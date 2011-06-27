@@ -121,7 +121,11 @@ int32_t ByteArray::copyTo(int32_t dst_offset, ByteArray* array,
   while ((bytes_read = get(index + src_offset, &b, 0, buffer_length)) > 0) {
     int bytes_written = array->put(index + dst_offset, &b, 0, bytes_read);
     if (bytes_written != bytes_read) {
+#if defined (SFNTLY_NO_EXCEPTION)
+      return 0;
+#else
       throw IOException("Error writing bytes.");
+#endif
     }
     index += bytes_read;
     remaining_length -= bytes_read;
@@ -155,7 +159,11 @@ bool ByteArray::copyFrom(InputStream* is, int32_t length) {
   while ((bytes_read =
           is->read(&b, 0, buffer_length)) > 0) {
     if (put(index, &b, 0, bytes_read) != bytes_read) {
+#if defined (SFNTLY_NO_EXCEPTION)
+      return 0;
+#else
       throw IOException("Error writing bytes.");
+#endif
     }
     index += bytes_read;
     length -= bytes_read;
@@ -172,7 +180,11 @@ bool ByteArray::copyFrom(InputStream* is) {
   while ((bytes_read =
           is->read(&b, 0, buffer_length)) > 0) {
     if (put(index, &b, 0, bytes_read) != bytes_read) {
+#if defined (SFNTLY_NO_EXCEPTION)
+      return 0;
+#else
       throw IOException("Error writing bytes.");
+#endif
     }
     index += bytes_read;
   }

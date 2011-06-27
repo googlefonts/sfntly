@@ -118,8 +118,8 @@ const int32_t Font::Offset::kTableRecordSize = 16;
 Font::~Font() {}
 
 Font::Font(FontFactory* factory, int32_t sfnt_version, ByteVector* digest,
-           TableMap* tables) :
-    sfnt_version_(sfnt_version), factory_(factory) {
+           TableMap* tables)
+    : factory_(factory), sfnt_version_(sfnt_version) {
   // non-trivial assignments that makes debugging hard if placed in
   // initialization list
   digest_ = *digest;
@@ -223,7 +223,11 @@ void Font::serializeTables(FontOutputStream* fos,
                                  record != end_of_headers; ++record) {
     TablePtr target_table = table((*record)->tag());
     if (target_table == NULL) {
+#if defined (SFNTLY_NO_EXCEPTION)
+      return;
+#else
       throw IOException("Table out of sync with font header.");
+#endif
     }
     int32_t table_size = target_table->serialize(fos);
     int32_t filler_size = ((table_size + 3) & ~3) - table_size;
@@ -462,19 +466,27 @@ void Font::Builder::buildTablesFromBuilders(TableBuilderMap* builder_map,
                                  builder != builder_end; ++builder) {
     TablePtr table;
     if (builder->second->readyToBuild()) {
+#if !defined (SFNTLY_NO_EXCEPTION)
       try {
+#endif
         table.attach(down_cast<Table*>(builder->second->build()));
+#if !defined (SFNTLY_NO_EXCEPTION)
       } catch(IOException& e) {
         std::string builder_string = "Unable to build table - ";
         builder_string += typeid(builder->second).name();
         builder_string += e.what();
         throw RuntimeException(builder_string.c_str());
       }
+#endif
     }
     if (table == NULL) {
+#if defined (SFNTLY_NO_EXCEPTION)
+      return;
+#else
       std::string builder_string = "Unable to build table - ";
       builder_string += typeid(builder->second).name();
       throw RuntimeException(builder_string.c_str());
+#endif
     }
     table_map->insert(TableMapEntry(table->header()->tag(), table));
   }

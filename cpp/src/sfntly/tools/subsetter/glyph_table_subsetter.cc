@@ -44,7 +44,11 @@ bool GlyphTableSubsetter::subset(Subsetter* subsetter, Font* font,
   GlyphTablePtr glyph_table = down_cast<GlyphTable*>(font->table(Tag::glyf));
   LocaTablePtr loca_table = down_cast<LocaTable*>(font->table(Tag::loca));
   if (glyph_table == NULL || loca_table == NULL) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return false;
+#else
     throw RuntimeException("Font to subset is not valid.");
+#endif
   }
 
   GlyphTableBuilderPtr glyph_table_builder;
@@ -54,7 +58,11 @@ bool GlyphTableSubsetter::subset(Subsetter* subsetter, Font* font,
   loca_table_builder.attach(down_cast<LocaTable::Builder*>(
        font_builder->newTableBuilder(Tag::loca)));
   if (glyph_table_builder == NULL || loca_table_builder == NULL) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return false;
+#else
     throw RuntimeException("Builder for subset is not valid.");
+#endif
   }
   GlyphTable::GlyphBuilderList* glyph_builders =
       glyph_table_builder->glyphBuilders();

@@ -54,7 +54,11 @@ int32_t HorizontalMetricsTable::numberOfLSBs() {
 
 int32_t HorizontalMetricsTable::hMetricAdvanceWidth(int32_t entry) {
   if (entry > num_hmetrics_) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return 0;
+#else
     throw IndexOutOfBoundException();
+#endif
   }
   int32_t offset = Offset::kHMetricsStart + (entry * Offset::kHMetricsSize) +
                    Offset::kHMetricsAdvanceWidth;
@@ -63,7 +67,11 @@ int32_t HorizontalMetricsTable::hMetricAdvanceWidth(int32_t entry) {
 
 int32_t HorizontalMetricsTable::hMetricLSB(int32_t entry) {
   if (entry > num_hmetrics_) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return 0;
+#else
     throw IndexOutOfBoundException();
+#endif
   }
   int32_t offset = Offset::kHMetricsStart + (entry * Offset::kHMetricsSize) +
                    Offset::kHMetricsLeftSideBearing;
@@ -72,7 +80,11 @@ int32_t HorizontalMetricsTable::hMetricLSB(int32_t entry) {
 
 int32_t HorizontalMetricsTable::lsbTableEntry(int32_t entry) {
   if (entry > num_hmetrics_) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return 0;
+#else
     throw IndexOutOfBoundException();
+#endif
   }
   int32_t offset = Offset::kHMetricsStart + (entry * Offset::kHMetricsSize) +
                    Offset::kLeftSideBearingSize;

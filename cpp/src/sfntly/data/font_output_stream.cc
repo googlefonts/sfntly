@@ -22,7 +22,7 @@
 namespace sfntly {
 
 FontOutputStream::FontOutputStream(OutputStream* os)
-    : position_(0), stream_(os) {
+    : stream_(os), position_(0) {
 }
 
 FontOutputStream::~FontOutputStream() {

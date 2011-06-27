@@ -3,6 +3,8 @@
 cmake_minimum_required(VERSION 2.6.2)
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 project(sfntly)
+# Uncomment the line below to simulate Chrome compilation flags
+#  add_definitions(-DSFNTLY_NO_EXCEPTION -Wall -Werror -fno-exceptions)
   set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/lib)
   set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src ext/gtest/include ext/gtest)

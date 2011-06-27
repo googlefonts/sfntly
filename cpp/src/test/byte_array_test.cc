@@ -112,10 +112,10 @@ bool byteArrayTester(ByteArray* ba) {
 }  // namespace byte_array_test
 
 bool testMemoryByteArray() {
-  for (int32_t i = 0;
+  for (size_t i = 0;
        i < sizeof(byte_array_test::BYTE_ARRAY_SIZES) / sizeof(int32_t); ++i) {
     int32_t size = byte_array_test::BYTE_ARRAY_SIZES[i];
-    fprintf(stderr, "fixed mem: iteration %d, size %d\n", i, size);
+    fprintf(stderr, "fixed mem: iteration %ld, size %d\n", i, size);
     ByteArrayPtr ba = new MemoryByteArray(size);
     byte_array_test::fillTestByteArray(ba, size);
     EXPECT_TRUE(byte_array_test::byteArrayTester(ba));
@@ -124,10 +124,10 @@ bool testMemoryByteArray() {
 }
 
 bool testGrowableMemoryByteArray() {
-  for (int32_t i = 0;
+  for (size_t i = 0;
        i < sizeof(byte_array_test::BYTE_ARRAY_SIZES) / sizeof(int32_t); ++i) {
     int32_t size = byte_array_test::BYTE_ARRAY_SIZES[i];
-    fprintf(stderr, "growable mem: iteration %d, size %d\n", i, size);
+    fprintf(stderr, "growable mem: iteration %ld, size %d\n", i, size);
     ByteArrayPtr ba = new GrowableMemoryByteArray();
     byte_array_test::fillTestByteArray(ba, size);
     EXPECT_TRUE(byte_array_test::byteArrayTester(ba));

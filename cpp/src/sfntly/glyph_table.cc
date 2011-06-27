@@ -109,8 +109,12 @@ void GlyphTable::Builder::initialize(ReadableFontData* data,
                                      const IntegerList& loca) {
   if (data != NULL) {
     if (loca_.empty()) {
+#if defined (SFNTLY_NO_EXCEPTION)
+      return;
+#else
       throw IllegalStateException(
           "Loca values not set - unable to parse glyph data.");
+#endif
     }
     int32_t loca_value;
     int32_t last_loca_value = loca[0];
@@ -513,8 +517,8 @@ CALLER_ATTACH FontDataTable*
  * GlyphTable::CompositeGlyph and its builder
  ******************************************************************************/
 GlyphTable::CompositeGlyph::CompositeGlyph(ReadableFontData* data)
-    : instruction_size_(0), instructions_offset_(0),
-      GlyphTable::Glyph(data, GlyphType::kComposite) {
+    : GlyphTable::Glyph(data, GlyphType::kComposite),
+      instruction_size_(0), instructions_offset_(0) {
   parseData();
 }
 

@@ -21,11 +21,11 @@
 namespace sfntly {
 
 FontInputStream::FontInputStream(InputStream* is)
-    : position_(0), length_(0), bounded_(false), stream_(is) {
+    : stream_(is), position_(0), length_(0), bounded_(false) {
 }
 
 FontInputStream::FontInputStream(InputStream* is, size_t length)
-    : position_(0), length_(length), bounded_(false), stream_(is) {
+    : stream_(is), position_(0), length_(length), bounded_(false) {
 }
 
 FontInputStream::~FontInputStream() {

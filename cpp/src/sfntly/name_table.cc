@@ -549,7 +549,7 @@ NameTable::NameEntryBuilder::~NameEntryBuilder() {}
  ******************************************************************************/
 NameTable::NameEntryIterator::NameEntryIterator(NameTable* table,
                                                 NameEntryFilter* filter) :
-    table_(table), filter_(filter), name_index_(0) {
+    table_(table), name_index_(0), filter_(filter) {
 }
 
 bool NameTable::NameEntryIterator::hasNext() {

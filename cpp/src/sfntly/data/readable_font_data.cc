@@ -23,16 +23,16 @@ namespace sfntly {
 ReadableFontData::~ReadableFontData() {}
 
 ReadableFontData::ReadableFontData(ByteArray* array)
-    : FontData(array), checksum_(0), checksum_set_(false) {
+    : FontData(array), checksum_set_(false), checksum_(0) {
 }
 
 ReadableFontData::ReadableFontData(ReadableFontData* data, int32_t offset)
-    : FontData(data, offset), checksum_(0), checksum_set_(false) {
+    : FontData(data, offset), checksum_set_(false), checksum_(0) {
 }
 
 ReadableFontData::ReadableFontData(ReadableFontData* data, int32_t offset,
                                    int32_t length)
-    : FontData(data, offset, length), checksum_(0), checksum_set_(false) {
+    : FontData(data, offset, length), checksum_set_(false), checksum_(0) {
 }
 
 int64_t ReadableFontData::checksum() {
@@ -133,9 +133,11 @@ int64_t ReadableFontData::readULong(int32_t index) {
 
 int32_t ReadableFontData::readULongAsInt(int32_t index) {
   int64_t ulong = readULong(index);
+#if !defined (SFNTLY_NO_EXCEPTION)
   if ((ulong & 0x80000000) == 0x80000000) {
     throw ArithmeticException("Long value too large to fit into an integer.");
   }
+#endif
   return ((int32_t)ulong) & ~0x80000000;
 }
 
