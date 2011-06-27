@@ -23,7 +23,7 @@
 
 namespace sfntly {
 
-FileInputStream::FileInputStream() : file_(NULL), length_(0), position_(0) {
+FileInputStream::FileInputStream() : file_(NULL), position_(0), length_(0) {
 }
 
 FileInputStream::~FileInputStream() {
@@ -73,10 +73,18 @@ bool FileInputStream::markSupported() {
 
 int32_t FileInputStream::read() {
   if (!file_) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return 0;
+#else
     throw IOException("no opened file");
+#endif
   }
   if (feof(file_)) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return 0;
+#else
     throw IOException("eof reached");
+#endif
   }
   byte_t value;
   fread(&value, 1, 1, file_);
@@ -92,10 +100,18 @@ int32_t FileInputStream::read(ByteVector* b, int32_t offset, int32_t length) {
   assert(b);
   assert(b->size() >= (size_t)(offset + length));
   if (!file_) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return 0;
+#else
     throw IOException("no opened file");
+#endif
   }
   if (feof(file_)) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return 0;
+#else
     throw IOException("eof reached");
+#endif
   }
   size_t read_count = std::min<size_t>(length_ - position_, length);
   int32_t actual_read = fread(&((*b)[offset]), 1, read_count, file_);
@@ -109,7 +125,11 @@ void FileInputStream::reset() {
 
 int64_t FileInputStream::skip(int64_t n) {
   if (!file_) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return 0;
+#else
     throw IOException("no opened file");
+#endif
   }
   if (n < 0) {
     return 0;
@@ -128,7 +148,11 @@ void FileInputStream::unread(ByteVector* b, int32_t offset, int32_t length) {
   assert(b);
   assert(b->size() >= size_t(offset + length));
   if (!file_) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return;
+#else
     throw IOException("no opened file");
+#endif
   }
   size_t unread_count = std::min<size_t>(position_, length);
   fseek(file_, position_ - unread_count, SEEK_SET);

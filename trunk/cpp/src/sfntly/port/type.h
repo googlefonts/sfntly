@@ -78,7 +78,7 @@ inline To down_cast(From* f) {                   // so we only accept pointers
 }
 
 #if !defined(WIN32)
-  #define UNREFERENCED_PARAMETER(p)
+  #define UNREFERENCED_PARAMETER(p) do { (void)p; } while (0)
 #endif
 
 #endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_TYPE_H_

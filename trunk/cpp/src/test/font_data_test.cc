@@ -186,7 +186,7 @@ void slicingWriteTest(ReadableFontData* rfd, WritableFontData* wfd) {
 }
 
 bool testReadableFontData() {
-  for (int32_t i = 0; i < sizeof(BYTE_ARRAY_SIZES) / sizeof(int32_t); ++i) {
+  for (size_t i = 0; i < sizeof(BYTE_ARRAY_SIZES) / sizeof(int32_t); ++i) {
     int32_t size = BYTE_ARRAY_SIZES[i];
     ByteArrayPtr ba = new MemoryByteArray(size);
     fillTestByteArray(ba, size);
@@ -197,7 +197,7 @@ bool testReadableFontData() {
 }
 
 bool testWritableFontData() {
-  for (int32_t i = 0; i < sizeof(BYTE_ARRAY_SIZES) / sizeof(int32_t); ++i) {
+  for (size_t i = 0; i < sizeof(BYTE_ARRAY_SIZES) / sizeof(int32_t); ++i) {
     int32_t size = BYTE_ARRAY_SIZES[i];
     ByteArrayPtr ba = new MemoryByteArray(size);
     fillTestByteArray(ba, size);

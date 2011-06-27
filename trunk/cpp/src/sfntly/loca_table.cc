@@ -36,14 +36,22 @@ int32_t LocaTable::numGlyphs() {
 
 int32_t LocaTable::glyphOffset(int32_t glyph_id) {
   if (glyph_id < 0 || glyph_id >= num_glyphs_) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return 0;
+#else
     throw IndexOutOfBoundException("Glyph ID is out of bounds.");
+#endif
   }
   return loca(glyph_id);
 }
 
 int32_t LocaTable::glyphLength(int32_t glyph_id) {
   if (glyph_id < 0 || glyph_id >= num_glyphs_) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return 0;
+#else
     throw IndexOutOfBoundException("Glyph ID is out of bounds.");
+#endif
   }
   return loca(glyph_id + 1) - loca(glyph_id);
 }
@@ -54,7 +62,11 @@ int32_t LocaTable::numLocas() {
 
 int32_t LocaTable::loca(int32_t index) {
   if (index > num_glyphs_) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return 0;
+#else
     throw IndexOutOfBoundException();
+#endif
   }
   if (version_ == IndexToLocFormat::kShortOffset) {
     return 2 * data_->readShort(index * DataSize::kUSHORT);
@@ -102,7 +114,11 @@ LocaTable::Builder::~Builder() {}
 void LocaTable::Builder::initialize(ReadableFontData* data) {
   if (data) {
     if (numGlyphs() < 0) {
+#if defined (SFNTLY_NO_EXCEPTION)
+      return;
+#else
       throw IllegalStateException("numglyphs not set on LocaTable Builder.");
+#endif
     }
     LocaTablePtr table =
         new LocaTable(header(), data, format_version_, num_glyphs_);
@@ -140,14 +156,22 @@ void LocaTable::Builder::setLocaList(IntegerList* list) {
 
 int32_t LocaTable::Builder::glyphOffset(int32_t glyph_id) {
   if (glyph_id < 0 || glyph_id > (num_glyphs_ + 1)) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return 0;
+#else
     throw IndexOutOfBoundException("Glyph ID is out of bounds.");
+#endif
   }
   return loca(glyph_id);
 }
 
 int32_t LocaTable::Builder::glyphLength(int32_t glyph_id) {
   if (glyph_id < 0 || glyph_id > (num_glyphs_ + 1)) {
+#if defined (SFNTLY_NO_EXCEPTION)
+    return 0;
+#else
     throw IndexOutOfBoundException("Glyph ID is out of bounds.");
+#endif
   }
   return loca(glyph_id + 1) - loca(glyph_id);
 }

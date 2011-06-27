@@ -33,44 +33,44 @@ bool testSmartPointer() {
   {
     Ptr<Foo> p1;
     p1 = new Foo();
-    EXPECT_EQ(1, p1->ref_count_);
-    EXPECT_EQ(1, RefCounted<Foo>::object_counter_);
+    EXPECT_EQ(size_t(1), p1->ref_count_);
+    EXPECT_EQ(size_t(1), RefCounted<Foo>::object_counter_);
 
     Ptr<Foo> p2;
     p2 = p1;
-    EXPECT_EQ(2, p1->ref_count_);
-    EXPECT_EQ(2, p2->ref_count_);
-    EXPECT_EQ(1, RefCounted<Foo>::object_counter_);
+    EXPECT_EQ(size_t(2), p1->ref_count_);
+    EXPECT_EQ(size_t(2), p2->ref_count_);
+    EXPECT_EQ(size_t(1), RefCounted<Foo>::object_counter_);
 
     Ptr<Foo> p3;
     p3 = p1;
-    EXPECT_EQ(3, p1->ref_count_);
-    EXPECT_EQ(3, p2->ref_count_);
-    EXPECT_EQ(3, p3->ref_count_);
-    EXPECT_EQ(1, RefCounted<Foo>::object_counter_);
+    EXPECT_EQ(size_t(3), p1->ref_count_);
+    EXPECT_EQ(size_t(3), p2->ref_count_);
+    EXPECT_EQ(size_t(3), p3->ref_count_);
+    EXPECT_EQ(size_t(1), RefCounted<Foo>::object_counter_);
 
     p2 = new Foo();
-    EXPECT_EQ(2, p1->ref_count_);
-    EXPECT_EQ(1, p2->ref_count_);
-    EXPECT_EQ(2, p3->ref_count_);
-    EXPECT_EQ(2, RefCounted<Foo>::object_counter_);
+    EXPECT_EQ(size_t(2), p1->ref_count_);
+    EXPECT_EQ(size_t(1), p2->ref_count_);
+    EXPECT_EQ(size_t(2), p3->ref_count_);
+    EXPECT_EQ(size_t(2), RefCounted<Foo>::object_counter_);
 
     p3.release();
-    EXPECT_EQ(1, p1->ref_count_);
+    EXPECT_EQ(size_t(1), p1->ref_count_);
     EXPECT_EQ(NULL, p3.p_);
-    EXPECT_EQ(2, RefCounted<Foo>::object_counter_);
+    EXPECT_EQ(size_t(2), RefCounted<Foo>::object_counter_);
 
     p2 = NULL;
-    EXPECT_EQ(1, RefCounted<Foo>::object_counter_);
+    EXPECT_EQ(size_t(1), RefCounted<Foo>::object_counter_);
 
     p1 = p1;
-    EXPECT_EQ(1, p1->ref_count_);
-    EXPECT_EQ(1, RefCounted<Foo>::object_counter_);
+    EXPECT_EQ(size_t(1), p1->ref_count_);
+    EXPECT_EQ(size_t(1), RefCounted<Foo>::object_counter_);
 
     p1 = &(*p1);
-    EXPECT_EQ(1, p1->ref_count_);
-    EXPECT_EQ(1, RefCounted<Foo>::object_counter_);
+    EXPECT_EQ(size_t(1), p1->ref_count_);
+    EXPECT_EQ(size_t(1), RefCounted<Foo>::object_counter_);
   }
-  EXPECT_EQ(0, RefCounted<Foo>::object_counter_);
+  EXPECT_EQ(size_t(0), RefCounted<Foo>::object_counter_);
   return true;
 }

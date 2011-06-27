@@ -445,7 +445,7 @@ CALLER_ATTACH FontDataTable* CMapTable::CMapFormat2::Builder::subBuildTable(
  * CMapTable::Iterator class
  ******************************************************************************/
 CMapTable::CMapIterator::CMapIterator(CMapTable* table, CMapFilter* filter)
-    : table_index_(0), table_(table), filter_(filter) {}
+    : table_index_(0), filter_(filter), table_(table) {}
 
 bool CMapTable::CMapIterator::hasNext() {
   if (!filter_) {

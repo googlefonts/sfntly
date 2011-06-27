@@ -19,6 +19,8 @@
 #ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_EXCEPTION_TYPE_H_
 #define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_EXCEPTION_TYPE_H_
 
+#if !defined (SFNTLY_NO_EXCEPTION)
+
 #include <exception>
 #include <string>
 
@@ -103,5 +105,7 @@ class IllegalStateException : public Exception {
 };
 
 }  // namespace sfntly
+
+#endif  // #if !defined (SFNTLY_NO_EXCEPTION)
 
 #endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_EXCEPTION_TYPE_H_

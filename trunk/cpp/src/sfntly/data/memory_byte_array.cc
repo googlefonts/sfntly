@@ -22,7 +22,7 @@ namespace sfntly {
 
 // Note: this constructor can fail under low-memory situation
 MemoryByteArray::MemoryByteArray(int32_t length)
-    : ByteArray(0, length), allocated_(true), b_(NULL) {
+    : ByteArray(0, length), b_(NULL), allocated_(true) {
 }
 
 MemoryByteArray::MemoryByteArray(byte_t* b, int32_t buffer_length)

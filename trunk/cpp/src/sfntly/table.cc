@@ -74,19 +74,19 @@ void Table::setFont(Font* font) {
  * Table::Header class
  ******************************************************************************/
 Table::Header::Header(int32_t tag)
-    : tag_(tag), checksum_(0), checksum_valid_(false), offset_(0), length_(0),
-      offset_valid_(false) {
+    : tag_(tag), offset_(0), length_(0), offset_valid_(false), checksum_(0),
+      checksum_valid_(false) {
 }
 
 Table::Header::Header(int32_t tag, int32_t length)
-    : tag_(tag), checksum_(0), checksum_valid_(false), offset_(0),
-      length_(length), offset_valid_(false) {
+    : tag_(tag), offset_(0), length_(length), offset_valid_(false),
+      checksum_(0), checksum_valid_(false) {
 }
 
 Table::Header::Header(int32_t tag, int64_t checksum, int32_t offset,
                       int32_t length)
-    : tag_(tag), checksum_(checksum), checksum_valid_(true), offset_(offset),
-      length_(length), offset_valid_(true) {
+    : tag_(tag), offset_(offset), length_(length), offset_valid_(true),
+      checksum_(checksum), checksum_valid_(true) {
 }
 
 Table::Header::~Header() {}
