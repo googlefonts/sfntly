@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sfntly", "vc\sfntly.vcxproj", "{794B4D75-CE21-49CB-BB27-C46C8FFF5F8A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "subsetter", "vc\subsetter.vcxproj", "{47DD131F-6B21-4C40-AE43-2D424BA04D1B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unit_test", "vc\unit_test.vcxproj", "{1BB1583E-5666-4440-AA2D-01888C1D2080}"
+	ProjectSection(ProjectDependencies) = postProject
+		{794B4D75-CE21-49CB-BB27-C46C8FFF5F8A} = {794B4D75-CE21-49CB-BB27-C46C8FFF5F8A}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{794B4D75-CE21-49CB-BB27-C46C8FFF5F8A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{794B4D75-CE21-49CB-BB27-C46C8FFF5F8A}.Debug|Win32.Build.0 = Debug|Win32
+		{794B4D75-CE21-49CB-BB27-C46C8FFF5F8A}.Release|Win32.ActiveCfg = Release|Win32
+		{794B4D75-CE21-49CB-BB27-C46C8FFF5F8A}.Release|Win32.Build.0 = Release|Win32
+		{47DD131F-6B21-4C40-AE43-2D424BA04D1B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{47DD131F-6B21-4C40-AE43-2D424BA04D1B}.Debug|Win32.Build.0 = Debug|Win32
+		{47DD131F-6B21-4C40-AE43-2D424BA04D1B}.Release|Win32.ActiveCfg = Release|Win32
+		{47DD131F-6B21-4C40-AE43-2D424BA04D1B}.Release|Win32.Build.0 = Release|Win32
+		{1BB1583E-5666-4440-AA2D-01888C1D2080}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1BB1583E-5666-4440-AA2D-01888C1D2080}.Debug|Win32.Build.0 = Debug|Win32
+		{1BB1583E-5666-4440-AA2D-01888C1D2080}.Release|Win32.ActiveCfg = Release|Win32
+		{1BB1583E-5666-4440-AA2D-01888C1D2080}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
