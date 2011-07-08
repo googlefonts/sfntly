@@ -23,21 +23,6 @@ namespace sfntly {
 /******************************************************************************
  * Constants
  ******************************************************************************/
-const int32_t GlyphTable::Offset::kNumberOfContours = 0;
-const int32_t GlyphTable::Offset::kXMin = 2;
-const int32_t GlyphTable::Offset::kYMin = 4;
-const int32_t GlyphTable::Offset::kXMax = 6;
-const int32_t GlyphTable::Offset::kYMax = 8;
-const int32_t GlyphTable::Offset::kSimpleEndPtsOfCountours = 10;
-const int32_t GlyphTable::Offset::kSimpleInstructionLength = 0;
-const int32_t GlyphTable::Offset::kSimpleInstructions = 2;
-const int32_t GlyphTable::Offset::kCompositeFlags = 0;
-const int32_t GlyphTable::Offset::kCompositeGyphIndexWithoutFlag = 0;
-const int32_t GlyphTable::Offset::kCompositeGlyphIndexWithFlag = 2;
-
-const int32_t GlyphType::kSimple = 0;
-const int32_t GlyphType::kComposite = 1;
-
 const int32_t GlyphTable::SimpleGlyph::kFLAG_ONCURVE = 1;
 const int32_t GlyphTable::SimpleGlyph::kFLAG_XSHORT = 1 << 1;
 const int32_t GlyphTable::SimpleGlyph::kFLAG_YSHORT = 1 << 2;

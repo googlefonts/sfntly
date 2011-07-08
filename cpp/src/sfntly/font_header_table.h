@@ -22,38 +22,44 @@
 namespace sfntly {
 
 struct IndexToLocFormat {
-  static const int32_t kShortOffset;
-  static const int32_t kLongOffset;
+  enum {
+    kShortOffset = 0,
+    kLongOffset = 1
+  };
 };
 
 struct FontDirectionHint {
-  static const int32_t kFullyMixed;
-  static const int32_t kOnlyStrongLTR;
-  static const int32_t kStrongLTRAndNeutral;
-  static const int32_t kOnlyStrongRTL;
-  static const int32_t kStrongRTLAndNeutral;
+  enum {
+    kFullyMixed = 0,
+    kOnlyStrongLTR = 1,
+    kStrongLTRAndNeutral = 2,
+    kOnlyStrongRTL = -1,
+    kStrongRTLAndNeutral = -2
+  };
 };
 
 class FontHeaderTable : public Table, public RefCounted<FontHeaderTable> {
  private:
   struct Offset {
-    static const int32_t kTableVersion;
-    static const int32_t kFontRevision;
-    static const int32_t kCheckSumAdjustment;
-    static const int32_t kMagicNumber;
-    static const int32_t kFlags;
-    static const int32_t kUnitsPerEm;
-    static const int32_t kCreated;
-    static const int32_t kModified;
-    static const int32_t kXMin;
-    static const int32_t kYMin;
-    static const int32_t kXMax;
-    static const int32_t kYMax;
-    static const int32_t kMacStyle;
-    static const int32_t kLowestRecPPEM;
-    static const int32_t kFontDirectionHint;
-    static const int32_t kIndexToLocFormat;
-    static const int32_t kGlyphDataFormat;
+    enum {
+      kTableVersion = 0,
+      kFontRevision = 4,
+      kCheckSumAdjustment = 8,
+      kMagicNumber = 12,
+      kFlags = 16,
+      kUnitsPerEm = 18,
+      kCreated = 20,
+      kModified = 28,
+      kXMin = 36,
+      kYMin = 38,
+      kXMax = 40,
+      kYMax = 42,
+      kMacStyle = 44,
+      kLowestRecPPEM = 46,
+      kFontDirectionHint = 48,
+      kIndexToLocFormat = 50,
+      kGlyphDataFormat = 52
+    };
   };
 
  private:

@@ -22,23 +22,6 @@
 
 namespace sfntly {
 /******************************************************************************
- * HorizontalHeaderTable::Builder class
- ******************************************************************************/
-const int32_t HorizontalHeaderTable::Offset::kVersion = 0;
-const int32_t HorizontalHeaderTable::Offset::kAscender = 4;
-const int32_t HorizontalHeaderTable::Offset::kDescender = 6;
-const int32_t HorizontalHeaderTable::Offset::kLineGap = 8;
-const int32_t HorizontalHeaderTable::Offset::kAdvanceWidthMax = 10;
-const int32_t HorizontalHeaderTable::Offset::kMinLeftSideBearing = 12;
-const int32_t HorizontalHeaderTable::Offset::kMinRightSideBearing = 14;
-const int32_t HorizontalHeaderTable::Offset::kXMaxExtent = 16;
-const int32_t HorizontalHeaderTable::Offset::kCaretSlopeRise = 18;
-const int32_t HorizontalHeaderTable::Offset::kCaretSlopeRun = 20;
-const int32_t HorizontalHeaderTable::Offset::kCaretOffset = 22;
-const int32_t HorizontalHeaderTable::Offset::kMetricDataFormat = 32;
-const int32_t HorizontalHeaderTable::Offset::kNumberOfHMetrics = 34;
-
-/******************************************************************************
  * HorizontalHeaderTable class
  ******************************************************************************/
 HorizontalHeaderTable:: HorizontalHeaderTable(Header* header,

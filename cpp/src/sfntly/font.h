@@ -36,78 +36,86 @@ namespace sfntly {
 // Platform ids. These are used in a number of places within the font whenever
 // the platform needs to be specified.
 struct PlatformId {
-  static const int32_t kUnknown;
-  static const int32_t kUnicode;
-  static const int32_t kMacintosh;
-  static const int32_t kISO;
-  static const int32_t kWindows;
-  static const int32_t kCustom;
+  enum {
+    kUnknown = -1,
+    kUnicode = 0,
+    kMacintosh = 1,
+    kISO = 2,
+    kWindows = 3,
+    kCustom = 4
+  };
 };
 
 // Unicode encoding ids. These are used in a number of places within the font
 // whenever character encodings need to be specified.
 struct UnicodeEncodingId {
-  static const int32_t kUnknown;
-  static const int32_t kUnicode1_0;
-  static const int32_t kUnicode1_1;
-  static const int32_t kISO10646;
-  static const int32_t kUnicode2_0_BMP;
-  static const int32_t kUnicode2_0;
-  static const int32_t kUnicodeVariationSequences;
+  enum {
+    kUnknown = -1,
+    kUnicode1_0 = 0,
+    kUnicode1_1 = 1,
+    kISO10646 = 2,
+    kUnicode2_0_BMP = 3,
+    kUnicode2_0 = 4,
+    kUnicodeVariationSequences = 5
+  };
 };
 
 // Windows encoding ids. These are used in a number of places within the font
 // whenever character encodings need to be specified.
 struct WindowsEncodingId {
-  static const int32_t kUnknown;
-  static const int32_t kSymbol;
-  static const int32_t kUnicodeUCS2;
-  static const int32_t kShiftJIS;
-  static const int32_t kPRC;
-  static const int32_t kBig5;
-  static const int32_t kWansung;
-  static const int32_t kJohab;
-  static const int32_t kUnicodeUCS4;
+  enum {
+    kUnknown = 0xffffffff,
+    kSymbol = 0,
+    kUnicodeUCS2 = 1,
+    kShiftJIS = 2,
+    kPRC = 3,
+    kBig5 = 4,
+    kWansung = 5,
+    kJohab = 6,
+    kUnicodeUCS4 = 10
+  };
 };
 
 // Macintosh encoding ids. These are used in a number of places within the
 // font whenever character encodings need to be specified.
 struct MacintoshEncodingId {
   // Macintosh Platform Encodings
-  static const int32_t kUnknown;
-  static const int32_t kRoman;
-  static const int32_t kJapanese;
-  static const int32_t kChineseTraditional;
-  static const int32_t kKorean;
-  static const int32_t kArabic;
-  static const int32_t kHebrew;
-  static const int32_t kGreek;
-  static const int32_t kRussian;
-  static const int32_t kRSymbol;
-  static const int32_t kDevanagari;
-  static const int32_t kGurmukhi;
-  static const int32_t kGujarati;
-  static const int32_t kOriya;
-  static const int32_t kBengali;
-  static const int32_t kTamil;
-  static const int32_t kTelugu;
-  static const int32_t kKannada;
-  static const int32_t kMalayalam;
-  static const int32_t kSinhalese;
-  static const int32_t kBurmese;
-  static const int32_t kKhmer;
-  static const int32_t kThai;
-  static const int32_t kLaotian;
-  static const int32_t kGeorgian;
-  static const int32_t kArmenian;
-  static const int32_t kChineseSimplified;
-  static const int32_t kTibetan;
-  static const int32_t kMongolian;
-  static const int32_t kGeez;
-  static const int32_t kSlavic;
-  static const int32_t kVietnamese;
-  static const int32_t kSindhi;
-  static const int32_t kUninterpreted;
+  enum {
+    kUnknown = -1,
+    kRoman = 0,
+    kJapanese = 1,
+    kChineseTraditional = 2,
+    kKorean = 3,
+    kArabic = 4,
+    kHebrew = 5,
+    kGreek = 6,
+    kRussian = 7,
+    kRSymbol = 8,
+    kDevanagari = 9,
+    kGurmukhi = 10,
+    kGujarati = 11,
+    kOriya = 12,
+    kBengali = 13,
+    kTamil = 14,
+    kTelugu = 15,
+    kKannada = 16,
+    kMalayalam = 17,
+    kSinhalese = 18,
+    kBurmese = 19,
+    kKhmer = 20,
+    kThai = 21,
+    kLaotian = 22,
+    kGeorgian = 23,
+    kArmenian = 24,
+    kChineseSimplified = 25,
+    kTibetan = 26,
+    kMongolian = 27,
+    kGeez = 28,
+    kSlavic = 29,
+    kVietnamese = 30,
+    kSindhi = 31,
+    kUninterpreted = 32
+  };
 };
 
 extern const int32_t SFNTVERSION_1;
@@ -119,21 +127,23 @@ class Font : public RefCounted<Font> {
   // relative to the start of the table or the start of sub-blocks within the
   // table.
   struct Offset {
+    enum {
     // Offsets within the main directory
-    static const int32_t kSfntVersion;
-    static const int32_t kNumTables;
-    static const int32_t kSearchRange;
-    static const int32_t kEntrySelector;
-    static const int32_t kRangeShift;
-    static const int32_t kTableRecordBegin;
-    static const int32_t kSfntHeaderSize;
+      kSfntVersion = 0,
+      kNumTables = 4,
+      kSearchRange = 6,
+      kEntrySelector = 8,
+      kRangeShift = 10,
+      kTableRecordBegin = 12,
+      kSfntHeaderSize = 12,
 
     // Offsets within a specific table record
-    static const int32_t kTableTag;
-    static const int32_t kTableCheckSum;
-    static const int32_t kTableOffset;
-    static const int32_t kTableLength;
-    static const int32_t kTableRecordSize;
+      kTableTag = 0,
+      kTableCheckSum = 4,
+      kTableOffset = 8,
+      kTableLength = 12,
+      kTableRecordSize = 16
+    };
   };
 
   // Note: the two constants are moved to tag.h to avoid VC++ bug.

@@ -25,19 +25,21 @@ class HorizontalHeaderTable : public Table,
                               public RefCounted<HorizontalHeaderTable> {
  private:
   struct Offset {
-    static const int32_t kVersion;
-    static const int32_t kAscender;
-    static const int32_t kDescender;
-    static const int32_t kLineGap;
-    static const int32_t kAdvanceWidthMax;
-    static const int32_t kMinLeftSideBearing;
-    static const int32_t kMinRightSideBearing;
-    static const int32_t kXMaxExtent;
-    static const int32_t kCaretSlopeRise;
-    static const int32_t kCaretSlopeRun;
-    static const int32_t kCaretOffset;
-    static const int32_t kMetricDataFormat;
-    static const int32_t kNumberOfHMetrics;
+    enum {
+      kVersion = 0,
+      kAscender = 4,
+      kDescender = 6,
+      kLineGap = 8,
+      kAdvanceWidthMax = 10,
+      kMinLeftSideBearing = 12,
+      kMinRightSideBearing = 14,
+      kXMaxExtent = 16,
+      kCaretSlopeRise = 18,
+      kCaretSlopeRun = 20,
+      kCaretOffset = 22,
+      kMetricDataFormat = 32,
+      kNumberOfHMetrics = 34,
+    };
   };
 
  private:

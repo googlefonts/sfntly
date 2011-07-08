@@ -25,8 +25,10 @@
 namespace sfntly {
 
 struct GlyphType {
-  static const int32_t kSimple;
-  static const int32_t kComposite;
+  enum {
+    kSimple = 0,
+    kComposite = 1
+  };
 };
 
 // Note: due to the complexity of this class, the order of declaration is
@@ -35,26 +37,28 @@ struct GlyphType {
 class GlyphTable : public Table, public RefCounted<GlyphTable> {
  public:
   struct Offset {
-    // header
-    static const int32_t kNumberOfContours;
-    static const int32_t kXMin;
-    static const int32_t kYMin;
-    static const int32_t kXMax;
-    static const int32_t kYMax;
+    enum {
+      // header
+      kNumberOfContours = 0,
+      kXMin = 2,
+      kYMin = 4,
+      kXMax = 6,
+      kYMax = 8,
 
-    // Simple Glyph Description
-    static const int32_t kSimpleEndPtsOfCountours;
-    // offset from the end of the contours array
-    static const int32_t kSimpleInstructionLength;
-    static const int32_t kSimpleInstructions;
-    // flags
-    // xCoordinates
-    // yCoordinates
+      // Simple Glyph Description
+      kSimpleEndPtsOfCountours = 10,
+      // offset from the end of the contours array
+      kSimpleInstructionLength = 0,
+      kSimpleInstructions = 2,
+      // flags
+      // xCoordinates
+      // yCoordinates
 
-    // Composite Glyph Description
-    static const int32_t kCompositeFlags;
-    static const int32_t kCompositeGyphIndexWithoutFlag;
-    static const int32_t kCompositeGlyphIndexWithFlag;
+      // Composite Glyph Description
+      kCompositeFlags = 0,
+      kCompositeGyphIndexWithoutFlag = 0,
+      kCompositeGlyphIndexWithFlag = 2,
+    };
   };
 
  private:

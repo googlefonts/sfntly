@@ -19,15 +19,6 @@
 
 namespace sfntly {
 /******************************************************************************
- * Constants
- ******************************************************************************/
-const int32_t HorizontalMetricsTable::Offset::kHMetricsStart = 0;
-const int32_t HorizontalMetricsTable::Offset::kHMetricsSize = 4;
-const int32_t HorizontalMetricsTable::Offset::kHMetricsAdvanceWidth = 0;
-const int32_t HorizontalMetricsTable::Offset::kHMetricsLeftSideBearing = 2;
-const int32_t HorizontalMetricsTable::Offset::kLeftSideBearingSize = 2;
-
-/******************************************************************************
  * HorizontalMetricsTable class
  ******************************************************************************/
 HorizontalMetricsTable::HorizontalMetricsTable(Header* header,
