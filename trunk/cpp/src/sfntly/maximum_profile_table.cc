@@ -18,25 +18,6 @@
 
 namespace sfntly {
 /******************************************************************************
- * Constants
- ******************************************************************************/
-const int32_t MaximumProfileTable::Offset::kVersion = 0;
-const int32_t MaximumProfileTable::Offset::kNumGlyphs = 4;
-const int32_t MaximumProfileTable::Offset::kMaxPoints = 6;
-const int32_t MaximumProfileTable::Offset::kMaxContours = 8;
-const int32_t MaximumProfileTable::Offset::kMaxCompositePoints = 10;
-const int32_t MaximumProfileTable::Offset::kMaxCompositeContours = 12;
-const int32_t MaximumProfileTable::Offset::kMaxZones = 14;
-const int32_t MaximumProfileTable::Offset::kMaxTwilightPoints = 16;
-const int32_t MaximumProfileTable::Offset::kMaxStorage = 18;
-const int32_t MaximumProfileTable::Offset::kMaxFunctionDefs = 20;
-const int32_t MaximumProfileTable::Offset::kMaxInstructionDefs = 22;
-const int32_t MaximumProfileTable::Offset::kMaxStackElements = 24;
-const int32_t MaximumProfileTable::Offset::kMaxSizeOfInstructions = 26;
-const int32_t MaximumProfileTable::Offset::kMaxComponentElements = 28;
-const int32_t MaximumProfileTable::Offset::kMaxComponentDepth = 30;
-
-/******************************************************************************
  * MaximumProfileTable class
  ******************************************************************************/
 MaximumProfileTable::MaximumProfileTable(Header* header,

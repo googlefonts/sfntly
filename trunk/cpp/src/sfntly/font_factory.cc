@@ -23,14 +23,6 @@
 
 namespace sfntly {
 
-const int32_t FontFactory::Offset::kTTCTag = 0;
-const int32_t FontFactory::Offset::kVersion = 4;
-const int32_t FontFactory::Offset::kNumFonts = 8;
-const int32_t FontFactory::Offset::kOffsetTable = 12;
-const int32_t FontFactory::Offset::kulDsigTag = 0;
-const int32_t FontFactory::Offset::kulDsigLength = 4;
-const int32_t FontFactory::Offset::kulDsigOffset = 8;
-
 FontFactory::FontFactory() : fingerprint_(false) {
 }
 

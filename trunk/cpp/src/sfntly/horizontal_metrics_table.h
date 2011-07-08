@@ -25,15 +25,17 @@ class HorizontalMetricsTable : public Table,
                                public RefCounted<HorizontalMetricsTable> {
  private:
   struct Offset {
-    // hMetrics
-    static const int32_t kHMetricsStart;
-    static const int32_t kHMetricsSize;
+    enum {
+      // hMetrics
+      kHMetricsStart = 0,
+      kHMetricsSize = 4,
 
-    // Offset within an hMetric
-    static const int32_t kHMetricsAdvanceWidth;
-    static const int32_t kHMetricsLeftSideBearing;
+      // Offset within an hMetric
+      kHMetricsAdvanceWidth = 0,
+      kHMetricsLeftSideBearing = 2,
 
-    static const int32_t kLeftSideBearingSize;
+      kLeftSideBearingSize = 2
+    };
   };
 
  private:

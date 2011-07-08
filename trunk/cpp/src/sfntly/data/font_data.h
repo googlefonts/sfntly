@@ -25,22 +25,24 @@
 namespace sfntly {
 
 struct DataSize {
-  static const int32_t kBYTE;
-  static const int32_t kCHAR;
-  static const int32_t kUSHORT;
-  static const int32_t kSHORT;
-  static const int32_t kUINT24;
-  static const int32_t kULONG;
-  static const int32_t kLONG;
-  static const int32_t kFixed;
-  static const int32_t kFUNIT;
-  static const int32_t kFWORD;
-  static const int32_t kUFWORD;
-  static const int32_t kF2DOT14;
-  static const int32_t kLONGDATETIME;
-  static const int32_t kTag;
-  static const int32_t kGlyphID;
-  static const int32_t kOffset;
+  enum {
+    kBYTE = 1,
+    kCHAR = 1,
+    kUSHORT = 2,
+    kSHORT = 2,
+    kUINT24 = 3,
+    kULONG = 4,
+    kLONG = 4,
+    kFixed = 4,
+    kFUNIT = 4,
+    kFWORD = 2,
+    kUFWORD = 2,
+    kF2DOT14 = 2,
+    kLONGDATETIME = 8,
+    kTag = 4,
+    kGlyphID = 2,
+    kOffset = 2
+  };
 };
 
 class FontData : virtual public RefCount {

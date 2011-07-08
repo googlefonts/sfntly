@@ -27,127 +27,131 @@
 
 namespace sfntly {
 
+// CMap subtable formats
+struct CMapFormat {
+  enum {
+    kFormat0 = 0,
+    kFormat2 = 2,
+    kFormat4 = 4,
+    kFormat6 = 6,
+    kFormat8 = 8,
+    kFormat10 = 10,
+    kFormat12 = 12,
+    kFormat13 = 13,
+    kFormat14 = 14
+  };
+};
+
 // A CMap table
 class CMapTable : public Table, public RefCounted<CMapTable> {
  private:
   static const int32_t NOTDEF;
   struct Offset {
-    static const int32_t kVersion;
-    static const int32_t kNumTables;
-    static const int32_t kEncodingRecordStart;
+    enum {
+      kVersion = 0,
+      kNumTables = 2,
+      kEncodingRecordStart = 4,
 
-    // offsets relative to the encoding record
-    static const int32_t kEncodingRecordPlatformId;
-    static const int32_t kEncodingRecordEncodingId;
-    static const int32_t kEncodingRecordOffset;
-    static const int32_t kEncodingRecordSize;
+      // offsets relative to the encoding record
+      kEncodingRecordPlatformId = 0,
+      kEncodingRecordEncodingId = 2,
+      kEncodingRecordOffset = 4,
+      kEncodingRecordSize = 8,
 
-    static const int32_t kFormat;
+      kFormat = 0,
 
-    // Format 0: Byte encoding table
-    static const int32_t kFormat0Format;
-    static const int32_t kFormat0Length;
-    static const int32_t kFormat0Language;
-    static const int32_t kFormat0GlyphIdArray;
+      // Format 0: Byte encoding table
+      kFormat0Format = 0,
+      kFormat0Length = 2,
+      kFormat0Language = 4,
+      kFormat0GlyphIdArray = 6,
 
-    // Format 2: High-byte mapping through table
-    static const int32_t kFormat2Format;
-    static const int32_t kFormat2Length;
-    static const int32_t kFormat2Language;
-    static const int32_t kFormat2SubHeaderKeys;
-    static const int32_t kFormat2SubHeaders;
-    // offset relative to the subHeader structure
-    static const int32_t kFormat2SubHeader_firstCode;
-    static const int32_t kFormat2SubHeader_entryCount;
-    static const int32_t kFormat2SubHeader_idDelta;
-    static const int32_t kFormat2SubHeader_idRangeOffset;
-    static const int32_t kFormat2SubHeader_structLength;
+      // Format 2: High-byte mapping through table
+      kFormat2Format = 0,
+      kFormat2Length = 2,
+      kFormat2Language = 4,
+      kFormat2SubHeaderKeys = 6,
+      kFormat2SubHeaders = 518,
+      // offset relative to the subHeader structure
+      kFormat2SubHeader_firstCode = 0,
+      kFormat2SubHeader_entryCount = 2,
+      kFormat2SubHeader_idDelta = 4,
+      kFormat2SubHeader_idRangeOffset = 6,
+      kFormat2SubHeader_structLength = 8,
 
-    // Format 4: Segment mapping to delta values
-    static const int32_t kFormat4Format;
-    static const int32_t kFormat4Length;
-    static const int32_t kFormat4Language;
-    static const int32_t kFormat4SegCountX2;
-    static const int32_t kFormat4SearchRange;
-    static const int32_t kFormat4EntrySelector;
-    static const int32_t kFormat4RangeShift;
-    static const int32_t kFormat4EndCount;
+      // Format 4: Segment mapping to delta values
+      kFormat4Format = 0,
+      kFormat4Length = 2,
+      kFormat4Language = 4,
+      kFormat4SegCountX2 = 6,
+      kFormat4SearchRange = 8,
+      kFormat4EntrySelector = 10,
+      kFormat4RangeShift = 12,
+      kFormat4EndCount = 14,
 
-    // format 6: Trimmed table mapping
-    static const int32_t kFormat6Format;
-    static const int32_t kFormat6Length;
-    static const int32_t kFormat6Language;
-    static const int32_t kFormat6FirstCode;
-    static const int32_t kFormat6EntryCount;
-    static const int32_t kFormat6GlyphIdArray;
+      // format 6: Trimmed table mapping
+      kFormat6Format = 0,
+      kFormat6Length = 2,
+      kFormat6Language = 4,
+      kFormat6FirstCode = 6,
+      kFormat6EntryCount = 8,
+      kFormat6GlyphIdArray = 10,
 
-    // Format 8: mixed 16-bit and 32-bit coverage
-    static const int32_t kFormat8Format;
-    static const int32_t kFormat8Length;
-    static const int32_t kFormat8Language;
-    static const int32_t kFormat8Is32;
-    static const int32_t kFormat8nGroups204;
-    static const int32_t kFormat8Groups208;
-    // ofset relative to the group structure
-    static const int32_t kFormat8Group_startCharCode;
-    static const int32_t kFormat8Group_endCharCode;
-    static const int32_t kFormat8Group_startGlyphId;
-    static const int32_t kFormat8Group_structLength;
+      // Format 8: mixed 16-bit and 32-bit coverage
+      kFormat8Format = 0,
+      kFormat8Length = 4,
+      kFormat8Language = 8,
+      kFormat8Is32 = 12,
+      kFormat8nGroups204 = 8204,
+      kFormat8Groups208 = 8208,
+      // offset relative to the group structure
+      kFormat8Group_startCharCode = 0,
+      kFormat8Group_endCharCode = 4,
+      kFormat8Group_startGlyphId = 8,
+      kFormat8Group_structLength = 12,
 
-    // Format 10: Trimmed array
-    static const int32_t kFormat10Format;
-    static const int32_t kFormat10Length;
-    static const int32_t kFormat10Language;
-    static const int32_t kFormat10StartCharCode;
-    static const int32_t kFormat10NumChars;
-    static const int32_t kFormat10Glyphs0;
+      // Format 10: Trimmed array
+      kFormat10Format = 0,
+      kFormat10Length = 4,
+      kFormat10Language = 8,
+      kFormat10StartCharCode = 12,
+      kFormat10NumChars = 16,
+      kFormat10Glyphs0 = 20,
 
-    // Format 12: Segmented coverage
-    static const int32_t kFormat12Format;
-    static const int32_t kFormat12Length;
-    static const int32_t kFormat12Language;
-    static const int32_t kFormat12nGroups;
-    static const int32_t kFormat12Groups;
-    static const int32_t kFormat12Groups_structLength;
-    // offsets within the group structure
-    static const int32_t kFormat12_startCharCode;
-    static const int32_t kFormat12_endCharCode;
-    static const int32_t kFormat12_startGlyphId;
+      // Format 12: Segmented coverage
+      kFormat12Format = 0,
+      kFormat12Length = 4,
+      kFormat12Language = 8,
+      kFormat12nGroups = 12,
+      kFormat12Groups = 16,
+      kFormat12Groups_structLength = 12,
+      // offsets within the group structure
+      kFormat12_startCharCode = 0,
+      kFormat12_endCharCode = 4,
+      kFormat12_startGlyphId = 8,
 
-    // Format 13: Last Resort Font
-    static const int32_t kFormat13Format;
-    static const int32_t kFormat13Length;
-    static const int32_t kFormat13Language;
-    static const int32_t kFormat13nGroups;
-    static const int32_t kFormat13Groups;
-    static const int32_t kFormat13Groups_structLength;
-    // offsets within the group structure
-    static const int32_t kFormat13_startCharCode;
-    static const int32_t kFormat13_endCharCode;
-    static const int32_t kFormat13_glyphId;
+      // Format 13: Last Resort Font
+      kFormat13Format = 0,
+      kFormat13Length = 4,
+      kFormat13Language = 8,
+      kFormat13nGroups = 12,
+      kFormat13Groups = 16,
+      kFormat13Groups_structLength = 12,
+      // offsets within the group structure
+      kFormat13_startCharCode = 0,
+      kFormat13_endCharCode = 4,
+      kFormat13_glyphId = 8,
 
-    // Format 14: Unicode Variation Sequences
-    static const int32_t kFormat14Format;
-    static const int32_t kFormat14Length;
+      // Format 14: Unicode Variation Sequences
+      kFormat14Format = 0,
+      kFormat14Length = 2,
 
-    // TODO(stuartg): finish tables
-    // Default UVS Table
+      // TODO(stuartg): finish tables
+      // Default UVS Table
 
-    // Non-default UVS Table
-    static const int32_t kLast;
-  };
-
-  // CMap subtable formats
-  struct CMapFormat {
-    static const int32_t kFormat0;
-    static const int32_t kFormat2;
-    static const int32_t kFormat4;
-    static const int32_t kFormat6;
-    static const int32_t kFormat8;
-    static const int32_t kFormat10;
-    static const int32_t kFormat12;
-    static const int32_t kFormat13;
-    static const int32_t kFormat14;
+      // Non-default UVS Table
+      kLast = -1
+    };
   };
 
  public:

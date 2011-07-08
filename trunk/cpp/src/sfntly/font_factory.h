@@ -31,17 +31,19 @@ class FontFactory : public RefCounted<FontFactory> {
   // relative to the start of the table or the start of sub-blocks within the
   // table.
   struct Offset {
-    // Offsets within the main directory
-    static const int32_t kTTCTag;
-    static const int32_t kVersion;
-    static const int32_t kNumFonts;
-    static const int32_t kOffsetTable;
+    enum {
+      // Offsets within the main directory
+      kTTCTag = 0,
+      kVersion = 4,
+      kNumFonts = 8,
+      kOffsetTable = 12,
 
-    // TTC Version 2.0 extensions
-    // offsets from end of OffsetTable
-    static const int32_t kulDsigTag;
-    static const int32_t kulDsigLength;
-    static const int32_t kulDsigOffset;
+      // TTC Version 2.0 extensions
+      // offsets from end of OffsetTable
+      kulDsigTag = 0,
+      kulDsigLength = 4,
+      kulDsigOffset = 8
+    };
   };
 
   FontFactory();

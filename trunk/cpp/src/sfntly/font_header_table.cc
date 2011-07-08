@@ -18,36 +18,6 @@
 
 namespace sfntly {
 /******************************************************************************
- * Constants
- ******************************************************************************/
-const int32_t FontHeaderTable::Offset::kTableVersion = 0;
-const int32_t FontHeaderTable::Offset::kFontRevision = 4;
-const int32_t FontHeaderTable::Offset::kCheckSumAdjustment = 8;
-const int32_t FontHeaderTable::Offset::kMagicNumber = 12;
-const int32_t FontHeaderTable::Offset::kFlags = 16;
-const int32_t FontHeaderTable::Offset::kUnitsPerEm = 18;
-const int32_t FontHeaderTable::Offset::kCreated = 20;
-const int32_t FontHeaderTable::Offset::kModified = 28;
-const int32_t FontHeaderTable::Offset::kXMin = 36;
-const int32_t FontHeaderTable::Offset::kYMin = 38;
-const int32_t FontHeaderTable::Offset::kXMax = 40;
-const int32_t FontHeaderTable::Offset::kYMax = 42;
-const int32_t FontHeaderTable::Offset::kMacStyle = 44;
-const int32_t FontHeaderTable::Offset::kLowestRecPPEM = 46;
-const int32_t FontHeaderTable::Offset::kFontDirectionHint = 48;
-const int32_t FontHeaderTable::Offset::kIndexToLocFormat = 50;
-const int32_t FontHeaderTable::Offset::kGlyphDataFormat = 52;
-
-const int32_t IndexToLocFormat::kShortOffset = 0;
-const int32_t IndexToLocFormat::kLongOffset = 1;
-
-const int32_t FontDirectionHint::kFullyMixed = 0;
-const int32_t FontDirectionHint::kOnlyStrongLTR = 1;
-const int32_t FontDirectionHint::kStrongLTRAndNeutral = 2;
-const int32_t FontDirectionHint::kOnlyStrongRTL = -1;
-const int32_t FontDirectionHint::kStrongRTLAndNeutral = -2;
-
-/******************************************************************************
  * FontHeaderTable class
  ******************************************************************************/
 FontHeaderTable::FontHeaderTable(Header* header, ReadableFontData* data)

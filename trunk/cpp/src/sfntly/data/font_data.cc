@@ -22,23 +22,6 @@
 
 namespace sfntly {
 
-const int32_t DataSize::kBYTE = 1;
-const int32_t DataSize::kCHAR = 1;
-const int32_t DataSize::kUSHORT = 2;
-const int32_t DataSize::kSHORT = 2;
-const int32_t DataSize::kUINT24 = 3;
-const int32_t DataSize::kULONG = 4;
-const int32_t DataSize::kLONG = 4;
-const int32_t DataSize::kFixed = 4;
-const int32_t DataSize::kFUNIT = 4;
-const int32_t DataSize::kFWORD = 2;
-const int32_t DataSize::kUFWORD = 2;
-const int32_t DataSize::kF2DOT14 = 2;
-const int32_t DataSize::kLONGDATETIME = 8;
-const int32_t DataSize::kTag = 4;
-const int32_t DataSize::kGlyphID = 2;
-const int32_t DataSize::kOffset = 2;
-
 FontData::~FontData() {}
 
 void FontData::init(ByteArray* ba) {

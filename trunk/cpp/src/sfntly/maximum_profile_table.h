@@ -26,24 +26,26 @@ class MaximumProfileTable : public Table,
                             public RefCounted<MaximumProfileTable> {
  private:
   struct Offset {
-    // version 0.5 and 1.0
-    static const int32_t kVersion;
-    static const int32_t kNumGlyphs;
+    enum {
+      // version 0.5 and 1.0
+      kVersion = 0,
+      kNumGlyphs = 4,
 
-    // version 1.0
-    static const int32_t kMaxPoints;
-    static const int32_t kMaxContours;
-    static const int32_t kMaxCompositePoints;
-    static const int32_t kMaxCompositeContours;
-    static const int32_t kMaxZones;
-    static const int32_t kMaxTwilightPoints;
-    static const int32_t kMaxStorage;
-    static const int32_t kMaxFunctionDefs;
-    static const int32_t kMaxInstructionDefs;
-    static const int32_t kMaxStackElements;
-    static const int32_t kMaxSizeOfInstructions;
-    static const int32_t kMaxComponentElements;
-    static const int32_t kMaxComponentDepth;
+      // version 1.0
+      kMaxPoints = 6,
+      kMaxContours = 8,
+      kMaxCompositePoints = 10,
+      kMaxCompositeContours = 12,
+      kMaxZones = 14,
+      kMaxTwilightPoints = 16,
+      kMaxStorage = 18,
+      kMaxFunctionDefs = 20,
+      kMaxInstructionDefs = 22,
+      kMaxStackElements = 24,
+      kMaxSizeOfInstructions = 26,
+      kMaxComponentElements = 28,
+      kMaxComponentDepth = 30,
+    };
   };
 
  private:

@@ -23,56 +23,64 @@
 namespace sfntly {
 
 struct WeightClass {
-  static const int32_t kThin;
-  static const int32_t kExtraLight;
-  static const int32_t kUltraLight;
-  static const int32_t kLight;
-  static const int32_t kNormal;
-  static const int32_t kRegular;
-  static const int32_t kMedium;
-  static const int32_t kSemiBold;
-  static const int32_t kDemiBold;
-  static const int32_t kBold;
-  static const int32_t kExtraBold;
-  static const int32_t kUltraBold;
-  static const int32_t kBlack;
-  static const int32_t kHeavy;
+  enum {
+    kThin = 100,
+    kExtraLight = 200,
+    kUltraLight = 200,
+    kLight = 300,
+    kNormal = 400,
+    kRegular = 400,
+    kMedium = 500,
+    kSemiBold = 600,
+    kDemiBold = 600,
+    kBold = 700,
+    kExtraBold = 800,
+    kUltraBold = 800,
+    kBlack = 900,
+    kHeavy = 900
+  };
 };
 
 struct WidthClass {
-  static const int32_t kUltraCondensed;
-  static const int32_t kExtraCondensed;
-  static const int32_t kCondensed;
-  static const int32_t kSemiCondensed;
-  static const int32_t kMedium;
-  static const int32_t kNormal;
-  static const int32_t kSemiExpanded;
-  static const int32_t kExpanded;
-  static const int32_t kExtraExpanded;
-  static const int32_t kUltraExpanded;
+  enum {
+    kUltraCondensed = 1,
+    kExtraCondensed = 2,
+    kCondensed = 3,
+    kSemiCondensed = 4,
+    kMedium = 5,
+    kNormal = 5,
+    kSemiExpanded = 6,
+    kExpanded = 7,
+    kExtraExpanded = 8,
+    kUltraExpanded = 9
+  };
 };
 
 struct EmbeddingFlags {
-  static const int32_t kReserved0;
-  static const int32_t kRestrictedLicenseEmbedding;
-  static const int32_t kPreviewAndPrintEmbedding;
-  static const int32_t kEditableEmbedding;
-  static const int32_t kReserved4;
-  static const int32_t kReserved5;
-  static const int32_t kReserved6;
-  static const int32_t kReserved7;
-  static const int32_t kNoSubsetting;
-  static const int32_t kBitmapEmbeddingOnly;
-  static const int32_t kReserved10;
-  static const int32_t kReserved11;
-  static const int32_t kReserved12;
-  static const int32_t kReserved13;
-  static const int32_t kReserved14;
-  static const int32_t kReserved15;
+  enum {
+    kReserved0 = 1 << 0,
+    kRestrictedLicenseEmbedding = 1 << 1,
+    kPreviewAndPrintEmbedding = 1 << 2,
+    kEditableEmbedding = 1 << 3,
+    kReserved4 = 1 << 4,
+    kReserved5 = 1 << 5,
+    kReserved6 = 1 << 6,
+    kReserved7 = 1 << 7,
+    kNoSubsetting = 1 << 8,
+    kBitmapEmbeddingOnly = 1 << 9,
+    kReserved10 = 1 << 10,
+    kReserved11 = 1 << 11,
+    kReserved12 = 1 << 12,
+    kReserved13 = 1 << 13,
+    kReserved14 = 1 << 14,
+    kReserved15 = 1 << 15
+  };
 };
 
 struct UnicodeRange {
   enum {
+    // This enum relies on the ordering of the data matching the ordinal numbers
+    // of the properties.
     kBasicLatin,
     kLatin1Supplement,
     kLatinExtendedA,
@@ -208,18 +216,22 @@ struct UnicodeRange {
 };
 
 struct FsSelection {
-  static const int32_t kITALIC;
-  static const int32_t kUNDERSCORE;
-  static const int32_t kNEGATIVE;
-  static const int32_t kOUTLINED;
-  static const int32_t kSTRIKEOUT;
-  static const int32_t kBOLD;
-  static const int32_t kREGULAR;
-  static const int32_t kUSE_TYPO_METRICS;
-  static const int32_t kWWS;
-  static const int32_t kOBLIQUE;
+  enum {
+    kITALIC = 1 << 0,
+    kUNDERSCORE = 1 << 1,
+    kNEGATIVE = 1 << 2,
+    kOUTLINED = 1 << 3,
+    kSTRIKEOUT = 1 << 4,
+    kBOLD = 1 << 5,
+    kREGULAR = 1 << 6,
+    kUSE_TYPO_METRICS = 1 << 7,
+    kWWS = 1 << 8,
+    kOBLIQUE = 1 << 9
+  };
 };
 
+// C++ port only: C++ does not support 64-bit enums until C++0x.  For better
+// portability, we need to use static const int64_t instead.
 struct CodePageRange {
   static const int64_t kLatin1_1252;
   static const int64_t kLatin2_1250;
@@ -290,43 +302,45 @@ struct CodePageRange {
 class OS2Table : public Table, public RefCounted<OS2Table> {
  private:
   struct Offset {
-    static const int32_t kVersion;
-    static const int32_t kXAvgCharWidth;
-    static const int32_t kUsWeightClass;
-    static const int32_t kUsWidthClass;
-    static const int32_t kFsType;
-    static const int32_t kYSubscriptXSize;
-    static const int32_t kYSubscriptYSize;
-    static const int32_t kYSubscriptXOffset;
-    static const int32_t kYSubscriptYOffset;
-    static const int32_t kYSuperscriptXSize;
-    static const int32_t kYSuperscriptYSize;
-    static const int32_t kYSuperscriptXOffset;
-    static const int32_t kYSuperscriptYOffset;
-    static const int32_t kYStrikeoutSize;
-    static const int32_t kYStrikeoutPosition;
-    static const int32_t kSFamilyClass;
-    static const int32_t kPanose;
-    static const int32_t kUlUnicodeRange1;
-    static const int32_t kUlUnicodeRange2;
-    static const int32_t kUlUnicodeRange3;
-    static const int32_t kUlUnicodeRange4;
-    static const int32_t kAchVendId;
-    static const int32_t kFsSelection;
-    static const int32_t kUsFirstCharIndex;
-    static const int32_t kUsLastCharIndex;
-    static const int32_t kSTypoAscender;
-    static const int32_t kSTypoDescender;
-    static const int32_t kSTypoLineGap;
-    static const int32_t kUsWinAscent;
-    static const int32_t kUsWinDescent;
-    static const int32_t kUlCodePageRange1;
-    static const int32_t kUlCodePageRange2;
-    static const int32_t kSxHeight;
-    static const int32_t kSCapHeight;
-    static const int32_t kUsDefaultChar;
-    static const int32_t kUsBreakChar;
-    static const int32_t kUsMaxContext;
+    enum {
+      kVersion = 0,
+      kXAvgCharWidth = 2,
+      kUsWeightClass = 4,
+      kUsWidthClass = 6,
+      kFsType = 8,
+      kYSubscriptXSize = 10,
+      kYSubscriptYSize = 12,
+      kYSubscriptXOffset = 14,
+      kYSubscriptYOffset = 16,
+      kYSuperscriptXSize = 18,
+      kYSuperscriptYSize = 20,
+      kYSuperscriptXOffset = 22,
+      kYSuperscriptYOffset = 24,
+      kYStrikeoutSize = 26,
+      kYStrikeoutPosition = 28,
+      kSFamilyClass = 30,
+      kPanose = 32,
+      kUlUnicodeRange1 = 42,
+      kUlUnicodeRange2 = 46,
+      kUlUnicodeRange3 = 50,
+      kUlUnicodeRange4 = 54,
+      kAchVendId = 58,
+      kFsSelection = 62,
+      kUsFirstCharIndex = 64,
+      kUsLastCharIndex = 66,
+      kSTypoAscender = 68,
+      kSTypoDescender = 70,
+      kSTypoLineGap = 72,
+      kUsWinAscent = 74,
+      kUsWinDescent = 76,
+      kUlCodePageRange1 = 78,
+      kUlCodePageRange2 = 82,
+      kSxHeight = 86,
+      kSCapHeight = 88,
+      kUsDefaultChar = 90,
+      kUsBreakChar = 92,
+      kUsMaxContext = 94
+    };
   };
 
   OS2Table(Header* header, ReadableFontData* data);
