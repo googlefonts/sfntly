@@ -59,6 +59,7 @@ void FileInputStream::close() {
     fclose(file_);
     length_ = 0;
     position_ = 0;
+    file_ = NULL;
   }
 }
 
@@ -98,7 +99,6 @@ int32_t FileInputStream::read(ByteVector* b) {
 
 int32_t FileInputStream::read(ByteVector* b, int32_t offset, int32_t length) {
   assert(b);
-  assert(b->size() >= (size_t)(offset + length));
   if (!file_) {
 #if defined (SFNTLY_NO_EXCEPTION)
     return 0;
@@ -114,6 +114,9 @@ int32_t FileInputStream::read(ByteVector* b, int32_t offset, int32_t length) {
 #endif
   }
   size_t read_count = std::min<size_t>(length_ - position_, length);
+  if (b->size() < (size_t)(offset + read_count)) {
+    b->resize((size_t)(offset + read_count));
+  }
   int32_t actual_read = fread(&((*b)[offset]), 1, read_count, file_);
   position_ += actual_read;
   return actual_read;
@@ -131,12 +134,16 @@ int64_t FileInputStream::skip(int64_t n) {
     throw IOException("no opened file");
 #endif
   }
-  if (n < 0) {
-    return 0;
+  int64_t skip_count = 0;
+  if (n < 0) {  // move backwards
+    skip_count = std::max<int64_t>(0 - (int64_t)position_, n);
+    position_ -= (size_t)(0 - skip_count);
+    fseek(file_, position_, SEEK_SET);
+  } else {
+    skip_count = std::min<size_t>(length_ - position_, (size_t)n);
+    position_ += (size_t)skip_count;
+    fseek(file_, (size_t)skip_count, SEEK_CUR);
   }
-  size_t skip_count = std::min<size_t>(length_ - position_, (size_t)n);
-  fseek(file_, skip_count, SEEK_CUR);
-  position_ += skip_count;
   return skip_count;
 }
 
@@ -156,8 +163,10 @@ void FileInputStream::unread(ByteVector* b, int32_t offset, int32_t length) {
   }
   size_t unread_count = std::min<size_t>(position_, length);
   fseek(file_, position_ - unread_count, SEEK_SET);
+  position_ -= unread_count;
   read(b, offset, length);
   fseek(file_, position_ - unread_count, SEEK_SET);
+  position_ -= unread_count;
 }
 
 }  // namespace sfntly

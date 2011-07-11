@@ -41,6 +41,12 @@
     <ClCompile Include="..\ext\gtest\src\gtest_main.cc">
       <Filter>gUnit</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\test_font_utils.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\file_io_test.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\test\byte_array_test.h">
@@ -59,6 +65,12 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\otf_basic_editing_test.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\test_font_utils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\file_io_test.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
