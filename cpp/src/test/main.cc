@@ -22,6 +22,7 @@
 #include "test/smart_pointer_test.h"
 #include "test/endian_test.h"
 #include "test/byte_array_test.h"
+#include "test/file_io_test.h"
 #include "test/font_data_test.h"
 #include "test/open_type_data_test.h"
 #include "test/otf_basic_editing_test.h"
@@ -49,6 +50,11 @@ TEST(FontData, All) {
   EXPECT_TRUE(sfntly::testWritableFontData());
 }
 #endif
+
+TEST(FileIO, All) {
+  EXPECT_TRUE(sfntly::testFileInputStream());
+  EXPECT_TRUE(sfntly::testFontInputStream());
+}
 
 TEST(OpenTypeData, All) {
   EXPECT_TRUE(sfntly::testOTFRead());
