@@ -20,7 +20,8 @@
 namespace sfntly {
 
 bool testFileInputStream();
-bool testFontInputStream();
+bool testFontInputStreamBasic();
+bool testFontInputStreamTableLoading();
 
 }  // namespace sfntly
 

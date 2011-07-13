@@ -83,4 +83,20 @@ void serializeToFile(MemoryOutputStream* output_stream, const char* file_path) {
   fclose(output_file);
 }
 
+void hexDump(const unsigned char* byte_data, size_t length) {
+  if (byte_data == NULL || length == 0) {
+    fprintf(stderr, "<NULL>\n");
+    return;
+  }
+
+  fprintf(stderr, "data length = %ld (%lx)\n", length, length);
+  for (size_t i = 0; i < length; ++i) {
+    fprintf(stderr, "%02x ", byte_data[i]);
+    if ((i & 0xf) == 0xf) {
+      fprintf(stderr, "\n");
+    }
+  }
+  fprintf(stderr, "\n");
+}
+
 }  // namespace sfntly

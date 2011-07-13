@@ -17,39 +17,22 @@
 #include "gtest/gtest.h"
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
-#include "sfntly/data/memory_byte_array.h"
 #include "sfntly/font_header_table.h"
 #include "sfntly/tag.h"
+#include "sfntly/data/memory_byte_array.h"
+#include "sfntly/port/endian.h"
+#include "sfntly/port/file_input_stream.h"
+#include "sfntly/port/memory_output_stream.h"
 #include "test/otf_basic_editing_test.h"
+#include "test/test_data.h"
+#include "test/test_font_utils.h"
 
 namespace sfntly {
 
-// TODO(arthurhsu): port over TestFontUtils
 bool testOTFBasicEditing() {
-  ByteVector input_buffer;
-#if defined WIN32
-  FILE* input_file;
-  fopen_s(&input_file, "..\\data\\ext\\arial.ttf", "rb");
-#else
-  FILE* input_file = fopen("../data/ext/arial.ttf", "rb");
-#endif
-  EXPECT_TRUE(input_file != NULL);
-  if (input_file == NULL) {
-    return false;
-  }
-  fseek(input_file, 0, SEEK_END);
-  size_t file_size = ftell(input_file);
-  fseek(input_file, 0, SEEK_SET);
-  input_buffer.resize(file_size);
-  fread(&(input_buffer[0]), 1, file_size, input_file);
-  fclose(input_file);
-
-  ByteArrayPtr ba = new MemoryByteArray(&(input_buffer[0]), file_size);
   FontFactoryPtr factory = FontFactory::getInstance();
-
   FontBuilderArray font_builder_array;
-  factory->loadFontsForBuilding(ba, &font_builder_array);
-  EXPECT_GT(font_builder_array.size(), static_cast<size_t>(0));
+  builderForFontFile(SAMPLE_TTF_FILE, factory, &font_builder_array);
   FontBuilderPtr font_builder = font_builder_array[0];
 
   // ensure the builder is not bogus
@@ -61,7 +44,8 @@ bool testOTFBasicEditing() {
     EXPECT_TRUE(i->second != NULL);
     if (i->second == NULL) {
       char tag[5] = {0};
-      memcpy(tag, &(i->first), 4);
+      int32_t value = toBE32(i->first);
+      memcpy(tag, &value, 4);
       fprintf(stderr, "tag %s does not have valid builder\n", tag);
     }
   }

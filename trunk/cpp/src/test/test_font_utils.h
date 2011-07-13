@@ -31,6 +31,8 @@ void loadFont(const char* font_path, FontFactory* factory, FontArray* fonts);
 void loadFile(const char* input_file_path, ByteVector* input_buffer);
 void serializeToFile(MemoryOutputStream* output_stream, const char* file_path);
 
+void hexDump(const unsigned char* byte_data, size_t length);
+
 }  // namespace sfntly
 
 #endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_TEST_FONT_UTILS_H_

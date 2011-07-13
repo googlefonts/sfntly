@@ -141,9 +141,9 @@ int32_t ByteArray::copyTo(OutputStream* os) {
 int32_t ByteArray::copyTo(OutputStream* os, int32_t offset, int32_t length) {
   ByteVector b(COPY_BUFFER_SIZE);
   int32_t bytes_read = 0;
-  int32_t index = offset;
+  int32_t index = 0;
   int32_t buffer_length = std::min<int32_t>(COPY_BUFFER_SIZE, length);
-  while ((bytes_read = get(index, &b, 0, buffer_length)) > 0) {
+  while ((bytes_read = get(index + offset, &b, 0, buffer_length)) > 0) {
     os->write(&b, 0, bytes_read);
     index += bytes_read;
     buffer_length = std::min<int32_t>(b.size(), length - index);

@@ -29,7 +29,7 @@ FontInputStream::FontInputStream(InputStream* is, size_t length)
 }
 
 FontInputStream::~FontInputStream() {
-  close();
+  // Do not close here, underlying InputStream will close themselves.
 }
 
 int32_t FontInputStream::available() {

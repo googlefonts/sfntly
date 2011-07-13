@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\src"
+				AdditionalIncludeDirectories="..\src;..\ext\icu\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -106,7 +106,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\src"
+				AdditionalIncludeDirectories="..\src;..\ext\icu\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -397,6 +397,14 @@
 				</File>
 				<File
 					RelativePath="..\src\sfntly\port\endian.h"
+					>
+				</File>
+				<File
+					RelativePath="..\src\sfntly\port\file_input_stream.cc"
+					>
+				</File>
+				<File
+					RelativePath="..\src\sfntly\port\file_input_stream.h"
 					>
 				</File>
 				<File
