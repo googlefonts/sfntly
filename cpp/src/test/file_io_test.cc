@@ -19,16 +19,16 @@
 #include "gtest/gtest.h"
 #include "sfntly/port/file_input_stream.h"
 #include "sfntly/data/font_input_stream.h"
+#include "test/test_data.h"
 
 namespace sfntly {
 
 bool testFileInputStream() {
-  const char* test_file = "arial.ttf";
-    FILE* file_handle = NULL;
+  FILE* file_handle = NULL;
 #if defined (WIN32)
-  fopen_s(&file_handle, test_file, "rb");
+  fopen_s(&file_handle, SAMPLE_TTF_FILE, "rb");
 #else
-  file_handle = fopen(test_file, "rb");
+  file_handle = fopen(SAMPLE_TTF_FILE, "rb");
 #endif
   if (file_handle == NULL) {
     return false;
@@ -43,8 +43,8 @@ bool testFileInputStream() {
 
   // Full file reading test
   FileInputStream is;
-  is.open(test_file);
-  EXPECT_EQ(length, is.available());
+  is.open(SAMPLE_TTF_FILE);
+  EXPECT_EQ(length, (size_t)is.available());
   ByteVector b2;
   is.read(&b2, 0, length);
   is.close();
@@ -52,7 +52,7 @@ bool testFileInputStream() {
   b2.clear();
 
   // Partial reading test
-  is.open(test_file);
+  is.open(SAMPLE_TTF_FILE);
   is.skip(89);
   is.read(&b2, 0, 100);
   EXPECT_EQ(memcmp(&(b1[89]), &(b2[0]), 100), 0);
@@ -83,13 +83,12 @@ bool testFileInputStream() {
   return true;
 }
 
-bool testFontInputStream() {
-  const char* test_file = "arial.ttf";
-    FILE* file_handle = NULL;
+bool testFontInputStreamBasic() {
+  FILE* file_handle = NULL;
 #if defined (WIN32)
-  fopen_s(&file_handle, test_file, "rb");
+  fopen_s(&file_handle, SAMPLE_TTF_FILE, "rb");
 #else
-  file_handle = fopen(test_file, "rb");
+  file_handle = fopen(SAMPLE_TTF_FILE, "rb");
 #endif
   if (file_handle == NULL) {
     return false;
@@ -103,9 +102,9 @@ bool testFontInputStream() {
   fclose(file_handle);
 
   FileInputStream is;
-  is.open(test_file);
+  is.open(SAMPLE_TTF_FILE);
   FontInputStream font_is1(&is);
-  EXPECT_EQ(font_is1.available(), length);
+  EXPECT_EQ((size_t)font_is1.available(), length);
 
   ByteVector b2;
   font_is1.read(&b2, 0, length);
@@ -113,7 +112,7 @@ bool testFontInputStream() {
   EXPECT_EQ(memcmp(&(b1[0]), &(b2[0]), length), 0);
   b2.clear();
 
-  is.open(test_file);
+  is.open(SAMPLE_TTF_FILE);
   is.skip(89);
   FontInputStream font_is2(&is, 200);
   font_is2.read(&b2, 0, 100);
@@ -124,6 +123,28 @@ bool testFontInputStream() {
   font_is2.skip(-200);
   font_is2.read(&b2, 0, 100);
   EXPECT_EQ(memcmp(&(b1[89]), &(b2[0]), 100), 0);
+
+  return true;
+}
+
+bool testFontInputStreamTableLoading() {
+  FileInputStream is;
+  is.open(SAMPLE_TTF_FILE);
+  FontInputStream font_is(&is);
+
+  font_is.skip(TTF_OFFSET[SAMPLE_TTF_GDEF]);
+  FontInputStream gdef_is(&font_is, TTF_LENGTH[SAMPLE_TTF_GDEF]);
+  ByteVector gdef_data;
+  gdef_is.read(&gdef_data, 0, TTF_LENGTH[SAMPLE_TTF_GDEF]);
+  EXPECT_EQ(memcmp(&(gdef_data[0]), TTF_GDEF_DATA,
+                   TTF_LENGTH[SAMPLE_TTF_GDEF]), 0);
+
+  font_is.skip(TTF_OFFSET[SAMPLE_TTF_HEAD] - font_is.position());
+  FontInputStream head_is(&font_is, TTF_LENGTH[SAMPLE_TTF_HEAD]);
+  ByteVector head_data;
+  head_is.read(&head_data, 0, TTF_LENGTH[SAMPLE_TTF_HEAD]);
+  EXPECT_EQ(memcmp(&(head_data[0]), TTF_HEAD_DATA,
+                   TTF_LENGTH[SAMPLE_TTF_HEAD]), 0);
 
   return true;
 }

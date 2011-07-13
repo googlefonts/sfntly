@@ -21,17 +21,27 @@
 
 #if defined (_MSC_VER) && (_MSC_VER < 1600)
   typedef unsigned char     uint8_t;
-  typedef char              int8_t;
+  typedef signed char       int8_t;
   typedef unsigned __int16  uint16_t;
-  typedef __int16           int16_t;
+  typedef signed __int16    int16_t;
   typedef unsigned __int32  uint32_t;
-  typedef __int32           int32_t;
+  typedef signed __int32    int32_t;
   typedef unsigned __int64  uint64_t;
-  typedef __int64           int64_t;
+  typedef signed __int64    int64_t;
+  // Definitions to avoid ICU redefinition issue
+  #define U_HAVE_INT8_T 1
+  #define U_HAVE_UINT8_T 1
+  #define U_HAVE_INT16_T 1
+  #define U_HAVE_UINT16_T 1
+  #define U_HAVE_INT32_T 1
+  #define U_HAVE_UINT32_T 1
+  #define U_HAVE_INT64_T 1
+  #define U_HAVE_UINT64_T 1
 #else
   #include <stdint.h>
 #endif
 
+#include <cstddef>
 #include <vector>
 #include <set>
 
@@ -71,7 +81,9 @@ inline To down_cast(From* f) {                   // so we only accept pointers
   #pragma warning(pop)
 #endif
 
-#if !defined(NDEBUG)
+// The following code is the only place for RTTI.  It is done so to allow VC++
+// to perform additional type checking in DEBUG builds.
+#if defined (_MSC_VER) && !defined(NDEBUG)
   assert(f == NULL || dynamic_cast<To>(f) != NULL);  // RTTI: debug mode only!
 #endif
   return static_cast<To>(f);

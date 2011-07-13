@@ -17,6 +17,8 @@
 #ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_TAG_H_
 #define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_TAG_H_
 
+#include <cstddef>
+
 #include "sfntly/port/type.h"
 
 namespace sfntly {

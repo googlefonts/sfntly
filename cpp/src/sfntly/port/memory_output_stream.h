@@ -17,6 +17,7 @@
 #ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_MEMORY_OUTPUT_STREAM_H_
 #define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_MEMORY_OUTPUT_STREAM_H_
 
+#include <cstddef>
 #include <vector>
 
 #include "sfntly/port/type.h"

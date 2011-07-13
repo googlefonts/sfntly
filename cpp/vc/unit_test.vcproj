@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\ext\gtest\include;..\ext\gtest;..\src;"
+				AdditionalIncludeDirectories="..\ext\gtest\include;..\ext\gtest;..\src;..\ext\icu\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -63,9 +63,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfntly.lib"
+				AdditionalDependencies="sfntly.lib icuuc.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(SolutionDir)lib\$(ConfigurationName)\"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)lib\$(ConfigurationName)\&quot;;..\ext\icu\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -119,7 +119,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\ext\gtest\include;..\ext\gtest;..\src"
+				AdditionalIncludeDirectories="..\ext\gtest\include;..\ext\gtest;..\src;..\ext\icu\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -140,9 +140,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sfntly.lib"
+				AdditionalDependencies="sfntly.lib icuuc.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(SolutionDir)lib\$(ConfigurationName)\"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)lib\$(ConfigurationName)\&quot;;..\ext\icu\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -197,11 +197,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\test\file_io_test.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\file_io_test.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\test\font_data_test.cc"
 				>
 			</File>
 			<File
 				RelativePath="..\src\test\font_data_test.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\font_parsing_test.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\font_parsing_test.h"
 				>
 			</File>
 			<File
@@ -230,6 +246,22 @@
 			</File>
 			<File
 				RelativePath="..\src\test\smart_pointer_test.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\test_data.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\test_data.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\test_font_utils.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\test_font_utils.h"
 				>
 			</File>
 		</Filter>

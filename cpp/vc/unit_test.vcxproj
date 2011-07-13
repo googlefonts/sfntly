@@ -55,13 +55,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>..\ext\gtest\include;..\ext\gtest;..\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ext\gtest\include;..\ext\gtest;..\ext\icu\include;..\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfntly.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)\;..\ext\icu\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfntly.lib;icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -74,15 +74,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>..\ext\gtest\include;..\ext\gtest;..\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ext\gtest\include;..\ext\gtest;..\ext\icu\include;..\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>sfntly.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfntly.lib;icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\$(Configuration)\;..\ext\icu\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -92,20 +92,24 @@
     <ClCompile Include="..\src\test\endian_test.cc" />
     <ClCompile Include="..\src\test\file_io_test.cc" />
     <ClCompile Include="..\src\test\font_data_test.cc" />
+    <ClCompile Include="..\src\test\font_parsing_test.cc" />
     <ClCompile Include="..\src\test\main.cc" />
     <ClCompile Include="..\src\test\open_type_data_test.cc" />
     <ClCompile Include="..\src\test\otf_basic_editing_test.cc" />
     <ClCompile Include="..\src\test\smart_pointer_test.cc" />
+    <ClCompile Include="..\src\test\test_data.cc" />
     <ClCompile Include="..\src\test\test_font_utils.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\test\byte_array_test.h" />
     <ClInclude Include="..\src\test\file_io_test.h" />
     <ClInclude Include="..\src\test\font_data_test.h" />
+    <ClInclude Include="..\src\test\font_parsing_test.h" />
     <ClInclude Include="..\src\test\open_type_data_test.h" />
     <ClInclude Include="..\src\test\otf_basic_editing_test.h" />
     <ClInclude Include="..\src\test\smart_pointer_test.h" />
     <ClInclude Include="..\src\test\endian_test.h" />
+    <ClInclude Include="..\src\test\test_data.h" />
     <ClInclude Include="..\src\test\test_font_utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

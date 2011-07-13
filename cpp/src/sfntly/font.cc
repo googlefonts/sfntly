@@ -154,6 +154,9 @@ void Font::serializeTables(FontOutputStream* fos,
 #endif
     }
     int32_t table_size = target_table->serialize(fos);
+    if (table_size != (*record)->length()) {
+      assert(false);
+    }
     int32_t filler_size = ((table_size + 3) & ~3) - table_size;
     fos->write(&SERIALIZATION_FILLER, 0, filler_size);
   }

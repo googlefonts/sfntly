@@ -24,6 +24,7 @@
 #include "test/byte_array_test.h"
 #include "test/file_io_test.h"
 #include "test/font_data_test.h"
+#include "test/font_parsing_test.h"
 #include "test/open_type_data_test.h"
 #include "test/otf_basic_editing_test.h"
 
@@ -53,12 +54,19 @@ TEST(FontData, All) {
 
 TEST(FileIO, All) {
   EXPECT_TRUE(sfntly::testFileInputStream());
-  EXPECT_TRUE(sfntly::testFontInputStream());
+  EXPECT_TRUE(sfntly::testFontInputStreamBasic());
+  EXPECT_TRUE(sfntly::testFontInputStreamTableLoading());
 }
 
 TEST(OpenTypeData, All) {
   EXPECT_TRUE(sfntly::testOTFRead());
   EXPECT_TRUE(sfntly::testOTFCopy());
+}
+
+TEST(FontParsing, All) {
+  EXPECT_TRUE(sfntly::testFontParsing());
+  EXPECT_TRUE(sfntly::testTTFReadWrite());
+  EXPECT_TRUE(sfntly::testTTFMemoryBasedReadWrite());
 }
 
 TEST(OTFBasicEditing, All) {

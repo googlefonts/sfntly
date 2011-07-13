@@ -26,7 +26,7 @@ FontOutputStream::FontOutputStream(OutputStream* os)
 }
 
 FontOutputStream::~FontOutputStream() {
-  close();
+  // Do not close, underlying stream shall clean up themselves.
 }
 
 size_t FontOutputStream::position() {
@@ -36,19 +36,21 @@ size_t FontOutputStream::position() {
 void FontOutputStream::write(byte_t b) {
   if (stream_) {
     stream_->write(b);
+    position_++;
   }
-  position_++;
 }
 
 void FontOutputStream::write(ByteVector* b) {
   if (b) {
     write(b, 0, b->size());
+    position_ += b->size();
   }
 }
 
 void FontOutputStream::write(ByteVector* b, int32_t offset, int32_t length) {
   if (stream_ && b) {
     stream_->write(b, offset, length);
+    position_ += length;
   }
 }
 
@@ -101,6 +103,7 @@ void FontOutputStream::close() {
   if (stream_) {
     stream_->flush();
     stream_->close();
+    position_ = 0;
   }
 }
 
