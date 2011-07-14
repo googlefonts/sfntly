@@ -61,6 +61,7 @@ endif(NOT CMAKE_BUILD_TYPE)
     src/test/font_data_test.cc
     src/test/font_parsing_test.cc
     src/test/main.cc
+    src/test/name_editing_test.cc
     src/test/open_type_data_test.cc
     src/test/otf_basic_editing_test.cc
     src/test/smart_pointer_test.cc

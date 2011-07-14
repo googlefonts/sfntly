@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-// TODO(arthurhsu): IMPLEMENT: not really used and tested, need cleanup
 #ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_NAME_TABLE_H_
 #define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_NAME_TABLE_H_
+
+// Must include this before ICU to avoid stdint redefinition issue.
+#include "sfntly/port/type.h"
+
+#include <unicode/ucnv.h>
+#include <unicode/ustring.h>
 
 #include <map>
 #include <utility>
 
 #include "sfntly/table.h"
+
+#if defined U_USING_ICU_NAMESPACE
+  U_NAMESPACE_USE
+#endif
 
 namespace sfntly {
 
@@ -422,52 +431,152 @@ class NameTable : public Table, public RefCounted<NameTable> {
     };
   };
 
+  NameTable(Header* header, ReadableFontData* data);
+
  public:
+  virtual ~NameTable();
+  virtual int32_t format();
+
+  // Get the number of names in the name table.
+  virtual int32_t nameCount();
+
+ private:
+  // Get the offset to the string data in the name table.
+  int32_t stringOffset();
+
+  // Get the offset for the given name record.
+  int32_t offsetForNameRecord(int32_t index);
+
+ public:
+  // Get the platform id for the given name record.
+  virtual int32_t platformId(int32_t index);
+
+  // Get the encoding id for the given name record.
+  // see MacintoshEncodingId, WindowsEncodingId, UnicodeEncodingId
+  virtual int32_t encodingId(int32_t index);
+
+  // Get the language id for the given name record.
+  virtual int32_t languageId(int32_t index);
+
+  // Get the name id for given name record.
+  virtual int32_t nameId(int32_t index);
+
+ private:
+  // Get the length of the string data for the given name record.
+  int32_t nameLength(int32_t index);
+
+  // Get the offset of the string data for the given name record.
+  int32_t nameOffset(int32_t index);
+
+ public:
+  // Get the name as bytes for the specified name. If there is no entry for the
+  // requested name, then empty vector is returned.
+  virtual void nameAsBytes(int32_t index, ByteVector* b);
+  virtual void nameAsBytes(int32_t platform_id, int32_t encoding_id,
+                           int32_t language_id, int32_t name_id,
+                           ByteVector* b);
+
+  // Get the name as a UChar* for the given name record. If there is no
+  // encoding conversion available for the name record then a best attempt
+  // UChar* will be returned.
+  // Note: ICU UChar* convention requires caller to delete[] it.
+  virtual UChar* name(int index);
+
+  // Get the name as a UChar* for the specified name. If there is no entry for
+  // the requested name then NULL is returned. If there is no encoding
+  // conversion available for the name then a best attempt UChar* will be
+  // returned.
+  // Note: ICU UChar* convention requires caller to delete[] it.
+  virtual UChar* name(int32_t platform_id, int32_t encoding_id,
+                      int32_t language_id, int32_t name_id);
+
+  class NameEntry;
+  virtual CALLER_ATTACH NameEntry* nameEntry(int32_t index);
+  virtual CALLER_ATTACH NameEntry* nameEntry(int32_t platform_id,
+      int32_t encoding_id, int32_t language_id, int32_t name_id);
+
+  // Note: Not implemented in C++ port due to complexity and low usage.
+  // virtual void names(std::set<NameEntryPtr>*);
+
+  class NameEntryId {
+   protected:
+    mutable int32_t platform_id_;
+    mutable int32_t encoding_id_;
+    mutable int32_t language_id_;
+    mutable int32_t name_id_;
+
+   public:
+    NameEntryId();  // C++ port only, must provide default constructor.
+    NameEntryId(int32_t platform_id, int32_t encoding_id, int32_t language_id,
+                int32_t name_id);
+    NameEntryId(const NameEntryId&);
+    virtual ~NameEntryId();
+    virtual int32_t getPlatformId() const;
+    virtual int32_t getEncodingId() const;
+    virtual int32_t getLanguageId() const;
+    virtual int32_t getNameId() const;
+    virtual const NameEntryId& operator=(const NameEntryId& rhs) const;
+    virtual bool operator==(const NameEntryId& rhs) const;
+    virtual bool operator<(const NameEntryId& rhs) const;
+  };
+
+  // Class to represent a name entry in the name table.
   class NameEntryBuilder;
   class NameEntry : public RefCounted<NameEntry> {
    public:
     NameEntry();
+    NameEntry(const NameEntryId& name_entry_id, const ByteVector& name_bytes);
     NameEntry(int32_t platform_id, int32_t encoding_id, int32_t language_id,
               int32_t name_id, const ByteVector& name_bytes);
-    virtual void init(int32_t platform_id, int32_t encoding_id,
-                      int32_t language_id, int32_t name_id,
-                      const ByteVector* name_bytes);
     virtual ~NameEntry();
+    virtual NameEntryId& getNameEntryId();
     virtual int32_t platformId();
     virtual int32_t encodingId();
     virtual int32_t languageId();
     virtual int32_t nameId();
-    virtual bool operator==(const NameEntry& obj);
-    virtual int hashCode();
-    virtual int compareTo(const NameEntry& obj);
     virtual int32_t nameBytesLength();  // C++ port only
-    virtual ByteVector* nameBytes();
+    virtual ByteVector* nameAsBytes();
+    virtual UChar* name();
+    virtual bool operator==(const NameEntry& rhs) const;
 
-   protected:
-    int32_t platform_id_;
-    int32_t encoding_id_;
-    int32_t language_id_;
-    int32_t name_id_;
+   private:
+    void init(int32_t platform_id, int32_t encoding_id, int32_t language_id,
+              int32_t name_id, const ByteVector* name_bytes);
+
+    NameEntryId name_entry_id_;
     int32_t length_;
     ByteVector name_bytes_;
 
     friend class NameEntryBuilder;
   };
 
-  class NameEntryBuilder : public NameEntry {
+  // C++ port: we don't use original Java hierarchy to avoid ref count issues
+  // and nasty protected members.
+  class NameEntryBuilder : public RefCounted<NameEntryBuilder> {
    public:
     NameEntryBuilder();
-    NameEntryBuilder(int32_t platform_id, int32_t encoding_id,
-                     int32_t language_id, int32_t name_id,
+    NameEntryBuilder(const NameEntryId& name_entry_id,
                      const ByteVector& name_bytes);
-    NameEntryBuilder(int32_t platform_id, int32_t encoding_id,
-                     int32_t language_id, int32_t name_id);
+    explicit NameEntryBuilder(const NameEntryId& name_entry_id);
     explicit NameEntryBuilder(NameEntry* entry);
     virtual ~NameEntryBuilder();
+
+    virtual void setName(const UChar* name);
+    virtual void setName(const ByteVector& name_bytes);
+    virtual void setName(const ByteVector& name_bytes, int32_t offset,
+                         int32_t length);
+
+    // C++ port only member functions. CALLER_ATTACH is not added because the
+    // lifetime shall be controlled by build, therefore the caller shall not
+    // increase the ref count.
+    NameEntry* entry();
+
+  private:
+    void init(int32_t platform_id, int32_t encoding_id, int32_t language_id,
+              int32_t name_id, const ByteVector* name_bytes);
+
+    Ptr<NameEntry> name_entry_;
   };
-  typedef Ptr<NameEntryBuilder> NameEntryBuilderPtr;
-  typedef std::map<NameEntryBuilderPtr, NameEntryBuilderPtr> NameEntryMap;
-  typedef std::pair<NameEntryBuilderPtr, NameEntryBuilderPtr> NameEntryMapEntry;
 
   class NameEntryFilter {
    public:
@@ -477,7 +586,59 @@ class NameTable : public Table, public RefCounted<NameTable> {
     virtual ~NameEntryFilter() {}
   };
 
-  class Builder : public Table::ArrayElementTableBuilder {
+  // C++ port only
+  class NameEntryFilterInPlace : public NameEntryFilter {
+   public:
+    NameEntryFilterInPlace(int32_t platform_id, int32_t encoding_id,
+                           int32_t language_id, int32_t name_id);
+    // Make gcc -Wnon-virtual-dtor happy.
+    virtual ~NameEntryFilterInPlace() {}
+    virtual bool accept(int32_t platform_id, int32_t encoding_id,
+                        int32_t language_id, int32_t name_id);
+
+   private:
+    int32_t platform_id_;
+    int32_t encoding_id_;
+    int32_t language_id_;
+    int32_t name_id_;
+  };
+
+  class NameEntryIterator {
+   public:
+    // If filter is NULL, filter through all tables.
+    explicit NameEntryIterator(NameTable* table);
+    NameEntryIterator(NameTable* table, NameEntryFilter* filter);
+    // Make gcc -Wnon-virtual-dtor happy.
+    virtual ~NameEntryIterator();
+    virtual bool hasNext();
+    virtual CALLER_ATTACH NameEntry* next();
+    virtual void remove();
+
+   private:
+    void init(NameTable* table, NameEntryFilter* filter);
+
+    NameTable* table_;  // use dumb pointer since it's a composition object
+    int32_t name_index_;
+    NameEntryFilter* filter_;
+  };
+
+  // caller delete the object
+  virtual NameEntryIterator* iterator();
+  virtual NameEntryIterator* iterator(NameEntryFilter* filter);
+
+ private:
+  static const char* getEncodingName(int32_t platform_id, int32_t encoding_id);
+  static UConverter* getCharset(int32_t platform_id, int32_t encoding_id);
+  static void convertToNameBytes(const UChar* name, int32_t platform_id,
+                                 int32_t encoding_id, ByteVector* b);
+  static UChar* convertFromNameBytes(ByteVector* name_bytes,
+                                     int32_t platform_id, int32_t encoding_id);
+
+ public:
+  typedef std::map<NameEntryId, Ptr<NameEntryBuilder> > NameEntryBuilderMap;
+
+  class Builder : public Table::ArrayElementTableBuilder,
+                  public RefCounted<Builder> {
    public:
     // Constructor scope altered to public because C++ does not allow base
     // class to instantiate derived class with protected constructors.
@@ -486,54 +647,43 @@ class NameTable : public Table, public RefCounted<NameTable> {
     Builder(FontDataTableBuilderContainer* font_builder, Header* header,
             ReadableFontData* data);
 
-    virtual int32_t subSerialize(WritableFontData* new_data);
-    virtual bool subReadyToSerialize();
-    virtual int32_t subDataSizeToSerialize();
-    virtual void subDataSet();
-    virtual CALLER_ATTACH FontDataTable* subBuildTable(ReadableFontData* data);
-
    private:
     void initialize(ReadableFontData* data);
+    NameEntryBuilderMap* getNameBuilders();
+
+   public:  // static class in Java, functions are not virtual unless inherited
+    void revertNames();
+    int32_t builderCount();
+
+    // Note: For C++ port, this is not implemented so far.  The clear() function
+    //       implies completely remove name entry builders, which is easy in
+    //       Java but will take a lot of efforts in C++ to release the builders
+    //       nicely and correctly.
+    // TODO(arthurhsu): IMPLEMENT
+    // Clear the name builders for the name table.
+    // void clear();
+
+    bool has(int32_t platform_id, int32_t encoding_id, int32_t language_id,
+             int32_t name_id);
+    CALLER_ATTACH NameEntryBuilder* nameBuilder(int32_t platform_id,
+        int32_t encoding_id, int32_t language_id, int32_t name_id);
+    bool remove(int32_t platform_id, int32_t encoding_id, int32_t language_id,
+                int32_t name_id);
+
+    virtual CALLER_ATTACH FontDataTable* subBuildTable(ReadableFontData* data);
+    virtual void subDataSet();
+    virtual int32_t subDataSizeToSerialize();
+    virtual bool subReadyToSerialize();
+    virtual int32_t subSerialize(WritableFontData* new_data);
 
    private:
-    NameEntryMap name_entry_map_;
+    NameEntryBuilderMap name_entry_map_;
   };
-
-  class NameEntryIterator {
-   public:
-    // If filter is NULL, filter through all tables.
-    NameEntryIterator(NameTable* table, NameEntryFilter* filter);
-    bool hasNext();
-    NameEntry* next();
-
-   private:
-    NameTable* table_;  // use dumb pointer since it's a composition object
-    int32_t name_index_;
-    NameEntryFilter* filter_;
-  };
-
- private:
-  NameTable(Header* header, ReadableFontData* data);
-
- public:
-  virtual ~NameTable();
-  virtual int32_t format();
-  virtual int32_t nameCount();
-  virtual int32_t platformId(int32_t index);
-  virtual int32_t encodingId(int32_t index);
-  virtual int32_t languageId(int32_t index);
-  virtual int32_t nameId(int32_t index);
-  virtual void nameAsBytes(int32_t index, ByteVector* b);
-  virtual CALLER_ATTACH NameEntry* nameEntry(int32_t index);
-
- private:
-  int32_t stringOffset();
-  int32_t offsetForNameRecord(int32_t index);
-  int32_t nameLength(int32_t index);
-  int32_t nameOffset(int32_t index);
-};
+};  // class NameTable
 typedef Ptr<NameTable> NameTablePtr;
 typedef Ptr<NameTable::NameEntry> NameEntryPtr;
+typedef Ptr<NameTable::Builder> NameTableBuilderPtr;
+typedef Ptr<NameTable::NameEntryBuilder> NameEntryBuilderPtr;
 
 }  // namespace sfntly
 

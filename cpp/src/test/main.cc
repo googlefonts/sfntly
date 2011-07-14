@@ -27,6 +27,7 @@
 #include "test/font_parsing_test.h"
 #include "test/open_type_data_test.h"
 #include "test/otf_basic_editing_test.h"
+#include "test/name_editing_test.h"
 
 #define RUN_LENGTHY_TESTS
 
@@ -71,4 +72,10 @@ TEST(FontParsing, All) {
 
 TEST(OTFBasicEditing, All) {
   EXPECT_TRUE(sfntly::testOTFBasicEditing());
+}
+
+TEST(NameEditing, All) {
+  EXPECT_TRUE(sfntly::testChangeOneName());
+  EXPECT_TRUE(sfntly::testModifyNameTableAndRevert());
+  EXPECT_TRUE(sfntly::testRemoveOneName());
 }

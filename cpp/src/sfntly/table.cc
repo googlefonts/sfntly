@@ -169,10 +169,10 @@ CALLER_ATTACH Table::Builder* Table::Builder::getBuilder(
   } else if (tag == Tag::maxp) {
     builder_raw = static_cast<Table::Builder*>(
         new MaximumProfileTable::Builder(font_builder, header, table_data));
-  }/* else if (tag == Tag::name) {
+  } else if (tag == Tag::name) {
     builder_raw = static_cast<Table::Builder*>(
         new NameTable::Builder(font_builder, header, table_data));
-  }*/ else if (tag == Tag::OS_2) {
+  } else if (tag == Tag::OS_2) {
     builder_raw = static_cast<Table::Builder*>(
         new OS2Table::Builder(font_builder, header, table_data));
   }/* else if (tag == Tag::PostScript) {
