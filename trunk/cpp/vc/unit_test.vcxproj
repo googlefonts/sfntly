@@ -94,6 +94,7 @@
     <ClCompile Include="..\src\test\font_data_test.cc" />
     <ClCompile Include="..\src\test\font_parsing_test.cc" />
     <ClCompile Include="..\src\test\main.cc" />
+    <ClCompile Include="..\src\test\name_editing_test.cc" />
     <ClCompile Include="..\src\test\open_type_data_test.cc" />
     <ClCompile Include="..\src\test\otf_basic_editing_test.cc" />
     <ClCompile Include="..\src\test\smart_pointer_test.cc" />
@@ -105,6 +106,7 @@
     <ClInclude Include="..\src\test\file_io_test.h" />
     <ClInclude Include="..\src\test\font_data_test.h" />
     <ClInclude Include="..\src\test\font_parsing_test.h" />
+    <ClInclude Include="..\src\test\name_editing_test.h" />
     <ClInclude Include="..\src\test\open_type_data_test.h" />
     <ClInclude Include="..\src\test\otf_basic_editing_test.h" />
     <ClInclude Include="..\src\test\smart_pointer_test.h" />

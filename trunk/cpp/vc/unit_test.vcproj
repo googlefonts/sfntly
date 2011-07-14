@@ -225,6 +225,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\test\name_editing_test.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\name_editing_test.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\test\open_type_data_test.cc"
 				>
 			</File>
