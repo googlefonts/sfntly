@@ -2,8 +2,8 @@
 
 Wiki
 
-  * True Type [http://en.wikipedia.org/wiki/TrueType]
-  * Open Type [http://en.wikipedia.org/wiki/OpenType]
+  * TrueType [http://en.wikipedia.org/wiki/TrueType]
+  * OpenType [http://en.wikipedia.org/wiki/OpenType]
 
 Microsoft Typography [http://www.microsoft.com/typography/default.mspx]
 
