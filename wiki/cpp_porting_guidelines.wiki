@@ -7,6 +7,7 @@ A *correct*, *faithful* port of the Java version sfntly.
 
   # Take one snapshot of the Java source, run all its unit tests and make sure there are no known problems.
   # Coordinate with other developers to work on the same snapshot.  Once the snapshot is done, then move on next version.
+  # *The code must be built and tested on all three supported platforms (Windows, Linux, Mac).*  Our clients count on us to do a good job.
 
 The least thing a faithful port wants is out-of-sync versions among files.
 
