@@ -29,7 +29,8 @@ obj.attach(Foo::CreateInstance());  // ref count = 1
 obj.release();  // ref count = 0, object destroyed
 }}}
 
-Notes on usage:
+==Notes on usage==
+
   * Virtual inherit from RefCount interface in base class if smart pointers are going to be defined.
 
   * All RefCounted objects must be instantiated on the heap.  Allocating the object on stack will cause crash.
@@ -58,4 +59,49 @@ FooPtr end_scope_pointer;
 end_scope_pointer.attach(passThrough);
 }}}
 
-  If you are not passing that object back, you are the end of scope.                
+  If you are not passing that object back, you are the end of scope.
+
+==Detecting Memory Leak==
+
+  The implementation of COM-like ref-counting and smart pointer remedies the lack of garbage collector in C++ to certain extent, however, it also introduces other problems.  The most common one is memory leakage.  How do we know that our code leak memory or not?
+
+  * For Linux/Mac, valgrind [http://valgrind.org] is very useful.
+  * For Windows, the easiest is to use Visual C++ built-in CRT debugging [http://msdn.microsoft.com/en-us/library/x98tx3cf(v=vs.80).aspx]
+
+==Useful Tips for Debugging Ref-Couting Issue==
+
+  * Define {{{ENABLE_OBJECT_COUNTER}}} and {{{REF_COUNT_DEBUGGING}}}.  All ref-count related activity will be ouput to stderr.
+
+  * The logs will look like (under VC2010)
+{{{
+A class RefCounted<class sfntly::Table::Header> const *:oc=2,oid=2,rc=3
+}}}
+
+  Use your favorite editor to transform them into SQL statements, e.g.
+  Regex pattern 
+{{{ 
+^([ACDR]) class RefCounted<class sfntly::([A-Za-z0-9:]+)>[ *const]+:oc=([-0-9]+),oid=([0-9]+),rc=([-0-9]+)
+}}}
+
+  Replace to
+{{{
+insert into log values('\1', '\2', \3, \4, \5);
+}}}
+
+  * Add one line to the beginning of log
+{{{
+create table log(action char(1), class_name char(30), oc integer, oid integer, rc integer);
+}}}
+
+  * Run sqlite shell, use .read to input the SQL file.
+
+  * Run following commands to get the leaking object class and object id:
+{{{
+create table todrop(class_name char(30), oid integer);
+insert into todrop select class_name, oid from log where action='D';
+create table tocreate (class_name char(30), oid integer);
+insert into tocreate select class_name, oid from log where action='C';
+select * from tocreate except select * from todrop;
+}}}
+
+  * Once you know which object is leaking, it's much easier to setup conditional breakpoints to identify the real culprit.
