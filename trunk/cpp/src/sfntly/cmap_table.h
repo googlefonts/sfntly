@@ -46,6 +46,10 @@ struct CMapFormat {
 class CMapTable : public Table, public RefCounted<CMapTable> {
  private:
   static const int32_t NOTDEF;
+
+  // Offsets to specific elements in the underlying data. These offsets are
+  // relative to the start of the table or the start of sub-blocks within
+  // the table.
   struct Offset {
     enum {
       kVersion = 0,
@@ -155,6 +159,7 @@ class CMapTable : public Table, public RefCounted<CMapTable> {
   };
 
  public:
+  // CMapTable::CMapId
   class CMapId {
    public:
     CMapId(int32_t platform_id, int32_t encoding_id);
@@ -175,13 +180,19 @@ class CMapTable : public Table, public RefCounted<CMapTable> {
   static CMapId WINDOWS_UCS4;
   static CMapId MAC_ROMAN;
 
+  // CMapTable::CMapIdComparator
   class CMapIdComparator {
    public:
     bool operator()(const CMapId& lhs, const CMapId& rhs);
   };
 
+  // A filter on cmap
+  // CMapTable::CMapFilter
   class CMapFilter {
    public:
+    // Test on whether the cmap is acceptable or not
+    // @param cmap_id the id of the cmap
+    // @return true if the cmap is acceptable; false otherwise
     virtual bool accept(CMapId cmap_id) = 0;
     // Make gcc -Wnon-virtual-dtor happy.
     virtual ~CMapFilter() {}
@@ -197,14 +208,15 @@ class CMapTable : public Table, public RefCounted<CMapTable> {
   // The cmap implements {@code Iterable<Integer>} to allow iteration over
   // characters that are mapped by the cmap. This iteration mostly returns the
   // characters mapped by the cmap. It will return all characters mapped by the
-  // cmap to anything but .notdef <b>but</b> it may return some that are mapped
-  // or are mapped to .notdef. Various cmap tables provide ranges and such to
-  // describe characters for lookup but without going the full way to mapping to
-  // the glyph id it isn't always possible to tell if a character will end up
-  // with a valid glyph id. So, some of the characters returned from the
-  // iterator may still end up pointing to the .notdef glyph. However, the
+  // cmap to anything but .notdef <b>but</b> it may return some that are not
+  // mapped or are mapped to .notdef. Various cmap tables provide ranges and
+  // such to describe characters for lookup but without going the full way to
+  // mapping to the glyph id it isn't always possible to tell if a character
+  // will end up with a valid glyph id. So, some of the characters returned from
+  // the iterator may still end up pointing to the .notdef glyph. However, the
   // number of such characters should be small in most cases with well designed
   // cmaps.
+  class Builder;
   class CMap : public SubTable {
    public:
     CMap(ReadableFontData* data, int32_t format, const CMapId& cmap_id);
@@ -235,7 +247,11 @@ class CMapTable : public Table, public RefCounted<CMapTable> {
     virtual int32_t glyphId(int32_t character) = 0;
 
    public:
+    // CMapTable::CMap::Builder
     class Builder : public SubTable::Builder {
+     public:
+      friend class CMapTable::Builder;
+
      protected:
       Builder(FontDataTableBuilderContainer* container, ReadableFontData* data,
               int32_t format, const CMapId& cmap_id);
@@ -282,6 +298,7 @@ class CMapTable : public Table, public RefCounted<CMapTable> {
     virtual int32_t language();
     virtual int32_t glyphId(int32_t character);
 
+    // CMapTable::CMapFormat0::Builder
     class Builder : public CMap::Builder,
                     public RefCounted<Builder> {
      public:
@@ -321,6 +338,7 @@ class CMapTable : public Table, public RefCounted<CMapTable> {
     int32_t idRangeOffset(int32_t sub_header_index);
     int32_t idDelta(int32_t sub_header_index);
 
+    // CMapTable::CMapFormat2::Builder
     class Builder : public CMap::Builder,
                     public RefCounted<Builder> {
      public:
@@ -335,7 +353,9 @@ class CMapTable : public Table, public RefCounted<CMapTable> {
     };
   };
 
-  class Builder : public Table::ArrayElementTableBuilder {
+  // CMapTable::Builder
+  class Builder : public Table::ArrayElementTableBuilder,
+                  public RefCounted<Builder> {
    public:
     // Constructor scope altered to public because C++ does not allow base
     // class to instantiate derived class with protected constructors.
@@ -406,6 +426,7 @@ class CMapTable : public Table, public RefCounted<CMapTable> {
   int32_t offsetForEncodingRecord(int32_t index);
 };
 typedef std::vector<CMapTable::CMapId> CMapIdList;
+typedef Ptr<CMapTable> CMapTablePtr;
 
 }  // namespace sfntly
 

@@ -21,7 +21,7 @@ endif(NOT CMAKE_BUILD_TYPE)
   set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/lib)
   set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src ext/gtest/include ext/gtest)
-  add_library(sfntly 
+  add_library(sfntly
     src/sfntly/cmap_table.cc
     src/sfntly/data/byte_array.cc
     src/sfntly/data/font_data.cc
@@ -67,6 +67,8 @@ endif(NOT CMAKE_BUILD_TYPE)
     src/test/smart_pointer_test.cc
     src/test/test_data.cc
     src/test/test_font_utils.cc
+    src/test/test_utils.cc
+    src/test/test_utils_test.cc
     ext/gtest/src/gtest-all.cc
     ext/gtest/src/gtest_main.cc)
   target_link_libraries(unit_test sfntly icuuc pthread)

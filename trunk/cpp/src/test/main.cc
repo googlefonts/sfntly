@@ -28,8 +28,11 @@
 #include "test/open_type_data_test.h"
 #include "test/otf_basic_editing_test.h"
 #include "test/name_editing_test.h"
+#include "test/test_utils_test.h"
 
 #define RUN_LENGTHY_TESTS
+
+namespace sfntly {
 
 TEST(SmartPointer, All) {
   EXPECT_TRUE(testSmartPointer());
@@ -79,3 +82,13 @@ TEST(NameEditing, All) {
   EXPECT_TRUE(sfntly::testModifyNameTableAndRevert());
   EXPECT_TRUE(sfntly::testRemoveOneName());
 }
+
+TEST(TestUtils, Extension) {
+  EXPECT_TRUE(sfntly::testExtension());
+}
+
+TEST(TestUtils, Encoding) {
+  EXPECT_TRUE(sfntly::testEncoding());
+}
+
+}  // namespace sfntly

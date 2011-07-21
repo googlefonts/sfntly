@@ -16,6 +16,8 @@
 
 // TODO(arthurhsu): IMPLEMENT: not really used and tested, need cleanup
 
+#include <cstdlib>
+
 #include "sfntly/cmap_table.h"
 #include "sfntly/name_table.h"
 #include "sfntly/font.h"
@@ -125,13 +127,15 @@ int32_t CMapTable::CMap::encodingId() { return cmap_id_.encodingId(); }
  * CMapTable::CMap::Builder class
  ******************************************************************************/
 CMapTable::CMap::Builder::Builder(FontDataTableBuilderContainer* container,
-    ReadableFontData* data, int32_t format, const CMapId& cmap_id) :
-    SubTable::Builder(container, data), format_(format), cmap_id_(cmap_id) {
+                                  ReadableFontData* data, int32_t format,
+                                  const CMapId& cmap_id)
+    : SubTable::Builder(container, data), format_(format), cmap_id_(cmap_id) {
 }
 
 CMapTable::CMap::Builder::Builder(FontDataTableBuilderContainer* container,
-    WritableFontData* data, int32_t format, const CMapId& cmap_id) :
-    SubTable::Builder(container, data), format_(format), cmap_id_(cmap_id) {
+                                  WritableFontData* data, int32_t format,
+                                  const CMapId& cmap_id)
+    : SubTable::Builder(container, data), format_(format), cmap_id_(cmap_id) {
 }
 
 CMapTable::CMap::Builder::~Builder() {}
@@ -171,12 +175,12 @@ CALLER_ATTACH CMapTable::CMap::Builder* CMapTable::CMap::Builder::getBuilder(
   int32_t format = data->readUShort(offset);
   CMapBuilderPtr builder;
   switch (format) {
-  case CMapFormat::kFormat0:
-    builder = new CMapFormat0::Builder(container, data, offset, cmap_id);
-  case CMapFormat::kFormat2:
-    builder = new CMapFormat0::Builder(container, data, offset, cmap_id);
-  default:
-    break;
+    case CMapFormat::kFormat0:
+      builder = new CMapFormat0::Builder(container, data, offset, cmap_id);
+    case CMapFormat::kFormat2:
+      builder = new CMapFormat0::Builder(container, data, offset, cmap_id);
+    default:
+      break;
   }
   return builder.detach();
 }
@@ -185,7 +189,8 @@ CALLER_ATTACH CMapTable::CMap::Builder* CMapTable::CMap::Builder::getBuilder(
  * CMapTable::CMapFormat0 and CMapTable::CMapFormat0::Builder
  ******************************************************************************/
 CMapTable::CMapFormat0::CMapFormat0(ReadableFontData* data,
-    const CMapId& cmap_id) : CMap(data, CMapFormat::kFormat0, cmap_id) {
+                                    const CMapId& cmap_id)
+    : CMap(data, CMapFormat::kFormat0, cmap_id) {
 }
 
 CMapTable::CMapFormat0::~CMapFormat0() {}
@@ -206,9 +211,9 @@ CMapTable::CMapFormat0::Builder::Builder(
     int32_t offset, const CMapId& cmap_id)
     : CMapTable::CMap::Builder(container,
                                data ? down_cast<WritableFontData*>(
-                                          data->slice(offset, data->readUShort(
-                                              offset + Offset::kFormat0Length)))
-                                    : reinterpret_cast<WritableFontData*>(NULL),
+                                   data->slice(offset, data->readUShort(
+                                       offset + Offset::kFormat0Length)))
+                               : reinterpret_cast<WritableFontData*>(NULL),
                                CMapFormat::kFormat0, cmap_id) {
   // TODO(arthurhsu): FIXIT: heavy lifting and leak, need fix.
 }
@@ -218,9 +223,9 @@ CMapTable::CMapFormat0::Builder::Builder(
     int32_t offset, const CMapId& cmap_id)
     : CMapTable::CMap::Builder(container,
                                data ? down_cast<ReadableFontData*>(
-                                          data->slice(offset, data->readUShort(
-                                              offset + Offset::kFormat0Length)))
-                                    : reinterpret_cast<WritableFontData*>(NULL),
+                                   data->slice(offset, data->readUShort(
+                                       offset + Offset::kFormat0Length)))
+                               : reinterpret_cast<WritableFontData*>(NULL),
                                CMapFormat::kFormat0, cmap_id) {
   // TODO(arthurhsu): FIXIT: heavy lifting and leak, need fix.
 }
@@ -237,7 +242,8 @@ CALLER_ATTACH FontDataTable* CMapTable::CMapFormat0::Builder::subBuildTable(
  * CMapTable::CMapFormat2 and CMapTable::CMapFormat2::Builder
  ******************************************************************************/
 CMapTable::CMapFormat2::CMapFormat2(ReadableFontData* data,
-    const CMapId& cmap_id) : CMap(data, CMapFormat::kFormat2, cmap_id) {
+                                    const CMapId& cmap_id)
+    : CMap(data, CMapFormat::kFormat2, cmap_id) {
 }
 
 CMapTable::CMapFormat2::~CMapFormat2() {}
@@ -305,8 +311,8 @@ int32_t CMapTable::CMapFormat2::glyphId(int32_t character) {
   // position of idRangeOffset + value of idRangeOffset + index for low byte
   // = firstcode
   int32_t p_location = (offset + Offset::kFormat2SubHeader_idRangeOffset) +
-                       id_range_offset +
-                       (low_byte - first_code) * DataSize::kUSHORT;
+      id_range_offset +
+      (low_byte - first_code) * DataSize::kUSHORT;
   int p = data_->readUShort(p_location);
   if (p == 0) {
     return CMapTable::NOTDEF;
@@ -328,9 +334,9 @@ CMapTable::CMapFormat2::Builder::Builder(
     int32_t offset, const CMapId& cmap_id)
     : CMapTable::CMap::Builder(container,
                                data ? down_cast<WritableFontData*>(
-                                          data->slice(offset, data->readUShort(
-                                              offset + Offset::kFormat0Length)))
-                                    : reinterpret_cast<WritableFontData*>(NULL),
+                                   data->slice(offset, data->readUShort(
+                                       offset + Offset::kFormat0Length)))
+                               : reinterpret_cast<WritableFontData*>(NULL),
                                CMapFormat::kFormat2, cmap_id) {
   // TODO(arthurhsu): FIXIT: heavy lifting and leak, need fix.
 }
@@ -340,9 +346,9 @@ CMapTable::CMapFormat2::Builder::Builder(
     int32_t offset, const CMapId& cmap_id)
     : CMapTable::CMap::Builder(container,
                                data ? down_cast<ReadableFontData*>(
-                                          data->slice(offset, data->readUShort(
-                                              offset + Offset::kFormat0Length)))
-                                    : reinterpret_cast<ReadableFontData*>(NULL),
+                                   data->slice(offset, data->readUShort(
+                                       offset + Offset::kFormat0Length)))
+                               : reinterpret_cast<ReadableFontData*>(NULL),
                                CMapFormat::kFormat2, cmap_id) {
   // TODO(arthurhsu): FIXIT: heavy lifting and leak, need fix.
 }
@@ -391,23 +397,64 @@ CMapTable::Builder::Builder(FontDataTableBuilderContainer* font_builder,
 }
 
 int32_t CMapTable::Builder::subSerialize(WritableFontData* new_data) {
-  // TODO(arthurhsu): IMPLEMENT
-  UNREFERENCED_PARAMETER(new_data);
-  return 0;
+  int32_t size = new_data->writeUShort(CMapTable::Offset::kVersion,
+                                       version_);
+  size += new_data->writeUShort(CMapTable::Offset::kNumTables,
+                                cmap_builders_.size());
+
+  int32_t index_offset = size;
+  size += cmap_builders_.size() * CMapTable::Offset::kEncodingRecordSize;
+  for (CMapBuilderMap::iterator it = cmap_builders_.begin(),
+           e = cmap_builders_.end(); it != e; ++it) {
+    CMapBuilderPtr b = it->second;
+    // header entry
+    index_offset += new_data->writeUShort(index_offset, b->platformId());
+    index_offset += new_data->writeUShort(index_offset, b->encodingId());
+    index_offset += new_data->writeULong(index_offset, size);
+
+    // cmap
+    FontDataPtr slice;
+    slice.attach(new_data->slice(size));
+    size +=
+        b->subSerialize(down_cast<WritableFontData*>(slice.p_));
+  }
+  return size;
 }
 
 bool CMapTable::Builder::subReadyToSerialize() {
-  // TODO(arthurhsu): IMPLEMENT
-  return false;
+  if (cmap_builders_.empty())
+    return false;
+
+  // check each table
+  for (CMapBuilderMap::iterator it = cmap_builders_.begin(),
+           e = cmap_builders_.end(); it != e; ++it) {
+    if (!it->second->subReadyToSerialize())
+      return false;
+  }
+  return true;
 }
 
 int32_t CMapTable::Builder::subDataSizeToSerialize() {
-  // TODO(arthurhsu): IMPLEMENT
-  return 0;
+  if (cmap_builders_.empty())
+    return 0;
+
+  bool variable = false;
+  int32_t size = CMapTable::Offset::kEncodingRecordStart +
+      cmap_builders_.size() * CMapTable::Offset::kEncodingRecordSize;
+
+  // calculate size of each table
+  for (CMapBuilderMap::iterator it = cmap_builders_.begin(),
+           e = cmap_builders_.end(); it != e; ++it) {
+    int32_t cmap_size = it->second->subDataSizeToSerialize();
+    size += abs(cmap_size);
+    variable |= cmap_size <= 0;
+  }
+  return variable ? -size : size;
 }
 
 void CMapTable::Builder::subDataSet() {
-  // TODO(arthurhsu): IMPLEMENT
+  cmap_builders_.clear();
+  Table::Builder::setModelChanged(false);
 }
 
 CALLER_ATTACH FontDataTable* CMapTable::Builder::subBuildTable(
@@ -423,7 +470,7 @@ CALLER_ATTACH CMapTable::CMap::Builder* CMapTable::Builder::cmapBuilder(
     return NULL;
 
   int32_t record_offset = Offset::kEncodingRecordOffset + index *
-                          Offset::kEncodingRecordSize;
+      Offset::kEncodingRecordSize;
   int32_t platform_id = data->readUShort(Offset::kEncodingRecordPlatformId +
                                          record_offset);
   int32_t encoding_id = data->readUShort(Offset::kEncodingRecordEncodingId +
