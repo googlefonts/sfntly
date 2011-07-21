@@ -48,22 +48,14 @@ sudo apt-get install libicu-dev
 ===Using clang Instead===
 Change the {{{cmake}}} command line to
 {{{
-CC=clang CXX=clang cmake ..
+CC=clang CXX=clang++ cmake ..
 }}}
-The generated Makefile will use clang
+The generated Makefile will use clang.  Please note that sfntly uses a lot of advanced C++ semantics that might not be understood or compiled correctly by earlier versions of clang (2.8 and before).  
+
+sfntly is tested to compile and run correctly on clang 3.0 (trunk 135314).  clang 2.9 might work but unfortunately we don't have the resource to test it.
 
 ===Debug and Release Builds===
 Currently Linux/Mac build Debug builds by default.  To build Release builds, you can either modify the {{{CMakeList.txt}}}, or set environment variable {{{CMAKE_BUILD_TYPE}}} to {{{Release}}} before invoking {{{cmake}}}.
-
-===Common Errors===
-sfntly checks {{{__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4}}} to determine if underlying gcc is configured to carry required intrinsic.  If that check fail, it will generate a lot of errors.
-
-In this case, the best strategy is to check your environment.  According to [http://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html], this definition should be common.
-
-You can also run this command line to check if your gcc has it defined.
-{{{
-gcc -dM -E - | grep __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4
-}}}
 
 ==Running Unit Test==
 A program named {{{unit_test}}} will be generated after a full compilation.  It expects {{{Tuffy.ttf}}} to be in the same directory it resides to execute the unit tests.  {{{Tuffy.ttf}}} can be found at {{{data/ext}}}.  Windows users also needs to copy {{{icudt.dll}}} and {{{icuuc.dll}}} to that directory.
