@@ -1,0 +1,69 @@
+=How to build sfntly C++ port=
+
+==Build Environment Requirements==
+  * cmake 2.6 or above
+  * C++ compiler requirement
+    * Windows: Visual C++ 2008, Visual C++ 2010
+    * Linux: g++ 4.3 or above.  g++ must support built-in atomic ops and has companion libstd++.
+    * Mac: Apple XCode 3.2.5 or above.
+
+==External Dependencies==
+
+sfntly is dependent on several external packages.
+
+  * Google C++ Testing Framework [http://code.google.com/p/googletest]
+  You can download the package yourself or extract the one from {{{ext/redist}}}.  The package needs to be extracted to ext and rename/symbolic link to {{{gtest}}}.
+
+  sfntly C++ port had been tested with gTest 1.6.0.
+
+  * ICU
+  For Linux/Mac, default ICU headers in system will be used.  Linux users please make sure you have dev packages for ICU.  For example, you can run
+{{{
+sudo apt-get install libicu-dev
+}}}
+  in Ubuntu and see if the required library is installed.
+
+  For Windows, download from [http://site.icu-project.org/download] or extract the one from {{{ext/redist}}}. You can also provide your own ICU package. However, you need to alter the include path, library path, and provide {{{icudt.dll}}}.
+
+  Tested with ICU 4.6.1 binary release.
+
+==Building on Windows==
+  # Open sfntly.vc10.sln (if using Visual C++ 2010) or sfntly.vc9.sln (if using Visual C++ 2008).  Since sfntly use STL extensively, please patch your Visual Studio for any STL-related hotfixes/service packs.
+  # Build the solution.
+
+==Building on Linux/Mac==
+
+===Default In-Source Building===
+  # {{{cd}}} _<sfntly dir>_
+  # {{{cmake .}}}
+  # {{{make}}}
+
+===Recommended Out-of-Source Building===
+  # {{{cd}}} _<sfntly dir>_
+  # {{{mkdir build}}}
+  # {{{cd build}}}
+  # {{{cmake ..}}}
+  # {{{make}}}
+
+===Using clang Instead===
+Change the {{{cmake}}} command line to
+{{{
+CC=clang CXX=clang cmake ..
+}}}
+The generated Makefile will use clang
+
+===Debug and Release Builds===
+Currently Linux/Mac build Debug builds by default.  To build Release builds, you can either modify the {{{CMakeList.txt}}}, or set environment variable {{{CMAKE_BUILD_TYPE}}} to {{{Release}}} before invoking {{{cmake}}}.
+
+===Common Errors===
+sfntly checks {{{__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4}}} to determine if underlying gcc is configured to carry required intrinsic.  If that check fail, it will generate a lot of errors.
+
+In this case, the best strategy is to check your environment.  According to [http://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html], this definition should be common.
+
+You can also run this command line to check if your gcc has it defined.
+{{{
+gcc -dM -E - | grep __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4
+}}}
+
+==Running Unit Test==
+A program named {{{unit_test}}} will be generated after a full compilation.  It expects {{{Tuffy.ttf}}} to be in the same directory it resides to execute the unit tests.  {{{Tuffy.ttf}}} can be found at {{{data/ext}}}.  Windows users also needs to copy {{{icudt.dll}}} and {{{icuuc.dll}}} to that directory.
