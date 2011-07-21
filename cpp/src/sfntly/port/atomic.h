@@ -49,7 +49,12 @@ static inline size_t atomicDecrement(size_t* address) {
   return OSAtomicDecrement32Barrier(reinterpret_cast<int32_t*>(address));
 }
 
-#elif defined (__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
+// Originally we check __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4, however, there are
+// issues that clang not carring over this definition.  Therefore we boldly
+// assume it's gcc or gcc-compatible here.  Compilation shall still fail since
+// the intrinsics used are GCC-specific.
+
+#else
 
 #include <stddef.h>
 
@@ -60,10 +65,6 @@ static inline size_t atomicIncrement(size_t* address) {
 static inline size_t atomicDecrement(size_t* address) {
   return __sync_sub_and_fetch(address, 1);
 }
-
-#else
-
-#error "Compiler not supported"
 
 #endif  // WIN32
 

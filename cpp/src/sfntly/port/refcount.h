@@ -15,6 +15,29 @@
  */
 
 // Object reference count and smart pointer implementation.
+
+// Smart pointer usage in sfntly:
+//
+// sfntly carries a smart pointer implementation like COM.  Ref-countable object
+// type inherits from RefCounted<>, which have AddRef and Release just like
+// IUnknown (but no QueryInterface).  Use a Ptr<> based smart pointer to hold
+// the object so that the object ref count is handled correctly.
+//
+// class Foo : public RefCounted<Foo> {
+//  public:
+//   static Foo* CreateInstance() {
+//     Ptr<Foo> obj = new Foo();  // ref count = 1
+//     return obj.detach();
+//   }
+// };
+// typedef Ptr<Foo> FooPtr;  // common short-hand notation
+// FooPtr obj;
+// obj.attach(Foo::CreatedInstance());  // ref count = 1
+// {
+//   FooPtr obj2 = obj;  // ref count = 2
+// }  // ref count = 1, obj2 out of scope
+// obj.release();  // ref count = 0, object destroyed
+
 // Notes on usage:
 // 1. Virtual inherit from RefCount interface in base class if smart pointers
 //    are going to be defined.
