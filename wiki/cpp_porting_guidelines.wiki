@@ -1,7 +1,14 @@
 =sfntly C++ Porting Guidelines=
 
 ==Goal==
-A correct, faithful port of the Java version sfntly.
+A *correct*, *faithful* port of the Java version sfntly.
+
+==How It Works==
+
+  # Take one snapshot of the Java source, run all its unit tests and make sure there are no known problems.
+  # Coordinate with other developers to work on the same snapshot.  Once the snapshot is done, then move on next version.
+
+The least thing a faithful port wants is out-of-sync versions among files.
 
 ==Guidelines==
   * Follow Google C++ Style Guide [http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml] with following exceptions:
