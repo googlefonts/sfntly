@@ -1,0 +1,54 @@
+#summary Notes & comments about how sfntly works
+#labels Phase-Implementation
+
+= Introduction =
+
+This document will as the C++ port matures serve as a log to how different parts of the library work. As of today, there is some general info but mostly CMap specific details.
+
+= Table Building =
+
+Building a data table in sfntly is done by the `FontDataTable::Builder::build` method which defines the general pipeline and leaves the details to each implementing subclass (`CMapTable::Builder` for example).
+  # *`ReadableFontDataPtr data = internalReadData()`*
+    There are 2 private fields in the `FontDataTable::Builder` class: `rData` and `wData` for `ReadableFontData` and `WritableFontData`. This function returns `rData` if there is any or `wData` (it is cast to readable font data) if `rData` is null.
+    _They hold the same data!_
+  # *`if (model_changed_)`*
+    A font is essentially a binary blob when loaded inside a `FontData` object. A _model_ is the Java/C++ collection of objects that represent the same data in a manipulable format. If you ask for the model (even if you don't write to it), it will count as changed and the underlying raw data will get updated.
+  # *`if (!subReadyToSerialize())`*
+    * *`return NULL`*
+    * `else` 
+      # *`size = subDataToSerialize()`*
+        The data to be serialized needs to be estimated (the size may be 0, indicating unknown data size) or a negative number indicating an estimate. A positive value means that the exact amount of bytes required to store serialize the table is known.
+      # *`WritableDataPtr new_data = container_->getNewData(size)`* 
+      # *`subSerialize(new_data)`*
+      # *`data = new_data`*
+if (!subReadyToSerialize()) 
+return NULL
+
+If we’re not ready to serialize the table, the table cannot possibly be built. Return NULL.
+else
+size = subDataSizeToSerialize()
+
+We can serialize data. The size of the data may be 0, but the table is ready.
+WritableDataPtr new_data = container_->getNewData(size)
+
+container_ = FontDataTableBuilderContainer			
+Get size bytes of writable data from the container???
+subSerialize(new_data)
+
+Serializes existing data into new_data. This function always comes from subclasses. FontDataTable does not implement it!
+data = new_data
+FontDataTablePtr table = subBuildTable(data)
+
+After getting the actual data, bui
+After building the new table, call this function to update any special info needed for coherent table view (headers etc.)
+return table
+
+When creating the object view of the font and dealing with lots of tables, it would be wasteful to create builders for every subtable there is since most users only do fairly high level manipulation of the font.
+Instead, only tables at font level are all built. All other subtables have basic builders in place that contain valid FontData but the object view is not created by default. For the CMapTable, this means that if you don’t go through the getCMapBuilders method, the CMap builders are not initialized. For example,the builder map seems to be empty when calling its size() method but there are CMaps in the font when calling readFont
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
