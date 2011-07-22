@@ -4,14 +4,56 @@
 = Introduction =
 
 This document will as the C++ port matures serve as a log to how different parts of the library work. As of today, there is some general info but mostly CMap specific details.
+
 ----
 = Font Data Tables =
+One of the important goals in `sfntly` is thread safety which is why tables can only be created with their nested `Builder` class and are immutable after creation.
+
 == `CMapTable` ==
 _CMap_ = character map; it converts _code points_ in a _code page_ to _glyph IDs_.
 
 The CMapTable is a table of CMaps (CMaps are also tables; one for every encoding supported by the font). Representing an encoding-dependent character map is in one of 14 formats, out of which formats 0 and 4 are the most used; sfntly/C++ will initially only support formats 0, 2, 4 and 12.
 
-The `CMapTable` is the main class and the container for all other CMap related classes.
+=== `CMapFormat0` Byte encoding table===
+Format 0 is a basic table where a character’s  glyph ID is looked up in a glyphIdArray[256]. As it only supports 256 characters it can only encode ASCII and ISO 8859-x (alphabet-based languages).
+
+=== `CMapFormat2` High-byte mapping through table ===
+Chinese, Japanese and Korean (CJK) need special 2 byte encodings for each code point like Shift-JIS.
+
+=== `CMapFormat4` Segment mapping to delta values ===
+This is the preferred format for Unicode Basic Multilingual Plane (BMP) encodings according to the Microsoft spec. Format 4 defines segments (contiguous ranges of characters; variable length).
+Finding a character’s glyph id first means finding the segment it is part of using a binary search (the segments are sorted).
+A segment has a *`startCode`*, an *`endCode`* (the minimum and maximum code points in the segment), an *`idDelta`* (delta for all code points in the segment) and an *`idRangeOffset`* (offset into glyphIdArray or 0).
+
+`idDelta` and `idRangeOffset` seem to be the same thing, offsets. 
+In fact, `idRangeOffset` uses the glyph array to get the index by relying on the fact that the array is immediately after the `idRangeOffset` table in the font file. So, the segment’s offset is `idRangeOffset[i]` but since the `idRangeOffset` table contains words and not bytes, the value is divided by 2.
+{{{
+glyphIndex = *(&idRangeOffset[i] + idRangeOffset[i] / 2 + (c - startCode[i]))
+}}}
+`idDelta[i]` is another kind of segment offset used when `idRangeOffset[i] = 0`, in which case it is added directly to the character code.
+{{{
+glyphIndex = idDelta[i] + c
+}}}
+
+=== Class Hierarchy ===
+`CMapTable` is the main class and the container for all other CMap related classes.
+
+==== Utility classes ====
+  * `CMapTable::CMapId` describes a pair of IDs, platform ID and encoding ID that form the CMap's ID. The ID a CMap has is usually a good indicator as to what kind of format the CMap uses (Unicode CMaps are usually either format 4 or format 12).
+  * `CMapTable::CMapIdComparator`
+  * `CMapTable::CMapIterator` iteration through the CMapTable is supported through a Java-style iterator.
+  * `CMapTable::CMapFilter` Java-style filter; CMapIterator supports filtering CMaps. By default, it accepts everything CMap.
+  * `CMapTable::CMapIdFilter` extends CMapFilter; only accepts one type of CMap. Used in conjunction with CMapIterator, this is how the CMap getters are implemented.
+  * *`CMapTable::Builder`* is the only way to create a CMapTable.
+
+==== CMaps ====
+  * *`CMapTable::CMap`* is the abstract base class that all `CMapFormat*` derive. It defines basic functions and the abstract `CMapTable::CMap::CharacterIterator` class to iterate through the characters in the map. The basic implementation just loops through every character between a start and an end. This is overridden so that format specific iteration is performed.
+  * `CMapFormat0` (mostly done?)
+  * `CMapFormat2` (needs builders)
+  * ... coming soon
+  
+`[todo: will add images soon; need to upload to svn]`
+
 ----
 
 = Table Building Pipeline =
