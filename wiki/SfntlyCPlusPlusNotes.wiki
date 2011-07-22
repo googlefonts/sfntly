@@ -4,10 +4,19 @@
 = Introduction =
 
 This document will as the C++ port matures serve as a log to how different parts of the library work. As of today, there is some general info but mostly CMap specific details.
+----
+= Font Data Tables =
+== `CMapTable` ==
+_CMap_ = character map; it converts _code points_ in a _code page_ to _glyph IDs_.
 
-= Table Building =
+The CMapTable is a table of CMaps (CMaps are also tables; one for every encoding supported by the font). Representing an encoding-dependent character map is in one of 14 formats, out of which formats 0 and 4 are the most used; sfntly/C++ will initially only support formats 0, 2, 4 and 12.
 
-Building a data table in sfntly is done by the `FontDataTable::Builder::build` method which defines the general pipeline and leaves the details to each implementing subclass (`CMapTable::Builder` for example).
+The `CMapTable` is the main class and the container for all other CMap related classes.
+----
+
+= Table Building Pipeline =
+
+Building a data table in sfntly is done by the `FontDataTable::Builder::build` method which defines the general pipeline and leaves the details to each implementing subclass (`CMapTable::Builder` for example). Note: *`sub*`* methods are table specific
   # *`ReadableFontDataPtr data = internalReadData()`*
     There are 2 private fields in the `FontDataTable::Builder` class: `rData` and `wData` for `ReadableFontData` and `WritableFontData`. This function returns `rData` if there is any or `wData` (it is cast to readable font data) if `rData` is null.
     _They hold the same data!_
@@ -19,36 +28,21 @@ Building a data table in sfntly is done by the `FontDataTable::Builder::build` m
       # *`size = subDataToSerialize()`*
         The data to be serialized needs to be estimated (the size may be 0, indicating unknown data size) or a negative number indicating an estimate. A positive value means that the exact amount of bytes required to store serialize the table is known.
       # *`WritableDataPtr new_data = container_->getNewData(size)`* 
+        A table container is a mechanism used for implementing callbacks to the object that owns the table to be built. This can be *either the font object or another table*. `getNewData` instructs the containing object to allocate more memory to hold the new data (`typeof container_ = FontDataTableBuilderContainer`).
       # *`subSerialize(new_data)`*
+        The objects are serialized and written to `new_data`.
       # *`data = new_data`*
-if (!subReadyToSerialize()) 
-return NULL
+  # *`FontDataTablePtr table = subBuildTable(data)`*
+    The table is actually built, where `subBuildTable` is overridden by every class of table but a table header is always added. 
 
-If we’re not ready to serialize the table, the table cannot possibly be built. Return NULL.
-else
-size = subDataSizeToSerialize()
-
-We can serialize data. The size of the data may be 0, but the table is ready.
-WritableDataPtr new_data = container_->getNewData(size)
-
-container_ = FontDataTableBuilderContainer			
-Get size bytes of writable data from the container???
-subSerialize(new_data)
-
-Serializes existing data into new_data. This function always comes from subclasses. FontDataTable does not implement it!
-data = new_data
-FontDataTablePtr table = subBuildTable(data)
-
-After getting the actual data, bui
-After building the new table, call this function to update any special info needed for coherent table view (headers etc.)
-return table
+== Subtable Builders ==
+=== Subtables are lazily built ===
 
 When creating the object view of the font and dealing with lots of tables, it would be wasteful to create builders for every subtable there is since most users only do fairly high level manipulation of the font.
-Instead, only tables at font level are all built. All other subtables have basic builders in place that contain valid FontData but the object view is not created by default. For the CMapTable, this means that if you don’t go through the getCMapBuilders method, the CMap builders are not initialized. For example,the builder map seems to be empty when calling its size() method but there are CMaps in the font when calling readFont
+Instead, *only the tables at font level are fully built*. 
 
-= Details =
+All other subtables have builders that contain valid FontData but the object view is not created by default. For the `CMapTable`, this means that if you don’t go through the `getCMapBuilders()` method, the CMap builders are not initialized. So, the builder map would seem to be empty when calling its `size()` method but there are CMaps in the font when calling `numCMaps(internalReadFont())`.
+----
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+== Character encoders ==
+Sfntly/Java uses a native ICU-based API for encoding characters. Sfntly/C++ uses ICU directly. In unit tests we assume text is encoded in UTF16. Public APIs will use ICU classes like `UnicodeString`.
