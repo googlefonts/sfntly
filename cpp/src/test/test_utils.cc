@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include "test/test_utils.h"
+
 #include <stdio.h>
 #include <unicode/ucnv.h>
 #include <unicode/uchar.h>
@@ -23,7 +25,6 @@
 #include "sfntly/data/memory_byte_array.h"
 #include "sfntly/data/growable_memory_byte_array.h"
 #include "sfntly/port/file_input_stream.h"
-#include "test/test_utils.h"
 
 namespace sfntly {
 TestUtils::TestUtils() {}

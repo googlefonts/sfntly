@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
+#include "test/test_utils_test.h"
+
 #include <stdio.h>
 #include <unicode/ucnv.h>
 #include <unicode/uchar.h>
 
 #include "gtest/gtest.h"
 #include "test/test_utils.h"
-#include "test/test_utils_test.h"
 
 namespace sfntly {
 
@@ -54,33 +55,23 @@ bool testEncoding() {
 
 // Check if the proper extension is obtained
 bool testExtension() {
-  char *test = new char[32];
   // usual file name
-  memset(test, 0, 32);
-  strncpy(test, "../data/ext/arial.ttf", 31);
   const char *result;
-  result = TestUtils::extension(test);
+  result = TestUtils::extension("../data/ext/arial.ttf");
   EXPECT_EQ(strcmp(result, ".ttf"), 0);
 
   // more than one 'extension'
-  memset(test, 0, 32);
-  strncpy(test, "arial.ttf.fake", 31);
-  result = TestUtils::extension(test);
+  result = TestUtils::extension("arial.ttf.fake");
   EXPECT_EQ(strcmp(result, ".fake"), 0);
 
   // no extension
-  memset(test, 0, 32);
-  strncpy(test, "arial", 31);
-  result = TestUtils::extension(test);
+  result = TestUtils::extension("arial");
   EXPECT_STREQ(result, NULL);
 
   // bogus extension
-  memset(test, 0, 32);
-  strncpy(test, "arial.", 31);
-  result = TestUtils::extension(test);
+  result = TestUtils::extension("arial.");
   EXPECT_EQ(strcmp(result, "."), 0);
 
-  delete[] test;
   return true;
 }
 

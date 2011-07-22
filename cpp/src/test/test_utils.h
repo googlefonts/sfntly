@@ -17,8 +17,13 @@
 #ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_TEST_UTILS_H_
 #define TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_TEST_UTILS_H_
 
+// Must include this before ICU to avoid stdint redefinition issue.
+#include "sfntly/port/type.h"
+
 #include <unicode/ucnv.h>
+
 #include <string>
+
 #include "sfntly/font.h"
 #include "sfntly/data/memory_byte_array.h"
 

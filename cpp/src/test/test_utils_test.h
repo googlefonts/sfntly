@@ -17,6 +17,8 @@
 #ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_TEST_UTILS_TEST_H_
 #define TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_TEST_UTILS_TEST_H_
 
+#include "sfntly/port/type.h"
+
 namespace sfntly {
 
 bool testEncoding();

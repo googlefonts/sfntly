@@ -272,6 +272,22 @@
 				RelativePath="..\src\test\test_font_utils.h"
 				>
 			</File>
+			<File
+				RelativePath="..\src\test\test_utils.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\test_utils.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\test_utils_test.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\test_utils_test.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
