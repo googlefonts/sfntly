@@ -81,10 +81,10 @@ inline To down_cast(From* f) {                   // so we only accept pointers
   #pragma warning(pop)
 #endif
 
-// The following code is the only place for RTTI.  It is done so to allow VC++
-// to perform additional type checking in DEBUG builds.
-#if defined (_MSC_VER) && !defined(NDEBUG)
-  assert(f == NULL || dynamic_cast<To>(f) != NULL);  // RTTI: debug mode only!
+// The following code is the only place for RTTI.  It is done so to allow
+// additional type checking when SFNTLY_TYPE_VERIFICATION is defined.
+#if defined (SFNTLY_TYPE_VERIFICATION)
+  assert(f == NULL || dynamic_cast<To>(f) != NULL);
 #endif
   return static_cast<To>(f);
 }
