@@ -392,7 +392,7 @@ void Font::Builder::buildTablesFromBuilders(TableBuilderMap* builder_map,
                                  builder_end = builder_map->end();
                                  builder != builder_end; ++builder) {
     TablePtr table;
-    if (builder->second && builder->second->readyToBuild()) {
+    if (builder->second->readyToBuild()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
       try {
 #endif
@@ -420,32 +420,17 @@ void Font::Builder::buildTablesFromBuilders(TableBuilderMap* builder_map,
 }
 
 void Font::Builder::interRelateBuilders(TableBuilderMap* builder_map) {
-  TableBuilderMap::iterator end_iterator = builder_map->end(),
-      header_iterator = builder_map->find(Tag::head),
-      horizontal_header_iterator = builder_map->find(Tag::hhea),
-      max_profile_iterator = builder_map->find(Tag::maxp),
-      loca_table_iterator = builder_map->find(Tag::loca),
-      horizontal_metrics_iterator = builder_map->find(Tag::hmtx);
-  FontHeaderTableBuilderPtr header_table_builder;
-  HorizontalHeaderTableBuilderPtr horizontal_header_builder;
-  MaximumProfileTableBuilderPtr max_profile_builder;
-  LocaTableBuilderPtr loca_table_builder;
-  HorizontalMetricsTableBuilderPtr horizontal_metrics_builder;
-  header_table_builder = (header_iterator != end_iterator) ?
-      down_cast<FontHeaderTable::Builder*>
-      (header_iterator->second.p_) : NULL;
-  horizontal_header_builder = (horizontal_header_iterator != end_iterator) ?
-      down_cast<HorizontalHeaderTable::Builder*>
-      (horizontal_header_iterator->second.p_) : NULL;
-  max_profile_builder = (max_profile_iterator != end_iterator) ?
-      down_cast<MaximumProfileTable::Builder*>
-      (max_profile_iterator->second.p_) : NULL;
-  loca_table_builder = (loca_table_iterator != end_iterator) ?
-      down_cast<LocaTable::Builder*>
-      (loca_table_iterator->second.p_) : NULL;
-  horizontal_metrics_builder = (horizontal_metrics_iterator != end_iterator) ?
-      down_cast<HorizontalMetricsTable::Builder*>
-      (horizontal_metrics_iterator->second.p_) : NULL;
+  FontHeaderTableBuilderPtr header_table_builder =
+      down_cast<FontHeaderTable::Builder*>((*builder_map)[Tag::head].p_);
+  HorizontalHeaderTableBuilderPtr horizontal_header_builder =
+      down_cast<HorizontalHeaderTable::Builder*>((*builder_map)[Tag::hhea].p_);
+  MaximumProfileTableBuilderPtr max_profile_builder =
+      down_cast<MaximumProfileTable::Builder*>((*builder_map)[Tag::maxp].p_);
+  LocaTableBuilderPtr loca_table_builder =
+      down_cast<LocaTable::Builder*>((*builder_map)[Tag::loca].p_);
+  HorizontalMetricsTableBuilderPtr horizontal_metrics_builder =
+      down_cast<HorizontalMetricsTable::Builder*>(
+          (*builder_map)[Tag::hmtx].p_);
 
   // set the inter table data required to build certain tables
   if (horizontal_metrics_builder != NULL) {
@@ -501,8 +486,7 @@ void Font::Builder::loadTableData(TableHeaderSortedSet* headers,
     is->skip((*table_header)->offset() - is->position());
     FontInputStream table_is(is, (*table_header)->length());
     int32_t roundup_length = ((*table_header)->length() + 3) & ~3;
-    ByteArrayPtr array;
-    array.attach(factory_->getNewArray(roundup_length));
+    ByteArrayPtr array = factory_->getNewArray(roundup_length);
     array->copyFrom(&table_is, (*table_header)->length());
     WritableFontDataPtr data = new WritableFontData(array);
     table_data->insert(DataBlockEntry(*table_header, data));
