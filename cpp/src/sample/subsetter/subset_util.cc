@@ -50,7 +50,8 @@ void SubsetUtil::subset(const char *input_file_path,
   size_t file_size = ftell(input_file);
   fseek(input_file, 0, SEEK_SET);
   input_buffer.resize(file_size);
-  fread(&(input_buffer[0]), 1, file_size, input_file);
+  size_t bytes_read = fread(&(input_buffer[0]), 1, file_size, input_file);
+  UNREFERENCED_PARAMETER(bytes_read);
   fclose(input_file);
 
   ByteArrayPtr ba = new MemoryByteArray(&(input_buffer[0]), file_size);

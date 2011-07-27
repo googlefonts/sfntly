@@ -63,7 +63,8 @@ void loadFile(const char* input_file_path, ByteVector* input_buffer) {
   size_t file_size = ftell(input_file);
   fseek(input_file, 0, SEEK_SET);
   input_buffer->resize(file_size);
-  fread(&((*input_buffer)[0]), 1, file_size, input_file);
+  size_t bytes_read = fread(&((*input_buffer)[0]), 1, file_size, input_file);
+  EXPECT_EQ(bytes_read, file_size);
   fclose(input_file);
 }
 
