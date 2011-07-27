@@ -38,7 +38,8 @@ bool testFileInputStream() {
   fseek(file_handle, 0, SEEK_SET);
   ByteVector b1;
   b1.resize(length);
-  fread(&(b1[0]), 1, length, file_handle);
+  size_t bytes_read = fread(&(b1[0]), 1, length, file_handle);
+  EXPECT_EQ(bytes_read, length);
   fclose(file_handle);
 
   // Full file reading test
@@ -98,7 +99,8 @@ bool testFontInputStreamBasic() {
   fseek(file_handle, 0, SEEK_SET);
   ByteVector b1;
   b1.resize(length);
-  fread(&(b1[0]), 1, length, file_handle);
+  size_t bytes_read = fread(&(b1[0]), 1, length, file_handle);
+  EXPECT_EQ(bytes_read, length);
   fclose(file_handle);
 
   FileInputStream is;

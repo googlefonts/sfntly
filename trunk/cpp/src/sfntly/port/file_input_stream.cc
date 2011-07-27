@@ -88,8 +88,8 @@ int32_t FileInputStream::read() {
 #endif
   }
   byte_t value;
-  fread(&value, 1, 1, file_);
-  position_++;
+  size_t length = fread(&value, 1, 1, file_);
+  position_ += length;
   return value;
 }
 

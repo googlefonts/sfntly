@@ -17,7 +17,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 # Uncomment the line below to simulate Chrome compilation flags
-  add_definitions(-DSFNTLY_NO_EXCEPTION -Wall -Werror -fno-exceptions)
+  add_definitions(-DSFNTLY_NO_EXCEPTION -D__wur=__attribute__\(\(warn_unused_result\)\) -Wall -Werror -fno-exceptions)
   set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/lib)
   set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src ext/gtest/include ext/gtest)
