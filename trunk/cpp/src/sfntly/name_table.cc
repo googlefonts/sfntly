@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include "port/type.h"
+
 #include <stdio.h>
 #include <string.h>
 
