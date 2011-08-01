@@ -371,7 +371,7 @@ void Font::Builder::BuildTablesFromBuilders(TableBuilderMap* builder_map,
                                  builder_end = builder_map->end();
                                  builder != builder_end; ++builder) {
     TablePtr table;
-    if (builder->second->ReadyToBuild()) {
+    if (builder->second && builder->second->ReadyToBuild()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
       try {
 #endif
