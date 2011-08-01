@@ -1,6 +1,6 @@
 =Usage of smart pointers in sfntly C++ port=
 
-In sfntly C++ port, an object ref-counting and smart pointer mechanism is implemented.  The implementation works very like COM.
+In sfntly C++ port, an object ref-counting and smart pointer mechanism is implemented.  The implementation works very much like COM.
 
 Ref-countable object type inherits from RefCounted<>, which have addRef() and release() just like IUnknown in COM (but no QueryInterface).  Ptr<> is a smart pointer class like CComPtr<> which is used to hold the ref-countable objects so that the object ref count is handled correctly.
 
@@ -60,6 +60,18 @@ end_scope_pointer.attach(passThrough);
 }}}
 
   If you are not passing that object back, you are the end of scope.
+
+  Be very careful when using the assignment operator as opposed to attaching. This can easily cause memory leaks. Have a look at  [http://blogs.msdn.com/b/oldnewthing/archive/2009/11/20/9925918.aspx The difference between assignment and attachment with ATL smart pointers]. Since we're using essentially the same model, it applies in pretty much the same way.
+  The easiest way of knowing when to Attach and when to assign is to check the declaration of the function you are using. 
+{{{
+  // Attach to the pointer returned by GetInstance
+  static CALLER_ATTACH FontFactory* GetInstance();
+
+  // Assign pointer returned by NewCMapBuilder 
+  CMap::Builder* NewCMapBuilder(const CMapId& cmap_id,
+                                ReadableFontData* data);
+}}}
+
 
 ==Detecting Memory Leak==
 
