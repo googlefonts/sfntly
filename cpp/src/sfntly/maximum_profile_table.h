@@ -24,6 +24,63 @@ namespace sfntly {
 
 class MaximumProfileTable : public Table,
                             public RefCounted<MaximumProfileTable> {
+ public:
+  class Builder : public Table::TableBasedTableBuilder,
+                  public RefCounted<Builder> {
+   public:
+    // Constructor scope altered to public because C++ does not allow base
+    // class to instantiate derived class with protected constructors.
+    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
+            WritableFontData* data);
+    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
+            ReadableFontData* data);
+    virtual ~Builder();
+
+    virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
+
+    int32_t Version();
+    void SetVersion(int32_t version);
+    int32_t NumGlyphs();
+    void SetNumGlyphs(int32_t num_glyphs);
+    int32_t MaxPoints();
+    void SetMaxPoints(int32_t max_points);
+    int32_t MaxContours();
+    void SetMaxContours(int32_t max_contours);
+    int32_t MaxCompositePoints();
+    void SetMaxCompositePoints(int32_t max_composite_points);
+    int32_t MaxZones();
+    void SetMaxZones(int32_t max_zones);
+    int32_t MaxTwilightPoints();
+    void SetMaxTwilightPoints(int32_t max_twilight_points);
+    int32_t MaxStorage();
+    void SetMaxStorage(int32_t max_storage);
+    int32_t MaxFunctionDefs();
+    void SetMaxFunctionDefs(int32_t max_function_defs);
+    int32_t MaxStackElements();
+    void SetMaxStackElements(int32_t max_stack_elements);
+    int32_t MaxSizeOfInstructions();
+    void SetMaxSizeOfInstructions(int32_t max_size_of_instructions);
+    int32_t MaxComponentElements();
+    void SetMaxComponentElements(int32_t max_component_elements);
+    int32_t MaxComponentDepth();
+    void SetMaxComponentDepth(int32_t max_component_depth);
+  };
+
+  virtual ~MaximumProfileTable();
+  int32_t Version();
+  int32_t NumGlyphs();
+  int32_t MaxPoints();
+  int32_t MaxContours();
+  int32_t MaxCompositePoints();
+  int32_t MaxZones();
+  int32_t MaxTwilightPoints();
+  int32_t MaxStorage();
+  int32_t MaxFunctionDefs();
+  int32_t MaxStackElements();
+  int32_t MaxSizeOfInstructions();
+  int32_t MaxComponentElements();
+  int32_t MaxComponentDepth();
+
  private:
   struct Offset {
     enum {
@@ -48,67 +105,7 @@ class MaximumProfileTable : public Table,
     };
   };
 
- private:
   MaximumProfileTable(Header* header, ReadableFontData* data);
-
- public:  // Class is final, no virtual functions unless derived from parent.
-  virtual ~MaximumProfileTable();
-  int32_t version();
-  int32_t numGlyphs();
-  int32_t maxPoints();
-  int32_t maxContours();
-  int32_t maxCompositePoints();
-  int32_t maxZones();
-  int32_t maxTwilightPoints();
-  int32_t maxStorage();
-  int32_t maxFunctionDefs();
-  int32_t maxStackElements();
-  int32_t maxSizeOfInstructions();
-  int32_t maxComponentElements();
-  int32_t maxComponentDepth();
-
- public:
-  class Builder : public Table::TableBasedTableBuilder,
-                  public RefCounted<Builder> {
-   public:
-    // Constructor scope altered to public because C++ does not allow base
-    // class to instantiate derived class with protected constructors.
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            ReadableFontData* data);
-    virtual ~Builder();
-
-    virtual CALLER_ATTACH FontDataTable* subBuildTable(ReadableFontData* data);
-
-   public:  // Class is static, no virtual functions unless derived from parent.
-    int32_t version();
-    void setVersion(int32_t version);
-    int32_t numGlyphs();
-    void setNumGlyphs(int32_t num_glyphs);
-    int32_t maxPoints();
-    void setMaxPoints(int32_t max_points);
-    int32_t maxContours();
-    void setMaxContours(int32_t max_contours);
-    int32_t maxCompositePoints();
-    void setMaxCompositePoints(int32_t max_composite_points);
-    int32_t maxZones();
-    void setMaxZones(int32_t max_zones);
-    int32_t maxTwilightPoints();
-    void setMaxTwilightPoints(int32_t max_twilight_points);
-    int32_t maxStorage();
-    void setMaxStorage(int32_t max_storage);
-    int32_t maxFunctionDefs();
-    void setMaxFunctionDefs(int32_t max_function_defs);
-    int32_t maxStackElements();
-    void setMaxStackElements(int32_t max_stack_elements);
-    int32_t maxSizeOfInstructions();
-    void setMaxSizeOfInstructions(int32_t max_size_of_instructions);
-    int32_t maxComponentElements();
-    void setMaxComponentElements(int32_t max_component_elements);
-    int32_t maxComponentDepth();
-    void setMaxComponentDepth(int32_t max_component_depth);
-  };
 };
 typedef Ptr<MaximumProfileTable> MaximumProfileTablePtr;
 typedef Ptr<MaximumProfileTable::Builder> MaximumProfileTableBuilderPtr;

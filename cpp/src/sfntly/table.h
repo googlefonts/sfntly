@@ -36,13 +36,12 @@ class Table : public FontDataTable, public FontDataTableBuilderContainer {
     Header(int32_t tag, int64_t checksum, int32_t offset, int32_t length);
     virtual ~Header();
 
-   public:  // class is final, no virtual functions unless from parent
-    int32_t tag();
-    int32_t offset();
-    int32_t length();
-    bool offsetValid();
-    int64_t checksum();
-    bool checksumValid();
+    int32_t tag() { return tag_; }
+    int32_t offset() { return offset_; }
+    int32_t length() { return length_; }
+    bool offset_valid() { return offset_valid_; }
+    int64_t checksum() { return checksum_; }
+    bool checksum_valid() { return checksum_valid_; }
 
    private:
     int32_t tag_;
@@ -60,88 +59,94 @@ class Table : public FontDataTable, public FontDataTableBuilderContainer {
   //       chosen.
   class Builder : public FontDataTable::Builder,
                   public FontDataTableBuilderContainer {
+   public:
+    virtual ~Builder();
+    virtual Header* header() { return header_; }
+    virtual void NotifyPostTableBuild(FontDataTable* table);
+    virtual WritableFontData* GetNewData(int32_t size);
+
+    static CALLER_ATTACH Builder*
+        GetBuilder(FontDataTableBuilderContainer* font_builder,
+                   Header* header,
+                   WritableFontData* table_data);
+
    protected:
     // Note: original version is Font.Builder font_builder. This results in
     //       mutual inclusion happiness that Java solved for C++.  Therefore,
     //       we need to avoid that happiness when we port it to C++.
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
+    Builder(FontDataTableBuilderContainer* font_builder,
+            Header* header,
             WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
+    Builder(FontDataTableBuilderContainer* font_builder,
+            Header* header,
             ReadableFontData* data);
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header);
-
-   public:
-    virtual ~Builder();
-    virtual Header* header();
-    virtual void notifyPostTableBuild(FontDataTable* table);
-    virtual WritableFontData* getNewData(int32_t size);
-
-   public:
-    static CALLER_ATTACH Builder* getBuilder(
-        FontDataTableBuilderContainer* font_builder, Header* header,
-        WritableFontData* table_data);
+    Builder(FontDataTableBuilderContainer* font_builder,
+            Header* header);
 
    private:
     Ptr<Header> header_;
   };
 
   class TableBasedTableBuilder : public Builder {
-   protected:
-    TableBasedTableBuilder(FontDataTableBuilderContainer* font_builder,
-      Header* header, WritableFontData* data);
-    TableBasedTableBuilder(FontDataTableBuilderContainer* font_builder,
-      Header* header, ReadableFontData* data);
-    TableBasedTableBuilder(FontDataTableBuilderContainer* font_builder,
-      Header* header);
    public:
     virtual ~TableBasedTableBuilder();
 
-   protected:
-    virtual Table* table();
-
-   public:
-    virtual int32_t subSerialize(WritableFontData* new_data);
-    virtual bool subReadyToSerialize();
-    virtual int32_t subDataSizeToSerialize();
-    virtual void subDataSet();
+    virtual int32_t SubSerialize(WritableFontData* new_data);
+    virtual bool SubReadyToSerialize();
+    virtual int32_t SubDataSizeToSerialize();
+    virtual void SubDataSet();
 
    protected:
+    TableBasedTableBuilder(FontDataTableBuilderContainer* font_builder,
+                           Header* header,
+                           WritableFontData* data);
+    TableBasedTableBuilder(FontDataTableBuilderContainer* font_builder,
+                           Header* header,
+                           ReadableFontData* data);
+    TableBasedTableBuilder(FontDataTableBuilderContainer* font_builder,
+                           Header* header);
+
+    // C++ port: renamed table() to GetTable()
+    virtual Table* GetTable();
+
+    // TODO(arthurhsu): style guide violation: protected member, need refactor
     Ptr<Table> table_;
   };
 
   class GenericTableBuilder : public TableBasedTableBuilder,
-    public RefCounted<GenericTableBuilder> {
+                              public RefCounted<GenericTableBuilder> {
    public:
     GenericTableBuilder(FontDataTableBuilderContainer* font_builder,
-      Header* header, WritableFontData* data);
-    virtual CALLER_ATTACH FontDataTable* subBuildTable(ReadableFontData* data);
+                        Header* header,
+                        WritableFontData* data);
+    virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
   };
 
   class ArrayElementTableBuilder : public Builder {
-   protected:
-    ArrayElementTableBuilder(FontDataTableBuilderContainer* font_builder,
-                             Header* header, WritableFontData* data);
-    ArrayElementTableBuilder(FontDataTableBuilderContainer* font_builder,
-                             Header* header, ReadableFontData* data);
    public:
     virtual ~ArrayElementTableBuilder();
+
+   protected:
+    ArrayElementTableBuilder(FontDataTableBuilderContainer* font_builder,
+                             Header* header,
+                             WritableFontData* data);
+    ArrayElementTableBuilder(FontDataTableBuilderContainer* font_builder,
+                             Header* header,
+                             ReadableFontData* data);
   };
+
+  virtual ~Table();
+  virtual int64_t CalculatedChecksum();
+  virtual Header* header()          { return header_; }
+  virtual int32_t header_tag()      { return header_->tag(); }
+  virtual int32_t header_offset()   { return header_->offset(); }
+  virtual int32_t header_length()   { return header_->length(); }
+  virtual int64_t header_checksum() { return header_->checksum(); }
+  virtual WritableFontData* GetNewData(int32_t size);
+  virtual void SetFont(Font* font);
 
  protected:
   Table(Header* header, ReadableFontData* data);
-
- public:
-  virtual ~Table();
-  virtual int64_t calculatedChecksum();
-  virtual Header* header();
-  virtual int32_t headerTag();
-  virtual int32_t headerOffset();
-  virtual int32_t headerLength();
-  virtual int64_t headerChecksum();
-
- public:  // FontDataTableBuilderContainer, deprecated
-  virtual WritableFontData* getNewData(int32_t size);
-  virtual void setFont(Font* font);
 
  private:
   Ptr<Header> header_;

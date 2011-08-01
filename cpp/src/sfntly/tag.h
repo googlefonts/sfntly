@@ -82,7 +82,7 @@ struct Tag {
   static const int32_t bloc;
 };
 
-inline int32_t generate_tag(char a, char b, char c, char d) {
+inline int32_t GenerateTag(char a, char b, char c, char d) {
   return (((int32_t)(a) << 24) |
           ((int32_t)(b) << 16) |
           ((int32_t)(c) <<  8) |

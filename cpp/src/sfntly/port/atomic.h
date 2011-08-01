@@ -21,7 +21,7 @@
 
 #include <windows.h>
 
-static inline size_t atomicIncrement(size_t* address) {
+static inline size_t AtomicIncrement(size_t* address) {
 #if defined (_WIN64)
   return InterlockedIncrement64(reinterpret_cast<LONGLONG*>(address));
 #else
@@ -29,7 +29,7 @@ static inline size_t atomicIncrement(size_t* address) {
 #endif
 }
 
-static inline size_t atomicDecrement(size_t* address) {
+static inline size_t AtomicDecrement(size_t* address) {
 #if defined (_WIN64)
   return InterlockedDecrement64(reinterpret_cast<LONGLONG*>(address));
 #else
@@ -41,11 +41,11 @@ static inline size_t atomicDecrement(size_t* address) {
 
 #include <libkern/OSAtomic.h>
 
-static inline size_t atomicIncrement(size_t* address) {
+static inline size_t AtomicIncrement(size_t* address) {
   return OSAtomicIncrement32Barrier(reinterpret_cast<int32_t*>(address));
 }
 
-static inline size_t atomicDecrement(size_t* address) {
+static inline size_t AtomicDecrement(size_t* address) {
   return OSAtomicDecrement32Barrier(reinterpret_cast<int32_t*>(address));
 }
 
@@ -58,11 +58,11 @@ static inline size_t atomicDecrement(size_t* address) {
 
 #include <stddef.h>
 
-static inline size_t atomicIncrement(size_t* address) {
+static inline size_t AtomicIncrement(size_t* address) {
   return __sync_add_and_fetch(address, 1);
 }
 
-static inline size_t atomicDecrement(size_t* address) {
+static inline size_t AtomicDecrement(size_t* address) {
   return __sync_sub_and_fetch(address, 1);
 }
 

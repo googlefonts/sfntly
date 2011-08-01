@@ -29,22 +29,22 @@ class FileInputStream : public PushbackInputStream {
   virtual ~FileInputStream();
 
   // InputStream methods
-  virtual int32_t available();
-  virtual void close();
-  virtual void mark(int32_t readlimit);
-  virtual bool markSupported();
-  virtual int32_t read();
-  virtual int32_t read(ByteVector* b);
-  virtual int32_t read(ByteVector* b, int32_t offset, int32_t length);
-  virtual void reset();
-  virtual int64_t skip(int64_t n);
+  virtual int32_t Available();
+  virtual void Close();
+  virtual void Mark(int32_t readlimit);
+  virtual bool MarkSupported();
+  virtual int32_t Read();
+  virtual int32_t Read(ByteVector* b);
+  virtual int32_t Read(ByteVector* b, int32_t offset, int32_t length);
+  virtual void Reset();
+  virtual int64_t Skip(int64_t n);
 
   // PushbackInputStream methods
-  virtual void unread(ByteVector* b);
-  virtual void unread(ByteVector* b, int32_t offset, int32_t length);
+  virtual void Unread(ByteVector* b);
+  virtual void Unread(ByteVector* b, int32_t offset, int32_t length);
 
   // Own methods
-  virtual bool open(const char* file_path);
+  virtual bool Open(const char* file_path);
 
  private:
   FILE* file_;

@@ -28,7 +28,7 @@ public:  // put in something to make sure it's not empty
   int foo() { return foo_; }
 };
 
-bool testSmartPointer() {
+bool TestSmartPointer() {
   // scope out allocation
   {
     Ptr<Foo> p1;
@@ -55,7 +55,7 @@ bool testSmartPointer() {
     EXPECT_EQ(size_t(2), p3->ref_count_);
     EXPECT_EQ(size_t(2), RefCounted<Foo>::object_counter_);
 
-    p3.release();
+    p3.Release();
     EXPECT_EQ(size_t(1), p1->ref_count_);
     EXPECT_EQ(NULL, p3.p_);
     EXPECT_EQ(size_t(2), RefCounted<Foo>::object_counter_);

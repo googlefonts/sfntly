@@ -24,7 +24,7 @@ class SubsetUtil {
   SubsetUtil();
   virtual ~SubsetUtil();
 
-  void subset(const char* input_file_path, const char* output_file_path);
+  void Subset(const char* input_file_path, const char* output_file_path);
 };
 
 }  // namespace sfntly

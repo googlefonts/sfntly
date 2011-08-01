@@ -19,8 +19,8 @@
 
 namespace sfntly {
 
-bool testOTFRead();
-bool testOTFCopy();
+bool TestOTFRead();
+bool TestOTFCopy();
 
 }  // namespace sfntly
 

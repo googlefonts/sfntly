@@ -26,23 +26,22 @@ namespace sfntly {
 // of these are the CMap subtables within CMap table (cmap) or a glyph within
 // the glyph table (glyf).
 class SubTable : public FontDataTable {
- protected:
-  // Note: constructor refactored in C++ to avoid heavy lifting.
-  //       caller need to do data->slice(offset, length) beforehand.
-  explicit SubTable(ReadableFontData* data);
-
- public:
-  virtual ~SubTable();
-
  public:
   class Builder : public FontDataTable::Builder {
+   public:
+    virtual ~Builder();
+
    protected:
     Builder(FontDataTableBuilderContainer* container, WritableFontData* data);
     Builder(FontDataTableBuilderContainer* container, ReadableFontData* data);
-
-   public:
-    virtual ~Builder();
   };
+
+  virtual ~SubTable();
+
+ protected:
+  // Note: constructor refactored in C++ to avoid heavy lifting.
+  //       caller need to do data->Slice(offset, length) beforehand.
+  explicit SubTable(ReadableFontData* data);
 };
 
 }  // namespace sfntly

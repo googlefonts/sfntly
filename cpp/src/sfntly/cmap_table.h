@@ -44,6 +44,268 @@ struct CMapFormat {
 
 // A CMap table
 class CMapTable : public Table, public RefCounted<CMapTable> {
+public:
+  // CMapTable::CMapId
+  class CMapId {
+   public:
+    CMapId(int32_t platform_id, int32_t encoding_id);
+    CMapId(const CMapId& obj);
+
+    int32_t platform_id() { return platform_id_; }
+    int32_t encoding_id() { return encoding_id_; }
+
+    bool operator==(const CMapId& obj);
+    const CMapId& operator=(const CMapId& obj);
+    int HashCode() const;
+
+    friend class CMapIdComparator;
+
+   private:
+    int32_t platform_id_;
+    int32_t encoding_id_;
+  };
+  static CMapId WINDOWS_BMP;
+  static CMapId WINDOWS_UCS4;
+  static CMapId MAC_ROMAN;
+
+  // CMapTable::CMapIdComparator
+  class CMapIdComparator {
+   public:
+    bool operator()(const CMapId& lhs, const CMapId& rhs);
+  };
+
+  // A filter on cmap
+  // CMapTable::CMapFilter
+  class CMapFilter {
+   public:
+    // Test on whether the cmap is acceptable or not
+    // @param cmap_id the id of the cmap
+    // @return true if the cmap is acceptable; false otherwise
+    virtual bool accept(CMapId cmap_id) = 0;
+    // Make gcc -Wnon-virtual-dtor happy.
+    virtual ~CMapFilter() {}
+  };
+
+  // The abstract base class for all cmaps.
+  //
+  // CMap equality is based on the equality of the (@link {@link CMapId} that
+  // defines the CMap. In the cmap table for a font there can only be one cmap
+  // with a given cmap id (pair of platform and encoding ids) no matter what the
+  // type of the cmap is.
+  //
+  // The cmap implements {@code Iterable<Integer>} to allow iteration over
+  // characters that are mapped by the cmap. This iteration mostly returns the
+  // characters mapped by the cmap. It will return all characters mapped by the
+  // cmap to anything but .notdef <b>but</b> it may return some that are not
+  // mapped or are mapped to .notdef. Various cmap tables provide ranges and
+  // such to describe characters for lookup but without going the full way to
+  // mapping to the glyph id it isn't always possible to tell if a character
+  // will end up with a valid glyph id. So, some of the characters returned from
+  // the iterator may still end up pointing to the .notdef glyph. However, the
+  // number of such characters should be small in most cases with well designed
+  // cmaps.
+  class Builder;
+  class CMap : public SubTable {
+   public:
+    // CMapTable::CMap::Builder
+    class Builder : public SubTable::Builder {
+     public:
+      virtual ~Builder();
+
+      CALLER_ATTACH static Builder*
+          GetBuilder(FontDataTableBuilderContainer* container,
+                     ReadableFontData* data,
+                     int32_t offset,
+                     const CMapId& cmap_id);
+
+      // Note: yes, an object is returned on stack since it's small enough.
+      virtual CMapId cmap_id() { return cmap_id_; }
+      virtual int32_t platform_id() { return cmap_id_.platform_id(); }
+      virtual int32_t encoding_id() { return cmap_id_.encoding_id(); }
+
+     protected:
+      Builder(FontDataTableBuilderContainer* container,
+              ReadableFontData* data,
+              int32_t format,
+              const CMapId& cmap_id);
+      Builder(FontDataTableBuilderContainer* container,
+              WritableFontData* data,
+              int32_t format,
+              const CMapId& cmap_id);
+
+      virtual int32_t SubSerialize(WritableFontData* new_data);
+      virtual bool SubReadyToSerialize();
+      virtual int32_t SubDataSizeToSerialize();
+      virtual void SubDataSet();
+
+     private:
+      int32_t format_;
+      CMapId cmap_id_;
+
+      friend class CMapTable::Builder;
+    };
+
+    CMap(ReadableFontData* data, int32_t format, const CMapId& cmap_id);
+    virtual ~CMap();
+    virtual int32_t format() { return format_; }
+    virtual CMapId cmap_id() { return cmap_id_; }
+    virtual int32_t platform_id() { return cmap_id_.platform_id(); }
+    virtual int32_t encoding_id() { return cmap_id_.encoding_id(); }
+
+    // Get the language of the cmap.
+    //
+    // Note on the language field in 'cmap' subtables: The language field must
+    // be set to zero for all cmap subtables whose platform IDs are other than
+    // Macintosh (platform ID 1). For cmap subtables whose platform IDs are
+    // Macintosh, set this field to the Macintosh language ID of the cmap
+    // subtable plus one, or to zero if the cmap subtable is not
+    // language-specific. For example, a Mac OS Turkish cmap subtable must set
+    // this field to 18, since the Macintosh language ID for Turkish is 17. A
+    // Mac OS Roman cmap subtable must set this field to 0, since Mac OS Roman
+    // is not a language-specific encoding.
+    //
+    // @return the language id
+    virtual int32_t Language() = 0;
+
+    // Gets the glyph id for the character code provided.
+    // The character code provided must be in the encoding used by the cmap
+    // table.
+    virtual int32_t GlyphId(int32_t character) = 0;
+
+   private:
+    int32_t format_;
+    CMapId cmap_id_;
+  };
+  typedef Ptr<CMap::Builder> CMapBuilderPtr;
+  typedef std::map<CMapId, CMapBuilderPtr, CMapIdComparator> CMapBuilderMap;
+
+  // A cmap format 0 sub table
+  class CMapFormat0 : public CMap, public RefCounted<CMapFormat0> {
+   public:
+    // CMapTable::CMapFormat0::Builder
+    class Builder : public CMap::Builder,
+                    public RefCounted<Builder> {
+     public:
+      Builder(FontDataTableBuilderContainer* container,
+              ReadableFontData* data,
+              int32_t offset,
+              const CMapId& cmap_id);
+      Builder(FontDataTableBuilderContainer* container,
+              WritableFontData* data,
+              int32_t offset,
+              const CMapId& cmap_id);
+      virtual ~Builder();
+
+     protected:
+      virtual CALLER_ATTACH FontDataTable*
+          SubBuildTable(ReadableFontData* data);
+    };
+
+    virtual ~CMapFormat0();
+    virtual int32_t Language();
+    virtual int32_t GlyphId(int32_t character);
+
+   private:
+    CMapFormat0(ReadableFontData* data, const CMapId& cmap_id);
+  };
+
+  // A cmap format 2 sub table
+  // The format 2 cmap is used for multi-byte encodings such as SJIS,
+  // EUC-JP/KR/CN, Big5, etc.
+  class CMapFormat2 : public CMap, public RefCounted<CMapFormat2> {
+   public:
+    // CMapTable::CMapFormat2::Builder
+    class Builder : public CMap::Builder,
+                    public RefCounted<Builder> {
+     public:
+      Builder(FontDataTableBuilderContainer* container,
+              ReadableFontData* data,
+              int32_t offset,
+              const CMapId& cmap_id);
+      Builder(FontDataTableBuilderContainer* container,
+              WritableFontData* data,
+              int32_t offset,
+              const CMapId& cmap_id);
+      virtual ~Builder();
+
+     protected:
+      virtual CALLER_ATTACH FontDataTable*
+          SubBuildTable(ReadableFontData* data);
+    };
+
+    virtual ~CMapFormat2();
+    virtual int32_t Language();
+    virtual int32_t GlyphId(int32_t character);
+
+    // Returns how many bytes would be consumed by a lookup of this character
+    // with this cmap. This comes about because the cmap format 2 table is
+    // designed around multi-byte encodings such as SJIS, EUC-JP, Big5, etc.
+    // return the number of bytes consumed from this "character" - either 1 or 2
+    virtual int32_t BytesConsumed(int32_t character);
+
+   private:
+    CMapFormat2(ReadableFontData* data, const CMapId& cmap_id);
+
+    int32_t SubHeaderOffset(int32_t sub_header_index);
+    int32_t FirstCode(int32_t sub_header_index);
+    int32_t EntryCount(int32_t sub_header_index);
+    int32_t IdRangeOffset(int32_t sub_header_index);
+    int32_t IdDelta(int32_t sub_header_index);
+  };
+
+  // CMapTable::Builder
+  class Builder : public Table::ArrayElementTableBuilder,
+                  public RefCounted<Builder> {
+   public:
+    // Constructor scope altered to public because C++ does not allow base
+    // class to instantiate derived class with protected constructors.
+    Builder(FontDataTableBuilderContainer* font_builder,
+            Header* header,
+            WritableFontData* data);
+    Builder(FontDataTableBuilderContainer* font_builder,
+            Header* header,
+            ReadableFontData* data);
+    virtual ~Builder();
+
+    virtual int32_t SubSerialize(WritableFontData* new_data);
+    virtual bool SubReadyToSerialize();
+    virtual int32_t SubDataSizeToSerialize();
+    virtual void SubDataSet();
+    virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
+
+   protected:
+    static CALLER_ATTACH CMap::Builder*
+        CMapBuilder(FontDataTableBuilderContainer* container,
+                    ReadableFontData* data,
+                    int32_t index);
+
+   private:
+    static int32_t NumCMaps(ReadableFontData* data);
+
+    int32_t version_;
+    CMapBuilderMap cmap_builders_;
+  };
+
+  virtual ~CMapTable();
+
+  // Get the table version.
+  virtual int32_t Version();
+
+  // Get the number of cmaps within the CMap table.
+  virtual int32_t NumCMaps();
+
+  // Get the cmap id for the cmap with the given index.
+  // Note: yes, an object is returned on stack since it's small enough.
+  //       This function is renamed from cmapId to GetCMapId().
+  virtual CMapId GetCMapId(int32_t index);
+
+  virtual int32_t PlatformId(int32_t index);
+  virtual int32_t EncodingId(int32_t index);
+
+  // Get the offset in the table data for the cmap table with the given index.
+  // The offset is from the beginning of the table.
+  virtual int32_t Offset(int32_t index);
+
  private:
   static const int32_t NOTDEF;
 
@@ -158,238 +420,12 @@ class CMapTable : public Table, public RefCounted<CMapTable> {
     };
   };
 
- public:
-  // CMapTable::CMapId
-  class CMapId {
-   public:
-    CMapId(int32_t platform_id, int32_t encoding_id);
-    CMapId(const CMapId& obj);
-    int32_t platformId();
-    int32_t encodingId();
-    bool operator==(const CMapId& obj);
-    const CMapId& operator=(const CMapId& obj);
-    int hashCode() const;
-
-    friend class CMapIdComparator;
-
-   private:
-    int32_t platform_id_;
-    int32_t encoding_id_;
-  };
-  static CMapId WINDOWS_BMP;
-  static CMapId WINDOWS_UCS4;
-  static CMapId MAC_ROMAN;
-
-  // CMapTable::CMapIdComparator
-  class CMapIdComparator {
-   public:
-    bool operator()(const CMapId& lhs, const CMapId& rhs);
-  };
-
-  // A filter on cmap
-  // CMapTable::CMapFilter
-  class CMapFilter {
-   public:
-    // Test on whether the cmap is acceptable or not
-    // @param cmap_id the id of the cmap
-    // @return true if the cmap is acceptable; false otherwise
-    virtual bool accept(CMapId cmap_id) = 0;
-    // Make gcc -Wnon-virtual-dtor happy.
-    virtual ~CMapFilter() {}
-  };
-
-  // The abstract base class for all cmaps.
-  //
-  // CMap equality is based on the equality of the (@link {@link CMapId} that
-  // defines the CMap. In the cmap table for a font there can only be one cmap
-  // with a given cmap id (pair of platform and encoding ids) no matter what the
-  // type of the cmap is.
-  //
-  // The cmap implements {@code Iterable<Integer>} to allow iteration over
-  // characters that are mapped by the cmap. This iteration mostly returns the
-  // characters mapped by the cmap. It will return all characters mapped by the
-  // cmap to anything but .notdef <b>but</b> it may return some that are not
-  // mapped or are mapped to .notdef. Various cmap tables provide ranges and
-  // such to describe characters for lookup but without going the full way to
-  // mapping to the glyph id it isn't always possible to tell if a character
-  // will end up with a valid glyph id. So, some of the characters returned from
-  // the iterator may still end up pointing to the .notdef glyph. However, the
-  // number of such characters should be small in most cases with well designed
-  // cmaps.
-  class Builder;
-  class CMap : public SubTable {
-   public:
-    CMap(ReadableFontData* data, int32_t format, const CMapId& cmap_id);
-    virtual ~CMap();
-    virtual int32_t format();
-    virtual CMapId cmapId();
-    virtual int32_t platformId();
-    virtual int32_t encodingId();
-
-    // Get the language of the cmap.
-    //
-    // Note on the language field in 'cmap' subtables: The language field must
-    // be set to zero for all cmap subtables whose platform IDs are other than
-    // Macintosh (platform ID 1). For cmap subtables whose platform IDs are
-    // Macintosh, set this field to the Macintosh language ID of the cmap
-    // subtable plus one, or to zero if the cmap subtable is not
-    // language-specific. For example, a Mac OS Turkish cmap subtable must set
-    // this field to 18, since the Macintosh language ID for Turkish is 17. A
-    // Mac OS Roman cmap subtable must set this field to 0, since Mac OS Roman
-    // is not a language-specific encoding.
-    //
-    // @return the language id
-    virtual int32_t language() = 0;
-
-    // Gets the glyph id for the character code provided.
-    // The character code provided must be in the encoding used by the cmap
-    // table.
-    virtual int32_t glyphId(int32_t character) = 0;
-
-   public:
-    // CMapTable::CMap::Builder
-    class Builder : public SubTable::Builder {
-     public:
-      friend class CMapTable::Builder;
-
-     protected:
-      Builder(FontDataTableBuilderContainer* container, ReadableFontData* data,
-              int32_t format, const CMapId& cmap_id);
-      Builder(FontDataTableBuilderContainer* container, WritableFontData* data,
-              int32_t format, const CMapId& cmap_id);
-
-     public:
-      virtual ~Builder();
-      CALLER_ATTACH static Builder*
-          getBuilder(FontDataTableBuilderContainer* container,
-                     ReadableFontData* data, int32_t offset,
-                     const CMapId& cmap_id);
-
-      // Note: yes, an object is returned on stack since it's small enough.
-      virtual CMapId cmapId();
-      virtual int32_t platformId();
-      virtual int32_t encodingId();
-
-     protected:
-      virtual int32_t subSerialize(WritableFontData* new_data);
-      virtual bool subReadyToSerialize();
-      virtual int32_t subDataSizeToSerialize();
-      virtual void subDataSet();
-
-     private:
-      int32_t format_;
-      CMapId cmap_id_;
-    };
-
-   private:
-    int32_t format_;
-    CMapId cmap_id_;
-  };
-  typedef Ptr<CMap::Builder> CMapBuilderPtr;
-  typedef std::map<CMapId, CMapBuilderPtr, CMapIdComparator> CMapBuilderMap;
-
-  // A cmap format 0 sub table
-  class CMapFormat0 : public CMap, public RefCounted<CMapFormat0> {
-   protected:
-    CMapFormat0(ReadableFontData* data, const CMapId& cmap_id);
-
-   public:
-    virtual ~CMapFormat0();
-    virtual int32_t language();
-    virtual int32_t glyphId(int32_t character);
-
-    // CMapTable::CMapFormat0::Builder
-    class Builder : public CMap::Builder,
-                    public RefCounted<Builder> {
-     public:
-      Builder(FontDataTableBuilderContainer* container, ReadableFontData* data,
-        int32_t offset, const CMapId& cmap_id);
-      Builder(FontDataTableBuilderContainer* container, WritableFontData* data,
-        int32_t offset, const CMapId& cmap_id);
-      virtual ~Builder();
-     protected:
-      virtual CALLER_ATTACH FontDataTable*
-          subBuildTable(ReadableFontData* data);
-    };
-  };
-
-  // A cmap format 2 sub table
-  // The format 2 cmap is used for multi-byte encodings such as SJIS,
-  // EUC-JP/KR/CN, Big5, etc.
-  class CMapFormat2 : public CMap, public RefCounted<CMapFormat2> {
-   protected:
-    CMapFormat2(ReadableFontData* data, const CMapId& cmap_id);
-
-   public:
-    virtual ~CMapFormat2();
-    virtual int32_t language();
-    virtual int32_t glyphId(int32_t character);
-
-    // Returns how many bytes would be consumed by a lookup of this character
-    // with this cmap. This comes about because the cmap format 2 table is
-    // designed around multi-byte encodings such as SJIS, EUC-JP, Big5, etc.
-    // return the number of bytes consumed from this "character" - either 1 or 2
-    virtual int32_t bytesConsumed(int32_t character);
-
-   private:
-    int32_t subHeaderOffset(int32_t sub_header_index);
-    int32_t firstCode(int32_t sub_header_index);
-    int32_t entryCount(int32_t sub_header_index);
-    int32_t idRangeOffset(int32_t sub_header_index);
-    int32_t idDelta(int32_t sub_header_index);
-
-    // CMapTable::CMapFormat2::Builder
-    class Builder : public CMap::Builder,
-                    public RefCounted<Builder> {
-     public:
-      Builder(FontDataTableBuilderContainer* container, ReadableFontData* data,
-        int32_t offset, const CMapId& cmap_id);
-      Builder(FontDataTableBuilderContainer* container, WritableFontData* data,
-        int32_t offset, const CMapId& cmap_id);
-      virtual ~Builder();
-     protected:
-      virtual CALLER_ATTACH FontDataTable*
-          subBuildTable(ReadableFontData* data);
-    };
-  };
-
-  // CMapTable::Builder
-  class Builder : public Table::ArrayElementTableBuilder,
-                  public RefCounted<Builder> {
-   public:
-    // Constructor scope altered to public because C++ does not allow base
-    // class to instantiate derived class with protected constructors.
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-      WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-      ReadableFontData* data);
-
-    virtual int32_t subSerialize(WritableFontData* new_data);
-    virtual bool subReadyToSerialize();
-    virtual int32_t subDataSizeToSerialize();
-    virtual void subDataSet();
-    virtual CALLER_ATTACH FontDataTable* subBuildTable(ReadableFontData* data);
-
-   protected:
-    static CALLER_ATTACH CMap::Builder* cmapBuilder(
-        FontDataTableBuilderContainer* container, ReadableFontData* data,
-        int32_t index);
-
-   private:
-    static int32_t numCMaps(ReadableFontData* data);
-
-   private:
-    int32_t version_;
-    CMapBuilderMap cmap_builders_;
-  };
-
- private:
   class CMapIterator {
    public:
     // If filter is NULL, filter through all tables.
     CMapIterator(CMapTable* table, CMapFilter* filter);
-    bool hasNext();
-    CMap* next();
+    bool HasNext();
+    CMap* Next();
 
    private:
     int32_t table_index_;
@@ -397,33 +433,11 @@ class CMapTable : public Table, public RefCounted<CMapTable> {
     CMapTable* table_;
   };
 
- private:
   CMapTable(Header* header, ReadableFontData* data);
 
- public:
-  virtual ~CMapTable();
-
-  // Get the table version.
-  virtual int32_t version();
-
-  // Get the number of cmaps within the CMap table.
-  virtual int32_t numCMaps();
-
-  // Get the cmap id for the cmap with the given index.
-  // Note: yes, an object is returned on stack since it's small enough.
-  virtual CMapId cmapId(int32_t index);
-
-  virtual int32_t platformId(int32_t index);
-  virtual int32_t encodingId(int32_t index);
-
-  // Get the offset in the table data for the cmap table with the given index.
-  // The offset is from the beginning of the table.
-  virtual int32_t offset(int32_t index);
-
- private:
   // Get the offset in the table data for the encoding record for the cmap with
   // the given index. The offset is from the beginning of the table.
-  int32_t offsetForEncodingRecord(int32_t index);
+  int32_t OffsetForEncodingRecord(int32_t index);
 };
 typedef std::vector<CMapTable::CMapId> CMapIdList;
 typedef Ptr<CMapTable> CMapTablePtr;

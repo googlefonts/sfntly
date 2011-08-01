@@ -31,7 +31,7 @@ class Subsetter : public RefCounted<Subsetter> {
   Subsetter(Font* font, FontFactory* font_factory);
   virtual ~Subsetter();
 
-  virtual void setGlyphs(IntegerList* glyphs);
+  virtual void SetGlyphs(IntegerList* glyphs);
 
   // Set the cmaps to be used in the subsetted font. The cmaps are listed in
   // order of priority and the number parameter gives a count of how many of the
@@ -49,12 +49,12 @@ class Subsetter : public RefCounted<Subsetter> {
   //     into the subsetted font.
   // @param cmapIds the cmap ids to use for the subsetted font
   // @param number the maximum number of cmaps to place in the subsetted font
-  virtual void setCMaps(CMapIdList* cmap_ids, int32_t number);
+  virtual void SetCMaps(CMapIdList* cmap_ids, int32_t number);
 
-  virtual void setRemoveTables(IntegerSet* remove_tables);
-  virtual CALLER_ATTACH Font::Builder* subset();
-  virtual IntegerList* glyphPermutationTable();
-  virtual CMapIdList* cmapId();
+  virtual void SetRemoveTables(IntegerSet* remove_tables);
+  virtual CALLER_ATTACH Font::Builder* Subset();
+  virtual IntegerList* GlyphPermutationTable();
+  virtual CMapIdList* CMapId();
 
  private:
   FontPtr font_;

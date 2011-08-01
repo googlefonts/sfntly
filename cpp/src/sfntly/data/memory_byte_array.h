@@ -29,17 +29,21 @@ class MemoryByteArray : public ByteArray, public RefCounted<MemoryByteArray> {
   virtual ~MemoryByteArray();
 
  protected:
-  virtual bool internalPut(int32_t index, byte_t b);
-  virtual int32_t internalPut(int32_t index, ByteVector* b, int32_t offset,
+  virtual bool InternalPut(int32_t index, byte_t b);
+  virtual int32_t InternalPut(int32_t index,
+                              ByteVector* b,
+                              int32_t offset,
                               int32_t length);
-  virtual byte_t internalGet(int32_t index);
-  virtual int32_t internalGet(int32_t index, ByteVector* b, int32_t offset,
+  virtual byte_t InternalGet(int32_t index);
+  virtual int32_t InternalGet(int32_t index,
+                              ByteVector* b,
+                              int32_t offset,
                               int32_t length);
-  virtual void close();
-  virtual byte_t* begin();
+  virtual void Close();
+  virtual byte_t* Begin();
 
  private:
-  void init();  // C++ port only, used to allocate memory outside constructor.
+  void Init();  // C++ port only, used to allocate memory outside constructor.
 
   byte_t* b_;
   bool allocated_;

@@ -18,111 +18,116 @@
 
 namespace sfntly {
 
+WritableFontData::WritableFontData(ByteArray* ba) : ReadableFontData(ba) {
+}
+
 WritableFontData::~WritableFontData() {}
 
-WritableFontData::WritableFontData(ByteArray* ba) : ReadableFontData(ba) {
+int32_t WritableFontData::WriteByte(int32_t index, byte_t b) {
+  array_->Put(BoundOffset(index), b);
+  return 1;
+}
+
+int32_t WritableFontData::WriteBytes(int32_t offset,
+                                     ByteVector* b,
+                                     int32_t index,
+                                     int32_t length) {
+  return array_->Put(BoundOffset(offset),
+                     b,
+                     index,
+                     BoundLength(offset, length));
+}
+
+int32_t WritableFontData::WriteBytes(int32_t index, ByteVector* b) {
+  return WriteBytes(index, b, 0, b->size());
+}
+
+int32_t WritableFontData::WriteChar(int32_t index, byte_t c) {
+  return WriteByte(index, c);
+}
+
+int32_t WritableFontData::WriteUShort(int32_t index, int32_t us) {
+  WriteByte(index, (byte_t)((us >> 8) & 0xff));
+  WriteByte(index + 1, (byte_t)(us & 0xff));
+  return 2;
+}
+
+int32_t WritableFontData::WriteUShortLE(int32_t index, int32_t us) {
+  WriteByte(index, (byte_t)(us & 0xff));
+  WriteByte(index + 1, (byte_t)((us >> 8) & 0xff));
+  return 2;
+}
+
+int32_t WritableFontData::WriteShort(int32_t index, int32_t s) {
+  return WriteUShort(index, s);
+}
+
+int32_t WritableFontData::WriteUInt24(int32_t index, int32_t ui) {
+  WriteByte(index, (byte_t)((ui >> 16) & 0xff));
+  WriteByte(index + 1, (byte_t)((ui >> 8) & 0xff));
+  WriteByte(index + 2, (byte_t)(ui & 0xff));
+  return 3;
+}
+
+int32_t WritableFontData::WriteULong(int32_t index, int64_t ul) {
+  WriteByte(index, (byte_t)((ul >> 24) & 0xff));
+  WriteByte(index + 1, (byte_t)((ul >> 16) & 0xff));
+  WriteByte(index + 2, (byte_t)((ul >> 8) & 0xff));
+  WriteByte(index + 3, (byte_t)(ul & 0xff));
+  return 4;
+}
+
+int32_t WritableFontData::WriteULongLE(int32_t index, int64_t ul) {
+  WriteByte(index, (byte_t)(ul & 0xff));
+  WriteByte(index + 1, (byte_t)((ul >> 8) & 0xff));
+  WriteByte(index + 2, (byte_t)((ul >> 16) & 0xff));
+  WriteByte(index + 3, (byte_t)((ul >> 24) & 0xff));
+  return 4;
+}
+
+int32_t WritableFontData::WriteLong(int32_t index, int64_t l) {
+  return WriteULong(index, l);
+}
+
+int32_t WritableFontData::WriteFixed(int32_t index, int32_t l) {
+  return WriteLong(index, l);
+}
+
+int32_t WritableFontData::WriteDateTime(int32_t index, int64_t date) {
+  WriteULong(index, (date >> 32) & 0xffffffff);
+  WriteULong(index + 4, date & 0xffffffff);
+  return 8;
+}
+
+CALLER_ATTACH FontData* WritableFontData::Slice(int32_t offset,
+                                                int32_t length) {
+  if (offset < 0 || offset + length > Size()) {
+    return NULL;
+  }
+  FontDataPtr slice = new WritableFontData(this, offset, length);
+  // Note: exception not ported because the condition is always false in C++.
+  // if (slice == null) { throw new IndexOutOfBoundsException( ...
+  return slice.Detach();
+}
+
+CALLER_ATTACH FontData* WritableFontData::Slice(int32_t offset) {
+  if (offset > Size()) {
+    return NULL;
+  }
+  FontDataPtr slice = new WritableFontData(this, offset);
+  // Note: exception not ported because the condition is always false in C++.
+  // if (slice == null) { throw new IndexOutOfBoundsException( ...
+  return slice.Detach();
 }
 
 WritableFontData::WritableFontData(WritableFontData* data, int32_t offset)
     : ReadableFontData(data, offset) {
 }
 
-WritableFontData::WritableFontData(WritableFontData* data, int32_t offset,
+WritableFontData::WritableFontData(WritableFontData* data,
+                                   int32_t offset,
                                    int32_t length)
     : ReadableFontData(data, offset, length) {
-}
-
-int32_t WritableFontData::writeByte(int32_t index, byte_t b) {
-  array_->put(boundOffset(index), b);
-  return 1;
-}
-
-int32_t WritableFontData::writeBytes(int32_t offset, ByteVector* b,
-                                     int32_t index, int32_t length) {
-  return array_->put(boundOffset(offset), b, index,
-                     boundLength(offset, length));
-}
-
-int32_t WritableFontData::writeBytes(int32_t index, ByteVector* b) {
-  return writeBytes(index, b, 0, b->size());
-}
-
-int32_t WritableFontData::writeChar(int32_t index, byte_t c) {
-  return writeByte(index, c);
-}
-
-int32_t WritableFontData::writeUShort(int32_t index, int32_t us) {
-  writeByte(index, (byte_t)((us >> 8) & 0xff));
-  writeByte(index + 1, (byte_t)(us & 0xff));
-  return 2;
-}
-
-int32_t WritableFontData::writeUShortLE(int32_t index, int32_t us) {
-  writeByte(index, (byte_t)(us & 0xff));
-  writeByte(index + 1, (byte_t)((us >> 8) & 0xff));
-  return 2;
-}
-
-int32_t WritableFontData::writeShort(int32_t index, int32_t s) {
-  return writeUShort(index, s);
-}
-
-int32_t WritableFontData::writeUInt24(int32_t index, int32_t ui) {
-  writeByte(index, (byte_t)((ui >> 16) & 0xff));
-  writeByte(index + 1, (byte_t)((ui >> 8) & 0xff));
-  writeByte(index + 2, (byte_t)(ui & 0xff));
-  return 3;
-}
-
-int32_t WritableFontData::writeULong(int32_t index, int64_t ul) {
-  writeByte(index, (byte_t)((ul >> 24) & 0xff));
-  writeByte(index + 1, (byte_t)((ul >> 16) & 0xff));
-  writeByte(index + 2, (byte_t)((ul >> 8) & 0xff));
-  writeByte(index + 3, (byte_t)(ul & 0xff));
-  return 4;
-}
-
-int32_t WritableFontData::writeULongLE(int32_t index, int64_t ul) {
-  writeByte(index, (byte_t)(ul & 0xff));
-  writeByte(index + 1, (byte_t)((ul >> 8) & 0xff));
-  writeByte(index + 2, (byte_t)((ul >> 16) & 0xff));
-  writeByte(index + 3, (byte_t)((ul >> 24) & 0xff));
-  return 4;
-}
-
-int32_t WritableFontData::writeLong(int32_t index, int64_t l) {
-  return writeULong(index, l);
-}
-
-int32_t WritableFontData::writeFixed(int32_t index, int32_t l) {
-  return writeLong(index, l);
-}
-
-int32_t WritableFontData::writeDateTime(int32_t index, int64_t date) {
-  writeULong(index, (date >> 32) & 0xffffffff);
-  writeULong(index + 4, date & 0xffffffff);
-  return 8;
-}
-
-CALLER_ATTACH FontData* WritableFontData::slice(int32_t offset,
-                                                int32_t length) {
-  if (offset < 0 || offset + length > size()) {
-    return NULL;
-  }
-  FontDataPtr slice = new WritableFontData(this, offset, length);
-  // Note: exception not ported because the condition is always false in C++.
-  // if (slice == null) { throw new IndexOutOfBoundsException( ...
-  return slice.detach();
-}
-
-CALLER_ATTACH FontData* WritableFontData::slice(int32_t offset) {
-  if (offset > size()) {
-    return NULL;
-  }
-  FontDataPtr slice = new WritableFontData(this, offset);
-  // Note: exception not ported because the condition is always false in C++.
-  // if (slice == null) { throw new IndexOutOfBoundsException( ...
-  return slice.detach();
 }
 
 }  // namespace sfntly

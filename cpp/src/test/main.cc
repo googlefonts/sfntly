@@ -35,60 +35,60 @@
 namespace sfntly {
 
 TEST(SmartPointer, All) {
-  EXPECT_TRUE(testSmartPointer());
+  EXPECT_TRUE(TestSmartPointer());
 }
 
 TEST(Endian, All) {
-  EXPECT_TRUE(sfntly::testEndian());
+  EXPECT_TRUE(sfntly::TestEndian());
 }
 
 #if defined RUN_LENGTHY_TESTS
 TEST(ByteArray, All) {
-  EXPECT_TRUE(sfntly::testMemoryByteArray());
-  EXPECT_TRUE(sfntly::testGrowableMemoryByteArray());
+  EXPECT_TRUE(sfntly::TestMemoryByteArray());
+  EXPECT_TRUE(sfntly::TestGrowableMemoryByteArray());
 }
 #endif
 
 #if defined RUN_LENGTHY_TESTS
 TEST(FontData, All) {
-  EXPECT_TRUE(sfntly::testReadableFontData());
-  EXPECT_TRUE(sfntly::testWritableFontData());
+  EXPECT_TRUE(sfntly::TestReadableFontData());
+  EXPECT_TRUE(sfntly::TestWritableFontData());
 }
 #endif
 
 TEST(FileIO, All) {
-  EXPECT_TRUE(sfntly::testFileInputStream());
-  EXPECT_TRUE(sfntly::testFontInputStreamBasic());
-  EXPECT_TRUE(sfntly::testFontInputStreamTableLoading());
+  EXPECT_TRUE(sfntly::TestFileInputStream());
+  EXPECT_TRUE(sfntly::TestFontInputStreamBasic());
+  EXPECT_TRUE(sfntly::TestFontInputStreamTableLoading());
 }
 
 TEST(OpenTypeData, All) {
-  EXPECT_TRUE(sfntly::testOTFRead());
-  EXPECT_TRUE(sfntly::testOTFCopy());
+  EXPECT_TRUE(sfntly::TestOTFRead());
+  EXPECT_TRUE(sfntly::TestOTFCopy());
 }
 
 TEST(FontParsing, All) {
-  EXPECT_TRUE(sfntly::testFontParsing());
-  EXPECT_TRUE(sfntly::testTTFReadWrite());
-  EXPECT_TRUE(sfntly::testTTFMemoryBasedReadWrite());
+  EXPECT_TRUE(sfntly::TestFontParsing());
+  EXPECT_TRUE(sfntly::TestTTFReadWrite());
+  EXPECT_TRUE(sfntly::TestTTFMemoryBasedReadWrite());
 }
 
 TEST(OTFBasicEditing, All) {
-  EXPECT_TRUE(sfntly::testOTFBasicEditing());
+  EXPECT_TRUE(sfntly::TestOTFBasicEditing());
 }
 
 TEST(NameEditing, All) {
-  EXPECT_TRUE(sfntly::testChangeOneName());
-  EXPECT_TRUE(sfntly::testModifyNameTableAndRevert());
-  EXPECT_TRUE(sfntly::testRemoveOneName());
+  EXPECT_TRUE(sfntly::TestChangeOneName());
+  EXPECT_TRUE(sfntly::TestModifyNameTableAndRevert());
+  EXPECT_TRUE(sfntly::TestRemoveOneName());
 }
 
 TEST(TestUtils, Extension) {
-  EXPECT_TRUE(sfntly::testExtension());
+  EXPECT_TRUE(sfntly::TestExtension());
 }
 
 TEST(TestUtils, Encoding) {
-  EXPECT_TRUE(sfntly::testEncoding());
+  EXPECT_TRUE(sfntly::TestEncoding());
 }
 
 }  // namespace sfntly

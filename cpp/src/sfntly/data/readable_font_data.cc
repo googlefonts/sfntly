@@ -20,27 +20,148 @@
 
 namespace sfntly {
 
+ReadableFontData::ReadableFontData(ByteArray* array)
+    : FontData(array),
+      checksum_set_(false),
+      checksum_(0) {
+}
+
 ReadableFontData::~ReadableFontData() {}
 
-ReadableFontData::ReadableFontData(ByteArray* array)
-    : FontData(array), checksum_set_(false), checksum_(0) {
+int64_t ReadableFontData::Checksum() {
+  // TODO(arthurhsu): IMPLEMENT: atomicity
+  if (!checksum_set_) {
+    ComputeChecksum();
+  }
+  return checksum_;
+}
+
+void ReadableFontData::SetCheckSumRanges(const IntegerList& ranges) {
+  checksum_range_ = ranges;
+  checksum_set_ = false;  // UNIMPLEMENTED: atomicity
+}
+
+int32_t ReadableFontData::ReadUByte(int32_t index) {
+  return 0xff & array_->Get(BoundOffset(index));
+}
+
+int32_t ReadableFontData::ReadByte(int32_t index) {
+  return (array_->Get(BoundOffset(index)) << 24) >> 24;
+}
+
+int32_t ReadableFontData::ReadBytes(int32_t index,
+                                    ByteVector* b,
+                                    int32_t offset,
+                                    int32_t length) {
+  return array_->Get(BoundOffset(index), b, offset, BoundLength(index, length));
+}
+
+int32_t ReadableFontData::ReadChar(int32_t index) {
+  return ReadUByte(index);
+}
+
+int32_t ReadableFontData::ReadUShort(int32_t index) {
+  return 0xffff & (ReadUByte(index) << 8 | ReadUByte(index + 1));
+}
+
+int32_t ReadableFontData::ReadShort(int32_t index) {
+  return ((ReadByte(index) << 8 | ReadUByte(index + 1)) << 16) >> 16;
+}
+
+int32_t ReadableFontData::ReadUInt24(int32_t index) {
+  return 0xffffff & (ReadUByte(index) << 16 |
+                     ReadUByte(index + 1) << 8 |
+                     ReadUByte(index + 2));
+}
+
+int64_t ReadableFontData::ReadULong(int32_t index) {
+  return 0xffffffffL & (ReadUByte(index) << 24 |
+                        ReadUByte(index + 1) << 16 |
+                        ReadUByte(index + 2) << 8 |
+                        ReadUByte(index + 3));
+}
+
+int32_t ReadableFontData::ReadULongAsInt(int32_t index) {
+  int64_t ulong = ReadULong(index);
+#if !defined (SFNTLY_NO_EXCEPTION)
+  if ((ulong & 0x80000000) == 0x80000000) {
+    throw ArithmeticException("Long value too large to fit into an integer.");
+  }
+#endif
+  return ((int32_t)ulong) & ~0x80000000;
+}
+
+int32_t ReadableFontData::ReadLong(int32_t index) {
+  return ReadByte(index) << 24 |
+         ReadUByte(index + 1) << 16 |
+         ReadUByte(index + 2) << 8 |
+         ReadUByte(index + 3);
+}
+
+int32_t ReadableFontData::ReadFixed(int32_t index) {
+  return ReadLong(index);
+}
+
+int64_t ReadableFontData::ReadDateTimeAsLong(int32_t index) {
+  return (int64_t)ReadULong(index) << 32 | ReadULong(index + 4);
+}
+
+int32_t ReadableFontData::ReadFWord(int32_t index) {
+  return ReadShort(index);
+}
+
+int32_t ReadableFontData::ReadFUFWord(int32_t index) {
+  return ReadUShort(index);
+}
+
+int32_t ReadableFontData::CopyTo(OutputStream* os) {
+  return array_->CopyTo(os, BoundOffset(0), Length());
+}
+
+int32_t ReadableFontData::CopyTo(WritableFontData* wfd) {
+  return array_->CopyTo(wfd->BoundOffset(0),
+                        wfd->array_,
+                        BoundOffset(0),
+                        Length());
+}
+
+int32_t ReadableFontData::CopyTo(ByteArray* ba) {
+  return array_->CopyTo(ba, BoundOffset(0), Length());
+}
+
+CALLER_ATTACH FontData* ReadableFontData::Slice(int32_t offset,
+                                                int32_t length) {
+  if (offset < 0 || offset + length > Size()) {
+    return NULL;
+  }
+  FontDataPtr slice = new ReadableFontData(this, offset, length);
+  // Note: exception not ported because the condition is always false in C++.
+  // if (slice == null) { throw new IndexOutOfBoundsException( ...
+  return slice.Detach();
+}
+
+CALLER_ATTACH FontData* ReadableFontData::Slice(int32_t offset) {
+  if (offset < 0 || offset > Size()) {
+    return NULL;
+  }
+  FontDataPtr slice = new ReadableFontData(this, offset);
+  // Note: exception not ported because the condition is always false in C++.
+  // if (slice == null) { throw new IndexOutOfBoundsException( ...
+  return slice.Detach();
 }
 
 ReadableFontData::ReadableFontData(ReadableFontData* data, int32_t offset)
-    : FontData(data, offset), checksum_set_(false), checksum_(0) {
+    : FontData(data, offset),
+      checksum_set_(false),
+      checksum_(0) {
 }
 
-ReadableFontData::ReadableFontData(ReadableFontData* data, int32_t offset,
+ReadableFontData::ReadableFontData(ReadableFontData* data,
+                                   int32_t offset,
                                    int32_t length)
-    : FontData(data, offset, length), checksum_set_(false), checksum_(0) {
-}
-
-int64_t ReadableFontData::checksum() {
-  // TODO(arthurhsu): IMPLEMENT: atomicity
-  if (!checksum_set_) {
-    computeChecksum();
-  }
-  return checksum_;
+    : FontData(data, offset, length),
+      checksum_set_(false),
+      checksum_(0) {
 }
 
 /* OpenType checksum
@@ -54,19 +175,19 @@ while (Table < EndPtr)
 return Sum;
 }
 */
-void ReadableFontData::computeChecksum() {
+void ReadableFontData::ComputeChecksum() {
   // TODO(arthurhsu): IMPLEMENT: synchronization/atomicity
   int64_t sum = 0;
   if (checksum_range_.empty()) {
-    sum = computeCheckSum(0, length());
+    sum = ComputeCheckSum(0, Length());
   } else {
     for (uint32_t low_bound_index = 0; low_bound_index < checksum_range_.size();
          low_bound_index += 2) {
       int32_t low_bound = checksum_range_[low_bound_index];
       int32_t high_bound = (low_bound_index == checksum_range_.size() - 1) ?
-                                length() :
+                                Length() :
                                 checksum_range_[low_bound_index + 1];
-      sum += computeCheckSum(low_bound, high_bound);
+      sum += ComputeCheckSum(low_bound, high_bound);
     }
   }
 
@@ -74,126 +195,21 @@ void ReadableFontData::computeChecksum() {
   checksum_set_ = true;
 }
 
-int64_t ReadableFontData::computeCheckSum(int32_t low_bound,
+int64_t ReadableFontData::ComputeCheckSum(int32_t low_bound,
                                           int32_t high_bound) {
   int64_t sum = 0;
   for (int32_t i = low_bound; i < high_bound; i += 4) {
-    int32_t b3 = readUByte(i);
+    int32_t b3 = ReadUByte(i);
     b3 = (b3 == -1) ? 0 : b3;
-    int32_t b2 = readUByte(i + 1);
+    int32_t b2 = ReadUByte(i + 1);
     b2 = (b2 == -1) ? 0 : b2;
-    int32_t b1 = readUByte(i + 2);
+    int32_t b1 = ReadUByte(i + 2);
     b1 = (b1 == -1) ? 0 : b1;
-    int32_t b0 = readUByte(i + 3);
+    int32_t b0 = ReadUByte(i + 3);
     b0 = (b0 == -1) ? 0 : b0;
     sum += (b3 << 24) | (b2 << 16) | (b1 << 8) | b0;
   }
   return sum;
-}
-
-void ReadableFontData::setCheckSumRanges(const IntegerList& ranges) {
-  checksum_range_ = ranges;
-  checksum_set_ = false;  // UNIMPLEMENTED: atomicity
-}
-
-int32_t ReadableFontData::readUByte(int32_t index) {
-  return 0xff & array_->get(boundOffset(index));
-}
-
-int32_t ReadableFontData::readByte(int32_t index) {
-  return (array_->get(boundOffset(index)) << 24) >> 24;
-}
-
-int32_t ReadableFontData::readBytes(int32_t index, ByteVector* b,
-                                    int32_t offset, int32_t length) {
-  return array_->get(boundOffset(index), b, offset, boundLength(index, length));
-}
-
-int32_t ReadableFontData::readChar(int32_t index) {
-  return readUByte(index);
-}
-
-int32_t ReadableFontData::readUShort(int32_t index) {
-  return 0xffff & (readUByte(index) << 8 | readUByte(index + 1));
-}
-
-int32_t ReadableFontData::readShort(int32_t index) {
-  return ((readByte(index) << 8 | readUByte(index + 1)) << 16) >> 16;
-}
-
-int32_t ReadableFontData::readUInt24(int32_t index) {
-  return 0xffffff & (readUByte(index) << 16 |
-                     readUByte(index + 1) << 8 | readUByte(index + 2));
-}
-
-int64_t ReadableFontData::readULong(int32_t index) {
-  return 0xffffffffL & (readUByte(index) << 24 | readUByte(index + 1) << 16 |
-                        readUByte(index + 2) << 8 | readUByte(index + 3));
-}
-
-int32_t ReadableFontData::readULongAsInt(int32_t index) {
-  int64_t ulong = readULong(index);
-#if !defined (SFNTLY_NO_EXCEPTION)
-  if ((ulong & 0x80000000) == 0x80000000) {
-    throw ArithmeticException("Long value too large to fit into an integer.");
-  }
-#endif
-  return ((int32_t)ulong) & ~0x80000000;
-}
-
-int32_t ReadableFontData::readLong(int32_t index) {
-  return readByte(index) << 24 | readUByte(index + 1) << 16 |
-         readUByte(index + 2) << 8 | readUByte(index + 3);
-}
-
-int32_t ReadableFontData::readFixed(int32_t index) {
-  return readLong(index);
-}
-
-int64_t ReadableFontData::readDateTimeAsLong(int32_t index) {
-  return (int64_t)readULong(index) << 32 | readULong(index + 4);
-}
-
-int32_t ReadableFontData::readFWord(int32_t index) {
-  return readShort(index);
-}
-
-int32_t ReadableFontData::readFUFWord(int32_t index) {
-  return readUShort(index);
-}
-
-int32_t ReadableFontData::copyTo(OutputStream* os) {
-  return array_->copyTo(os, boundOffset(0), length());
-}
-
-int32_t ReadableFontData::copyTo(WritableFontData* wfd) {
-  return array_->copyTo(wfd->boundOffset(0), wfd->array_, boundOffset(0),
-                        length());
-}
-
-int32_t ReadableFontData::copyTo(ByteArray* ba) {
-  return array_->copyTo(ba, boundOffset(0), length());
-}
-
-CALLER_ATTACH FontData* ReadableFontData::slice(int32_t offset,
-                                                int32_t length) {
-  if (offset < 0 || offset + length > size()) {
-    return NULL;
-  }
-  FontDataPtr slice = new ReadableFontData(this, offset, length);
-  // Note: exception not ported because the condition is always false in C++.
-  // if (slice == null) { throw new IndexOutOfBoundsException( ...
-  return slice.detach();
-}
-
-CALLER_ATTACH FontData* ReadableFontData::slice(int32_t offset) {
-  if (offset < 0 || offset > size()) {
-    return NULL;
-  }
-  FontDataPtr slice = new ReadableFontData(this, offset);
-  // Note: exception not ported because the condition is always false in C++.
-  // if (slice == null) { throw new IndexOutOfBoundsException( ...
-  return slice.detach();
 }
 
 }  // namespace sfntly

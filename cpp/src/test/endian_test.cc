@@ -25,7 +25,7 @@
 
 namespace sfntly {
 
-bool testEndian() {
+bool TestEndian() {
   byte_t test_data[] = {
       0x68, 0x65, 0x61, 0x64,  // 0: head
       0xca, 0xca, 0xca, 0xca,  // 4: ubyte, byte, char
@@ -38,35 +38,35 @@ bool testEndian() {
 
   ByteArrayPtr ba1 = new GrowableMemoryByteArray();
   for (size_t i = 0; i < sizeof(test_data); ++i) {
-    ba1->put(i, test_data[i]);
+    ba1->Put(i, test_data[i]);
   }
   ReadableFontDataPtr rfd = new ReadableFontData(ba1);
-  EXPECT_EQ(rfd->readULongAsInt(0), Tag::head);
-  EXPECT_EQ(rfd->readUByte(4), 202);
-  EXPECT_EQ(rfd->readByte(5), -54);
-  EXPECT_EQ(rfd->readChar(6), 202);
-  EXPECT_EQ(rfd->readUShort(8), 24);
-  EXPECT_EQ(rfd->readShort(10), -32744);
-  EXPECT_EQ(rfd->readUInt24(12), 24);
-  EXPECT_EQ(rfd->readULong(16), 24);
-  EXPECT_EQ(rfd->readLong(20), -256);
-  EXPECT_EQ(rfd->readFixed(24), Fixed1616::fixed(1, 0));
+  EXPECT_EQ(rfd->ReadULongAsInt(0), Tag::head);
+  EXPECT_EQ(rfd->ReadUByte(4), 202);
+  EXPECT_EQ(rfd->ReadByte(5), -54);
+  EXPECT_EQ(rfd->ReadChar(6), 202);
+  EXPECT_EQ(rfd->ReadUShort(8), 24);
+  EXPECT_EQ(rfd->ReadShort(10), -32744);
+  EXPECT_EQ(rfd->ReadUInt24(12), 24);
+  EXPECT_EQ(rfd->ReadULong(16), 24);
+  EXPECT_EQ(rfd->ReadLong(20), -256);
+  EXPECT_EQ(rfd->ReadFixed(24), Fixed1616::Fixed(1, 0));
 
   MemoryOutputStream os;
   FontOutputStream fos(&os);
-  fos.writeULong(Tag::head);
-  fos.write(202);
-  fos.write(202);
-  fos.write(202);
-  fos.write(202);
-  fos.writeUShort(24);
-  fos.writeShort(-32744);
-  fos.writeUInt24(24);
-  fos.writeChar(0);
-  fos.writeULong(24);
-  fos.writeLong(-256);
-  fos.writeFixed(Fixed1616::fixed(1, 0));
-  EXPECT_EQ(memcmp(os.get(), test_data, sizeof(test_data)), 0);
+  fos.WriteULong(Tag::head);
+  fos.Write(202);
+  fos.Write(202);
+  fos.Write(202);
+  fos.Write(202);
+  fos.WriteUShort(24);
+  fos.WriteShort(-32744);
+  fos.WriteUInt24(24);
+  fos.WriteChar(0);
+  fos.WriteULong(24);
+  fos.WriteLong(-256);
+  fos.WriteFixed(Fixed1616::Fixed(1, 0));
+  EXPECT_EQ(memcmp(os.Get(), test_data, sizeof(test_data)), 0);
 
   return true;
 }

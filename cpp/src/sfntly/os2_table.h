@@ -300,6 +300,61 @@ struct CodePageRange {
 };
 
 class OS2Table : public Table, public RefCounted<OS2Table> {
+ public:
+  class Builder : public Table::TableBasedTableBuilder,
+                  public RefCounted<Builder> {
+   public:
+    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
+            WritableFontData* data);
+    virtual ~Builder();
+    virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
+  };
+
+  ~OS2Table();
+
+  int32_t Version();
+  int32_t XAvgCharWidth();
+  int32_t UsWeightClass();
+  int32_t UsWidthClass();
+  // UNIMPLEMENTED: public EnumSet<EmbeddingFlags> fsType()
+  int32_t FsType();
+  int32_t YSubscriptXSize();
+  int32_t YSubscriptYSize();
+  int32_t YSubscriptXOffset();
+  int32_t YSubscriptYOffset();
+  int32_t YSuperscriptXSize();
+  int32_t YSuperscriptYSize();
+  int32_t YSuperscriptXOffset();
+  int32_t YSuperscriptYOffset();
+  int32_t YStrikeoutSize();
+  int32_t YStrikeoutPosition();
+  int32_t SFamilyClass();
+  void Panose(ByteVector* value);
+  int64_t UlUnicodeRange1();
+  int64_t UlUnicodeRange2();
+  int64_t UlUnicodeRange3();
+  int64_t UlUnicodeRange4();
+  // UNIMPLEMENTED: public EnumSet<UnicodeRange> UlUnicodeRange()
+  void AchVendId(ByteVector* b);
+  // UNIMPLEMENTED: public EnumSet<FsSelection> fsSelection()
+  int32_t FsSelection();
+  int32_t UsFirstCharIndex();
+  int32_t UsLastCharIndex();
+  int32_t STypoAscender();
+  int32_t STypoDecender();
+  int32_t STypoLineGap();
+  int32_t UsWinAscent();
+  int32_t UsWinDescent();
+  int64_t UlCodePageRange1();
+  int64_t UlCodePageRange2();
+  // UNIMPLEMENTED: public EnumSet<CodePageRange> ulCodePageRange()
+  int64_t UlCodePageRange();
+  int32_t SxHeight();
+  int32_t SCapHeight();
+  int32_t UsDefaultChar();
+  int32_t UsBreakChar();
+  int32_t UsMaxContext();
+
  private:
   struct Offset {
     enum {
@@ -344,62 +399,6 @@ class OS2Table : public Table, public RefCounted<OS2Table> {
   };
 
   OS2Table(Header* header, ReadableFontData* data);
-
- public:
-  ~OS2Table();
-
-  int32_t version();
-  int32_t xAvgCharWidth();
-  int32_t usWeightClass();
-  int32_t usWidthClass();
-  // UNIMPLEMENTED: public EnumSet<EmbeddingFlags> fsType()
-  int32_t fsType();
-  int32_t ySubscriptXSize();
-  int32_t ySubscriptYSize();
-  int32_t ySubscriptXOffset();
-  int32_t ySubscriptYOffset();
-  int32_t ySuperscriptXSize();
-  int32_t ySuperscriptYSize();
-  int32_t ySuperscriptXOffset();
-  int32_t ySuperscriptYOffset();
-  int32_t yStrikeoutSize();
-  int32_t yStrikeoutPosition();
-  int32_t sFamilyClass();
-  void panose(ByteVector* value);
-  int64_t ulUnicodeRange1();
-  int64_t ulUnicodeRange2();
-  int64_t ulUnicodeRange3();
-  int64_t ulUnicodeRange4();
-  // UNIMPLEMENTED: public EnumSet<UnicodeRange> ulUnicodeRange()
-  void achVendId(ByteVector* b);
-  // UNIMPLEMENTED: public EnumSet<FsSelection> fsSelection()
-  int32_t fsSelection();
-  int32_t usFirstCharIndex();
-  int32_t usLastCharIndex();
-  int32_t sTypoAscender();
-  int32_t sTypoDecender();
-  int32_t sTypoLineGap();
-  int32_t usWinAscent();
-  int32_t usWinDescent();
-  int64_t ulCodePageRange1();
-  int64_t ulCodePageRange2();
-  // UNIMPLEMENTED: public EnumSet<CodePageRange> ulCodePageRange()
-  int64_t ulCodePageRange();
-  int32_t sxHeight();
-  int32_t sCapHeight();
-  int32_t usDefaultChar();
-  int32_t usBreakChar();
-  int32_t usMaxContext();
-
- public:
-  class Builder : public Table::TableBasedTableBuilder,
-                  public RefCounted<Builder> {
-   public:
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            WritableFontData* data);
-    virtual ~Builder();
-    virtual CALLER_ATTACH FontDataTable* subBuildTable(ReadableFontData* data);
-  };
 };
 
 }  // namespace sfntly

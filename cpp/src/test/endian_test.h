@@ -19,7 +19,7 @@
 
 namespace sfntly {
 
-bool testEndian();
+bool TestEndian();
 
 }  // namespace sfntly
 

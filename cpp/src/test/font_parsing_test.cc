@@ -30,52 +30,52 @@
 
 namespace sfntly {
 
-bool testFontParsing() {
+bool TestFontParsing() {
   ByteVector input_buffer;
-  loadFile(SAMPLE_TTF_FILE, &input_buffer);
+  LoadFile(SAMPLE_TTF_FILE, &input_buffer);
   ByteArrayPtr ba = new MemoryByteArray(&(input_buffer[0]),
                                         input_buffer.size());
 
-  FontFactoryPtr factory = FontFactory::getInstance();
+  FontFactoryPtr factory = FontFactory::GetInstance();
   // File based
   FontBuilderArray font_builder_array;
-  builderForFontFile(SAMPLE_TTF_FILE, factory, &font_builder_array);
+  BuilderForFontFile(SAMPLE_TTF_FILE, factory, &font_builder_array);
   FontBuilderPtr font_builder = font_builder_array[0];
   // Memory based
   FontBuilderArray font_builder_array2;
-  factory->loadFontsForBuilding(ba, &font_builder_array2);
+  factory->LoadFontsForBuilding(ba, &font_builder_array2);
   FontBuilderPtr font_builder2 = font_builder_array2[0];
 
   for (size_t i = 0; i < SAMPLE_TTF_KNOWN_TAGS; ++i) {
-    EXPECT_TRUE(font_builder->hasTableBuilder(TTF_KNOWN_TAGS[i]));
-    EXPECT_TRUE(font_builder2->hasTableBuilder(TTF_KNOWN_TAGS[i]));
+    EXPECT_TRUE(font_builder->HasTableBuilder(TTF_KNOWN_TAGS[i]));
+    EXPECT_TRUE(font_builder2->HasTableBuilder(TTF_KNOWN_TAGS[i]));
   }
 
   // Generic table
   Ptr<Table::GenericTableBuilder> gdef_builder =
       down_cast<Table::GenericTableBuilder*>(
-          font_builder->getTableBuilder(Tag::GDEF));
+          font_builder->GetTableBuilder(Tag::GDEF));
   Ptr<Table::Header> gdef_header = gdef_builder->header();
   EXPECT_EQ(gdef_header->length(), TTF_LENGTH[SAMPLE_TTF_GDEF]);
   EXPECT_EQ(gdef_header->offset(), TTF_OFFSET[SAMPLE_TTF_GDEF]);
   EXPECT_EQ(gdef_header->checksum(), TTF_CHECKSUM[SAMPLE_TTF_GDEF]);
-  EXPECT_TRUE(gdef_header->checksumValid());
+  EXPECT_TRUE(gdef_header->checksum_valid());
 
-  WritableFontDataPtr wfd = gdef_builder->data();
+  WritableFontDataPtr wfd = gdef_builder->Data();
   ByteVector b;
   b.resize(TTF_LENGTH[SAMPLE_TTF_GDEF]);
-  wfd->readBytes(0, &b, 0, TTF_LENGTH[SAMPLE_TTF_GDEF]);
+  wfd->ReadBytes(0, &b, 0, TTF_LENGTH[SAMPLE_TTF_GDEF]);
   EXPECT_EQ(memcmp(&(b[0]), TTF_GDEF_DATA, TTF_LENGTH[SAMPLE_TTF_GDEF]), 0);
 
   // Header table
   FontHeaderTableBuilderPtr header_builder =
       down_cast<FontHeaderTable::Builder*>(
-          font_builder->getTableBuilder(Tag::head));
+          font_builder->GetTableBuilder(Tag::head));
   Ptr<Table::Header> header_header = header_builder->header();
   EXPECT_EQ(header_header->length(), TTF_LENGTH[SAMPLE_TTF_HEAD]);
   EXPECT_EQ(header_header->offset(), TTF_OFFSET[SAMPLE_TTF_HEAD]);
   EXPECT_EQ(header_header->checksum(), TTF_CHECKSUM[SAMPLE_TTF_HEAD]);
-  EXPECT_TRUE(header_header->checksumValid());
+  EXPECT_TRUE(header_header->checksum_valid());
 
   // Data conformance
   for (size_t i = 0; i < SAMPLE_TTF_KNOWN_TAGS; ++i) {
@@ -83,46 +83,46 @@ bool testFontParsing() {
     b1.resize(TTF_LENGTH[i]);
     b2.resize(TTF_LENGTH[i]);
     TableBuilderPtr builder1 =
-        font_builder->getTableBuilder(TTF_KNOWN_TAGS[i]);
+        font_builder->GetTableBuilder(TTF_KNOWN_TAGS[i]);
     TableBuilderPtr builder2 =
-        font_builder2->getTableBuilder(TTF_KNOWN_TAGS[i]);
-    WritableFontDataPtr wfd1 = builder1->data();
-    WritableFontDataPtr wfd2 = builder2->data();
-    wfd1->readBytes(0, &b1, 0, TTF_LENGTH[i]);
-    wfd2->readBytes(0, &b2, 0, TTF_LENGTH[i]);
+        font_builder2->GetTableBuilder(TTF_KNOWN_TAGS[i]);
+    WritableFontDataPtr wfd1 = builder1->Data();
+    WritableFontDataPtr wfd2 = builder2->Data();
+    wfd1->ReadBytes(0, &b1, 0, TTF_LENGTH[i]);
+    wfd2->ReadBytes(0, &b2, 0, TTF_LENGTH[i]);
     EXPECT_EQ(memcmp(&(b1[0]), &(b2[0]), TTF_LENGTH[i]), 0);
   }
 
   return true;
 }
 
-bool testTTFReadWrite() {
-  FontFactoryPtr factory = FontFactory::getInstance();
+bool TestTTFReadWrite() {
+  FontFactoryPtr factory = FontFactory::GetInstance();
   FontBuilderArray font_builder_array;
-  builderForFontFile(SAMPLE_TTF_FILE, factory, &font_builder_array);
+  BuilderForFontFile(SAMPLE_TTF_FILE, factory, &font_builder_array);
   FontBuilderPtr font_builder = font_builder_array[0];
-  FontPtr font = font_builder->build();
+  FontPtr font = font_builder->Build();
   MemoryOutputStream output_stream;
-  factory->serializeFont(font, &output_stream);
-  EXPECT_GE(output_stream.size(), SAMPLE_TTF_SIZE);
+  factory->SerializeFont(font, &output_stream);
+  EXPECT_GE(output_stream.Size(), SAMPLE_TTF_SIZE);
 
   return true;
 }
 
-bool testTTFMemoryBasedReadWrite() {
+bool TestTTFMemoryBasedReadWrite() {
   ByteVector input_buffer;
-  loadFile(SAMPLE_TTF_FILE, &input_buffer);
+  LoadFile(SAMPLE_TTF_FILE, &input_buffer);
 
-  FontFactoryPtr factory = FontFactory::getInstance();
+  FontFactoryPtr factory = FontFactory::GetInstance();
   FontBuilderArray font_builder_array;
   ByteArrayPtr ba = new MemoryByteArray(&(input_buffer[0]),
                                         input_buffer.size());
-  factory->loadFontsForBuilding(ba, &font_builder_array);
+  factory->LoadFontsForBuilding(ba, &font_builder_array);
   FontBuilderPtr font_builder = font_builder_array[0];
-  FontPtr font = font_builder->build();
+  FontPtr font = font_builder->Build();
   MemoryOutputStream output_stream;
-  factory->serializeFont(font, &output_stream);
-  EXPECT_GE(output_stream.size(), input_buffer.size());
+  factory->SerializeFont(font, &output_stream);
+  EXPECT_GE(output_stream.Size(), input_buffer.size());
 
   return true;
 }

@@ -23,15 +23,15 @@ namespace sfntly {
 
 class Fixed1616 {
  public:
-  static inline int32_t integral(int32_t fixed) {
+  static inline int32_t Integral(int32_t fixed) {
     return (fixed >> 16);
   }
 
-  static inline int32_t fractional(int32_t fixed) {
+  static inline int32_t Fractional(int32_t fixed) {
     return (fixed & 0xffff);
   }
 
-  static inline int32_t fixed(int32_t integral, int32_t fractional) {
+  static inline int32_t Fixed(int32_t integral, int32_t fractional) {
     return ((integral & 0xffff) << 16) | (fractional & 0xffff);
   }
 };

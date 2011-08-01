@@ -32,22 +32,22 @@ class FontOutputStream : public OutputStream {
   explicit FontOutputStream(OutputStream* os);
   virtual ~FontOutputStream();
 
-  virtual size_t position();
+  virtual size_t position() { return position_; }
 
-  virtual void write(byte_t b);
-  virtual void write(ByteVector* b);
-  virtual void write(ByteVector* b, int32_t offset, int32_t len);
-  virtual void writeChar(byte_t c);
-  virtual void writeUShort(int32_t us);
-  virtual void writeShort(int32_t s);
-  virtual void writeUInt24(int32_t ui);
-  virtual void writeULong(int64_t ul);
-  virtual void writeLong(int64_t l);
-  virtual void writeFixed(int32_t l);
-  virtual void writeDateTime(int64_t date);
+  virtual void Write(byte_t b);
+  virtual void Write(ByteVector* b);
+  virtual void Write(ByteVector* b, int32_t offset, int32_t len);
+  virtual void WriteChar(byte_t c);
+  virtual void WriteUShort(int32_t us);
+  virtual void WriteShort(int32_t s);
+  virtual void WriteUInt24(int32_t ui);
+  virtual void WriteULong(int64_t ul);
+  virtual void WriteLong(int64_t l);
+  virtual void WriteFixed(int32_t l);
+  virtual void WriteDateTime(int64_t date);
 
-  virtual void flush();
-  virtual void close();
+  virtual void Flush();
+  virtual void Close();
 
  private:
   OutputStream* stream_;

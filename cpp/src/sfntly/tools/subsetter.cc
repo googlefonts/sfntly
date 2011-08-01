@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
+#include "sfntly/tools/subsetter/subsetter.h"
+
 #include <algorithm>
 #include <iterator>
 
-#include "sfntly/tools/subsetter/subsetter.h"
 #include "sfntly/tools/subsetter/glyph_table_subsetter.h"
 
 namespace sfntly {
@@ -31,32 +32,32 @@ Subsetter::Subsetter(Font* font, FontFactory* font_factory) {
 }
 
 Subsetter::~Subsetter() {
-  font_factory_.release();
-  font_.release();
+  font_factory_.Release();
+  font_.Release();
   table_subsetters_.clear();
 }
 
-void Subsetter::setGlyphs(IntegerList* glyphs) {
+void Subsetter::SetGlyphs(IntegerList* glyphs) {
   new_to_old_glyphs_ = *glyphs;
 }
 
-void Subsetter::setCMaps(CMapIdList* cmap_ids, int32_t number) {
+void Subsetter::SetCMaps(CMapIdList* cmap_ids, int32_t number) {
   UNREFERENCED_PARAMETER(cmap_ids);
   UNREFERENCED_PARAMETER(number);
   // TODO(arthurhsu): IMPLEMENT
 }
 
-void Subsetter::setRemoveTables(IntegerSet* remove_tables) {
+void Subsetter::SetRemoveTables(IntegerSet* remove_tables) {
   remove_tables_ = *remove_tables;
 }
 
-CALLER_ATTACH Font::Builder* Subsetter::subset() {
+CALLER_ATTACH Font::Builder* Subsetter::Subset() {
   FontBuilderPtr font_builder;
-  font_builder.attach(font_factory_->newFontBuilder());
+  font_builder.Attach(font_factory_->NewFontBuilder());
 
   IntegerSet table_tags;
-  for (TableMap::iterator i = font_->tables()->begin(),
-                          e = font_->tables()->end(); i != e; ++i) {
+  for (TableMap::iterator i = font_->Tables()->begin(),
+                          e = font_->Tables()->end(); i != e; ++i) {
     table_tags.insert(i->first);
   }
   if (!remove_tables_.empty()) {
@@ -70,9 +71,9 @@ CALLER_ATTACH Font::Builder* Subsetter::subset() {
            table_subsetter = table_subsetters_.begin(),
            table_subsetter_end = table_subsetters_.end();
            table_subsetter != table_subsetter_end; ++table_subsetter) {
-    bool handled = (*table_subsetter)->subset(this, font_, font_builder);
+    bool handled = (*table_subsetter)->Subset(this, font_, font_builder);
     if (handled) {
-      IntegerSet* handled_tags = (*table_subsetter)->tagsHandled();
+      IntegerSet* handled_tags = (*table_subsetter)->TagsHandled();
       IntegerSet result;
       std::set_difference(table_tags.begin(), table_tags.end(),
                           handled_tags->begin(), handled_tags->end(),
@@ -82,24 +83,24 @@ CALLER_ATTACH Font::Builder* Subsetter::subset() {
   }
   for (IntegerSet::iterator tag = table_tags.begin(),
                             tag_end = table_tags.end(); tag != tag_end; ++tag) {
-    Table* table = font_->table(*tag);
+    Table* table = font_->GetTable(*tag);
     if (table) {
-      // The newTableBuilder() call will alter internal state of font_builder
+      // The NewTableBuilder() call will alter internal state of font_builder
       // AND the reference count of returned object.  Therefore we need to
       // dereference it.
       TableBuilderPtr dereference;
-      dereference.attach(
-          font_builder->newTableBuilder(*tag, table->readFontData()));
+      dereference.Attach(
+          font_builder->NewTableBuilder(*tag, table->ReadFontData()));
     }
   }
-  return font_builder.detach();
+  return font_builder.Detach();
 }
 
-IntegerList* Subsetter::glyphPermutationTable() {
+IntegerList* Subsetter::GlyphPermutationTable() {
   return &new_to_old_glyphs_;
 }
 
-CMapIdList* Subsetter::cmapId() {
+CMapIdList* Subsetter::CMapId() {
   return &cmap_ids_;
 }
 

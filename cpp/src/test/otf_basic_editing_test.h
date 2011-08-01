@@ -19,7 +19,7 @@
 
 namespace sfntly {
 
-bool testOTFBasicEditing();
+bool TestOTFBasicEditing();
 
 }  // namespace sfntly
 

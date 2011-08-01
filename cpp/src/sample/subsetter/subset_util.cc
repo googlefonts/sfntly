@@ -37,7 +37,7 @@ SubsetUtil::SubsetUtil() {
 SubsetUtil::~SubsetUtil() {
 }
 
-void SubsetUtil::subset(const char *input_file_path,
+void SubsetUtil::Subset(const char *input_file_path,
                         const char *output_file_path) {
   UNREFERENCED_PARAMETER(output_file_path);
   ByteVector input_buffer;
@@ -56,10 +56,10 @@ void SubsetUtil::subset(const char *input_file_path,
 
   ByteArrayPtr ba = new MemoryByteArray(&(input_buffer[0]), file_size);
   FontFactoryPtr factory;
-  factory.attach(FontFactory::getInstance());
+  factory.Attach(FontFactory::GetInstance());
 
   FontArray font_array;
-  factory->loadFonts(ba, &font_array);
+  factory->LoadFonts(ba, &font_array);
   if (font_array.empty() || font_array[0] == NULL)
     return;
 
@@ -71,25 +71,25 @@ void SubsetUtil::subset(const char *input_file_path,
   glyphs.push_back(10);
 
   Ptr<Subsetter> subsetter = new Subsetter(font_array[0], factory);
-  subsetter->setGlyphs(&glyphs);
+  subsetter->SetGlyphs(&glyphs);
   IntegerSet remove_tables;
   remove_tables.insert(Tag::DSIG);
-  subsetter->setRemoveTables(&remove_tables);
+  subsetter->SetRemoveTables(&remove_tables);
 
   FontBuilderPtr font_builder;
-  font_builder.attach(subsetter->subset());
+  font_builder.Attach(subsetter->Subset());
 
   FontPtr new_font;
-  new_font.attach(font_builder->build());
+  new_font.Attach(font_builder->Build());
 
   // TODO(arthurhsu): glyph renumbering/Loca table
   // TODO(arthurhsu): alter CMaps
 
   MemoryOutputStream output_stream;
-  factory->serializeFont(new_font, &output_stream);
+  factory->SerializeFont(new_font, &output_stream);
 
   FILE* output_file = fopen(output_file_path, "wb");
-  fwrite(output_stream.get(), 1, output_stream.size(), output_file);
+  fwrite(output_stream.Get(), 1, output_stream.Size(), output_file);
   fflush(output_file);
   fclose(output_file);
 }

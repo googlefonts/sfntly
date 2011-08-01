@@ -26,20 +26,92 @@
 namespace sfntly {
 
 class FontFactory : public RefCounted<FontFactory> {
+ public:
+  virtual ~FontFactory();
+
+  // Factory method for the construction of a font factory.
+  static CALLER_ATTACH FontFactory* GetInstance();
+
+  // Toggle whether fonts that are loaded are fingerprinted with a SHA-1 hash.
+  // If a font is fingerprinted then a SHA-1 hash is generated at load time and
+  // stored in the font. This is useful for uniquely identifying fonts. By
+  // default this is turned on.
+  // @param fingerprint whether fingerprinting should be turned on or off
+  // TODO(arthurhsu): IMPLEMENT: C++ port currently don't do any SHA-1
+  void FingerprintFont(bool fingerprint);
+  bool FingerprintFont();
+
+  // Load the font(s) from the input stream. The current settings on the factory
+  // are used during the loading process. One or more fonts are returned if the
+  // stream contains valid font data. Some font container formats may have more
+  // than one font and in this case multiple font objects will be returned. If
+  // the data in the stream cannot be parsed or is invalid an array of size zero
+  // will be returned.
+  void LoadFonts(InputStream* is, FontArray* output);
+
+  // ByteArray font loading
+  // Load the font(s) from the byte array. The current settings on the factory
+  // are used during the loading process. One or more fonts are returned if the
+  // stream contains valid font data. Some font container formats may have more
+  // than one font and in this case multiple font objects will be returned. If
+  // the data in the stream cannot be parsed or is invalid an array of size zero
+  // will be returned.
+  void LoadFonts(ByteArray* ba, FontArray* output);
+
+  // Load the font(s) from the input stream into font builders. The current
+  // settings on the factory are used during the loading process. One or more
+  // font builders are returned if the stream contains valid font data. Some
+  // font container formats may have more than one font and in this case
+  // multiple font builder objects will be returned. If the data in the stream
+  // cannot be parsed or is invalid an array of size zero will be returned.
+  void LoadFontsForBuilding(InputStream* is, FontBuilderArray* output);
+
+  // Load the font(s) from the byte array into font builders. The current
+  // settings on the factory are used during the loading process. One or more
+  // font builders are returned if the stream contains valid font data. Some
+  // font container formats may have more than one font and in this case
+  // multiple font builder objects will be returned. If the data in the stream
+  // cannot be parsed or is invalid an array of size zero will be returned.
+  void LoadFontsForBuilding(ByteArray* ba, FontBuilderArray* output);
+
+  CALLER_ATTACH WritableFontData* GetNewData(int32_t capacity);
+  CALLER_ATTACH WritableFontData* GetNewFixedData(int32_t capacity);
+  CALLER_ATTACH WritableFontData* GetNewGrowableData(int32_t capacity);
+  CALLER_ATTACH WritableFontData*
+      GetNewGrowableData(ReadableFontData* src_data);
+  CALLER_ATTACH ByteArray* GetNewArray(int32_t length);
+  CALLER_ATTACH ByteArray* GetNewGrowableArray(int32_t length);
+
+  // Font serialization
+  // Serialize the font to the output stream.
+  // NOTE: in this port we attempted not to implement I/O stream because dealing
+  //       with cross-platform I/O stream itself is big enough as a project.
+  //       Byte buffer it is.
+  void SerializeFont(Font* font, OutputStream* os);
+
+  // Set the table ordering to be used in serializing a font. The table ordering
+  // is an ordered list of table ids and tables will be serialized in the order
+  // given. Any tables whose id is not listed in the ordering will be placed in
+  // an unspecified order following those listed.
+  void SetSerializationTableOrdering(const IntegerList& table_ordering);
+
+  // Get an empty font builder for creating a new font from scratch.
+  CALLER_ATTACH Font::Builder* NewFontBuilder();
+
  private:
   // Offsets to specific elements in the underlying data. These offsets are
   // relative to the start of the table or the start of sub-blocks within the
   // table.
   struct Offset {
     enum {
-      // Offsets within the main directory
+      // Offsets within the main directory.
       kTTCTag = 0,
       kVersion = 4,
       kNumFonts = 8,
       kOffsetTable = 12,
 
-      // TTC Version 2.0 extensions
-      // offsets from end of OffsetTable
+      // TTC Version 2.0 extensions.
+      // Offsets from end of OffsetTable.
       kulDsigTag = 0,
       kulDsigLength = 4,
       kulDsigOffset = 8
@@ -48,97 +120,22 @@ class FontFactory : public RefCounted<FontFactory> {
 
   FontFactory();
 
- public:  // class is final, no virtual functions unless from parent
-  virtual ~FontFactory();
+  CALLER_ATTACH Font* LoadSingleOTF(InputStream* is);
+  CALLER_ATTACH Font* LoadSingleOTF(ByteArray* ba);
 
-  // Factory method for the construction of a font factory.
-  static CALLER_ATTACH FontFactory* getInstance();
+  void LoadCollection(InputStream* is, FontArray* output);
+  void LoadCollection(ByteArray* ba, FontArray* output);
 
-  // Toggle whether fonts that are loaded are fingerprinted with a SHA-1 hash.
-  // If a font is fingerprinted then a SHA-1 hash is generated at load time and
-  // stored in the font. This is useful for uniquely identifying fonts. By
-  // default this is turned on.
-  // @param fingerprint whether fingerprinting should be turned on or off
-  // TODO(arthurhsu): IMPLEMENT: C++ port currently don't do any SHA-1
-  void fingerprintFont(bool fingerprint);
-  bool fingerprintFont();
-
-  // Load the font(s) from the input stream. The current settings on the factory
-  // are used during the loading process. One or more fonts are returned if the
-  // stream contains valid font data. Some font container formats may have more
-  // than one font and in this case multiple font objects will be returned. If
-  // the data in the stream cannot be parsed or is invalid an array of size zero
-  // will be returned.
-  void loadFonts(InputStream* is, FontArray* output);
-
-  // Load the font(s) from the input stream into font builders. The current
-  // settings on the factory are used during the loading process. One or more
-  // font builders are returned if the stream contains valid font data. Some
-  // font container formats may have more than one font and in this case
-  // multiple font builder objects will be returned. If the data in the stream
-  // cannot be parsed or is invalid an array of size zero will be returned.
-  void loadFontsForBuilding(InputStream* is, FontBuilderArray* output);
-
- private:
-  Font* loadSingleOTF(InputStream* is);
-  void loadCollection(InputStream* is, FontArray* output);
-  Font::Builder* loadSingleOTFForBuilding(InputStream* is);
-  void loadCollectionForBuilding(InputStream* is, FontBuilderArray* builders);
-  static bool isCollection(PushbackInputStream* pbis);
-
- public:
-  // ByteArray font loading
-  // Load the font(s) from the byte array. The current settings on the factory
-  // are used during the loading process. One or more fonts are returned if the
-  // stream contains valid font data. Some font container formats may have more
-  // than one font and in this case multiple font objects will be returned. If
-  // the data in the stream cannot be parsed or is invalid an array of size zero
-  // will be returned.
-  void loadFonts(ByteArray* ba, FontArray* output);
-
-  // Load the font(s) from the byte array into font builders. The current
-  // settings on the factory are used during the loading process. One or more
-  // font builders are returned if the stream contains valid font data. Some
-  // font container formats may have more than one font and in this case
-  // multiple font builder objects will be returned. If the data in the stream
-  // cannot be parsed or is invalid an array of size zero will be returned.
-  void loadFontsForBuilding(ByteArray* ba, FontBuilderArray* output);
-
- private:
-  CALLER_ATTACH Font* loadSingleOTF(ByteArray* ba);
-  void loadCollection(ByteArray* ba, FontArray* output);
+  CALLER_ATTACH Font::Builder* LoadSingleOTFForBuilding(InputStream* is);
   CALLER_ATTACH Font::Builder*
-      loadSingleOTFForBuilding(ByteArray* ba, int32_t offset_to_offset_table);
-  void loadCollectionForBuilding(ByteArray* ba, FontBuilderArray* builders);
-  static bool isCollection(ByteArray* ba);
+      LoadSingleOTFForBuilding(ByteArray* ba, int32_t offset_to_offset_table);
 
- public:
-  CALLER_ATTACH WritableFontData* getNewData(int32_t capacity);
-  CALLER_ATTACH WritableFontData* getNewFixedData(int32_t capacity);
-  CALLER_ATTACH WritableFontData* getNewGrowableData(int32_t capacity);
-  CALLER_ATTACH WritableFontData*
-      getNewGrowableData(ReadableFontData* src_data);
-  CALLER_ATTACH ByteArray* getNewArray(int32_t length);
-  CALLER_ATTACH ByteArray* getNewGrowableArray(int32_t length);
+  void LoadCollectionForBuilding(InputStream* is, FontBuilderArray* builders);
+  void LoadCollectionForBuilding(ByteArray* ba, FontBuilderArray* builders);
 
- public:
-  // Font serialization
-  // Serialize the font to the output stream.
-  // NOTE: in this port we attempted not to implement I/O stream because dealing
-  //       with cross-platform I/O stream itself is big enough as a project.
-  //       Byte buffer it is.
-  void serializeFont(Font* font, OutputStream* os);
+  static bool IsCollection(PushbackInputStream* pbis);
+  static bool IsCollection(ByteArray* ba);
 
-  // Set the table ordering to be used in serializing a font. The table ordering
-  // is an ordered list of table ids and tables will be serialized in the order
-  // given. Any tables whose id is not listed in the ordering will be placed in
-  // an unspecified order following those listed.
-  void setSerializationTableOrdering(const IntegerList& table_ordering);
-
-  // Get an empty font builder for creating a new font from scratch.
-  CALLER_ATTACH Font::Builder* newFontBuilder();
-
- private:
   bool fingerprint_;
   IntegerList table_ordering_;
 };

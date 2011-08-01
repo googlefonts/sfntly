@@ -32,14 +32,14 @@ class MemoryOutputStream : public OutputStream {
   MemoryOutputStream();
   virtual ~MemoryOutputStream();
 
-  virtual void close() {}  // no-op
-  virtual void flush() {}  // no-op
-  virtual void write(ByteVector* buffer);
-  virtual void write(ByteVector* buffer, int32_t offset, int32_t length);
-  virtual void write(byte_t b);
+  virtual void Close() {}  // no-op
+  virtual void Flush() {}  // no-op
+  virtual void Write(ByteVector* buffer);
+  virtual void Write(ByteVector* buffer, int32_t offset, int32_t length);
+  virtual void Write(byte_t b);
 
-  byte_t* get();
-  size_t size();
+  byte_t* Get();
+  size_t Size();
 
  private:
   std::vector<byte_t> store_;

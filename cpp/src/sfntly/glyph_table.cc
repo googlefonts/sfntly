@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+#include "sfntly/glyph_table.h"
+
 #include <stdlib.h>
 
-#include "sfntly/glyph_table.h"
 #include "sfntly/port/exception_type.h"
 
 namespace sfntly {
@@ -47,33 +48,38 @@ const int32_t GlyphTable::CompositeGlyph::kFLAG_UNSCALED_COMPONENT_OFFSET = 1 <<
 /******************************************************************************
  * GlyphTable class
  ******************************************************************************/
+GlyphTable::~GlyphTable() {
+}
+
+GlyphTable::Glyph* GlyphTable::GetGlyph(int32_t offset, int32_t length) {
+  return GlyphTable::Glyph::GetGlyph(data_, offset, length);
+}
+
 GlyphTable::GlyphTable(Header* header, ReadableFontData* data)
-    : Table(header, data) {}
-
-GlyphTable::~GlyphTable() {}
-
-GlyphTable::Glyph* GlyphTable::glyph(int32_t offset, int32_t length) {
-  return GlyphTable::Glyph::getGlyph(data_, offset, length);
+    : Table(header, data) {
 }
 
 /******************************************************************************
  * GlyphTable::Builder class
  ******************************************************************************/
 GlyphTable::Builder::Builder(FontDataTableBuilderContainer* font_builder,
-                            Header* header, WritableFontData* data) :
-    Table::ArrayElementTableBuilder(font_builder, header, data) {}
+                             Header* header,
+                             WritableFontData* data)
+    : Table::ArrayElementTableBuilder(font_builder, header, data) {
+}
 
-GlyphTable::Builder::~Builder() {}
+GlyphTable::Builder::~Builder() {
+}
 
-void GlyphTable::Builder::setLoca(const IntegerList& loca) {
+void GlyphTable::Builder::SetLoca(const IntegerList& loca) {
   loca_ = loca;
-  setModelChanged(false);
+  set_model_changed(false);
   glyph_builders_.clear();
 }
 
-void GlyphTable::Builder::generateLocaList(IntegerList* locas) {
+void GlyphTable::Builder::GenerateLocaList(IntegerList* locas) {
   assert(locas);
-  GlyphBuilderList* glyph_builders = getGlyphBuilders();
+  GlyphBuilderList* glyph_builders = GetGlyphBuilders();
   locas->resize(glyph_builders->size());
   locas->push_back(0);
   if (glyph_builders->size() == 0) {
@@ -83,14 +89,71 @@ void GlyphTable::Builder::generateLocaList(IntegerList* locas) {
     for (GlyphBuilderList::iterator b = glyph_builders->begin(),
                                     b_end = glyph_builders->end();
                                     b != b_end; ++b) {
-      int32_t size = (*b)->subDataSizeToSerialize();
+      int32_t size = (*b)->SubDataSizeToSerialize();
       locas->push_back(total + size);
       total += size;
     }
   }
 }
 
-void GlyphTable::Builder::initialize(ReadableFontData* data,
+GlyphTable::GlyphBuilderList* GlyphTable::Builder::GlyphBuilders() {
+  return GetGlyphBuilders();
+}
+
+void GlyphTable::Builder::SetGlyphBuilders(GlyphBuilderList* glyph_builders) {
+  glyph_builders_ = *glyph_builders;
+  set_model_changed();
+}
+
+CALLER_ATTACH GlyphTable::Glyph::Builder*
+    GlyphTable::Builder::GlyphBuilder(ReadableFontData* data) {
+  return Glyph::Builder::GetBuilder(this, data);
+}
+
+CALLER_ATTACH FontDataTable*
+    GlyphTable::Builder::SubBuildTable(ReadableFontData* data) {
+  FontDataTablePtr table = new GlyphTable(header(), data);
+  return table.Detach();
+}
+
+void GlyphTable::Builder::SubDataSet() {
+  glyph_builders_.clear();
+  set_model_changed(false);
+}
+
+int32_t GlyphTable::Builder::SubDataSizeToSerialize() {
+  if (glyph_builders_.empty())
+    return 0;
+
+  bool variable = false;
+  int32_t size = 0;
+
+  // Calculate size of each table.
+  for (GlyphBuilderList::iterator b = glyph_builders_.begin(),
+                                  end = glyph_builders_.end(); b != end; ++b) {
+      int32_t glyph_size = (*b)->SubDataSizeToSerialize();
+      size += abs(glyph_size);
+      variable |= glyph_size <= 0;
+  }
+  return variable ? -size : size;
+}
+
+bool GlyphTable::Builder::SubReadyToSerialize() {
+  return !glyph_builders_.empty();
+}
+
+int32_t GlyphTable::Builder::SubSerialize(WritableFontData* new_data) {
+  int32_t size = 0;
+  for (GlyphBuilderList::iterator b = glyph_builders_.begin(),
+                                  end = glyph_builders_.end(); b != end; ++b) {
+    FontDataPtr data;
+    data.Attach(new_data->Slice(size));
+    size += (*b)->SubSerialize(down_cast<WritableFontData*>(data.p_));
+  }
+  return size;
+}
+
+void GlyphTable::Builder::Initialize(ReadableFontData* data,
                                      const IntegerList& loca) {
   if (data != NULL) {
     if (loca_.empty()) {
@@ -106,222 +169,211 @@ void GlyphTable::Builder::initialize(ReadableFontData* data,
     for (size_t i = 1; i < loca.size(); ++i) {
       loca_value = loca[i];
       GlyphBuilderPtr builder;
-      builder.attach(Glyph::Builder::getBuilder(this, data,
-          last_loca_value /*offset*/, loca_value - last_loca_value /*length*/));
+      builder.Attach(
+        Glyph::Builder::GetBuilder(this,
+                                   data,
+                                   last_loca_value /*offset*/,
+                                   loca_value - last_loca_value /*length*/));
       glyph_builders_.push_back(builder);
       last_loca_value = loca_value;
     }
   }
 }
 
-GlyphTable::GlyphBuilderList* GlyphTable::Builder::getGlyphBuilders() {
+GlyphTable::GlyphBuilderList* GlyphTable::Builder::GetGlyphBuilders() {
   if (glyph_builders_.empty()) {
-    initialize(internalReadData(), loca_);
-    setModelChanged();
+    Initialize(InternalReadData(), loca_);
+    set_model_changed();
   }
   return &glyph_builders_;
 }
 
-void GlyphTable::Builder::revert() {
+void GlyphTable::Builder::Revert() {
   glyph_builders_.clear();
-  setModelChanged(false);
-}
-
-GlyphTable::GlyphBuilderList* GlyphTable::Builder::glyphBuilders() {
-  return getGlyphBuilders();
-}
-
-void GlyphTable::Builder::setGlyphBuilders(GlyphBuilderList* glyph_builders) {
-  glyph_builders_ = *glyph_builders;
-  setModelChanged();
-}
-
-CALLER_ATTACH GlyphTable::Glyph::Builder* GlyphTable::Builder::glyphBuilder(
-    ReadableFontData* data) {
-  return Glyph::Builder::getBuilder(this, data);
-}
-
-CALLER_ATTACH FontDataTable* GlyphTable::Builder::subBuildTable(
-    ReadableFontData* data) {
-  FontDataTablePtr table = new GlyphTable(header(), data);
-  return table.detach();
-}
-
-void GlyphTable::Builder::subDataSet() {
-  glyph_builders_.clear();
-  setModelChanged(false);
-}
-
-int32_t GlyphTable::Builder::subDataSizeToSerialize() {
-  if (glyph_builders_.empty())
-    return 0;
-
-  bool variable = false;
-  int32_t size = 0;
-
-  // Calculate size of each table.
-  for (GlyphBuilderList::iterator b = glyph_builders_.begin(),
-                                  end = glyph_builders_.end(); b != end; ++b) {
-      int32_t glyph_size = (*b)->subDataSizeToSerialize();
-      size += abs(glyph_size);
-      variable |= glyph_size <= 0;
-  }
-  return variable ? -size : size;
-}
-
-bool GlyphTable::Builder::subReadyToSerialize() {
-  return !glyph_builders_.empty();
-}
-
-int32_t GlyphTable::Builder::subSerialize(WritableFontData* new_data) {
-  int32_t size = 0;
-  for (GlyphBuilderList::iterator b = glyph_builders_.begin(),
-                                  end = glyph_builders_.end(); b != end; ++b) {
-    FontDataPtr data;
-    data.attach(new_data->slice(size));
-    size += (*b)->subSerialize(down_cast<WritableFontData*>(data.p_));
-  }
-  return size;
+  set_model_changed(false);
 }
 
 /******************************************************************************
  * GlyphTable::Glyph class
  ******************************************************************************/
+GlyphTable::Glyph::~Glyph() {}
+
+CALLER_ATTACH GlyphTable::Glyph*
+    GlyphTable::Glyph::GetGlyph(ReadableFontData* data,
+                                int32_t offset,
+                                int32_t length) {
+  int32_t type = GlyphType(data, offset, length);
+  GlyphPtr glyph;
+
+  ReadableFontDataPtr sliced_data;
+  sliced_data.Attach(down_cast<ReadableFontData*>(data->Slice(offset, length)));
+  if (type == GlyphType::kSimple) {
+    glyph = new SimpleGlyph(sliced_data);
+  }
+  glyph = new CompositeGlyph(sliced_data);
+  return glyph.Detach();
+}
+
+int32_t GlyphTable::Glyph::GlyphType() {
+  return glyph_type_;
+}
+
+int32_t GlyphTable::Glyph::NumberOfContours() {
+  return number_of_contours_;
+}
+
+int32_t GlyphTable::Glyph::XMin() {
+  return data_->ReadShort(Offset::kXMin);
+}
+
+int32_t GlyphTable::Glyph::XMax() {
+  return data_->ReadShort(Offset::kXMax);
+}
+
+int32_t GlyphTable::Glyph::YMin() {
+  return data_->ReadShort(Offset::kYMin);
+}
+
+int32_t GlyphTable::Glyph::YMax() {
+  return data_->ReadShort(Offset::kYMax);
+}
+
+int32_t GlyphTable::Glyph::Padding() {
+  return padding_;
+}
+
 GlyphTable::Glyph::Glyph(ReadableFontData* data, int32_t glyph_type)
-    : SubTable(data), glyph_type_(glyph_type) {
-  if (data_->length() == 0) {
+    : SubTable(data),
+      glyph_type_(glyph_type) {
+  if (data_->Length() == 0) {
     number_of_contours_ = 0;
   } else {
     // -1 if composite
-    number_of_contours_ = data_->readShort(Offset::kNumberOfContours);
+    number_of_contours_ = data_->ReadShort(Offset::kNumberOfContours);
   }
 }
 
-GlyphTable::Glyph::~Glyph() {}
-
-int32_t GlyphTable::Glyph::glyphType(ReadableFontData* data, int32_t offset,
+int32_t GlyphTable::Glyph::GlyphType(ReadableFontData* data,
+                                     int32_t offset,
                                      int32_t length) {
   if (length == 0) {
     return GlyphType::kSimple;
   }
-  int32_t number_of_contours = data->readShort(offset);
+  int32_t number_of_contours = data->ReadShort(offset);
   if (number_of_contours >= 0) {
     return GlyphType::kSimple;
   }
   return GlyphType::kComposite;
 }
 
-CALLER_ATTACH GlyphTable::Glyph* GlyphTable::Glyph::getGlyph(
-    ReadableFontData* data, int32_t offset, int32_t length) {
-  int32_t type = glyphType(data, offset, length);
-  GlyphPtr glyph;
-
-  ReadableFontDataPtr sliced_data;
-  sliced_data.attach(down_cast<ReadableFontData*>(data->slice(offset, length)));
-  if (type == GlyphType::kSimple) {
-    glyph = new SimpleGlyph(sliced_data);
-  }
-  glyph = new CompositeGlyph(sliced_data);
-  return glyph.detach();
-}
-
-int32_t GlyphTable::Glyph::glyphType() {
-  return glyph_type_;
-}
-
-int32_t GlyphTable::Glyph::numberOfContours() {
-  return number_of_contours_;
-}
-
-int32_t GlyphTable::Glyph::xMin() {
-  return data_->readShort(Offset::kXMin);
-}
-
-int32_t GlyphTable::Glyph::xMax() {
-  return data_->readShort(Offset::kXMax);
-}
-
-int32_t GlyphTable::Glyph::yMin() {
-  return data_->readShort(Offset::kYMin);
-}
-
-int32_t GlyphTable::Glyph::yMax() {
-  return data_->readShort(Offset::kYMax);
-}
-
-int32_t GlyphTable::Glyph::padding() {
-  return padding_;
-}
-
 /******************************************************************************
  * GlyphTable::Glyph::Builder class
  ******************************************************************************/
-GlyphTable::Glyph::Builder::Builder(FontDataTableBuilderContainer* font_builder,
-                                    WritableFontData* data) :
-    SubTable::Builder(font_builder, data) {
+GlyphTable::Glyph::Builder::~Builder() {
 }
 
 GlyphTable::Glyph::Builder::Builder(FontDataTableBuilderContainer* font_builder,
-                                    ReadableFontData* data) :
-    SubTable::Builder(font_builder, data) {
+                                    WritableFontData* data)
+    : SubTable::Builder(font_builder, data) {
 }
 
-GlyphTable::Glyph::Builder::~Builder() {}
-
-CALLER_ATTACH GlyphTable::Glyph::Builder*
-    GlyphTable::Glyph::Builder::getBuilder(
-        FontDataTableBuilderContainer* table_builder, ReadableFontData* data) {
-  return getBuilder(table_builder, data, 0, data->length());
+GlyphTable::Glyph::Builder::Builder(FontDataTableBuilderContainer* font_builder,
+                                    ReadableFontData* data)
+    : SubTable::Builder(font_builder, data) {
 }
 
 CALLER_ATTACH GlyphTable::Glyph::Builder*
-    GlyphTable::Glyph::Builder::getBuilder(
-        FontDataTableBuilderContainer* table_builder, ReadableFontData* data,
-        int32_t offset, int32_t length) {
-  int32_t type = Glyph::glyphType(data, offset, length);
+    GlyphTable::Glyph::Builder::GetBuilder(
+        FontDataTableBuilderContainer* table_builder,
+        ReadableFontData* data) {
+  return GetBuilder(table_builder, data, 0, data->Length());
+}
+
+CALLER_ATTACH GlyphTable::Glyph::Builder*
+    GlyphTable::Glyph::Builder::GetBuilder(
+        FontDataTableBuilderContainer* table_builder,
+        ReadableFontData* data,
+        int32_t offset,
+        int32_t length) {
+  int32_t type = Glyph::GlyphType(data, offset, length);
   GlyphBuilderPtr builder;
   ReadableFontDataPtr sliced_data;
-  sliced_data.attach(down_cast<ReadableFontData*>(data->slice(offset, length)));
+  sliced_data.Attach(down_cast<ReadableFontData*>(data->Slice(offset, length)));
   if (type == GlyphType::kSimple) {
     builder = new SimpleGlyph::SimpleGlyphBuilder(table_builder, sliced_data);
   } else {
     builder = new CompositeGlyph::CompositeGlyphBuilder(table_builder,
                                                         sliced_data);
   }
-  return builder.detach();
+  return builder.Detach();
 }
 
-void GlyphTable::Glyph::Builder::subDataSet() {
+void GlyphTable::Glyph::Builder::SubDataSet() {
   // NOP
 }
 
-int32_t GlyphTable::Glyph::Builder::subDataSizeToSerialize() {
-  return internalReadData()->length();
+int32_t GlyphTable::Glyph::Builder::SubDataSizeToSerialize() {
+  return InternalReadData()->Length();
 }
 
-bool GlyphTable::Glyph::Builder::subReadyToSerialize() {
+bool GlyphTable::Glyph::Builder::SubReadyToSerialize() {
   return true;
 }
 
-int32_t GlyphTable::Glyph::Builder::subSerialize(WritableFontData* new_data) {
-  return internalReadData()->copyTo(new_data);
+int32_t GlyphTable::Glyph::Builder::SubSerialize(WritableFontData* new_data) {
+  return InternalReadData()->CopyTo(new_data);
 }
 
 /******************************************************************************
- * GlyphTable::SimpleGlyph and its builder
+ * GlyphTable::SimpleGlyph
  ******************************************************************************/
 GlyphTable::SimpleGlyph::SimpleGlyph(ReadableFontData* data)
     : GlyphTable::Glyph(data, GlyphType::kSimple) {
 }
 
-GlyphTable::SimpleGlyph::~SimpleGlyph() {}
+GlyphTable::SimpleGlyph::~SimpleGlyph() {
+}
 
-void GlyphTable::SimpleGlyph::initialize() {
+int32_t GlyphTable::SimpleGlyph::InstructionSize() {
+  Initialize();
+  return instruction_size_;
+}
+
+CALLER_ATTACH ReadableFontData* GlyphTable::SimpleGlyph::Instructions() {
+  Initialize();
+  return down_cast<ReadableFontData*>(
+             data_->Slice(instructions_offset_, InstructionSize()));
+}
+
+int32_t GlyphTable::SimpleGlyph::NumberOfPoints(int32_t contour) {
+  Initialize();
+  if (contour >= NumberOfContours()) {
+    return 0;
+  }
+  return contour_index_[contour + 1] - contour_index_[contour];
+}
+
+int32_t GlyphTable::SimpleGlyph::XCoordinate(int32_t contour, int32_t point) {
+  Initialize();
+  return x_coordinates_[contour_index_[contour] + point];
+}
+
+int32_t GlyphTable::SimpleGlyph::YCoordinate(int32_t contour, int32_t point) {
+  Initialize();
+  return y_coordinates_[contour_index_[contour] + point];
+}
+
+bool GlyphTable::SimpleGlyph::OnCurve(int32_t contour, int32_t point) {
+  Initialize();
+  return on_curve_[contour_index_[contour] + point];
+}
+
+void GlyphTable::SimpleGlyph::Initialize() {
   if (initialized_) {
     return;
   }
 
-  if (readFontData()->length() == 0) {
+  if (ReadFontData()->Length() == 0) {
     instruction_size_ = 0;
     number_of_points_ = 0;
     instructions_offset_ = 0;
@@ -331,38 +383,38 @@ void GlyphTable::SimpleGlyph::initialize() {
     return;
   }
 
-  instruction_size_ = data_->readUShort(Offset::kSimpleEndPtsOfCountours +
-      numberOfContours() * DataSize::kUSHORT);
+  instruction_size_ = data_->ReadUShort(Offset::kSimpleEndPtsOfCountours +
+      NumberOfContours() * DataSize::kUSHORT);
   instructions_offset_ = Offset::kSimpleEndPtsOfCountours +
-      (numberOfContours() + 1) * DataSize::kUSHORT;
+      (NumberOfContours() + 1) * DataSize::kUSHORT;
   flags_offset_ = instructions_offset_ + instruction_size_ * DataSize::kBYTE;
-  number_of_points_ = contourEndPoint(numberOfContours() - 1) + 1;
+  number_of_points_ = ContourEndPoint(NumberOfContours() - 1) + 1;
   x_coordinates_.resize(number_of_points_);
   y_coordinates_.resize(number_of_points_);
   on_curve_.resize(number_of_points_);
-  parseData(false);
+  ParseData(false);
   x_coordinates_offset_ = flags_offset_ + flag_byte_count_ * DataSize::kBYTE;
   y_coordinates_offset_ = x_coordinates_offset_ + x_byte_count_ *
       DataSize::kBYTE;
-  contour_index_.resize(numberOfContours() + 1);
+  contour_index_.resize(NumberOfContours() + 1);
   contour_index_[0] = 0;
   for (uint32_t contour = 0; contour < contour_index_.size() - 1; ++contour) {
-    contour_index_[contour + 1] = contourEndPoint(contour) + 1;
+    contour_index_[contour + 1] = ContourEndPoint(contour) + 1;
   }
-  parseData(true);
+  ParseData(true);
   int32_t non_padded_data_length =
     5 * DataSize::kSHORT +
-    (numberOfContours() * DataSize::kUSHORT) +
+    (NumberOfContours() * DataSize::kUSHORT) +
     DataSize::kUSHORT +
     (instruction_size_ * DataSize::kBYTE) +
     (flag_byte_count_ * DataSize::kBYTE) +
     (x_byte_count_ * DataSize::kBYTE) +
     (y_byte_count_ * DataSize::kBYTE);
-  padding_ = length() - non_padded_data_length;
+  padding_ = Length() - non_padded_data_length;
   initialized_ = true;
 }
 
-void GlyphTable::SimpleGlyph::parseData(bool fill_arrays) {
+void GlyphTable::SimpleGlyph::ParseData(bool fill_arrays) {
   int32_t flag = 0;
   int32_t flag_repeat = 0;
   int32_t flag_index = 0;
@@ -373,9 +425,9 @@ void GlyphTable::SimpleGlyph::parseData(bool fill_arrays) {
        ++point_index) {
     // get the flag for the current point
     if (flag_repeat == 0) {
-      flag = flagAsInt(flag_index++);
+      flag = FlagAsInt(flag_index++);
       if ((flag & kFLAG_REPEAT) == kFLAG_REPEAT) {
-        flag_repeat = flagAsInt(flag_index++);
+        flag_repeat = FlagAsInt(flag_index++);
       }
     } else {
       flag_repeat--;
@@ -390,7 +442,7 @@ void GlyphTable::SimpleGlyph::parseData(bool fill_arrays) {
       // single byte x coord value
       if (fill_arrays) {
         x_coordinates_[point_index] =
-            data_->readUByte(x_coordinates_offset_ + x_byte_index);
+            data_->ReadUByte(x_coordinates_offset_ + x_byte_index);
         x_coordinates_[point_index] *=
             ((flag & kFLAG_XREPEATSIGN) == kFLAG_XREPEATSIGN) ? 1 : -1;
       }
@@ -400,7 +452,7 @@ void GlyphTable::SimpleGlyph::parseData(bool fill_arrays) {
       if (!((flag & kFLAG_XREPEATSIGN) == kFLAG_XREPEATSIGN)) {
         if (fill_arrays) {
           x_coordinates_[point_index] =
-            data_->readShort(x_coordinates_offset_ + x_byte_index);
+            data_->ReadShort(x_coordinates_offset_ + x_byte_index);
         }
         x_byte_index += 2;
       }
@@ -413,7 +465,7 @@ void GlyphTable::SimpleGlyph::parseData(bool fill_arrays) {
     if ((flag & kFLAG_YSHORT) == kFLAG_YSHORT) {
       if (fill_arrays) {
         y_coordinates_[point_index] =
-          data_->readUByte(y_coordinates_offset_ + y_byte_index);
+          data_->ReadUByte(y_coordinates_offset_ + y_byte_index);
         y_coordinates_[point_index] *=
           ((flag & kFLAG_YREPEATSIGN) == kFLAG_YREPEATSIGN) ? 1 : -1;
       }
@@ -422,7 +474,7 @@ void GlyphTable::SimpleGlyph::parseData(bool fill_arrays) {
       if (!((flag & kFLAG_YREPEATSIGN) == kFLAG_YREPEATSIGN)) {
         if (fill_arrays) {
           y_coordinates_[point_index] =
-            data_->readShort(y_coordinates_offset_ + y_byte_index);
+            data_->ReadShort(y_coordinates_offset_ + y_byte_index);
         }
         y_byte_index += 2;
       }
@@ -436,86 +488,130 @@ void GlyphTable::SimpleGlyph::parseData(bool fill_arrays) {
   y_byte_count_ = y_byte_index;
 }
 
-int32_t GlyphTable::SimpleGlyph::flagAsInt(int32_t index) {
-  return data_->readUByte(flags_offset_ + index * DataSize::kBYTE);
+int32_t GlyphTable::SimpleGlyph::FlagAsInt(int32_t index) {
+  return data_->ReadUByte(flags_offset_ + index * DataSize::kBYTE);
 }
 
-int32_t GlyphTable::SimpleGlyph::contourEndPoint(int32_t contour) {
-  return data_->readUShort(contour * DataSize::kUSHORT +
+int32_t GlyphTable::SimpleGlyph::ContourEndPoint(int32_t contour) {
+  return data_->ReadUShort(contour * DataSize::kUSHORT +
                            Offset::kSimpleEndPtsOfCountours);
 }
 
-int32_t GlyphTable::SimpleGlyph::instructionSize() {
-  initialize();
-  return instruction_size_;
-}
-
-CALLER_ATTACH ReadableFontData* GlyphTable::SimpleGlyph::instructions() {
-  initialize();
-  return down_cast<ReadableFontData*>(
-             data_->slice(instructions_offset_, instructionSize()));
-}
-
-int32_t GlyphTable::SimpleGlyph::numberOfPoints(int32_t contour) {
-  initialize();
-  if (contour >= numberOfContours()) {
-    return 0;
-  }
-  return contour_index_[contour + 1] - contour_index_[contour];
-}
-
-int32_t GlyphTable::SimpleGlyph::xCoordinate(int32_t contour, int32_t point) {
-  initialize();
-  return x_coordinates_[contour_index_[contour] + point];
-}
-
-int32_t GlyphTable::SimpleGlyph::yCoordinate(int32_t contour, int32_t point) {
-  initialize();
-  return y_coordinates_[contour_index_[contour] + point];
-}
-
-bool GlyphTable::SimpleGlyph::onCurve(int32_t contour, int32_t point) {
-  initialize();
-  return on_curve_[contour_index_[contour] + point];
+/******************************************************************************
+ * GlyphTable::SimpleGlyph::Builder
+ ******************************************************************************/
+GlyphTable::SimpleGlyph::SimpleGlyphBuilder::~SimpleGlyphBuilder() {
 }
 
 GlyphTable::SimpleGlyph::SimpleGlyphBuilder::SimpleGlyphBuilder(
-    FontDataTableBuilderContainer* table_builder, WritableFontData* data) :
-    Glyph::Builder(table_builder, data) {
+    FontDataTableBuilderContainer* table_builder,
+    WritableFontData* data)
+    : Glyph::Builder(table_builder, data) {
 }
 
 GlyphTable::SimpleGlyph::SimpleGlyphBuilder::SimpleGlyphBuilder(
-    FontDataTableBuilderContainer* table_builder, ReadableFontData* data) :
-    Glyph::Builder(table_builder, data) {
+    FontDataTableBuilderContainer* table_builder,
+    ReadableFontData* data)
+    : Glyph::Builder(table_builder, data) {
 }
-
-GlyphTable::SimpleGlyph::SimpleGlyphBuilder::~SimpleGlyphBuilder() {}
 
 CALLER_ATTACH FontDataTable*
-    GlyphTable::SimpleGlyph::SimpleGlyphBuilder::subBuildTable(
+    GlyphTable::SimpleGlyph::SimpleGlyphBuilder::SubBuildTable(
         ReadableFontData* data) {
   FontDataTablePtr table = new SimpleGlyph(data);
-  return table.detach();
+  return table.Detach();
 }
 
 /******************************************************************************
- * GlyphTable::CompositeGlyph and its builder
+ * GlyphTable::CompositeGlyph
  ******************************************************************************/
 GlyphTable::CompositeGlyph::CompositeGlyph(ReadableFontData* data)
     : GlyphTable::Glyph(data, GlyphType::kComposite),
-      instruction_size_(0), instructions_offset_(0) {
-  parseData();
+      instruction_size_(0),
+      instructions_offset_(0) {
+  ParseData();
 }
 
-GlyphTable::CompositeGlyph::~CompositeGlyph() {}
+GlyphTable::CompositeGlyph::~CompositeGlyph() {
+}
 
-void GlyphTable::CompositeGlyph::parseData() {
+int32_t GlyphTable::CompositeGlyph::Flags(int32_t contour) {
+  return data_->ReadUShort(contour_index_[contour]);
+}
+
+int32_t GlyphTable::CompositeGlyph::NumGlyphs() {
+  return contour_index_.size();
+}
+
+int32_t GlyphTable::CompositeGlyph::GlyphIndex(int32_t contour) {
+  return data_->ReadUShort(DataSize::kUSHORT + contour_index_[contour]);
+}
+
+int32_t GlyphTable::CompositeGlyph::Argument1(int32_t contour) {
+  int32_t index = 2 * DataSize::kUSHORT + contour_index_[contour];
+  int32_t contour_flags = Flags(contour);
+  if ((contour_flags & kFLAG_ARG_1_AND_2_ARE_WORDS) ==
+                       kFLAG_ARG_1_AND_2_ARE_WORDS) {
+    return data_->ReadUShort(index);
+  }
+  return data_->ReadByte(index);
+}
+
+int32_t GlyphTable::CompositeGlyph::Argument2(int32_t contour) {
+  int32_t index = 2 * DataSize::kUSHORT + contour_index_[contour];
+  int32_t contour_flags = Flags(contour);
+  if ((contour_flags & kFLAG_ARG_1_AND_2_ARE_WORDS) ==
+                       kFLAG_ARG_1_AND_2_ARE_WORDS) {
+    return data_->ReadUShort(index + DataSize::kUSHORT);
+  }
+  return data_->ReadByte(index + DataSize::kUSHORT);
+}
+
+int32_t GlyphTable::CompositeGlyph::TransformationSize(int32_t contour) {
+  int32_t contour_flags = Flags(contour);
+  if ((contour_flags & kFLAG_WE_HAVE_A_SCALE) == kFLAG_WE_HAVE_A_SCALE) {
+      return DataSize::kF2DOT14;
+    } else if ((contour_flags & kFLAG_WE_HAVE_AN_X_AND_Y_SCALE) ==
+                                kFLAG_WE_HAVE_AN_X_AND_Y_SCALE) {
+      return 2 * DataSize::kF2DOT14;
+    } else if ((contour_flags & kFLAG_WE_HAVE_A_TWO_BY_TWO) ==
+                                kFLAG_WE_HAVE_A_TWO_BY_TWO) {
+      return 4 * DataSize::kF2DOT14;
+    }
+    return 0;
+}
+
+void GlyphTable::CompositeGlyph::Transformation(int32_t contour,
+                                                ByteVector* transformation) {
+  int32_t contour_flags = Flags(contour);
+  int32_t index = contour_index_[contour] + 2 * DataSize::kUSHORT;
+  if ((contour_flags & kFLAG_ARG_1_AND_2_ARE_WORDS) ==
+                       kFLAG_ARG_1_AND_2_ARE_WORDS) {
+    index += 2 * DataSize::kSHORT;
+  } else {
+    index += 2 * DataSize::kBYTE;
+  }
+  int32_t tsize = TransformationSize(contour);
+  transformation->resize(tsize);
+  data_->ReadBytes(index, transformation, 0, tsize);
+}
+
+int32_t GlyphTable::CompositeGlyph::InstructionSize() {
+  return instruction_size_;
+}
+
+CALLER_ATTACH ReadableFontData* GlyphTable::CompositeGlyph::Instructions() {
+  return down_cast<ReadableFontData*>(
+             data_->Slice(instructions_offset_, InstructionSize()));
+}
+
+void GlyphTable::CompositeGlyph::ParseData() {
   int32_t index = 5 * DataSize::kUSHORT;
   int32_t flags = kFLAG_MORE_COMPONENTS;
 
   while ((flags & kFLAG_MORE_COMPONENTS) == kFLAG_MORE_COMPONENTS) {
     contour_index_.push_back(index);
-    flags = data_->readUShort(index);
+    flags = data_->ReadUShort(index);
     index += 2 * DataSize::kUSHORT;  // flags and glyphIndex
     if ((flags & kFLAG_ARG_1_AND_2_ARE_WORDS) == kFLAG_ARG_1_AND_2_ARE_WORDS) {
       index += 2 * DataSize::kSHORT;
@@ -533,102 +629,38 @@ void GlyphTable::CompositeGlyph::parseData() {
     }
     int32_t non_padded_data_length = index;
     if ((flags & kFLAG_WE_HAVE_INSTRUCTIONS) == kFLAG_WE_HAVE_INSTRUCTIONS) {
-      instruction_size_ = data_->readUShort(index);
+      instruction_size_ = data_->ReadUShort(index);
       index += DataSize::kUSHORT;
       instructions_offset_ = index;
       non_padded_data_length = index + (instruction_size_ * DataSize::kBYTE);
     }
-    padding_ = length() - non_padded_data_length;
+    padding_ = Length() - non_padded_data_length;
   }
 }
 
-int32_t GlyphTable::CompositeGlyph::flags(int32_t contour) {
-  return data_->readUShort(contour_index_[contour]);
-}
-
-int32_t GlyphTable::CompositeGlyph::numGlyphs() {
-  return contour_index_.size();
-}
-
-int32_t GlyphTable::CompositeGlyph::glyphIndex(int32_t contour) {
-  return data_->readUShort(DataSize::kUSHORT + contour_index_[contour]);
-}
-
-int32_t GlyphTable::CompositeGlyph::argument1(int32_t contour) {
-  int32_t index = 2 * DataSize::kUSHORT + contour_index_[contour];
-  int32_t contour_flags = flags(contour);
-  if ((contour_flags & kFLAG_ARG_1_AND_2_ARE_WORDS) ==
-                       kFLAG_ARG_1_AND_2_ARE_WORDS) {
-    return data_->readUShort(index);
-  }
-  return data_->readByte(index);
-}
-
-int32_t GlyphTable::CompositeGlyph::argument2(int32_t contour) {
-  int32_t index = 2 * DataSize::kUSHORT + contour_index_[contour];
-  int32_t contour_flags = flags(contour);
-  if ((contour_flags & kFLAG_ARG_1_AND_2_ARE_WORDS) ==
-                       kFLAG_ARG_1_AND_2_ARE_WORDS) {
-    return data_->readUShort(index + DataSize::kUSHORT);
-  }
-  return data_->readByte(index + DataSize::kUSHORT);
-}
-
-int32_t GlyphTable::CompositeGlyph::transformationSize(int32_t contour) {
-  int32_t contour_flags = flags(contour);
-  if ((contour_flags & kFLAG_WE_HAVE_A_SCALE) == kFLAG_WE_HAVE_A_SCALE) {
-      return DataSize::kF2DOT14;
-    } else if ((contour_flags & kFLAG_WE_HAVE_AN_X_AND_Y_SCALE) ==
-                                kFLAG_WE_HAVE_AN_X_AND_Y_SCALE) {
-      return 2 * DataSize::kF2DOT14;
-    } else if ((contour_flags & kFLAG_WE_HAVE_A_TWO_BY_TWO) ==
-                                kFLAG_WE_HAVE_A_TWO_BY_TWO) {
-      return 4 * DataSize::kF2DOT14;
-    }
-    return 0;
-}
-
-void GlyphTable::CompositeGlyph::transformation(int32_t contour,
-                                                ByteVector* transformation) {
-  int32_t contour_flags = flags(contour);
-  int32_t index = contour_index_[contour] + 2 * DataSize::kUSHORT;
-  if ((contour_flags & kFLAG_ARG_1_AND_2_ARE_WORDS) ==
-                       kFLAG_ARG_1_AND_2_ARE_WORDS) {
-    index += 2 * DataSize::kSHORT;
-  } else {
-    index += 2 * DataSize::kBYTE;
-  }
-  int32_t tsize = transformationSize(contour);
-  transformation->resize(tsize);
-  data_->readBytes(index, transformation, 0, tsize);
-}
-
-int32_t GlyphTable::CompositeGlyph::instructionSize() {
-  return instruction_size_;
-}
-
-CALLER_ATTACH ReadableFontData* GlyphTable::CompositeGlyph::instructions() {
-  return down_cast<ReadableFontData*>(
-             data_->slice(instructions_offset_, instructionSize()));
+/******************************************************************************
+ * GlyphTable::CompositeGlyph::Builder
+ ******************************************************************************/
+GlyphTable::CompositeGlyph::CompositeGlyphBuilder::~CompositeGlyphBuilder() {
 }
 
 GlyphTable::CompositeGlyph::CompositeGlyphBuilder::CompositeGlyphBuilder(
-    FontDataTableBuilderContainer* table_builder, WritableFontData* data) :
-    Glyph::Builder(table_builder, data) {
+    FontDataTableBuilderContainer* table_builder,
+    WritableFontData* data)
+    : Glyph::Builder(table_builder, data) {
 }
 
 GlyphTable::CompositeGlyph::CompositeGlyphBuilder::CompositeGlyphBuilder(
-    FontDataTableBuilderContainer* table_builder, ReadableFontData* data) :
-    Glyph::Builder(table_builder, data) {
+    FontDataTableBuilderContainer* table_builder,
+    ReadableFontData* data)
+    : Glyph::Builder(table_builder, data) {
 }
-
-GlyphTable::CompositeGlyph::CompositeGlyphBuilder::~CompositeGlyphBuilder() {}
 
 CALLER_ATTACH FontDataTable*
-    GlyphTable::CompositeGlyph::CompositeGlyphBuilder::subBuildTable(
+    GlyphTable::CompositeGlyph::CompositeGlyphBuilder::SubBuildTable(
         ReadableFontData* data) {
   FontDataTablePtr table = new CompositeGlyph(data);
-  return table.detach();
+  return table.Detach();
 }
 
 }  // namespace sfntly

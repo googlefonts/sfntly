@@ -19,9 +19,9 @@
 
 namespace sfntly {
 
-bool testFontParsing();
-bool testTTFReadWrite();
-bool testTTFMemoryBasedReadWrite();
+bool TestFontParsing();
+bool TestTTFReadWrite();
+bool TestTTFMemoryBasedReadWrite();
 
 }  // namespace sfntly
 

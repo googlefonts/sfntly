@@ -20,83 +20,83 @@ namespace sfntly {
 /******************************************************************************
  * FontHeaderTable class
  ******************************************************************************/
+FontHeaderTable::~FontHeaderTable() {}
+
+int32_t FontHeaderTable::TableVersion() {
+  return data_->ReadFixed(Offset::kTableVersion);
+}
+
+int32_t FontHeaderTable::FontRevision() {
+  return data_->ReadFixed(Offset::kFontRevision);
+}
+
+int64_t FontHeaderTable::ChecksumAdjustment() {
+  return data_->ReadULong(Offset::kCheckSumAdjustment);
+}
+
+int64_t FontHeaderTable::MagicNumber() {
+  return data_->ReadULong(Offset::kMagicNumber);
+}
+
+int32_t FontHeaderTable::FlagsAsInt() {
+  return data_->ReadUShort(Offset::kFlags);
+}
+
+int32_t FontHeaderTable::UnitsPerEm() {
+  return data_->ReadUShort(Offset::kUnitsPerEm);
+}
+
+int64_t FontHeaderTable::Created() {
+  return data_->ReadDateTimeAsLong(Offset::kCreated);
+}
+
+int64_t FontHeaderTable::Modified() {
+  return data_->ReadDateTimeAsLong(Offset::kModified);
+}
+
+int32_t FontHeaderTable::XMin() {
+  return data_->ReadUShort(Offset::kXMin);
+}
+
+int32_t FontHeaderTable::YMin() {
+  return data_->ReadUShort(Offset::kYMin);
+}
+
+int32_t FontHeaderTable::XMax() {
+  return data_->ReadUShort(Offset::kXMax);
+}
+
+int32_t FontHeaderTable::YMax() {
+  return data_->ReadUShort(Offset::kYMax);
+}
+
+int32_t FontHeaderTable::MacStyleAsInt() {
+  return data_->ReadUShort(Offset::kMacStyle);
+}
+
+int32_t FontHeaderTable::LowestRecPPEM() {
+  return data_->ReadUShort(Offset::kLowestRecPPEM);
+}
+
+int32_t FontHeaderTable::FontDirectionHint() {
+  return data_->ReadShort(Offset::kFontDirectionHint);
+}
+
+int32_t FontHeaderTable::IndexToLocFormat() {
+  return data_->ReadShort(Offset::kIndexToLocFormat);
+}
+
+int32_t FontHeaderTable::GlyphDataFormat() {
+  return data_->ReadShort(Offset::kGlyphDataFormat);
+}
+
 FontHeaderTable::FontHeaderTable(Header* header, ReadableFontData* data)
     : Table(header, data) {
   IntegerList checksum_ranges;
   checksum_ranges.push_back(0);
   checksum_ranges.push_back(Offset::kCheckSumAdjustment);
   checksum_ranges.push_back(Offset::kMagicNumber);
-  data_->setCheckSumRanges(checksum_ranges);
-}
-
-FontHeaderTable::~FontHeaderTable() {}
-
-int32_t FontHeaderTable::tableVersion() {
-  return data_->readFixed(Offset::kTableVersion);
-}
-
-int32_t FontHeaderTable::fontRevision() {
-  return data_->readFixed(Offset::kFontRevision);
-}
-
-int64_t FontHeaderTable::checksumAdjustment() {
-  return data_->readULong(Offset::kCheckSumAdjustment);
-}
-
-int64_t FontHeaderTable::magicNumber() {
-  return data_->readULong(Offset::kMagicNumber);
-}
-
-int32_t FontHeaderTable::flagsAsInt() {
-  return data_->readUShort(Offset::kFlags);
-}
-
-int32_t FontHeaderTable::unitsPerEm() {
-  return data_->readUShort(Offset::kUnitsPerEm);
-}
-
-int64_t FontHeaderTable::created() {
-  return data_->readDateTimeAsLong(Offset::kCreated);
-}
-
-int64_t FontHeaderTable::modified() {
-  return data_->readDateTimeAsLong(Offset::kModified);
-}
-
-int32_t FontHeaderTable::xMin() {
-  return data_->readUShort(Offset::kXMin);
-}
-
-int32_t FontHeaderTable::yMin() {
-  return data_->readUShort(Offset::kYMin);
-}
-
-int32_t FontHeaderTable::xMax() {
-  return data_->readUShort(Offset::kXMax);
-}
-
-int32_t FontHeaderTable::yMax() {
-  return data_->readUShort(Offset::kYMax);
-}
-
-int32_t FontHeaderTable::macStyleAsInt() {
-  return data_->readUShort(Offset::kMacStyle);
-}
-
-int32_t FontHeaderTable::lowestRecPPEM() {
-  return data_->readUShort(Offset::kLowestRecPPEM);
-}
-
-int32_t FontHeaderTable::fontDirectionHint() {
-  return data_->readShort(Offset::kFontDirectionHint);
-}
-
-int32_t FontHeaderTable::indexToLocFormat() {
-  return data_->readShort(Offset::kIndexToLocFormat);
-}
-
-int32_t FontHeaderTable::glyphDataFormat() {
-  return data_->readShort(Offset::kGlyphDataFormat);
+  data_->SetCheckSumRanges(checksum_ranges);
 }
 
 /******************************************************************************
@@ -114,146 +114,146 @@ FontHeaderTable::Builder::Builder(FontDataTableBuilderContainer* font_builder,
 
 FontHeaderTable::Builder::~Builder() {}
 
-CALLER_ATTACH FontDataTable* FontHeaderTable::Builder::subBuildTable(
+CALLER_ATTACH FontDataTable* FontHeaderTable::Builder::SubBuildTable(
     ReadableFontData* data) {
   FontDataTablePtr table = new FontHeaderTable(header(), data);
-  return table.detach();
+  return table.Detach();
 }
 
-int32_t FontHeaderTable::Builder::tableVersion() {
-  return down_cast<FontHeaderTable*>(table())->tableVersion();
+int32_t FontHeaderTable::Builder::TableVersion() {
+  return down_cast<FontHeaderTable*>(GetTable())->TableVersion();
 }
 
-void FontHeaderTable::Builder::setTableVersion(int32_t version) {
-  internalWriteData()->writeFixed(Offset::kTableVersion, version);
+void FontHeaderTable::Builder::SetTableVersion(int32_t version) {
+  InternalWriteData()->WriteFixed(Offset::kTableVersion, version);
 }
 
-int32_t FontHeaderTable::Builder::fontRevision() {
-  return down_cast<FontHeaderTable*>(table())->fontRevision();
+int32_t FontHeaderTable::Builder::FontRevision() {
+  return down_cast<FontHeaderTable*>(GetTable())->FontRevision();
 }
 
-void FontHeaderTable::Builder::setFontRevision(int32_t revision) {
-  internalWriteData()->writeFixed(Offset::kFontRevision, revision);
+void FontHeaderTable::Builder::SetFontRevision(int32_t revision) {
+  InternalWriteData()->WriteFixed(Offset::kFontRevision, revision);
 }
 
-int64_t FontHeaderTable::Builder::checksumAdjustment() {
-  return down_cast<FontHeaderTable*>(table())->checksumAdjustment();
+int64_t FontHeaderTable::Builder::ChecksumAdjustment() {
+  return down_cast<FontHeaderTable*>(GetTable())->ChecksumAdjustment();
 }
 
-void FontHeaderTable::Builder::setChecksumAdjustment(int64_t adjustment) {
-  internalWriteData()->writeULong(Offset::kCheckSumAdjustment, adjustment);
+void FontHeaderTable::Builder::SetChecksumAdjustment(int64_t adjustment) {
+  InternalWriteData()->WriteULong(Offset::kCheckSumAdjustment, adjustment);
 }
 
-int64_t FontHeaderTable::Builder::magicNumber() {
-  return down_cast<FontHeaderTable*>(table())->magicNumber();
+int64_t FontHeaderTable::Builder::MagicNumber() {
+  return down_cast<FontHeaderTable*>(GetTable())->MagicNumber();
 }
 
-void FontHeaderTable::Builder::setMagicNumber(int64_t magic_number) {
-  internalWriteData()->writeULong(Offset::kMagicNumber, magic_number);
+void FontHeaderTable::Builder::SetMagicNumber(int64_t magic_number) {
+  InternalWriteData()->WriteULong(Offset::kMagicNumber, magic_number);
 }
 
-int32_t FontHeaderTable::Builder::flagsAsInt() {
-  return down_cast<FontHeaderTable*>(table())->flagsAsInt();
+int32_t FontHeaderTable::Builder::FlagsAsInt() {
+  return down_cast<FontHeaderTable*>(GetTable())->FlagsAsInt();
 }
 
-void FontHeaderTable::Builder::setFlagsAsInt(int32_t flags) {
-  internalWriteData()->writeUShort(Offset::kFlags, flags);
+void FontHeaderTable::Builder::SetFlagsAsInt(int32_t flags) {
+  InternalWriteData()->WriteUShort(Offset::kFlags, flags);
 }
 
-int32_t FontHeaderTable::Builder::unitsPerEm() {
-  return down_cast<FontHeaderTable*>(table())->unitsPerEm();
+int32_t FontHeaderTable::Builder::UnitsPerEm() {
+  return down_cast<FontHeaderTable*>(GetTable())->UnitsPerEm();
 }
 
-void FontHeaderTable::Builder::setUnitsPerEm(int32_t units) {
-  internalWriteData()->writeUShort(Offset::kUnitsPerEm, units);
+void FontHeaderTable::Builder::SetUnitsPerEm(int32_t units) {
+  InternalWriteData()->WriteUShort(Offset::kUnitsPerEm, units);
 }
 
-int64_t FontHeaderTable::Builder::created() {
-  return down_cast<FontHeaderTable*>(table())->modified();
+int64_t FontHeaderTable::Builder::Created() {
+  return down_cast<FontHeaderTable*>(GetTable())->Created();
 }
 
-void FontHeaderTable::Builder::setCreated(int64_t date) {
-  internalWriteData()->writeDateTime(Offset::kCreated, date);
+void FontHeaderTable::Builder::SetCreated(int64_t date) {
+  InternalWriteData()->WriteDateTime(Offset::kCreated, date);
 }
 
-int64_t FontHeaderTable::Builder::modified() {
-  return down_cast<FontHeaderTable*>(table())->modified();
+int64_t FontHeaderTable::Builder::Modified() {
+  return down_cast<FontHeaderTable*>(GetTable())->Modified();
 }
 
-void FontHeaderTable::Builder::setModified(int64_t date) {
-  internalWriteData()->writeDateTime(Offset::kModified, date);
+void FontHeaderTable::Builder::SetModified(int64_t date) {
+  InternalWriteData()->WriteDateTime(Offset::kModified, date);
 }
 
-int32_t FontHeaderTable::Builder::xMin() {
-  return down_cast<FontHeaderTable*>(table())->xMin();
+int32_t FontHeaderTable::Builder::XMin() {
+  return down_cast<FontHeaderTable*>(GetTable())->XMin();
 }
 
-void FontHeaderTable::Builder::setXMin(int32_t xmin) {
-  internalWriteData()->writeShort(Offset::kXMin, xmin);
+void FontHeaderTable::Builder::SetXMin(int32_t xmin) {
+  InternalWriteData()->WriteShort(Offset::kXMin, xmin);
 }
 
-int32_t FontHeaderTable::Builder::yMin() {
-  return down_cast<FontHeaderTable*>(table())->yMin();
+int32_t FontHeaderTable::Builder::YMin() {
+  return down_cast<FontHeaderTable*>(GetTable())->YMin();
 }
 
-void FontHeaderTable::Builder::setYMin(int32_t ymin) {
-  internalWriteData()->writeShort(Offset::kYMin, ymin);
+void FontHeaderTable::Builder::SetYMin(int32_t ymin) {
+  InternalWriteData()->WriteShort(Offset::kYMin, ymin);
 }
 
-int32_t FontHeaderTable::Builder::xMax() {
-  return down_cast<FontHeaderTable*>(table())->xMax();
+int32_t FontHeaderTable::Builder::XMax() {
+  return down_cast<FontHeaderTable*>(GetTable())->XMax();
 }
 
-void FontHeaderTable::Builder::setXMax(int32_t xmax) {
-  internalWriteData()->writeShort(Offset::kXMax, xmax);
+void FontHeaderTable::Builder::SetXMax(int32_t xmax) {
+  InternalWriteData()->WriteShort(Offset::kXMax, xmax);
 }
 
-int32_t FontHeaderTable::Builder::yMax() {
-  return down_cast<FontHeaderTable*>(table())->yMax();
+int32_t FontHeaderTable::Builder::YMax() {
+  return down_cast<FontHeaderTable*>(GetTable())->YMax();
 }
 
-void FontHeaderTable::Builder::setYMax(int32_t ymax) {
-  internalWriteData()->writeShort(Offset::kYMax, ymax);
+void FontHeaderTable::Builder::SetYMax(int32_t ymax) {
+  InternalWriteData()->WriteShort(Offset::kYMax, ymax);
 }
 
-int32_t FontHeaderTable::Builder::macStyleAsInt() {
-  return down_cast<FontHeaderTable*>(table())->macStyleAsInt();
+int32_t FontHeaderTable::Builder::MacStyleAsInt() {
+  return down_cast<FontHeaderTable*>(GetTable())->MacStyleAsInt();
 }
 
-void FontHeaderTable::Builder::setMacStyleAsInt(int32_t style) {
-  internalWriteData()->writeUShort(Offset::kMacStyle, style);
+void FontHeaderTable::Builder::SetMacStyleAsInt(int32_t style) {
+  InternalWriteData()->WriteUShort(Offset::kMacStyle, style);
 }
 
-int32_t FontHeaderTable::Builder::lowestRecPPEM() {
-  return down_cast<FontHeaderTable*>(table())->lowestRecPPEM();
+int32_t FontHeaderTable::Builder::LowestRecPPEM() {
+  return down_cast<FontHeaderTable*>(GetTable())->LowestRecPPEM();
 }
 
-void FontHeaderTable::Builder::setLowestRecPPEM(int32_t size) {
-  internalWriteData()->writeUShort(Offset::kLowestRecPPEM, size);
+void FontHeaderTable::Builder::SetLowestRecPPEM(int32_t size) {
+  InternalWriteData()->WriteUShort(Offset::kLowestRecPPEM, size);
 }
 
-int32_t FontHeaderTable::Builder::fontDirectionHint() {
-  return down_cast<FontHeaderTable*>(table())->fontDirectionHint();
+int32_t FontHeaderTable::Builder::FontDirectionHint() {
+  return down_cast<FontHeaderTable*>(GetTable())->FontDirectionHint();
 }
 
-void FontHeaderTable::Builder::setFontDirectionHint(int32_t hint) {
-  internalWriteData()->writeShort(Offset::kFontDirectionHint, hint);
+void FontHeaderTable::Builder::SetFontDirectionHint(int32_t hint) {
+  InternalWriteData()->WriteShort(Offset::kFontDirectionHint, hint);
 }
 
-int32_t FontHeaderTable::Builder::indexToLocFormat() {
-  return down_cast<FontHeaderTable*>(table())->indexToLocFormat();
+int32_t FontHeaderTable::Builder::IndexToLocFormat() {
+  return down_cast<FontHeaderTable*>(GetTable())->IndexToLocFormat();
 }
 
-void FontHeaderTable::Builder::setIndexToLocFormat(int32_t format) {
-  internalWriteData()->writeShort(Offset::kIndexToLocFormat, format);
+void FontHeaderTable::Builder::SetIndexToLocFormat(int32_t format) {
+  InternalWriteData()->WriteShort(Offset::kIndexToLocFormat, format);
 }
 
-int32_t FontHeaderTable::Builder::glyphDataFormat() {
-  return down_cast<FontHeaderTable*>(table())->glyphDataFormat();
+int32_t FontHeaderTable::Builder::GlyphDataFormat() {
+  return down_cast<FontHeaderTable*>(GetTable())->GlyphDataFormat();
 }
 
-void FontHeaderTable::Builder::setGlyphDataFormat(int32_t format) {
-  internalWriteData()->writeShort(Offset::kGlyphDataFormat, format);
+void FontHeaderTable::Builder::SetGlyphDataFormat(int32_t format) {
+  InternalWriteData()->WriteShort(Offset::kGlyphDataFormat, format);
 }
 
 }  // namespace sfntly

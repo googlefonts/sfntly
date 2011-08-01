@@ -27,8 +27,8 @@ namespace sfntly {
 
 // Check if proper encoding is being performed
 // Conversion is done from UTF16 to UTF8, SJIS
-bool testEncoding() {
-  UConverter* conv = TestUtils::getEncoder("utf8");
+bool TestEncoding() {
+  UConverter* conv = TestUtils::GetEncoder("utf8");
   EXPECT_TRUE(conv != NULL);
   // Ūnĭcōde̽
   UChar from[8] = {0x016A, 0x006E, 0x012D, 0x0063, 0x014D, 0x0064, 0x0065,
@@ -37,7 +37,7 @@ bool testEncoding() {
                       0x65, 0xcc, 0xbd};
   int32_t i, j = 0;
   for (i = 0; i < 7; ++i) {
-    int32_t encoded = TestUtils::encodeOneChar(conv, (int16_t)from[i]);
+    int32_t encoded = TestUtils::EncodeOneChar(conv, (int16_t)from[i]);
     for (; encoded; encoded <<= 8) {
       byte_t b = (encoded & 0xff000000) >> 24;
       if (!b)
@@ -54,22 +54,22 @@ bool testEncoding() {
 }
 
 // Check if the proper extension is obtained
-bool testExtension() {
+bool TestExtension() {
   // usual file name
   const char *result;
-  result = TestUtils::extension("../data/ext/arial.ttf");
+  result = TestUtils::Extension("../data/ext/tuffy.ttf");
   EXPECT_EQ(strcmp(result, ".ttf"), 0);
 
   // more than one 'extension'
-  result = TestUtils::extension("arial.ttf.fake");
+  result = TestUtils::Extension("tuffy.ttf.fake");
   EXPECT_EQ(strcmp(result, ".fake"), 0);
 
   // no extension
-  result = TestUtils::extension("arial");
+  result = TestUtils::Extension("tuffy");
   EXPECT_STREQ(result, NULL);
 
   // bogus extension
-  result = TestUtils::extension("arial.");
+  result = TestUtils::Extension("tuffy.");
   EXPECT_EQ(strcmp(result, "."), 0);
 
   return true;

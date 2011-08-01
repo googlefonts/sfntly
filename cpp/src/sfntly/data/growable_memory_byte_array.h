@@ -30,14 +30,18 @@ class GrowableMemoryByteArray : public ByteArray,
   virtual ~GrowableMemoryByteArray();
 
  protected:
-  virtual bool internalPut(int32_t index, byte_t b);
-  virtual int32_t internalPut(int32_t index, ByteVector* b, int32_t offset,
+  virtual bool InternalPut(int32_t index, byte_t b);
+  virtual int32_t InternalPut(int32_t index,
+                              ByteVector* b,
+                              int32_t offset,
                               int32_t length);
-  virtual byte_t internalGet(int32_t index);
-  virtual int32_t internalGet(int32_t index, ByteVector* b, int32_t offset,
+  virtual byte_t InternalGet(int32_t index);
+  virtual int32_t InternalGet(int32_t index,
+                              ByteVector* b,
+                              int32_t offset,
                               int32_t length);
-  virtual void close();
-  virtual byte_t* begin();
+  virtual void Close();
+  virtual byte_t* Begin();
 
  private:
   ByteVector b_;

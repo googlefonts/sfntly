@@ -27,16 +27,16 @@
 //  public:
 //   static Foo* CreateInstance() {
 //     Ptr<Foo> obj = new Foo();  // ref count = 1
-//     return obj.detach();
+//     return obj.Detach();
 //   }
 // };
 // typedef Ptr<Foo> FooPtr;  // common short-hand notation
 // FooPtr obj;
-// obj.attach(Foo::CreatedInstance());  // ref count = 1
+// obj.Attach(Foo::CreatedInstance());  // ref count = 1
 // {
 //   FooPtr obj2 = obj;  // ref count = 2
 // }  // ref count = 1, obj2 out of scope
-// obj.release();  // ref count = 0, object destroyed
+// obj.Release();  // ref count = 0, object destroyed
 
 // Notes on usage:
 // 1. Virtual inherit from RefCount interface in base class if smart pointers
@@ -57,10 +57,10 @@
 //    VC++ will generate SEH which is not handled well in VC++ debugger.  One
 //    can use WinDBG to run it and get the faulting stack.
 // 6. Idioms for heap object as return value
-//    Foo* createFoo() { FooPtr obj = new Foo(); return obj.detach(); }
+//    Foo* createFoo() { FooPtr obj = new Foo(); return obj.Detach(); }
 //    Foo* passthru() { FooPtr obj = createFoo(), return obj; }
 //    FooPtr end_scope_pointer;
-//    end_scope_pointer.attach(passThrough);
+//    end_scope_pointer.Attach(passThrough);
 //    If you are not passing that object back, you are the end of scope.
 
 #ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_REFCOUNT_H_
@@ -101,10 +101,11 @@ namespace sfntly {
 
 class RefCount {
  public:
-  virtual size_t addRef() const = 0;
-  virtual size_t release() const = 0;
   // Make gcc -Wnon-virtual-dtor happy.
   virtual ~RefCount() {}
+
+  virtual size_t AddRef() const = 0;
+  virtual size_t Release() const = 0;
 };
 
 template <typename T>
@@ -114,8 +115,8 @@ class NoAddRefRelease : public T {
   ~NoAddRefRelease();
 
  private:
-  virtual size_t addRef() const = 0;
-  virtual size_t release() const = 0;
+  virtual size_t AddRef() const = 0;
+  virtual size_t Release() const = 0;
 };
 
 template <typename TDerived>
@@ -123,15 +124,15 @@ class RefCounted : virtual public RefCount {
  public:
   RefCounted() : ref_count_(0) {
 #if defined (ENABLE_OBJECT_COUNTER)
-    object_id_ = atomicIncrement(&next_id_);
-    atomicIncrement(&object_counter_);
+    object_id_ = AtomicIncrement(&next_id_);
+    AtomicIncrement(&object_counter_);
     DEBUG_OUTPUT("C ");
 #endif
   }
   RefCounted(const RefCounted<TDerived>&) : ref_count_(0) {}
   virtual ~RefCounted() {
 #if defined (ENABLE_OBJECT_COUNTER)
-    atomicDecrement(&object_counter_);
+    AtomicDecrement(&object_counter_);
     DEBUG_OUTPUT("D ");
 #endif
   }
@@ -141,14 +142,14 @@ class RefCounted : virtual public RefCount {
     return *this;
   }
 
-  virtual size_t addRef() const {
-    size_t new_count = atomicIncrement(&ref_count_);
+  virtual size_t AddRef() const {
+    size_t new_count = AtomicIncrement(&ref_count_);
     DEBUG_OUTPUT("A ");
     return new_count;
   }
 
-  virtual size_t release() const {
-    size_t new_ref_count = atomicDecrement(&ref_count_);
+  virtual size_t Release() const {
+    size_t new_ref_count = AtomicDecrement(&ref_count_);
     DEBUG_OUTPUT("R ");
     if (new_ref_count == 0) {
       // A C-style is used to cast away const-ness and to derived.
@@ -189,7 +190,7 @@ class Ptr {
   }
 
   ~Ptr() {
-    release();
+    Release();
   }
 
   T* operator=(T* pT) {
@@ -201,9 +202,9 @@ class Ptr {
       if (p == NULL) {
         return NULL;
       }
-      p->addRef();  // always addRef() before release()
+      p->AddRef();  // always AddRef() before Release()
     }
-    release();
+    Release();
     p_ = pT;
     return p_;
   }
@@ -243,26 +244,26 @@ class Ptr {
     return (p_ == pT);
   }
 
-  size_t release() const {
+  size_t Release() const {
     size_t ref_count = 0;
     if (p_) {
       RefCount* p = static_cast<RefCount*>(p_);
       if (p) {
-        ref_count = p->release();
+        ref_count = p->Release();
       }
       p_ = NULL;
     }
     return ref_count;
   }
 
-  void attach(T* pT) {
+  void Attach(T* pT) {
     if (p_ != pT) {
-      release();
+      Release();
       p_ = pT;
     }
   }
 
-  T* detach() {
+  T* Detach() {
     T* pT = p_;
     p_ = NULL;
     return pT;

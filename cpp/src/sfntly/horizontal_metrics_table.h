@@ -23,6 +23,39 @@ namespace sfntly {
 
 class HorizontalMetricsTable : public Table,
                                public RefCounted<HorizontalMetricsTable> {
+ public:
+  class Builder : public Table::TableBasedTableBuilder,
+                  public RefCounted<Builder> {
+   public:
+    // Constructor scope altered to public because C++ does not allow base
+    // class to instantiate derived class with protected constructors.
+    Builder(FontDataTableBuilderContainer* font_builder,
+            Header* header,
+            WritableFontData* data);
+    Builder(FontDataTableBuilderContainer* font_builder,
+            Header* header,
+            ReadableFontData* data);
+    virtual ~Builder();
+
+    virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
+    void SetNumberOfHMetrics(int32_t num_hmetrics);
+    void SetNumGlyphs(int32_t num_glyphs);
+
+   private:
+    void Init();
+
+    int32_t num_hmetrics_;
+    int32_t num_glyphs_;
+  };
+
+  virtual ~HorizontalMetricsTable();
+  int32_t NumberOfHMetrics();
+  int32_t NumberOfLSBs();
+  int32_t HMetricAdvanceWidth(int32_t entry);
+  int32_t HMetricLSB(int32_t entry);
+  int32_t LsbTableEntry(int32_t entry);
+  int32_t AdvanceWidth(int32_t glyph_id);
+
  private:
   struct Offset {
     enum {
@@ -38,43 +71,12 @@ class HorizontalMetricsTable : public Table,
     };
   };
 
- private:
   HorizontalMetricsTable(Header* header, ReadableFontData* data);
-  HorizontalMetricsTable(Header* header, ReadableFontData* data,
-                         int32_t num_hmetrics, int32_t num_glyphs);
+  HorizontalMetricsTable(Header* header,
+                         ReadableFontData* data,
+                         int32_t num_hmetrics,
+                         int32_t num_glyphs);
 
- public:  // class is final, no virtual functions unless inherited from parent.
-  virtual ~HorizontalMetricsTable();
-  int32_t numberOfHMetrics();
-  int32_t numberOfLSBs();
-  int32_t hMetricAdvanceWidth(int32_t entry);
-  int32_t hMetricLSB(int32_t entry);
-  int32_t lsbTableEntry(int32_t entry);
-  int32_t advanceWidth(int32_t glyph_id);
-
- public:
-  class Builder : public Table::TableBasedTableBuilder,
-                  public RefCounted<Builder> {
-   public:
-    // Constructor scope altered to public because C++ does not allow base
-    // class to instantiate derived class with protected constructors.
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            ReadableFontData* data);
-    virtual ~Builder();
-    void init();
-
-    virtual CALLER_ATTACH FontDataTable* subBuildTable(ReadableFontData* data);
-    void setNumberOfHMetrics(int32_t num_hmetrics);
-    void setNumGlyphs(int32_t num_glyphs);
-
-   private:
-    int32_t num_hmetrics_;
-    int32_t num_glyphs_;
-  };
-
- private:
   int32_t num_hmetrics_;
   int32_t num_glyphs_;
 };

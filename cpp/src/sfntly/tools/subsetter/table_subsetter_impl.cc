@@ -27,11 +27,11 @@ TableSubsetterImpl::TableSubsetterImpl(const int32_t* tags,
 
 TableSubsetterImpl::~TableSubsetterImpl() {}
 
-bool TableSubsetterImpl::tagHandled(int32_t tag) {
+bool TableSubsetterImpl::TagHandled(int32_t tag) {
   return tags_.find(tag) != tags_.end();
 }
 
-IntegerSet* TableSubsetterImpl::tagsHandled() {
+IntegerSet* TableSubsetterImpl::TagsHandled() {
   return &tags_;
 }
 

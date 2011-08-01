@@ -30,6 +30,69 @@ class ReadableFontData : public FontData,
   explicit ReadableFontData(ByteArray* array);
   virtual ~ReadableFontData();
 
+  // Get a computed checksum for the data. This checksum uses the OpenType spec
+  // calculation. Every ULong value (32 bit unsigned) in the data is summed and
+  // the resulting value is truncated to 32 bits. If the data length in bytes is
+  // not an integral multiple of 4 then any remaining bytes are treated as the
+  // start of a 4 byte sequence whose remaining bytes are zero.
+  // @return the checksum
+  int64_t Checksum();
+
+  // Sets the bounds to use for computing the checksum. These bounds are in
+  // begin and end pairs. If an odd number is given then the final range is
+  // assumed to extend to the end of the data. The lengths of each range must be
+  // a multiple of 4.
+  // @param ranges the range bounds to use for the checksum
+  void SetCheckSumRanges(const IntegerList& ranges);
+
+  virtual int32_t ReadUByte(int32_t index);
+  virtual int32_t ReadByte(int32_t index);
+  virtual int32_t ReadBytes(int32_t index, ByteVector* b, int32_t offset,
+                            int32_t length);
+  virtual int32_t ReadChar(int32_t index);
+  virtual int32_t ReadUShort(int32_t index);
+  virtual int32_t ReadShort(int32_t index);
+  virtual int32_t ReadUInt24(int32_t index);
+  virtual int64_t ReadULong(int32_t index);
+  virtual int32_t ReadULongAsInt(int32_t index);
+  virtual int32_t ReadLong(int32_t index);
+  virtual int32_t ReadFixed(int32_t index);
+  virtual int64_t ReadDateTimeAsLong(int32_t index);
+
+  virtual int32_t ReadFWord(int32_t index);
+  virtual int32_t ReadFUFWord(int32_t index);
+
+  virtual int32_t CopyTo(OutputStream* os);
+  virtual int32_t CopyTo(WritableFontData* wfd);
+  virtual int32_t CopyTo(ByteArray* ba);
+
+  // TODO(arthurhsu): IMPLEMENT
+  /*
+  virtual int32_t ReadFUnit(int32_t index);
+  virtual int64_t ReadF2Dot14(int32_t index);
+  virtual int64_t ReadLongDateTime(int32_t index);
+  virtual int32_t SearchUShort(int32_t start, int32_t length, int32_t key);
+  virtual int32_t SearchUShort(int32_t start_index, int32_t start_offset,
+                               int32_t count_index, int32_t count_offset,
+                               int32_t length, int32_t key);
+  virtual int32_t SearchULong(int32_t start_index, int32_t start_offset,
+                              int32_t end_index, int32_t end_offset,
+                              int32_t length, int32_t key);
+  */
+
+  // Makes a slice of this FontData. The returned slice will share the data with
+  // the original FontData.
+  // @param offset the start of the slice
+  // @param length the number of bytes in the slice
+  // @return a slice of the original FontData
+  virtual CALLER_ATTACH FontData* Slice(int32_t offset, int32_t length);
+
+  // Makes a bottom bound only slice of this array. The returned slice will
+  // share the data with the original FontData.
+  // @param offset the start of the slice
+  // @return a slice of the original FontData
+  virtual CALLER_ATTACH FontData* Slice(int32_t offset);
+
  protected:
   // Constructor. Creates a bounded wrapper of another ReadableFontData from the
   // given offset until the end of the original ReadableFontData.
@@ -44,76 +107,10 @@ class ReadableFontData : public FontData,
   ReadableFontData(ReadableFontData* data, int32_t offset, int32_t length);
 
  private:
-  void computeChecksum();
-  int64_t computeCheckSum(int32_t low_bound, int32_t high_bound);
+  void ComputeChecksum();
+  int64_t ComputeCheckSum(int32_t low_bound, int32_t high_bound);
 
- public:
-  // Get a computed checksum for the data. This checksum uses the OpenType spec
-  // calculation. Every ULong value (32 bit unsigned) in the data is summed and
-  // the resulting value is truncated to 32 bits. If the data length in bytes is
-  // not an integral multiple of 4 then any remaining bytes are treated as the
-  // start of a 4 byte sequence whose remaining bytes are zero.
-  // @return the checksum
-  int64_t checksum();
-
-  // Sets the bounds to use for computing the checksum. These bounds are in
-  // begin and end pairs. If an odd number is given then the final range is
-  // assumed to extend to the end of the data. The lengths of each range must be
-  // a multiple of 4.
-  // @param ranges the range bounds to use for the checksum
-  void setCheckSumRanges(const IntegerList& ranges);
-
- public:
-  virtual int32_t readUByte(int32_t index);
-  virtual int32_t readByte(int32_t index);
-  virtual int32_t readBytes(int32_t index, ByteVector* b, int32_t offset,
-                            int32_t length);
-  virtual int32_t readChar(int32_t index);
-  virtual int32_t readUShort(int32_t index);
-  virtual int32_t readShort(int32_t index);
-  virtual int32_t readUInt24(int32_t index);
-  virtual int64_t readULong(int32_t index);
-  virtual int32_t readULongAsInt(int32_t index);
-  virtual int32_t readLong(int32_t index);
-  virtual int32_t readFixed(int32_t index);
-  virtual int64_t readDateTimeAsLong(int32_t index);
-
-  virtual int32_t readFWord(int32_t index);
-  virtual int32_t readFUFWord(int32_t index);
-
-  virtual int32_t copyTo(OutputStream* os);
-  virtual int32_t copyTo(WritableFontData* wfd);
-  virtual int32_t copyTo(ByteArray* ba);
-
-  // TODO(arthurhsu): IMPLEMENT
-  /*
-  virtual int32_t readFUnit(int32_t index);
-  virtual int64_t readF2Dot14(int32_t index);
-  virtual int64_t readLongDateTime(int32_t index);
-  virtual int32_t searchUShort(int32_t start, int32_t length, int32_t key);
-  virtual int32_t searchUShort(int32_t start_index, int32_t start_offset,
-                               int32_t count_index, int32_t count_offset,
-                               int32_t length, int32_t key);
-  virtual int32_t searchULong(int32_t start_index, int32_t start_offset,
-                              int32_t end_index, int32_t end_offset,
-                              int32_t length, int32_t key);
-  */
-
-  // Makes a slice of this FontData. The returned slice will share the data with
-  // the original FontData.
-  // @param offset the start of the slice
-  // @param length the number of bytes in the slice
-  // @return a slice of the original FontData
-  virtual CALLER_ATTACH FontData* slice(int32_t offset, int32_t length);
-
-  // Makes a bottom bound only slice of this array. The returned slice will
-  // share the data with the original FontData.
-  // @param offset the start of the slice
-  // @return a slice of the original FontData
-  virtual CALLER_ATTACH FontData* slice(int32_t offset);
-
- private:
-  bool checksum_set_;  // TODO(arthurhsu): IMPLEMENT: must be set atomically
+  bool checksum_set_;  // TODO(arthurhsu): IMPLEMENT: must be set atomically.
   int64_t checksum_;
   IntegerList checksum_range_;
 };
