@@ -24,13 +24,14 @@ namespace sfntly {
 // C++ equivalent to Java's OutputStream class
 class OutputStream {
  public:
-  virtual void close() = 0;
-  virtual void flush() = 0;
-  virtual void write(ByteVector* buffer) = 0;
-  virtual void write(ByteVector* buffer, int32_t offset, int32_t length) = 0;
-  virtual void write(byte_t b) = 0;
   // Make gcc -Wnon-virtual-dtor happy.
   virtual ~OutputStream() {}
+
+  virtual void Close() = 0;
+  virtual void Flush() = 0;
+  virtual void Write(ByteVector* buffer) = 0;
+  virtual void Write(ByteVector* buffer, int32_t offset, int32_t length) = 0;
+  virtual void Write(byte_t b) = 0;
 };
 
 }  // namespace sfntly

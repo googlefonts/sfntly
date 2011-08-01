@@ -26,9 +26,9 @@ namespace sfntly {
 class Subsetter;
 class TableSubsetter : virtual public RefCount {
  public:
-  virtual IntegerSet* tagsHandled() = 0;
-  virtual bool tagHandled(int32_t tag) = 0;
-  virtual bool subset(Subsetter* subsetter, Font* font,
+  virtual IntegerSet* TagsHandled() = 0;
+  virtual bool TagHandled(int32_t tag) = 0;
+  virtual bool Subset(Subsetter* subsetter, Font* font,
                       Font::Builder* font_builder) = 0;
 };
 typedef Ptr<TableSubsetter> TableSubsetterPtr;

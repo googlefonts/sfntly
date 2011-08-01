@@ -23,38 +23,21 @@
 
 namespace sfntly {
 
-FileInputStream::FileInputStream() : file_(NULL), position_(0), length_(0) {
+FileInputStream::FileInputStream()
+    : file_(NULL),
+      position_(0),
+      length_(0) {
 }
 
 FileInputStream::~FileInputStream() {
-  close();
+  Close();
 }
 
-int32_t FileInputStream::available() {
+int32_t FileInputStream::Available() {
   return length_ - position_;
 }
 
-bool FileInputStream::open(const char* file_path) {
-  assert(file_path);
-  if (file_) {
-    close();
-  }
-#if defined (WIN32)
-  fopen_s(&file_, file_path, "rb");
-#else
-  file_ = fopen(file_path, "rb");
-#endif
-  if (file_ == NULL) {
-    return false;
-  }
-
-  fseek(file_, 0, SEEK_END);
-  length_ = ftell(file_);
-  fseek(file_, 0, SEEK_SET);
-  return true;
-}
-
-void FileInputStream::close() {
+void FileInputStream::Close() {
   if (file_) {
     fclose(file_);
     length_ = 0;
@@ -63,16 +46,16 @@ void FileInputStream::close() {
   }
 }
 
-void FileInputStream::mark(int32_t readlimit) {
+void FileInputStream::Mark(int32_t readlimit) {
   // NOP
   UNREFERENCED_PARAMETER(readlimit);
 }
 
-bool FileInputStream::markSupported() {
+bool FileInputStream::MarkSupported() {
   return false;
 }
 
-int32_t FileInputStream::read() {
+int32_t FileInputStream::Read() {
   if (!file_) {
 #if defined (SFNTLY_NO_EXCEPTION)
     return 0;
@@ -93,11 +76,11 @@ int32_t FileInputStream::read() {
   return value;
 }
 
-int32_t FileInputStream::read(ByteVector* b) {
-  return read(b, 0, b->capacity());
+int32_t FileInputStream::Read(ByteVector* b) {
+  return Read(b, 0, b->capacity());
 }
 
-int32_t FileInputStream::read(ByteVector* b, int32_t offset, int32_t length) {
+int32_t FileInputStream::Read(ByteVector* b, int32_t offset, int32_t length) {
   assert(b);
   if (!file_) {
 #if defined (SFNTLY_NO_EXCEPTION)
@@ -122,11 +105,11 @@ int32_t FileInputStream::read(ByteVector* b, int32_t offset, int32_t length) {
   return actual_read;
 }
 
-void FileInputStream::reset() {
+void FileInputStream::Reset() {
   // NOP
 }
 
-int64_t FileInputStream::skip(int64_t n) {
+int64_t FileInputStream::Skip(int64_t n) {
   if (!file_) {
 #if defined (SFNTLY_NO_EXCEPTION)
     return 0;
@@ -147,11 +130,11 @@ int64_t FileInputStream::skip(int64_t n) {
   return skip_count;
 }
 
-void FileInputStream::unread(ByteVector* b) {
-  unread(b, 0, b->capacity());
+void FileInputStream::Unread(ByteVector* b) {
+  Unread(b, 0, b->capacity());
 }
 
-void FileInputStream::unread(ByteVector* b, int32_t offset, int32_t length) {
+void FileInputStream::Unread(ByteVector* b, int32_t offset, int32_t length) {
   assert(b);
   assert(b->size() >= size_t(offset + length));
   if (!file_) {
@@ -164,9 +147,29 @@ void FileInputStream::unread(ByteVector* b, int32_t offset, int32_t length) {
   size_t unread_count = std::min<size_t>(position_, length);
   fseek(file_, position_ - unread_count, SEEK_SET);
   position_ -= unread_count;
-  read(b, offset, length);
+  Read(b, offset, length);
   fseek(file_, position_ - unread_count, SEEK_SET);
   position_ -= unread_count;
+}
+
+bool FileInputStream::Open(const char* file_path) {
+  assert(file_path);
+  if (file_) {
+    Close();
+  }
+#if defined (WIN32)
+  fopen_s(&file_, file_path, "rb");
+#else
+  file_ = fopen(file_path, "rb");
+#endif
+  if (file_ == NULL) {
+    return false;
+  }
+
+  fseek(file_, 0, SEEK_END);
+  length_ = ftell(file_);
+  fseek(file_, 0, SEEK_SET);
+  return true;
 }
 
 }  // namespace sfntly

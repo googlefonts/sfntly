@@ -23,15 +23,15 @@
 
 namespace sfntly {
 
-void builderForFontFile(const char* font_path, FontFactory* factory,
+void BuilderForFontFile(const char* font_path, FontFactory* factory,
                         FontBuilderArray* builders);
-void serializeFont(const char* font_path, FontFactory* factory, Font* font);
-void loadFont(const char* font_path, FontFactory* factory, FontArray* fonts);
+void SerializeFont(const char* font_path, FontFactory* factory, Font* font);
+void LoadFont(const char* font_path, FontFactory* factory, FontArray* fonts);
 
-void loadFile(const char* input_file_path, ByteVector* input_buffer);
-void serializeToFile(MemoryOutputStream* output_stream, const char* file_path);
+void LoadFile(const char* input_file_path, ByteVector* input_buffer);
+void SerializeToFile(MemoryOutputStream* output_stream, const char* file_path);
 
-void hexDump(const unsigned char* byte_data, size_t length);
+void HexDump(const unsigned char* byte_data, size_t length);
 
 }  // namespace sfntly
 

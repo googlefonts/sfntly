@@ -23,7 +23,7 @@ namespace sfntly {
 
 class FontMath {
  public:
-  static int32_t log2(int32_t a) {
+  static int32_t Log2(int32_t a) {
     int r = 0;  // r will be lg(a)
     while (a != 0) {
       a >>= 1;

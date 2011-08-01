@@ -27,50 +27,50 @@ namespace byte_array_test {
 const int32_t BYTE_ARRAY_SIZES[] =
     {1, 7, 127, 128, 129, 255, 256, 257, 666, 1023, 10000, 0xffff, 0x10000};
 
-void fillTestByteArray(ByteArray* ba, int32_t size) {
+void FillTestByteArray(ByteArray* ba, int32_t size) {
   for (int32_t i = 0; i < size; ++i) {
-    ba->put(i, (byte_t)(i % 256));
+    ba->Put(i, (byte_t)(i % 256));
   }
 }
 
-void readByteArrayWithBuffer(ByteArray* ba, ByteVector* buffer, ByteVector* b) {
-  b->resize(ba->length());
+void ReadByteArrayWithBuffer(ByteArray* ba, ByteVector* buffer, ByteVector* b) {
+  b->resize(ba->Length());
   int32_t index = 0;
-  while (index < ba->length()) {
-    int32_t bytes_read = ba->get(index, buffer);
+  while (index < ba->Length()) {
+    int32_t bytes_read = ba->Get(index, buffer);
     std::copy(buffer->begin(), buffer->begin() + bytes_read,
               b->begin() + index);
     index += bytes_read;
   }
 }
 
-void readByteArrayWithSlidingWindow(ByteArray* ba, int window_size,
+void ReadByteArrayWithSlidingWindow(ByteArray* ba, int window_size,
                                     ByteVector* b) {
-  b->resize(ba->length());
+  b->resize(ba->Length());
   int32_t index = 0;
   int32_t actual_window_size = window_size;
-  while (index < ba->length()) {
+  while (index < ba->Length()) {
     actual_window_size =
         std::min<int32_t>(actual_window_size, b->size() - index);
-    int32_t bytes_read = ba->get(index, b, index, actual_window_size);
+    int32_t bytes_read = ba->Get(index, b, index, actual_window_size);
     index += bytes_read;
   }
 }
 
-bool readComparison(ByteArray* ba1, ByteArray* ba2) {
+bool ReadComparison(ByteArray* ba1, ByteArray* ba2) {
   // single byte reads
-  for (int i = 0; i < ba1->length(); ++i) {
-    EXPECT_EQ(ba1->get(i), ba2->get(i));
+  for (int i = 0; i < ba1->Length(); ++i) {
+    EXPECT_EQ(ba1->Get(i), ba2->Get(i));
   }
 
   ByteVector b1, b2;
   // buffer reads
-  int increments = std::max<int32_t>(ba1->length() / 11, 1);
-  for (int buffer_size = 1; buffer_size < ba1->length();
+  int increments = std::max<int32_t>(ba1->Length() / 11, 1);
+  for (int buffer_size = 1; buffer_size < ba1->Length();
        buffer_size += increments) {
     ByteVector buffer(buffer_size);
-    readByteArrayWithBuffer(ba1, &buffer, &b1);
-    readByteArrayWithBuffer(ba2, &buffer, &b2);
+    ReadByteArrayWithBuffer(ba1, &buffer, &b1);
+    ReadByteArrayWithBuffer(ba2, &buffer, &b2);
     EXPECT_GT(b1.size(), static_cast<size_t>(0));
     EXPECT_EQ(b1.size(), b2.size());
     EXPECT_TRUE(std::equal(b1.begin(), b1.end(), b2.begin()));
@@ -79,10 +79,10 @@ bool readComparison(ByteArray* ba1, ByteArray* ba2) {
   // sliding window reads
   b1.clear();
   b2.clear();
-  for (int window_size = 1; window_size < ba1->length();
+  for (int window_size = 1; window_size < ba1->Length();
        window_size += increments) {
-    readByteArrayWithSlidingWindow(ba1, window_size, &b1);
-    readByteArrayWithSlidingWindow(ba2, window_size, &b2);
+    ReadByteArrayWithSlidingWindow(ba1, window_size, &b1);
+    ReadByteArrayWithSlidingWindow(ba2, window_size, &b2);
     EXPECT_GT(b1.size(), static_cast<size_t>(0));
     EXPECT_EQ(b1.size(), b2.size());
     EXPECT_TRUE(std::equal(b1.begin(), b1.end(), b2.begin()));
@@ -91,46 +91,46 @@ bool readComparison(ByteArray* ba1, ByteArray* ba2) {
   return true;
 }
 
-bool copyTest(ByteArray* ba) {
-  ByteArrayPtr fixed_copy = new MemoryByteArray(ba->length());
-  ba->copyTo(fixed_copy);
-  EXPECT_EQ(ba->length(), fixed_copy->length());
-  EXPECT_TRUE(readComparison(ba, fixed_copy));
+bool CopyTest(ByteArray* ba) {
+  ByteArrayPtr fixed_copy = new MemoryByteArray(ba->Length());
+  ba->CopyTo(fixed_copy);
+  EXPECT_EQ(ba->Length(), fixed_copy->Length());
+  EXPECT_TRUE(ReadComparison(ba, fixed_copy));
 
   ByteArrayPtr growable_copy = new GrowableMemoryByteArray();
-  ba->copyTo(growable_copy);
-  EXPECT_EQ(ba->length(), growable_copy->length());
-  EXPECT_TRUE(readComparison(ba, growable_copy));
+  ba->CopyTo(growable_copy);
+  EXPECT_EQ(ba->Length(), growable_copy->Length());
+  EXPECT_TRUE(ReadComparison(ba, growable_copy));
 
   return true;
 }
 
-bool byteArrayTester(ByteArray* ba) {
-  return copyTest(ba);
+bool ByteArrayTester(ByteArray* ba) {
+  return CopyTest(ba);
 }
 
 }  // namespace byte_array_test
 
-bool testMemoryByteArray() {
+bool TestMemoryByteArray() {
   for (size_t i = 0;
        i < sizeof(byte_array_test::BYTE_ARRAY_SIZES) / sizeof(int32_t); ++i) {
     int32_t size = byte_array_test::BYTE_ARRAY_SIZES[i];
     fprintf(stderr, "fixed mem: iteration %ld, size %d\n", i, size);
     ByteArrayPtr ba = new MemoryByteArray(size);
-    byte_array_test::fillTestByteArray(ba, size);
-    EXPECT_TRUE(byte_array_test::byteArrayTester(ba));
+    byte_array_test::FillTestByteArray(ba, size);
+    EXPECT_TRUE(byte_array_test::ByteArrayTester(ba));
   }
   return true;
 }
 
-bool testGrowableMemoryByteArray() {
+bool TestGrowableMemoryByteArray() {
   for (size_t i = 0;
        i < sizeof(byte_array_test::BYTE_ARRAY_SIZES) / sizeof(int32_t); ++i) {
     int32_t size = byte_array_test::BYTE_ARRAY_SIZES[i];
     fprintf(stderr, "growable mem: iteration %ld, size %d\n", i, size);
     ByteArrayPtr ba = new GrowableMemoryByteArray();
-    byte_array_test::fillTestByteArray(ba, size);
-    EXPECT_TRUE(byte_array_test::byteArrayTester(ba));
+    byte_array_test::FillTestByteArray(ba, size);
+    EXPECT_TRUE(byte_array_test::ByteArrayTester(ba));
   }
   return true;
 }

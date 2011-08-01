@@ -20,202 +20,204 @@ namespace sfntly {
 /******************************************************************************
  * MaximumProfileTable class
  ******************************************************************************/
-MaximumProfileTable::MaximumProfileTable(Header* header,
-                                         ReadableFontData* data) :
-    Table(header, data) {
-}
-
 MaximumProfileTable::~MaximumProfileTable() {}
 
-int32_t MaximumProfileTable::version() {
-  return data_->readFixed(Offset::kVersion);
+int32_t MaximumProfileTable::Version() {
+  return data_->ReadFixed(Offset::kVersion);
 }
 
-int32_t MaximumProfileTable::numGlyphs() {
-  return data_->readUShort(Offset::kNumGlyphs);
+int32_t MaximumProfileTable::NumGlyphs() {
+  return data_->ReadUShort(Offset::kNumGlyphs);
 }
 
-int32_t MaximumProfileTable::maxPoints() {
-  return data_->readUShort(Offset::kMaxPoints);
+int32_t MaximumProfileTable::MaxPoints() {
+  return data_->ReadUShort(Offset::kMaxPoints);
 }
 
-int32_t MaximumProfileTable::maxContours() {
-  return data_->readUShort(Offset::kMaxContours);
+int32_t MaximumProfileTable::MaxContours() {
+  return data_->ReadUShort(Offset::kMaxContours);
 }
 
-int32_t MaximumProfileTable::maxCompositePoints() {
-  return data_->readUShort(Offset::kMaxCompositePoints);
+int32_t MaximumProfileTable::MaxCompositePoints() {
+  return data_->ReadUShort(Offset::kMaxCompositePoints);
 }
 
-int32_t MaximumProfileTable::maxZones() {
-  return data_->readUShort(Offset::kMaxZones);
+int32_t MaximumProfileTable::MaxZones() {
+  return data_->ReadUShort(Offset::kMaxZones);
 }
 
-int32_t MaximumProfileTable::maxTwilightPoints() {
-  return data_->readUShort(Offset::kMaxTwilightPoints);
+int32_t MaximumProfileTable::MaxTwilightPoints() {
+  return data_->ReadUShort(Offset::kMaxTwilightPoints);
 }
 
-int32_t MaximumProfileTable::maxStorage() {
-  return data_->readUShort(Offset::kMaxStorage);
+int32_t MaximumProfileTable::MaxStorage() {
+  return data_->ReadUShort(Offset::kMaxStorage);
 }
 
-int32_t MaximumProfileTable::maxFunctionDefs() {
-  return data_->readUShort(Offset::kMaxFunctionDefs);
+int32_t MaximumProfileTable::MaxFunctionDefs() {
+  return data_->ReadUShort(Offset::kMaxFunctionDefs);
 }
 
-int32_t MaximumProfileTable::maxStackElements() {
-  return data_->readUShort(Offset::kMaxStackElements);
+int32_t MaximumProfileTable::MaxStackElements() {
+  return data_->ReadUShort(Offset::kMaxStackElements);
 }
 
-int32_t MaximumProfileTable::maxSizeOfInstructions() {
-  return data_->readUShort(Offset::kMaxSizeOfInstructions);
+int32_t MaximumProfileTable::MaxSizeOfInstructions() {
+  return data_->ReadUShort(Offset::kMaxSizeOfInstructions);
 }
 
-int32_t MaximumProfileTable::maxComponentElements() {
-  return data_->readUShort(Offset::kMaxComponentElements);
+int32_t MaximumProfileTable::MaxComponentElements() {
+  return data_->ReadUShort(Offset::kMaxComponentElements);
 }
 
-int32_t MaximumProfileTable::maxComponentDepth() {
-  return data_->readUShort(Offset::kMaxComponentDepth);
+int32_t MaximumProfileTable::MaxComponentDepth() {
+  return data_->ReadUShort(Offset::kMaxComponentDepth);
+}
+
+MaximumProfileTable::MaximumProfileTable(Header* header,
+                                         ReadableFontData* data)
+    : Table(header, data) {
 }
 
 /******************************************************************************
  * MaximumProfileTable::Builder class
  ******************************************************************************/
 MaximumProfileTable::Builder::Builder(
-    FontDataTableBuilderContainer* font_builder, Header* header,
-    WritableFontData* data) :
-    Table::TableBasedTableBuilder(font_builder, header, data) {
+    FontDataTableBuilderContainer* font_builder,
+    Header* header,
+    WritableFontData* data)
+    : Table::TableBasedTableBuilder(font_builder, header, data) {
 }
 
 MaximumProfileTable::Builder::Builder(
-    FontDataTableBuilderContainer* font_builder, Header* header,
-    ReadableFontData* data) :
-    Table::TableBasedTableBuilder(font_builder, header, data) {
+    FontDataTableBuilderContainer* font_builder,
+    Header* header,
+    ReadableFontData* data)
+    : Table::TableBasedTableBuilder(font_builder, header, data) {
 }
 
 MaximumProfileTable::Builder::~Builder() {}
 
-CALLER_ATTACH FontDataTable* MaximumProfileTable::Builder::subBuildTable(
-    ReadableFontData* data) {
+CALLER_ATTACH FontDataTable*
+    MaximumProfileTable::Builder::SubBuildTable(ReadableFontData* data) {
   FontDataTablePtr table = new MaximumProfileTable(header(), data);
-  return table.detach();
+  return table.Detach();
 }
 
-int32_t MaximumProfileTable::Builder::version() {
-  return internalReadData()->readUShort(Offset::kVersion);
+int32_t MaximumProfileTable::Builder::Version() {
+  return InternalReadData()->ReadUShort(Offset::kVersion);
 }
 
-void MaximumProfileTable::Builder::setVersion(int32_t version) {
-  internalWriteData()->writeUShort(Offset::kVersion, version);
+void MaximumProfileTable::Builder::SetVersion(int32_t version) {
+  InternalWriteData()->WriteUShort(Offset::kVersion, version);
 }
 
-int32_t MaximumProfileTable::Builder::numGlyphs() {
-  return internalReadData()->readUShort(Offset::kNumGlyphs);
+int32_t MaximumProfileTable::Builder::NumGlyphs() {
+  return InternalReadData()->ReadUShort(Offset::kNumGlyphs);
 }
 
-void MaximumProfileTable::Builder::setNumGlyphs(int32_t num_glyphs) {
-  internalWriteData()->writeUShort(Offset::kNumGlyphs, num_glyphs);
+void MaximumProfileTable::Builder::SetNumGlyphs(int32_t num_glyphs) {
+  InternalWriteData()->WriteUShort(Offset::kNumGlyphs, num_glyphs);
 }
 
-int32_t MaximumProfileTable::Builder::maxPoints() {
-  return internalReadData()->readUShort(Offset::kMaxPoints);
+int32_t MaximumProfileTable::Builder::MaxPoints() {
+  return InternalReadData()->ReadUShort(Offset::kMaxPoints);
 }
 
-void MaximumProfileTable::Builder::setMaxPoints(int32_t max_points) {
-  internalWriteData()->writeUShort(Offset::kMaxPoints, max_points);
+void MaximumProfileTable::Builder::SetMaxPoints(int32_t max_points) {
+  InternalWriteData()->WriteUShort(Offset::kMaxPoints, max_points);
 }
 
-int32_t MaximumProfileTable::Builder::maxContours() {
-  return internalReadData()->readUShort(Offset::kMaxContours);
+int32_t MaximumProfileTable::Builder::MaxContours() {
+  return InternalReadData()->ReadUShort(Offset::kMaxContours);
 }
 
-void MaximumProfileTable::Builder::setMaxContours(int32_t max_contours) {
-  internalWriteData()->writeUShort(Offset::kMaxContours, max_contours);
+void MaximumProfileTable::Builder::SetMaxContours(int32_t max_contours) {
+  InternalWriteData()->WriteUShort(Offset::kMaxContours, max_contours);
 }
 
-int32_t MaximumProfileTable::Builder::maxCompositePoints() {
-  return internalReadData()->readUShort(Offset::kMaxCompositePoints);
+int32_t MaximumProfileTable::Builder::MaxCompositePoints() {
+  return InternalReadData()->ReadUShort(Offset::kMaxCompositePoints);
 }
 
-void MaximumProfileTable::Builder::setMaxCompositePoints(
+void MaximumProfileTable::Builder::SetMaxCompositePoints(
     int32_t max_composite_points) {
-  internalWriteData()->writeUShort(Offset::kMaxCompositePoints,
+  InternalWriteData()->WriteUShort(Offset::kMaxCompositePoints,
                                    max_composite_points);
 }
 
-int32_t MaximumProfileTable::Builder::maxZones() {
-  return internalReadData()->readUShort(Offset::kMaxZones);
+int32_t MaximumProfileTable::Builder::MaxZones() {
+  return InternalReadData()->ReadUShort(Offset::kMaxZones);
 }
 
-void MaximumProfileTable::Builder::setMaxZones(int32_t max_zones) {
-  internalWriteData()->writeUShort(Offset::kMaxZones, max_zones);
+void MaximumProfileTable::Builder::SetMaxZones(int32_t max_zones) {
+  InternalWriteData()->WriteUShort(Offset::kMaxZones, max_zones);
 }
 
-int32_t MaximumProfileTable::Builder::maxTwilightPoints() {
-  return internalReadData()->readUShort(Offset::kMaxTwilightPoints);
+int32_t MaximumProfileTable::Builder::MaxTwilightPoints() {
+  return InternalReadData()->ReadUShort(Offset::kMaxTwilightPoints);
 }
 
-void MaximumProfileTable::Builder::setMaxTwilightPoints(
+void MaximumProfileTable::Builder::SetMaxTwilightPoints(
     int32_t max_twilight_points) {
-  internalWriteData()->writeUShort(Offset::kMaxTwilightPoints,
+  InternalWriteData()->WriteUShort(Offset::kMaxTwilightPoints,
                                    max_twilight_points);
 }
 
-int32_t MaximumProfileTable::Builder::maxStorage() {
-  return internalReadData()->readUShort(Offset::kMaxStorage);
+int32_t MaximumProfileTable::Builder::MaxStorage() {
+  return InternalReadData()->ReadUShort(Offset::kMaxStorage);
 }
 
-void MaximumProfileTable::Builder::setMaxStorage(int32_t max_storage) {
-  internalWriteData()->writeUShort(Offset::kMaxStorage, max_storage);
+void MaximumProfileTable::Builder::SetMaxStorage(int32_t max_storage) {
+  InternalWriteData()->WriteUShort(Offset::kMaxStorage, max_storage);
 }
 
-int32_t MaximumProfileTable::Builder::maxFunctionDefs() {
-  return internalReadData()->readUShort(Offset::kMaxFunctionDefs);
+int32_t MaximumProfileTable::Builder::MaxFunctionDefs() {
+  return InternalReadData()->ReadUShort(Offset::kMaxFunctionDefs);
 }
 
-void MaximumProfileTable::Builder::setMaxFunctionDefs(
+void MaximumProfileTable::Builder::SetMaxFunctionDefs(
     int32_t max_function_defs) {
-  internalWriteData()->writeUShort(Offset::kMaxFunctionDefs, max_function_defs);
+  InternalWriteData()->WriteUShort(Offset::kMaxFunctionDefs, max_function_defs);
 }
 
-int32_t MaximumProfileTable::Builder::maxStackElements() {
-  return internalReadData()->readUShort(Offset::kMaxStackElements);
+int32_t MaximumProfileTable::Builder::MaxStackElements() {
+  return InternalReadData()->ReadUShort(Offset::kMaxStackElements);
 }
 
-void MaximumProfileTable::Builder::setMaxStackElements(
+void MaximumProfileTable::Builder::SetMaxStackElements(
     int32_t max_stack_elements) {
-  internalWriteData()->writeUShort(Offset::kMaxStackElements,
+  InternalWriteData()->WriteUShort(Offset::kMaxStackElements,
                                    max_stack_elements);
 }
 
-int32_t MaximumProfileTable::Builder::maxSizeOfInstructions() {
-  return internalReadData()->readUShort(Offset::kMaxSizeOfInstructions);
+int32_t MaximumProfileTable::Builder::MaxSizeOfInstructions() {
+  return InternalReadData()->ReadUShort(Offset::kMaxSizeOfInstructions);
 }
 
-void MaximumProfileTable::Builder::setMaxSizeOfInstructions(
+void MaximumProfileTable::Builder::SetMaxSizeOfInstructions(
     int32_t max_size_of_instructions) {
-  internalWriteData()->writeUShort(Offset::kMaxSizeOfInstructions,
+  InternalWriteData()->WriteUShort(Offset::kMaxSizeOfInstructions,
                                    max_size_of_instructions);
 }
 
-int32_t MaximumProfileTable::Builder::maxComponentElements() {
-  return internalReadData()->readUShort(Offset::kMaxComponentElements);
+int32_t MaximumProfileTable::Builder::MaxComponentElements() {
+  return InternalReadData()->ReadUShort(Offset::kMaxComponentElements);
 }
 
-void MaximumProfileTable::Builder::setMaxComponentElements(
+void MaximumProfileTable::Builder::SetMaxComponentElements(
     int32_t max_component_elements) {
-  internalWriteData()->writeUShort(Offset::kMaxComponentElements,
+  InternalWriteData()->WriteUShort(Offset::kMaxComponentElements,
                                    max_component_elements);
 }
 
-int32_t MaximumProfileTable::Builder::maxComponentDepth() {
-  return internalReadData()->readUShort(Offset::kMaxComponentDepth);
+int32_t MaximumProfileTable::Builder::MaxComponentDepth() {
+  return InternalReadData()->ReadUShort(Offset::kMaxComponentDepth);
 }
 
-void MaximumProfileTable::Builder::setMaxComponentDepth(
+void MaximumProfileTable::Builder::SetMaxComponentDepth(
     int32_t max_component_depth) {
-  internalWriteData()->writeUShort(Offset::kMaxComponentDepth,
+  InternalWriteData()->WriteUShort(Offset::kMaxComponentDepth,
                                    max_component_depth);
 }
 

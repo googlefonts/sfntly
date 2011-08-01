@@ -23,7 +23,7 @@ namespace sfntly {
 
 class FontDataTableBuilderContainer {
  public:
-  virtual WritableFontData* getNewData(int32_t size) = 0;
+  virtual WritableFontData* GetNewData(int32_t size) = 0;
   // Make gcc -Wnon-virtual-dtor happy.
   virtual ~FontDataTableBuilderContainer() {}
 };

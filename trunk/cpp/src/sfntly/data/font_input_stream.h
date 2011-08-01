@@ -33,33 +33,33 @@ class FontInputStream : public InputStream {
   FontInputStream(InputStream* is, size_t length);
   virtual ~FontInputStream();
 
-  virtual int32_t available();
-  virtual void close();
-  virtual void mark(int32_t readlimit);
-  virtual bool markSupported();
-  virtual void reset();
+  virtual int32_t Available();
+  virtual void Close();
+  virtual void Mark(int32_t readlimit);
+  virtual bool MarkSupported();
+  virtual void Reset();
 
-  virtual int32_t read();
-  virtual int32_t read(ByteVector* buffer);
-  virtual int32_t read(ByteVector* buffer, int32_t offset, int32_t length);
+  virtual int32_t Read();
+  virtual int32_t Read(ByteVector* buffer);
+  virtual int32_t Read(ByteVector* buffer, int32_t offset, int32_t length);
 
-  virtual int64_t position();
+  virtual int64_t position() { return position_; }
 
-  virtual int32_t readChar();
-  virtual int32_t readUShort();
-  virtual int32_t readShort();
-  virtual int32_t readUInt24();
-  virtual int64_t readULong();
-  virtual int32_t readULongAsInt();
-  virtual int32_t readLong();
-  virtual int32_t readFixed();
-  virtual int64_t readDateTimeAsLong();
-  virtual int64_t skip(int64_t n);  // n can be negative
+  virtual int32_t ReadChar();
+  virtual int32_t ReadUShort();
+  virtual int32_t ReadShort();
+  virtual int32_t ReadUInt24();
+  virtual int64_t ReadULong();
+  virtual int32_t ReadULongAsInt();
+  virtual int32_t ReadLong();
+  virtual int32_t ReadFixed();
+  virtual int64_t ReadDateTimeAsLong();
+  virtual int64_t Skip(int64_t n);  // n can be negative.
 
  private:
   InputStream* stream_;
   int64_t position_;
-  int64_t length_;  // bound on length of data to read
+  int64_t length_;  // Bound on length of data to read.
   bool bounded_;
 };
 

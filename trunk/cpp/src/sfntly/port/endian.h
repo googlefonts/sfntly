@@ -22,18 +22,18 @@
 
 namespace sfntly {
 
-static inline uint16_t endian_swap16(uint16_t value) {
+static inline uint16_t EndianSwap16(uint16_t value) {
   return (uint16_t)((value >> 8) | (value << 8));
 }
 
-static inline int32_t endian_swap32(int32_t value) {
+static inline int32_t EndianSwap32(int32_t value) {
   return (((value & 0x000000ff) << 24) |
           ((value & 0x0000ff00) <<  8) |
           ((value & 0x00ff0000) >>  8) |
           ((value & 0xff000000) >> 24));
 }
 
-static inline uint64_t endian_swap64(uint64_t value) {
+static inline uint64_t EndianSwap64(uint64_t value) {
   return (((value & 0x00000000000000ffLL) << 56) |
           ((value & 0x000000000000ff00LL) << 40) |
           ((value & 0x0000000000ff0000LL) << 24) |
@@ -45,31 +45,31 @@ static inline uint64_t endian_swap64(uint64_t value) {
 }
 
 #ifdef SFNTLY_LITTLE_ENDIAN
-  #define toBE16(n) endian_swap16(n)
-  #define toBE32(n) endian_swap32(n)
-  #define toBE64(n) endian_swap64(n)
-  #define toLE16(n) (n)
-  #define toLE32(n) (n)
-  #define toLE64(n) (n)
-  #define fromBE16(n) endian_swap16(n)
-  #define fromBE32(n) endian_swap32(n)
-  #define fromBE64(n) endian_swap64(n)
-  #define fromLE16(n) (n)
-  #define fromLE32(n) (n)
-  #define fromLE64(n) (n)
+  #define ToBE16(n) EndianSwap16(n)
+  #define ToBE32(n) EndianSwap32(n)
+  #define ToBE64(n) EndianSwap64(n)
+  #define ToLE16(n) (n)
+  #define ToLE32(n) (n)
+  #define ToLE64(n) (n)
+  #define FromBE16(n) EndianSwap16(n)
+  #define FromBE32(n) EndianSwap32(n)
+  #define FromBE64(n) EndianSwap64(n)
+  #define FromLE16(n) (n)
+  #define FromLE32(n) (n)
+  #define FromLE64(n) (n)
 #else  // SFNTLY_BIG_ENDIAN
-  #define toBE16(n) (n)
-  #define toBE32(n) (n)
-  #define toBE64(n) (n)
-  #define toLE16(n) endian_swap16(n)
-  #define toLE32(n) endian_swap32(n)
-  #define toLE64(n) endian_swap64(n)
-  #define fromBE16(n) (n)
-  #define fromBE32(n) (n)
-  #define fromBE64(n) (n)
-  #define fromLE16(n) endian_swap16(n)
-  #define fromLE32(n) endian_swap32(n)
-  #define fromLE64(n) endian_swap64(n)
+  #define ToBE16(n) (n)
+  #define ToBE32(n) (n)
+  #define ToBE64(n) (n)
+  #define ToLE16(n) EndianSwap16(n)
+  #define ToLE32(n) EndianSwap32(n)
+  #define ToLE64(n) EndianSwap64(n)
+  #define FromBE16(n) (n)
+  #define FromBE32(n) (n)
+  #define FromBE64(n) (n)
+  #define FromLE16(n) EndianSwap16(n)
+  #define FromLE32(n) EndianSwap32(n)
+  #define FromLE64(n) EndianSwap64(n)
 #endif
 
 }  // namespace sfntly

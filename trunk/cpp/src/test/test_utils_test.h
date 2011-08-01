@@ -21,9 +21,9 @@
 
 namespace sfntly {
 
-bool testEncoding();
-bool testExtension();
-bool testReadFile();
+bool TestEncoding();
+bool TestExtension();
+bool TestReadFile();
 
 }  // namespace sfntly
 

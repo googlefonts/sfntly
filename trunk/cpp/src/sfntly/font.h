@@ -122,13 +122,132 @@ extern const int32_t SFNTVERSION_1;
 
 class FontFactory;
 class Font : public RefCounted<Font> {
+ public:
+  class Builder : public FontDataTableBuilderContainer,
+                  public RefCounted<Builder> {
+   public:
+    virtual ~Builder();
+
+    static CALLER_ATTACH Builder*
+        GetOTFBuilder(FontFactory* factory, InputStream* is);
+    static CALLER_ATTACH Builder*
+        GetOTFBuilder(FontFactory* factory,
+                      ByteArray* ba,
+                      int32_t offset_to_offset_table);
+    static CALLER_ATTACH Builder* GetOTFBuilder(FontFactory* factory);
+    virtual bool ReadyToBuild();
+    virtual CALLER_ATTACH Font* Build();
+    virtual CALLER_ATTACH WritableFontData* GetNewData(int32_t capacity);
+    virtual CALLER_ATTACH WritableFontData*
+        GetNewGrowableData(ReadableFontData* data);
+    virtual void SetDigest(ByteVector* digest);
+    virtual void CleanTableBuilders();
+    virtual bool HasTableBuilder(int32_t tag);
+    virtual Table::Builder* GetTableBuilder(int32_t tag);
+
+    // Creates a new table builder for the table type given by the table id tag.
+    // This new table has been added to the font and will replace any existing
+    // builder for that table.
+    // @return new empty table of the type specified by tag; if tag is not known
+    //         then a generic OpenTypeTable is returned
+    virtual CALLER_ATTACH Table::Builder* NewTableBuilder(int32_t tag);
+    virtual CALLER_ATTACH Table::Builder*
+        NewTableBuilder(int32_t tag, ReadableFontData* src_data);
+    virtual TableBuilderMap* table_builders() { return &table_builders_; }
+    virtual void TableBuilderTags(IntegerSet* key_set);
+    // Note: different from Java: we don't return object in removeTableBuilder
+    virtual void RemoveTableBuilder(int32_t tag);
+    virtual int32_t number_of_table_builders() {
+      return (int32_t)table_builders_.size();
+    }
+
+   private:
+    explicit Builder(FontFactory* factory);
+    virtual void LoadFont(InputStream* is);
+    virtual void LoadFont(ByteArray* buffer, int32_t offset_to_offset_table);
+    int32_t SfntWrapperSize();
+    void BuildAllTableBuilders(DataBlockMap* table_data,
+                               TableBuilderMap* builder_map);
+    CALLER_ATTACH Table::Builder*
+        GetTableBuilder(Table::Header* header, WritableFontData* data);
+    void BuildTablesFromBuilders(TableBuilderMap* builder_map,
+                                 TableMap* tables);
+    static void InterRelateBuilders(TableBuilderMap* builder_map);
+    void ReadHeader(FontInputStream* is, TableHeaderSortedSet* records);
+    void ReadHeader(ReadableFontData* fd,
+                    int32_t offset,
+                    TableHeaderSortedSet* records);
+    void LoadTableData(TableHeaderSortedSet* headers,
+                       FontInputStream* is,
+                       DataBlockMap* table_data);
+    void LoadTableData(TableHeaderSortedSet* headers,
+                       WritableFontData* fd,
+                       DataBlockMap* table_data);
+
+    TableBuilderMap table_builders_;
+    FontFactory* factory_;  // dumb pointer, avoid circular refcounting
+    int32_t sfnt_version_;
+    int32_t num_tables_;
+    int32_t search_range_;
+    int32_t entry_selector_;
+    int32_t range_shift_;
+    DataBlockMap data_blocks_;
+    ByteVector digest_;
+  };
+
+  virtual ~Font();
+
+  // Gets the sfnt version set in the sfnt wrapper of the font.
+  int32_t version() { return sfnt_version_; }
+
+  // Gets a copy of the fonts digest that was created when the font was read. If
+  // no digest was set at creation time then the return result will be null.
+  ByteVector* digest() { return &digest_; }
+
+  // Get the checksum for this font.
+  int64_t checksum() { return checksum_; }
+
+  // Get the number of tables in this font.
+  int32_t num_tables() { return (int32_t)tables_.size(); }
+
+  // Whether the font has a particular table.
+  bool HasTable(int32_t tag);
+
+  // UNIMPLEMENTED: public Iterator<? extends Table> iterator
+
+  // Get the table in this font with the specified id.
+  // @param tag the identifier of the table
+  // @return the table specified if it exists; null otherwise
+  // C++ port: rename table() to GetTable()
+  Table* GetTable(int32_t tag);
+
+  // Get a map of the tables in this font accessed by table tag.
+  // @return an unmodifiable view of the tables in this font
+  TableMap* Tables();
+
+  // Serialize the font to the output stream.
+  // @param os the destination for the font serialization
+  // @param tableOrdering the table ordering to apply
+  void Serialize(OutputStream* os, IntegerList* table_ordering);
+
+  // Get a new data object. The size is a request for a data object and the
+  // returned data object will support at least that amount. A value greater
+  // than zero for the size is a request for a fixed size data object. A
+  // negative or zero value for the size is a request for a variable sized data
+  // object with the absolute value of the size being an estimate of the space
+  // required.
+  // @param size greater than zero is a request for a fixed size data object of
+  //        the given size; less than or equal to zero is a request for a
+  //        variable size data object with the absolute size as an estimate
+  CALLER_ATTACH WritableFontData* GetNewData(int32_t size);
+
  private:
   // Offsets to specific elements in the underlying data. These offsets are
   // relative to the start of the table or the start of sub-blocks within the
   // table.
   struct Offset {
     enum {
-    // Offsets within the main directory
+      // Offsets within the main directory
       kSfntVersion = 0,
       kNumTables = 4,
       kSearchRange = 6,
@@ -137,7 +256,7 @@ class Font : public RefCounted<Font> {
       kTableRecordBegin = 12,
       kSfntHeaderSize = 12,
 
-    // Offsets within a specific table record
+      // Offsets within a specific table record
       kTableTag = 0,
       kTableCheckSum = 4,
       kTableOffset = 8,
@@ -150,139 +269,17 @@ class Font : public RefCounted<Font> {
 //  static const int32_t CFF_TABLE_ORDERING[];
 //  static const int32_t TRUE_TYPE_TABLE_ORDERING[];
 
- public:
-  virtual ~Font();
-
- private:
   Font(FontFactory* factory, int32_t sfnt_version, ByteVector* digest,
        TableMap* tables);
 
- public:
-  // Gets the sfnt version set in the sfnt wrapper of the font.
-  virtual int32_t version();
+  void BuildTableHeadersForSerialization(IntegerList* table_ordering,
+                                         TableHeaderList* table_headers);
+  void SerializeHeader(FontOutputStream* fos, TableHeaderList* table_headers);
+  void SerializeTables(FontOutputStream* fos, TableHeaderList* table_headers);
+  void TableOrdering(IntegerList* default_table_ordering,
+                     IntegerList* table_ordering);
+  void DefaultTableOrdering(IntegerList* default_table_ordering);
 
-  // Gets a copy of the fonts digest that was created when the font was read. If
-  // no digest was set at creation time then the return result will be null.
-  virtual ByteVector* digest();
-
-  // Get the checksum for this font.
-  virtual int64_t checksum();
-
-  // Get the number of tables in this font.
-  virtual int32_t numTables();
-
-  // Whether the font has a particular table.
-  virtual bool hasTable(int32_t tag);
-
-  // UNIMPLEMENTED: public Iterator<? extends Table> iterator
-
-  // Get the table in this font with the specified id.
-  // @param tag the identifier of the table
-  // @return the table specified if it exists; null otherwise
-  virtual Table* table(int32_t tag);
-
-  // Get a map of the tables in this font accessed by table tag.
-  // @return an unmodifiable view of the tables in this font
-  virtual TableMap* tables();
-
-  // Serialize the font to the output stream.
-  // @param os the destination for the font serialization
-  // @param tableOrdering the table ordering to apply
-  virtual void serialize(OutputStream* os, IntegerList* table_ordering);
-
- private:
-  void buildTableHeadersForSerialization(IntegerList* table_ordering,
-    TableHeaderList* table_headers);
-  void serializeHeader(FontOutputStream* fos, TableHeaderList* table_headers);
-  void serializeTables(FontOutputStream* fos, TableHeaderList* table_headers);
-  void tableOrdering(IntegerList* default_table_ordering,
-    IntegerList* table_ordering);
-  void defaultTableOrdering(IntegerList* default_table_ordering);
-
- public:
-  class Builder : public FontDataTableBuilderContainer,
-                  public RefCounted<Builder> {
-   public:
-    virtual ~Builder();
-
-   private:
-    explicit Builder(FontFactory* factory);
-    virtual void loadFont(InputStream* is);
-    virtual void loadFont(ByteArray* buffer, int32_t offset_to_offset_table);
-
-   public:
-    static CALLER_ATTACH Builder*
-        getOTFBuilder(FontFactory* factory, InputStream* is);
-    static CALLER_ATTACH Builder*
-        getOTFBuilder(FontFactory* factory, ByteArray* ba,
-                      int32_t offset_to_offset_table);
-    static CALLER_ATTACH Builder* getOTFBuilder(FontFactory* factory);
-    virtual bool readyToBuild();
-    virtual CALLER_ATTACH Font* build();
-    virtual CALLER_ATTACH WritableFontData* getNewData(int32_t capacity);
-    virtual CALLER_ATTACH WritableFontData*
-        getNewGrowableData(ReadableFontData* data);
-    virtual void setDigest(ByteVector* digest);
-    virtual void cleanTableBuilders();
-    virtual bool hasTableBuilder(int32_t tag);
-    virtual Table::Builder* getTableBuilder(int32_t tag);
-
-    // Creates a new table builder for the table type given by the table id tag.
-    // This new table has been added to the font and will replace any existing
-    // builder for that table.
-    // @return new empty table of the type specified by tag; if tag is not known
-    //         then a generic OpenTypeTable is returned
-    virtual CALLER_ATTACH Table::Builder* newTableBuilder(int32_t tag);
-    virtual CALLER_ATTACH Table::Builder*
-        newTableBuilder(int32_t tag, ReadableFontData* src_data);
-    virtual TableBuilderMap* tableBuilders();
-    virtual void tableBuilderTags(IntegerSet* key_set);
-    // Note: different from Java: we don't return object in removeTableBuilder
-    virtual void removeTableBuilder(int32_t tag);
-    virtual int32_t numberOfTableBuilders();
-
-   private:
-    int32_t sfntWrapperSize();
-    void buildAllTableBuilders(DataBlockMap* table_data,
-                               TableBuilderMap* builder_map);
-    CALLER_ATTACH Table::Builder*
-        getTableBuilder(Table::Header* header, WritableFontData* data);
-    void buildTablesFromBuilders(TableBuilderMap* builder_map,
-                                 TableMap* tables);
-    static void interRelateBuilders(TableBuilderMap* builder_map);
-    void readHeader(FontInputStream* is, TableHeaderSortedSet* records);
-    void loadTableData(TableHeaderSortedSet* headers, FontInputStream* is,
-                       DataBlockMap* table_data);
-    void readHeader(ReadableFontData* fd, int32_t offset,
-                    TableHeaderSortedSet* records);
-    void loadTableData(TableHeaderSortedSet* headers, WritableFontData* fd,
-                       DataBlockMap* table_data);
-
-   private:
-    TableBuilderMap table_builders_;
-    FontFactory* factory_;  // dumb pointer, avoid circular refcounting
-    int32_t sfnt_version_;
-    int32_t num_tables_;
-    int32_t search_range_;
-    int32_t entry_selector_;
-    int32_t range_shift_;
-    DataBlockMap data_blocks_;
-    ByteVector digest_;
-  };
-
- public:
-  // Get a new data object. The size is a request for a data object and the
-  // returned data object will support at least that amount. A value greater
-  // than zero for the size is a request for a fixed size data object. A
-  // negative or zero value for the size is a request for a variable sized data
-  // object with the absolute value of the size being an estimate of the space
-  // required.
-  // @param size greater than zero is a request for a fixed size data object of
-  //        the given size; less than or equal to zero is a request for a
-  //        variable size data object with the absolute size as an estimate
-  CALLER_ATTACH WritableFontData* getNewData(int32_t size);
-
- private:
   FontFactory* factory_;  // dumb pointer, avoid circular ref-counting
   int32_t sfnt_version_;
   ByteVector digest_;

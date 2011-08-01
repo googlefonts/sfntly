@@ -18,8 +18,8 @@
 #define TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_FONT_DATA_TEST_H_
 
 namespace sfntly {
-  bool testReadableFontData();
-  bool testWritableFontData();
+  bool TestReadableFontData();
+  bool TestWritableFontData();
 }
 
 #endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_FONT_DATA_TEST_H_

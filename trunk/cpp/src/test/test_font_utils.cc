@@ -23,32 +23,32 @@
 
 namespace sfntly {
 
-void builderForFontFile(const char* font_path, FontFactory* factory,
+void BuilderForFontFile(const char* font_path, FontFactory* factory,
                         FontBuilderArray* builders) {
   assert(factory);
   FileInputStream is;
-  is.open(font_path);
-  factory->loadFontsForBuilding(&is, builders);
+  is.Open(font_path);
+  factory->LoadFontsForBuilding(&is, builders);
   EXPECT_GT(builders->size(), static_cast<size_t>(0));
 }
 
-void serializeFont(const char* font_path, FontFactory* factory, Font* font) {
+void SerializeFont(const char* font_path, FontFactory* factory, Font* font) {
   assert(font_path);
   assert(factory);
   assert(font);
   MemoryOutputStream output_stream;
-  factory->serializeFont(font, &output_stream);
-  serializeToFile(&output_stream, font_path);
+  factory->SerializeFont(font, &output_stream);
+  SerializeToFile(&output_stream, font_path);
 }
 
-void loadFont(const char* font_path, FontFactory* factory, FontArray* fonts) {
+void LoadFont(const char* font_path, FontFactory* factory, FontArray* fonts) {
   FileInputStream is;
-  is.open(font_path);
-  factory->loadFonts(&is, fonts);
-  is.close();
+  is.Open(font_path);
+  factory->LoadFonts(&is, fonts);
+  is.Close();
 }
 
-void loadFile(const char* input_file_path, ByteVector* input_buffer) {
+void LoadFile(const char* input_file_path, ByteVector* input_buffer) {
   assert(input_file_path);
   assert(input_buffer);
 
@@ -68,7 +68,7 @@ void loadFile(const char* input_file_path, ByteVector* input_buffer) {
   fclose(input_file);
 }
 
-void serializeToFile(MemoryOutputStream* output_stream, const char* file_path) {
+void SerializeToFile(MemoryOutputStream* output_stream, const char* file_path) {
   assert(file_path);
   assert(output_stream);
 
@@ -79,12 +79,12 @@ void serializeToFile(MemoryOutputStream* output_stream, const char* file_path) {
   output_file = fopen(file_path, "wb");
 #endif
   EXPECT_NE(output_file, reinterpret_cast<FILE*>(NULL));
-  fwrite(output_stream->get(), 1, output_stream->size(), output_file);
+  fwrite(output_stream->Get(), 1, output_stream->Size(), output_file);
   fflush(output_file);
   fclose(output_file);
 }
 
-void hexDump(const unsigned char* byte_data, size_t length) {
+void HexDump(const unsigned char* byte_data, size_t length) {
   if (byte_data == NULL || length == 0) {
     fprintf(stderr, "<NULL>\n");
     return;

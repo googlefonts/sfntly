@@ -18,6 +18,7 @@
 #define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_DATA_FONT_DATA_H_
 
 #include <vector>
+
 #include "sfntly/port/type.h"
 #include "sfntly/data/byte_array.h"
 #include "sfntly/port/refcount.h"
@@ -51,13 +52,13 @@ class FontData : virtual public RefCount {
   // that the font data can hold and all of it may not be filled with data or
   // even fully allocated yet.
   // @return the size of this array
-  virtual int32_t size() const;
+  virtual int32_t Size() const;
 
   // Sets limits on the size of the FontData. The font data is
   // @param offset the start of the new bounds
   // @param length the number of bytes in the bounded array
   // @return true if the bounding range was successful; false otherwise
-  virtual bool bound(int32_t offset, int32_t length);
+  virtual bool Bound(int32_t offset, int32_t length);
 
   // Sets limits on the size of the FontData. This is a offset bound only so if
   // the FontData is writable and growable then there is no limit to that growth
@@ -65,28 +66,25 @@ class FontData : virtual public RefCount {
   // @param offset the start of the new bounds which must be within the current
   //        size of the FontData
   // @return true if the bounding range was successful; false otherwise
-  virtual bool bound(int32_t offset);
+  virtual bool Bound(int32_t offset);
 
   // Makes a slice of this FontData. The returned slice will share the data with
   // the original FontData.
   // @param offset the start of the slice
   // @param length the number of bytes in the slice
   // @return a slice of the original FontData
-  virtual CALLER_ATTACH FontData* slice(int32_t offset, int32_t length) = 0;
+  virtual CALLER_ATTACH FontData* Slice(int32_t offset, int32_t length) = 0;
 
   // Makes a bottom bound only slice of this array. The returned slice will
   // share the data with the original FontData.
   // @param offset the start of the slice
   // @return a slice of the original FontData
-  virtual CALLER_ATTACH FontData* slice(int32_t offset) = 0;
+  virtual CALLER_ATTACH FontData* Slice(int32_t offset) = 0;
 
   // Get the length of the data.
-  virtual int32_t length() const;
-
+  virtual int32_t Length() const;
 
  protected:
-  virtual ~FontData();
-
   // Constructor.
   // @param ba the byte array to use for the backing data
   explicit FontData(ByteArray* ba);
@@ -101,12 +99,13 @@ class FontData : virtual public RefCount {
   // @param data the data to wrap
   // @param offset the offset to start the wrap from
   FontData(FontData* data, int32_t offset);
+  virtual ~FontData();
 
-  void init(ByteArray* ba);
-  int32_t boundOffset(int32_t offset);
-  int32_t boundLength(int32_t offset, int32_t length);
+  void Init(ByteArray* ba);
+  int32_t BoundOffset(int32_t offset);
+  int32_t BoundLength(int32_t offset, int32_t length);
 
- protected:
+  // TODO(arthurhsu): style guide violation: refactor this protected member
   ByteArrayPtr array_;
 
  private:

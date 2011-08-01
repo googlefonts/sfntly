@@ -15,6 +15,7 @@
  */
 
 #include "sfntly/font_data_table.h"
+
 #include "sfntly/data/font_output_stream.h"
 
 namespace sfntly {
@@ -29,158 +30,142 @@ FontDataTable::FontDataTable(ReadableFontData* data) {
 
 FontDataTable::~FontDataTable() {}
 
-ReadableFontData* FontDataTable::readFontData() {
+ReadableFontData* FontDataTable::ReadFontData() {
   return data_;
 }
 
-int32_t FontDataTable::length() {
-  return data_->length();
+int32_t FontDataTable::Length() {
+  return data_->Length();
 }
 
-int32_t FontDataTable::padding() {
+int32_t FontDataTable::Padding() {
   return -1;
 }
 
-int32_t FontDataTable::dataLength() {
-  int32_t paddings = padding();
-  return (paddings == -1) ? length() : length() - paddings;
+int32_t FontDataTable::DataLength() {
+  int32_t paddings = Padding();
+  return (paddings == -1) ? Length() : Length() - paddings;
 }
 
-int32_t FontDataTable::serialize(OutputStream* os) {
-  return data_->copyTo(os);
+int32_t FontDataTable::Serialize(OutputStream* os) {
+  return data_->CopyTo(os);
 }
 
 /******************************************************************************
  * FontDataTable::Builder class
  ******************************************************************************/
-void FontDataTable::Builder::init(FontDataTableBuilderContainer* container) {
-  container_ = container;
-  model_changed_ = false;
-  data_changed_ = false;
+CALLER_ATTACH WritableFontData* FontDataTable::Builder::Data() {
+  WritableFontDataPtr new_data;
+  if (model_changed_) {
+    if (!SubReadyToSerialize()) {
+      return NULL;
+    }
+    int32_t size = SubDataSizeToSerialize();
+    new_data.Attach(container_->GetNewData(size));
+    SubSerialize(new_data);
+  } else {
+    ReadableFontDataPtr data = InternalReadData();
+    new_data.Attach(container_->GetNewData(data != NULL ? data->Length() : 0));
+    data->CopyTo(new_data);
+  }
+  return new_data.Detach();
+}
+
+void FontDataTable::Builder::SetData(ReadableFontData* data) {
+  InternalSetData(data, true);
+}
+
+
+CALLER_ATTACH FontDataTable* FontDataTable::Builder::Build() {
+  ReadableFontDataPtr data = InternalReadData();
+  if (model_changed_) {
+    // Let subclass serialize from model.
+    if (!SubReadyToSerialize()) {
+      return NULL;
+    }
+    int32_t size = SubDataSizeToSerialize();
+    WritableFontDataPtr new_data;
+    new_data.Attach(container_->GetNewData(size));
+    SubSerialize(new_data);
+    data = new_data;
+  }
+  FontDataTablePtr table = SubBuildTable(data);
+  NotifyPostTableBuild(table);
+  return table;
+}
+
+bool FontDataTable::Builder::ReadyToBuild() {
+  return true;
+}
+
+ReadableFontData* FontDataTable::Builder::InternalReadData() {
+  return (r_data_ != NULL) ? r_data_.p_ :
+                             static_cast<ReadableFontData*>(w_data_.p_);
+}
+
+WritableFontData* FontDataTable::Builder::InternalWriteData() {
+  if (w_data_ == NULL) {
+    WritableFontDataPtr new_data;
+    new_data.Attach(container_->GetNewData(r_data_->Length()));
+    r_data_->CopyTo(new_data);
+    InternalSetData(new_data, false);
+  }
+  return w_data_.p_;
+}
+
+CALLER_ATTACH WritableFontData*
+    FontDataTable::Builder::InternalNewData(int32_t size) {
+  return container_->GetNewData(size);
 }
 
 FontDataTable::Builder::Builder(FontDataTableBuilderContainer* container) {
-  init(container);
+  Init(container);
 }
 
 FontDataTable::Builder::Builder(FontDataTableBuilderContainer* container,
                                 WritableFontData* data) {
-  init(container);
+  Init(container);
   w_data_ = data;
 }
 
 FontDataTable::Builder::Builder(FontDataTableBuilderContainer* container,
                                 ReadableFontData* data) {
-  init(container);
+  Init(container);
   r_data_ = data;
 }
 
 FontDataTable::Builder::~Builder() {
 }
 
-WritableFontData* FontDataTable::Builder::data() {
-  WritableFontDataPtr new_data;
-  if (model_changed_) {
-    if (!subReadyToSerialize()) {
-      return NULL;
-    }
-    int32_t size = subDataSizeToSerialize();
-    new_data.attach(container_->getNewData(size));
-    subSerialize(new_data);
-  } else {
-    ReadableFontDataPtr data = internalReadData();
-    new_data.attach(container_->getNewData(data != NULL ? data->length() : 0));
-    data->copyTo(new_data);
-  }
-  return new_data.detach();
+void FontDataTable::Builder::Init(FontDataTableBuilderContainer* container) {
+  container_ = container;
+  model_changed_ = false;
+  data_changed_ = false;
 }
 
-void FontDataTable::Builder::setData(ReadableFontData* data) {
-  internalSetData(data, true);
+void FontDataTable::Builder::NotifyPostTableBuild(FontDataTable* table) {
+  // Default: NOP.
+  UNREFERENCED_PARAMETER(table);
 }
 
-void FontDataTable::Builder::internalSetData(WritableFontData* data,
+void FontDataTable::Builder::InternalSetData(WritableFontData* data,
                                              bool data_changed) {
   w_data_ = data;
   r_data_ = NULL;
   if (data_changed) {
     data_changed_ = true;
-    subDataSet();
+    SubDataSet();
   }
 }
 
-void FontDataTable::Builder::internalSetData(ReadableFontData* data,
+void FontDataTable::Builder::InternalSetData(ReadableFontData* data,
                                              bool data_changed) {
   w_data_ = NULL;
   r_data_ = data;
   if (data_changed) {
     data_changed_ = true;
-    subDataSet();
+    SubDataSet();
   }
-}
-
-CALLER_ATTACH FontDataTable* FontDataTable::Builder::build() {
-  ReadableFontDataPtr data = internalReadData();
-  if (model_changed_) {
-    // Let subclass serialize from model.
-    if (!subReadyToSerialize()) {
-      return NULL;
-    }
-    int32_t size = subDataSizeToSerialize();
-    WritableFontDataPtr new_data;
-    new_data.attach(container_->getNewData(size));
-    subSerialize(new_data);
-    data = new_data;
-  }
-  FontDataTablePtr table = subBuildTable(data);
-  notifyPostTableBuild(table);
-  return table;
-}
-
-bool FontDataTable::Builder::readyToBuild() {
-  return true;
-}
-
-ReadableFontData* FontDataTable::Builder::internalReadData() {
-  return (r_data_ != NULL) ? r_data_.p_ :
-                             static_cast<ReadableFontData*>(w_data_.p_);
-}
-
-WritableFontData* FontDataTable::Builder::internalWriteData() {
-  if (w_data_ == NULL) {
-    WritableFontDataPtr new_data;
-    new_data.attach(container_->getNewData(r_data_->length()));
-    r_data_->copyTo(new_data);
-    internalSetData(new_data, false);
-  }
-  return w_data_.p_;
-}
-
-WritableFontData* FontDataTable::Builder::internalNewData(int32_t size) {
-  return container_->getNewData(size);
-}
-
-bool FontDataTable::Builder::dataChanged() {
-  return data_changed_;
-}
-
-bool FontDataTable::Builder::modelChanged() {
-  return model_changed_;
-}
-
-bool FontDataTable::Builder::setModelChanged() {
-  return setModelChanged(true);
-}
-
-bool FontDataTable::Builder::setModelChanged(bool changed) {
-  bool old = model_changed_;
-  model_changed_ = changed;
-  return old;
-}
-
-void FontDataTable::Builder::notifyPostTableBuild(FontDataTable* table) {
-  // default: NOP
-  UNREFERENCED_PARAMETER(table);
 }
 
 }  // namespace sfntly

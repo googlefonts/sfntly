@@ -27,7 +27,8 @@ class GlyphTableSubsetter : public TableSubsetterImpl,
   GlyphTableSubsetter();
   virtual ~GlyphTableSubsetter();
 
-  virtual bool subset(Subsetter* subsetter, Font* font,
+  virtual bool Subset(Subsetter* subsetter,
+                      Font* font,
                       Font::Builder* font_builder);
 };
 

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-#include <limits.h>
-#include <algorithm>
-
 #include "sfntly/data/growable_memory_byte_array.h"
+
+#include <limits.h>
+
+#include <algorithm>
 
 namespace sfntly {
 
@@ -27,40 +28,46 @@ GrowableMemoryByteArray::GrowableMemoryByteArray()
 
 GrowableMemoryByteArray::~GrowableMemoryByteArray() {}
 
-bool GrowableMemoryByteArray::internalPut(int32_t index, byte_t b) {
+bool GrowableMemoryByteArray::InternalPut(int32_t index, byte_t b) {
   if ((size_t)index >= b_.capacity()) {
-    b_.resize((size_t)(index + 1) << 2);  // grow exponentially
+    b_.resize((size_t)(index + 1) << 2);  // Grow exponentially.
   }
   b_[index] = b;
   return true;
 }
 
-int32_t GrowableMemoryByteArray::internalPut(int32_t index, ByteVector* b,
-                                             int32_t offset, int32_t length) {
+int32_t GrowableMemoryByteArray::InternalPut(int32_t index,
+                                             ByteVector* b,
+                                             int32_t offset,
+                                             int32_t length) {
   if ((size_t)index + length >= b_.capacity()) {
     b_.resize((size_t)(index + length + 1) << 2);
   }
-  std::copy(b->begin() + offset, b->begin() + (offset + length),
+  std::copy(b->begin() + offset,
+            b->begin() + (offset + length),
             b_.begin() + index);
   return length;
 }
 
-byte_t GrowableMemoryByteArray::internalGet(int32_t index) {
+byte_t GrowableMemoryByteArray::InternalGet(int32_t index) {
   return b_[index];
 }
 
-int32_t GrowableMemoryByteArray::internalGet(int32_t index, ByteVector* b,
-                                             int32_t offset, int32_t length) {
-  std::copy(b_.begin() + index, b_.begin() + (index + length),
+int32_t GrowableMemoryByteArray::InternalGet(int32_t index,
+                                             ByteVector* b,
+                                             int32_t offset,
+                                             int32_t length) {
+  std::copy(b_.begin() + index,
+            b_.begin() + (index + length),
             b->begin() + offset);
   return length;
 }
 
-void GrowableMemoryByteArray::close() {
+void GrowableMemoryByteArray::Close() {
   b_.clear();
 }
 
-byte_t* GrowableMemoryByteArray::begin() {
+byte_t* GrowableMemoryByteArray::Begin() {
   return &(b_[0]);
 }
 

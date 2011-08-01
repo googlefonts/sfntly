@@ -19,12 +19,12 @@
 
 namespace sfntly {
 
-bool testChangeOneName();
-bool testModifyNameTableAndRevert();
-bool testRemoveOneName();
+bool TestChangeOneName();
+bool TestModifyNameTableAndRevert();
+bool TestRemoveOneName();
 // Note: Function is not implemented but the test case is built.  Uncomment
 //       when NameTable::clear() is implemented.
-// bool testClearAllNamesAndSetOne();
+// bool TestClearAllNamesAndSetOne();
 
 }  // namespace sfntly
 

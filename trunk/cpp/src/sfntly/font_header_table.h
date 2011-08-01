@@ -39,6 +39,101 @@ struct FontDirectionHint {
 };
 
 class FontHeaderTable : public Table, public RefCounted<FontHeaderTable> {
+ public:
+  class Builder : public Table::TableBasedTableBuilder,
+                  public RefCounted<Builder> {
+   public:
+    // Constructor scope altered to public because C++ does not allow base
+    // class to instantiate derived class with protected constructors.
+    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
+            WritableFontData* data);
+    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
+            ReadableFontData* data);
+    virtual ~Builder();
+    virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
+
+    virtual int32_t TableVersion();
+    virtual void SetTableVersion(int32_t version);
+    virtual int32_t FontRevision();
+    virtual void SetFontRevision(int32_t revision);
+    virtual int64_t ChecksumAdjustment();
+    virtual void SetChecksumAdjustment(int64_t adjustment);
+    virtual int64_t MagicNumber();
+    virtual void SetMagicNumber(int64_t magic_number);
+    virtual int32_t FlagsAsInt();
+    virtual void SetFlagsAsInt(int32_t flags);
+    // TODO(arthurhsu): IMPLEMENT EnumSet<Flags> Flags()
+    // TODO(arthurhsu): IMPLEMENT setFlags(EnumSet<Flags> flags)
+    virtual int32_t UnitsPerEm();
+    virtual void SetUnitsPerEm(int32_t units);
+    virtual int64_t Created();
+    virtual void SetCreated(int64_t date);
+    virtual int64_t Modified();
+    virtual void SetModified(int64_t date);
+    virtual int32_t XMin();
+    virtual void SetXMin(int32_t xmin);
+    virtual int32_t YMin();
+    virtual void SetYMin(int32_t ymin);
+    virtual int32_t XMax();
+    virtual void SetXMax(int32_t xmax);
+    virtual int32_t YMax();
+    virtual void SetYMax(int32_t ymax);
+    virtual int32_t MacStyleAsInt();
+    virtual void SetMacStyleAsInt(int32_t style);
+    // TODO(arthurhsu): IMPLEMENT EnumSet<MacStyle> macStyle()
+    // TODO(arthurhsu): IMPLEMENT setMacStyle(EnumSet<MacStyle> style)
+    virtual int32_t LowestRecPPEM();
+    virtual void SetLowestRecPPEM(int32_t size);
+    virtual int32_t FontDirectionHint();
+    virtual void SetFontDirectionHint(int32_t hint);
+    virtual int32_t IndexToLocFormat();
+    virtual void SetIndexToLocFormat(int32_t format);
+    virtual int32_t GlyphDataFormat();
+    virtual void SetGlyphDataFormat(int32_t format);
+  };
+
+  virtual ~FontHeaderTable();
+  int32_t TableVersion();
+  int32_t FontRevision();
+
+  // Get the checksum adjustment. To compute: set it to 0, sum the entire font
+  // as ULONG, then store 0xB1B0AFBA - sum.
+  int64_t ChecksumAdjustment();
+
+  // Get the magic number. Set to 0x5F0F3CF5.
+  int64_t MagicNumber();
+
+  // TODO(arthurhsu): IMPLEMENT: EnumSet<Flags>
+  int32_t FlagsAsInt();
+  // TODO(arthurhsu): IMPLEMENT: Flags() returning EnumSet<Flags>
+
+  int32_t UnitsPerEm();
+
+  // Get the created date. Number of seconds since 12:00 midnight, January 1,
+  // 1904. 64-bit integer.
+  int64_t Created();
+  // Get the modified date. Number of seconds since 12:00 midnight, January 1,
+  // 1904. 64-bit integer.
+  int64_t Modified();
+
+  // Get the x min. For all glyph bounding boxes.
+  int32_t XMin();
+  // Get the y min. For all glyph bounding boxes.
+  int32_t YMin();
+  // Get the x max. For all glyph bounding boxes.
+  int32_t XMax();
+  // Get the y max. For all glyph bounding boxes.
+  int32_t YMax();
+
+  // TODO(arthurhsu): IMPLEMENT: EnumSet<MacStyle>
+  int32_t MacStyleAsInt();
+  // TODO(arthurhsu): IMPLEMENT: macStyle() returning EnumSet<MacStyle>
+
+  int32_t LowestRecPPEM();
+  int32_t FontDirectionHint();  // Note: no AsInt() form, already int
+  int32_t IndexToLocFormat();  // Note: no AsInt() form, already int
+  int32_t GlyphDataFormat();
+
  private:
   struct Offset {
     enum {
@@ -62,104 +157,7 @@ class FontHeaderTable : public Table, public RefCounted<FontHeaderTable> {
     };
   };
 
- private:
   FontHeaderTable(Header* header, ReadableFontData* data);
-
- public:  // class is final, no virtual functions unless from parent
-  virtual ~FontHeaderTable();
-  int32_t tableVersion();
-  int32_t fontRevision();
-
-  // Get the checksum adjustment. To compute: set it to 0, sum the entire font
-  // as ULONG, then store 0xB1B0AFBA - sum.
-  int64_t checksumAdjustment();
-
-  // Get the magic number. Set to 0x5F0F3CF5.
-  int64_t magicNumber();
-
-  // TODO(arthurhsu): IMPLEMENT: EnumSet<Flags>
-  int32_t flagsAsInt();
-  // TODO(arthurhsu): IMPLEMENT: flags() returning EnumSet<Flags>
-
-  int32_t unitsPerEm();
-
-  // Get the created date. Number of seconds since 12:00 midnight, January 1,
-  // 1904. 64-bit integer.
-  int64_t created();
-  // Get the modified date. Number of seconds since 12:00 midnight, January 1,
-  // 1904. 64-bit integer.
-  int64_t modified();
-
-  // Get the x min. For all glyph bounding boxes.
-  int32_t xMin();
-  // Get the y min. For all glyph bounding boxes.
-  int32_t yMin();
-  // Get the x max. For all glyph bounding boxes.
-  int32_t xMax();
-  // Get the y max. For all glyph bounding boxes.
-  int32_t yMax();
-
-  // TODO(arthurhsu): IMPLEMENT: EnumSet<MacStyle>
-  int32_t macStyleAsInt();
-  // TODO(arthurhsu): IMPLEMENT: macStyle() returning EnumSet<MacStyle>
-
-  int32_t lowestRecPPEM();
-  int32_t fontDirectionHint();  // Note: no AsInt() form, already int
-  int32_t indexToLocFormat();  // Note: no AsInt() form, already int
-  int32_t glyphDataFormat();
-
- public:
-  class Builder : public Table::TableBasedTableBuilder,
-                  public RefCounted<Builder> {
-   public:
-    // Constructor scope altered to public because C++ does not allow base
-    // class to instantiate derived class with protected constructors.
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            ReadableFontData* data);
-    virtual ~Builder();
-    virtual CALLER_ATTACH FontDataTable* subBuildTable(ReadableFontData* data);
-
-    virtual int32_t tableVersion();
-    virtual void setTableVersion(int32_t version);
-    virtual int32_t fontRevision();
-    virtual void setFontRevision(int32_t revision);
-    virtual int64_t checksumAdjustment();
-    virtual void setChecksumAdjustment(int64_t adjustment);
-    virtual int64_t magicNumber();
-    virtual void setMagicNumber(int64_t magic_number);
-    virtual int32_t flagsAsInt();
-    virtual void setFlagsAsInt(int32_t flags);
-    // TODO(arthurhsu): IMPLEMENT EnumSet<Flags> flags()
-    // TODO(arthurhsu): IMPLEMENT setFlags(EnumSet<Flags> flags)
-    virtual int32_t unitsPerEm();
-    virtual void setUnitsPerEm(int32_t units);
-    virtual int64_t created();
-    virtual void setCreated(int64_t date);
-    virtual int64_t modified();
-    virtual void setModified(int64_t date);
-    virtual int32_t xMin();
-    virtual void setXMin(int32_t xmin);
-    virtual int32_t yMin();
-    virtual void setYMin(int32_t ymin);
-    virtual int32_t xMax();
-    virtual void setXMax(int32_t xmax);
-    virtual int32_t yMax();
-    virtual void setYMax(int32_t ymax);
-    virtual int32_t macStyleAsInt();
-    virtual void setMacStyleAsInt(int32_t style);
-    // TODO(arthurhsu): IMPLEMENT EnumSet<MacStyle> macStyle()
-    // TODO(arthurhsu): IMPLEMENT setMacStyle(EnumSet<MacStyle> style)
-    virtual int32_t lowestRecPPEM();
-    virtual void setLowestRecPPEM(int32_t size);
-    virtual int32_t fontDirectionHint();
-    virtual void setFontDirectionHint(int32_t hint);
-    virtual int32_t indexToLocFormat();
-    virtual void setIndexToLocFormat(int32_t format);
-    virtual int32_t glyphDataFormat();
-    virtual void setGlyphDataFormat(int32_t format);
-  };
 };
 typedef Ptr<FontHeaderTable> FontHeaderTablePtr;
 typedef Ptr<FontHeaderTable::Builder> FontHeaderTableBuilderPtr;

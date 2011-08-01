@@ -19,8 +19,8 @@
 
 namespace sfntly {
 
-bool testMemoryByteArray();
-bool testGrowableMemoryByteArray();
+bool TestMemoryByteArray();
+bool TestGrowableMemoryByteArray();
 
 }  // namespace sfntly
 

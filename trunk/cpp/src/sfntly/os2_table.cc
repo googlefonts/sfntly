@@ -98,163 +98,164 @@ int32_t UnicodeRange::range(int32_t bit) {
 /******************************************************************************
  * class OS2Table
  ******************************************************************************/
-OS2Table::OS2Table(Header* header, ReadableFontData* data)
-    : Table(header, data) {
-}
-
 OS2Table::~OS2Table() {}
 
-int32_t OS2Table::version() {
-  return data_->readUShort(Offset::kVersion);
+int32_t OS2Table::Version() {
+  return data_->ReadUShort(Offset::kVersion);
 }
 
-int32_t OS2Table::xAvgCharWidth() {
-  return data_->readShort(Offset::kXAvgCharWidth);
+int32_t OS2Table::XAvgCharWidth() {
+  return data_->ReadShort(Offset::kXAvgCharWidth);
 }
 
-int32_t OS2Table::usWeightClass() {
-  return data_->readUShort(Offset::kUsWeightClass);
+int32_t OS2Table::UsWeightClass() {
+  return data_->ReadUShort(Offset::kUsWeightClass);
 }
 
-int32_t OS2Table::usWidthClass() {
-  return data_->readUShort(Offset::kUsWidthClass);
+int32_t OS2Table::UsWidthClass() {
+  return data_->ReadUShort(Offset::kUsWidthClass);
 }
 
-int32_t OS2Table::fsType() {
-  return data_->readUShort(Offset::kFsType);
+int32_t OS2Table::FsType() {
+  return data_->ReadUShort(Offset::kFsType);
 }
 
-int32_t OS2Table::ySubscriptXSize() {
-  return data_->readShort(Offset::kYSubscriptXSize);
+int32_t OS2Table::YSubscriptXSize() {
+  return data_->ReadShort(Offset::kYSubscriptXSize);
 }
 
-int32_t OS2Table::ySubscriptYSize() {
-  return data_->readShort(Offset::kYSubscriptYSize);
+int32_t OS2Table::YSubscriptYSize() {
+  return data_->ReadShort(Offset::kYSubscriptYSize);
 }
 
-int32_t OS2Table::ySubscriptXOffset() {
-  return data_->readShort(Offset::kYSubscriptXOffset);
+int32_t OS2Table::YSubscriptXOffset() {
+  return data_->ReadShort(Offset::kYSubscriptXOffset);
 }
 
-int32_t OS2Table::ySubscriptYOffset() {
-  return data_->readShort(Offset::kYSubscriptYOffset);
+int32_t OS2Table::YSubscriptYOffset() {
+  return data_->ReadShort(Offset::kYSubscriptYOffset);
 }
 
-int32_t OS2Table::ySuperscriptXSize() {
-  return data_->readShort(Offset::kYSuperscriptXSize);
+int32_t OS2Table::YSuperscriptXSize() {
+  return data_->ReadShort(Offset::kYSuperscriptXSize);
 }
 
-int32_t OS2Table::ySuperscriptYSize() {
-  return data_->readShort(Offset::kYSuperscriptYSize);
+int32_t OS2Table::YSuperscriptYSize() {
+  return data_->ReadShort(Offset::kYSuperscriptYSize);
 }
 
-int32_t OS2Table::ySuperscriptXOffset() {
-  return data_->readShort(Offset::kYSuperscriptXOffset);
+int32_t OS2Table::YSuperscriptXOffset() {
+  return data_->ReadShort(Offset::kYSuperscriptXOffset);
 }
 
-int32_t OS2Table::ySuperscriptYOffset() {
-  return data_->readShort(Offset::kYSuperscriptYOffset);
+int32_t OS2Table::YSuperscriptYOffset() {
+  return data_->ReadShort(Offset::kYSuperscriptYOffset);
 }
 
-int32_t OS2Table::yStrikeoutSize() {
-  return data_->readShort(Offset::kYStrikeoutSize);
+int32_t OS2Table::YStrikeoutSize() {
+  return data_->ReadShort(Offset::kYStrikeoutSize);
 }
 
-int32_t OS2Table::yStrikeoutPosition() {
-  return data_->readShort(Offset::kYStrikeoutPosition);
+int32_t OS2Table::YStrikeoutPosition() {
+  return data_->ReadShort(Offset::kYStrikeoutPosition);
 }
 
-int32_t OS2Table::sFamilyClass() {
-  return data_->readShort(Offset::kSFamilyClass);
+int32_t OS2Table::SFamilyClass() {
+  return data_->ReadShort(Offset::kSFamilyClass);
 }
 
-void OS2Table::panose(ByteVector* value) {
+void OS2Table::Panose(ByteVector* value) {
   value->clear();
   value->resize(10);
-  data_->readBytes(Offset::kPanose, value, 0, 10);
+  data_->ReadBytes(Offset::kPanose, value, 0, 10);
 }
 
-int64_t OS2Table::ulUnicodeRange1() {
-  return data_->readULong(Offset::kUlUnicodeRange1);
+int64_t OS2Table::UlUnicodeRange1() {
+  return data_->ReadULong(Offset::kUlUnicodeRange1);
 }
 
-int64_t OS2Table::ulUnicodeRange2() {
-  return data_->readULong(Offset::kUlUnicodeRange2);
+int64_t OS2Table::UlUnicodeRange2() {
+  return data_->ReadULong(Offset::kUlUnicodeRange2);
 }
 
-int64_t OS2Table::ulUnicodeRange3() {
-  return data_->readULong(Offset::kUlUnicodeRange3);
+int64_t OS2Table::UlUnicodeRange3() {
+  return data_->ReadULong(Offset::kUlUnicodeRange3);
 }
 
-int64_t OS2Table::ulUnicodeRange4() {
-  return data_->readULong(Offset::kUlUnicodeRange4);
+int64_t OS2Table::UlUnicodeRange4() {
+  return data_->ReadULong(Offset::kUlUnicodeRange4);
 }
 
-void OS2Table::achVendId(ByteVector* b) {
+void OS2Table::AchVendId(ByteVector* b) {
   b->clear();
   b->resize(4);
-  data_->readBytes(Offset::kAchVendId, b, 0, 4);
+  data_->ReadBytes(Offset::kAchVendId, b, 0, 4);
 }
 
-int32_t OS2Table::fsSelection() {
-  return data_->readUShort(Offset::kFsSelection);
+int32_t OS2Table::FsSelection() {
+  return data_->ReadUShort(Offset::kFsSelection);
 }
 
-int32_t OS2Table::usFirstCharIndex() {
-  return data_->readUShort(Offset::kUsFirstCharIndex);
+int32_t OS2Table::UsFirstCharIndex() {
+  return data_->ReadUShort(Offset::kUsFirstCharIndex);
 }
 
-int32_t OS2Table::usLastCharIndex() {
-  return data_->readUShort(Offset::kUsLastCharIndex);
+int32_t OS2Table::UsLastCharIndex() {
+  return data_->ReadUShort(Offset::kUsLastCharIndex);
 }
 
-int32_t OS2Table::sTypoAscender() {
-  return data_->readShort(Offset::kSTypoAscender);
+int32_t OS2Table::STypoAscender() {
+  return data_->ReadShort(Offset::kSTypoAscender);
 }
 
-int32_t OS2Table::sTypoDecender() {
-  return data_->readShort(Offset::kSTypoDescender);
+int32_t OS2Table::STypoDecender() {
+  return data_->ReadShort(Offset::kSTypoDescender);
 }
 
-int32_t OS2Table::sTypoLineGap() {
-  return data_->readShort(Offset::kSTypoLineGap);
+int32_t OS2Table::STypoLineGap() {
+  return data_->ReadShort(Offset::kSTypoLineGap);
 }
 
-int32_t OS2Table::usWinAscent() {
-  return data_->readUShort(Offset::kUsWinAscent);
+int32_t OS2Table::UsWinAscent() {
+  return data_->ReadUShort(Offset::kUsWinAscent);
 }
 
-int32_t OS2Table::usWinDescent() {
-  return data_->readUShort(Offset::kUsWinDescent);
+int32_t OS2Table::UsWinDescent() {
+  return data_->ReadUShort(Offset::kUsWinDescent);
 }
 
-int64_t OS2Table::ulCodePageRange1() {
-  return data_->readULong(Offset::kUlCodePageRange1);
+int64_t OS2Table::UlCodePageRange1() {
+  return data_->ReadULong(Offset::kUlCodePageRange1);
 }
 
-int64_t OS2Table::ulCodePageRange2() {
-  return data_->readULong(Offset::kUlCodePageRange2);
+int64_t OS2Table::UlCodePageRange2() {
+  return data_->ReadULong(Offset::kUlCodePageRange2);
 }
 
-int64_t OS2Table::ulCodePageRange() {
-  return ((0xffffffff & ulCodePageRange2()) << 32) |
-         (0xffffffff & ulCodePageRange1());
+int64_t OS2Table::UlCodePageRange() {
+  // TODO(arthurhsu): Possible bug point, check with stuartg.
+  return ((0xffffffff & UlCodePageRange2()) << 32) |
+         (0xffffffff & UlCodePageRange1());
 }
 
-int32_t OS2Table::sxHeight() {
-  return data_->readShort(Offset::kSxHeight);
+int32_t OS2Table::SxHeight() {
+  return data_->ReadShort(Offset::kSxHeight);
 }
 
-int32_t OS2Table::usDefaultChar() {
-  return data_->readUShort(Offset::kUsDefaultChar);
+int32_t OS2Table::UsDefaultChar() {
+  return data_->ReadUShort(Offset::kUsDefaultChar);
 }
 
-int32_t OS2Table::usBreakChar() {
-  return data_->readUShort(Offset::kUsBreakChar);
+int32_t OS2Table::UsBreakChar() {
+  return data_->ReadUShort(Offset::kUsBreakChar);
 }
 
-int32_t OS2Table::usMaxContext() {
-  return data_->readUShort(Offset::kUsMaxContext);
+int32_t OS2Table::UsMaxContext() {
+  return data_->ReadUShort(Offset::kUsMaxContext);
+}
+
+OS2Table::OS2Table(Header* header, ReadableFontData* data)
+    : Table(header, data) {
 }
 
 /******************************************************************************
@@ -267,10 +268,10 @@ OS2Table::Builder::Builder(FontDataTableBuilderContainer* font_builder,
 
 OS2Table::Builder::~Builder() {}
 
-CALLER_ATTACH FontDataTable* OS2Table::Builder::subBuildTable(
+CALLER_ATTACH FontDataTable* OS2Table::Builder::SubBuildTable(
     ReadableFontData* data) {
   FontDataTablePtr table = new OS2Table(header(), data);
-  return table.detach();
+  return table.Detach();
 }
 
 }  // namespace sfntly

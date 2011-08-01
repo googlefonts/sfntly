@@ -20,24 +20,25 @@ namespace sfntly {
 /******************************************************************************
  * SubTable class
  ******************************************************************************/
-SubTable::SubTable(ReadableFontData* data) : FontDataTable(data) {
-}
-
 SubTable::~SubTable() {}
+
+SubTable::SubTable(ReadableFontData* data)
+    : FontDataTable(data) {
+}
 
 /******************************************************************************
  * SubTable::Builder class
  ******************************************************************************/
-SubTable::Builder::Builder(FontDataTableBuilderContainer* container,
-                           WritableFontData* data) :
-    FontDataTable::Builder(container, data) {
-}
-
-SubTable::Builder::Builder(FontDataTableBuilderContainer* container,
-                           ReadableFontData* data) :
-    FontDataTable::Builder(container, data) {
-}
-
 SubTable::Builder::~Builder() {}
+
+SubTable::Builder::Builder(FontDataTableBuilderContainer* container,
+                           WritableFontData* data)
+    : FontDataTable::Builder(container, data) {
+}
+
+SubTable::Builder::Builder(FontDataTableBuilderContainer* container,
+                           ReadableFontData* data)
+    : FontDataTable::Builder(container, data) {
+}
 
 }  // namespace sfntly

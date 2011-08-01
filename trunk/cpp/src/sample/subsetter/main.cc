@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
   }
 
   sfntly::SubsetUtil subset_util;
-  subset_util.subset(argv[1], argv[2]);
+  subset_util.Subset(argv[1], argv[2]);
 
 #ifdef _CRTDBG_MAP_ALLOC
   _CrtDumpMemoryLeaks();

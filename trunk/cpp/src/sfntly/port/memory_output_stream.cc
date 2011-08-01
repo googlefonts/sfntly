@@ -24,25 +24,27 @@ MemoryOutputStream::MemoryOutputStream() {
 MemoryOutputStream::~MemoryOutputStream() {
 }
 
-void MemoryOutputStream::write(ByteVector* buffer) {
+void MemoryOutputStream::Write(ByteVector* buffer) {
   store_.insert(store_.end(), buffer->begin(), buffer->end());
 }
 
-void MemoryOutputStream::write(ByteVector* buffer, int32_t offset,
+void MemoryOutputStream::Write(ByteVector* buffer,
+                               int32_t offset,
                                int32_t length) {
-  store_.insert(store_.end(), buffer->begin() + offset,
+  store_.insert(store_.end(),
+                buffer->begin() + offset,
                 buffer->begin() + offset + length);
 }
 
-void MemoryOutputStream::write(byte_t b) {
+void MemoryOutputStream::Write(byte_t b) {
   store_.push_back(b);
 }
 
-byte_t* MemoryOutputStream::get() {
+byte_t* MemoryOutputStream::Get() {
   return &(store_[0]);
 }
 
-size_t MemoryOutputStream::size() {
+size_t MemoryOutputStream::Size() {
   return store_.size();
 }
 

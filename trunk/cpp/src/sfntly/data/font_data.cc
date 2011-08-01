@@ -22,30 +22,12 @@
 
 namespace sfntly {
 
-FontData::~FontData() {}
-
-void FontData::init(ByteArray* ba) {
-  array_ = ba;
-  bound_offset_ = 0;
-  bound_length_ = INT_MAX;
+int32_t FontData::Size() const {
+  return std::min<int32_t>(array_->Size() - bound_offset_, bound_length_);
 }
 
-FontData::FontData(ByteArray* ba) {
-  init(ba);
-}
-
-FontData::FontData(FontData* data, int32_t offset, int32_t length) {
-  init(data->array_);
-  bound(data->bound_offset_ + offset, length);
-}
-
-FontData::FontData(FontData* data, int32_t offset) {
-  init(data->array_);
-  bound(offset);
-}
-
-bool FontData::bound(int32_t offset, int32_t length) {
-  if (offset + length > size() || offset < 0 || length < 0)
+bool FontData::Bound(int32_t offset, int32_t length) {
+  if (offset + length > Size() || offset < 0 || length < 0)
     return false;
 
   bound_offset_ += offset;
@@ -53,27 +35,45 @@ bool FontData::bound(int32_t offset, int32_t length) {
   return true;
 }
 
-bool FontData::bound(int32_t offset) {
-if (offset > size() || offset < 0)
+bool FontData::Bound(int32_t offset) {
+if (offset > Size() || offset < 0)
     return false;
 
   bound_offset_ += offset;
   return true;
 }
 
-int32_t FontData::length() const {
-  return std::min<int32_t>(array_->length() - bound_offset_, bound_length_);
+int32_t FontData::Length() const {
+  return std::min<int32_t>(array_->Length() - bound_offset_, bound_length_);
 }
 
-int32_t FontData::size() const {
-  return std::min<int32_t>(array_->size() - bound_offset_, bound_length_);
+FontData::FontData(ByteArray* ba) {
+  Init(ba);
 }
 
-int32_t FontData::boundOffset(int32_t offset) {
+FontData::FontData(FontData* data, int32_t offset, int32_t length) {
+  Init(data->array_);
+  Bound(data->bound_offset_ + offset, length);
+}
+
+FontData::FontData(FontData* data, int32_t offset) {
+  Init(data->array_);
+  Bound(offset);
+}
+
+FontData::~FontData() {}
+
+void FontData::Init(ByteArray* ba) {
+  array_ = ba;
+  bound_offset_ = 0;
+  bound_length_ = INT_MAX;
+}
+
+int32_t FontData::BoundOffset(int32_t offset) {
   return offset + bound_offset_;
 }
 
-int32_t FontData::boundLength(int32_t offset, int32_t length) {
+int32_t FontData::BoundLength(int32_t offset, int32_t length) {
   return std::min<int32_t>(length, bound_length_ - offset);
 }
 

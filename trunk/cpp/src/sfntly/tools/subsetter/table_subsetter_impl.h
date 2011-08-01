@@ -25,8 +25,8 @@ class TableSubsetterImpl : public TableSubsetter {
  public:
   TableSubsetterImpl(const int32_t* tags, size_t tags_length);
   virtual ~TableSubsetterImpl();
-  virtual bool tagHandled(int32_t tag);
-  virtual IntegerSet* tagsHandled();
+  virtual bool TagHandled(int32_t tag);
+  virtual IntegerSet* TagsHandled();
 
  protected:
   IntegerSet tags_;

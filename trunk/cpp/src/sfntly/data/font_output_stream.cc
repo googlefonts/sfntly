@@ -14,95 +14,91 @@
  * limitations under the License.
  */
 
-#include <algorithm>
-
 #include "sfntly/data/font_output_stream.h"
-#include "sfntly/port/endian.h"
+
+#include <algorithm>
 
 namespace sfntly {
 
 FontOutputStream::FontOutputStream(OutputStream* os)
-    : stream_(os), position_(0) {
+    : stream_(os),
+      position_(0) {
 }
 
 FontOutputStream::~FontOutputStream() {
   // Do not close, underlying stream shall clean up themselves.
 }
 
-size_t FontOutputStream::position() {
-  return position_;
-}
-
-void FontOutputStream::write(byte_t b) {
+void FontOutputStream::Write(byte_t b) {
   if (stream_) {
-    stream_->write(b);
+    stream_->Write(b);
     position_++;
   }
 }
 
-void FontOutputStream::write(ByteVector* b) {
+void FontOutputStream::Write(ByteVector* b) {
   if (b) {
-    write(b, 0, b->size());
+    Write(b, 0, b->size());
     position_ += b->size();
   }
 }
 
-void FontOutputStream::write(ByteVector* b, int32_t offset, int32_t length) {
+void FontOutputStream::Write(ByteVector* b, int32_t offset, int32_t length) {
   if (stream_ && b) {
-    stream_->write(b, offset, length);
+    stream_->Write(b, offset, length);
     position_ += length;
   }
 }
 
-void FontOutputStream::writeChar(byte_t c) {
-  write(c);
+void FontOutputStream::WriteChar(byte_t c) {
+  Write(c);
 }
 
-void FontOutputStream::writeUShort(int32_t us) {
-  write((byte_t)((us >> 8) & 0xff));
-  write((byte_t)(us & 0xff));
+void FontOutputStream::WriteUShort(int32_t us) {
+  Write((byte_t)((us >> 8) & 0xff));
+  Write((byte_t)(us & 0xff));
 }
 
-void FontOutputStream::writeShort(int32_t s) {
-  writeUShort(s);
+void FontOutputStream::WriteShort(int32_t s) {
+  WriteUShort(s);
 }
 
-void FontOutputStream::writeUInt24(int32_t ui) {
-  write((byte_t)(ui >> 16) & 0xff);
-  write((byte_t)(ui >> 8) & 0xff);
-  write((byte_t)ui & 0xff);
+void FontOutputStream::WriteUInt24(int32_t ui) {
+  Write((byte_t)(ui >> 16) & 0xff);
+  Write((byte_t)(ui >> 8) & 0xff);
+  Write((byte_t)ui & 0xff);
 }
 
-void FontOutputStream::writeULong(int64_t ul) {
-  write((byte_t)((ul >> 24) & 0xff));
-  write((byte_t)((ul >> 16) & 0xff));
-  write((byte_t)((ul >> 8) & 0xff));
-  write((byte_t)(ul & 0xff));
+void FontOutputStream::WriteULong(int64_t ul) {
+  Write((byte_t)((ul >> 24) & 0xff));
+  Write((byte_t)((ul >> 16) & 0xff));
+  Write((byte_t)((ul >> 8) & 0xff));
+  Write((byte_t)(ul & 0xff));
 }
 
-void FontOutputStream::writeLong(int64_t l) {
-  writeULong(l);
+void FontOutputStream::WriteLong(int64_t l) {
+  WriteULong(l);
 }
 
-void FontOutputStream::writeFixed(int32_t f) {
-  writeULong(f);
+void FontOutputStream::WriteFixed(int32_t f) {
+  WriteULong(f);
 }
 
-void FontOutputStream::writeDateTime(int64_t date) {
-  writeULong((date >> 32) & 0xffffffff);
-  writeULong(date & 0xffffffff);
+void FontOutputStream::WriteDateTime(int64_t date) {
+  WriteULong((date >> 32) & 0xffffffff);
+  WriteULong(date & 0xffffffff);
 }
 
-void FontOutputStream::flush() {
+void FontOutputStream::Flush() {
   if (stream_) {
-    stream_->flush();
+    stream_->Flush();
   }
 }
 
-void FontOutputStream::close() {
+void FontOutputStream::Close() {
   if (stream_) {
-    stream_->flush();
-    stream_->close();
+    stream_->Flush();
+    stream_->Close();
     position_ = 0;
   }
 }

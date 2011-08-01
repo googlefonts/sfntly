@@ -30,15 +30,15 @@ namespace sfntly {
 TestUtils::TestUtils() {}
 
 // static
-// OutputStream createOutputStream(const char *file_path) {
+// OutputStream CreateOutputStream(const char *file_path) {
 // }
 
 // static
-// void TestUtils::createNewFile(const char* file_path) {
+// void TestUtils::CreateNewFile(const char* file_path) {
 // }
 
 // static
-int32_t TestUtils::encodeOneChar(UConverter* encoder, int16_t uchar) {
+int32_t TestUtils::EncodeOneChar(UConverter* encoder, int16_t uchar) {
   char* target = new char[ucnv_getMaxCharSize(encoder) * 2];
   char* target_end;
   UChar* source = new UChar[2];
@@ -69,7 +69,7 @@ int32_t TestUtils::encodeOneChar(UConverter* encoder, int16_t uchar) {
 }
 
 // static
-UConverter* TestUtils::getEncoder(const char* charset_name) {
+UConverter* TestUtils::GetEncoder(const char* charset_name) {
   if (charset_name == NULL || strcmp(charset_name, "") == 0)
     return NULL;
   UErrorCode status = U_ZERO_ERROR;
@@ -81,7 +81,7 @@ UConverter* TestUtils::getEncoder(const char* charset_name) {
 
 // Get a file's extension
 // static
-const char* TestUtils::extension(const char* file_path) {
+const char* TestUtils::Extension(const char* file_path) {
   if (!file_path)
     return NULL;
   return strrchr(file_path, EXTENSION_SEPARATOR);

@@ -23,6 +23,64 @@ namespace sfntly {
 
 class HorizontalHeaderTable : public Table,
                               public RefCounted<HorizontalHeaderTable> {
+ public:
+  class Builder : public Table::TableBasedTableBuilder,
+                  public RefCounted<Builder> {
+   public:
+    // Constructor scope altered to public because C++ does not allow base
+    // class to instantiate derived class with protected constructors.
+    Builder(FontDataTableBuilderContainer* font_builder,
+            Header* header,
+            WritableFontData* data);
+    Builder(FontDataTableBuilderContainer* font_builder,
+            Header* header,
+            ReadableFontData* data);
+    virtual ~Builder();
+    virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
+
+    int32_t Version();
+    void SetVersion(int32_t version);
+    int32_t Ascender();
+    void SetAscender(int32_t ascender);
+    int32_t Descender();
+    void SetDescender(int32_t descender);
+    int32_t LineGap();
+    void SetLineGap(int32_t line_gap);
+    int32_t AdvanceWidthMax();
+    void SetAdvanceWidthMax(int32_t value);
+    int32_t MinLeftSideBearing();
+    void SetMinLeftSideBearing(int32_t value);
+    int32_t MinRightSideBearing();
+    void SetMinRightSideBearing(int32_t value);
+    int32_t XMaxExtent();
+    void SetXMaxExtent(int32_t value);
+    int32_t CaretSlopeRise();
+    void SetCaretSlopeRise(int32_t value);
+    int32_t CaretSlopeRun();
+    void SetCaretSlopeRun(int32_t value);
+    int32_t CaretOffset();
+    void SetCaretOffset(int32_t value);
+    int32_t MetricDataFormat();
+    void SetMetricDataFormat(int32_t value);
+    int32_t NumberOfHMetrics();
+    void SetNumberOfHMetrics(int32_t value);
+  };
+
+  virtual ~HorizontalHeaderTable();
+  int32_t Version();
+  int32_t Ascender();
+  int32_t Descender();
+  int32_t LineGap();
+  int32_t AdvanceWidthMax();
+  int32_t MinLeftSideBearing();
+  int32_t MinRightSideBearing();
+  int32_t XMaxExtent();
+  int32_t CaretSlopeRise();
+  int32_t CaretSlopeRun();
+  int32_t CaretOffset();
+  int32_t MetricDataFormat();
+  int32_t NumberOfHMetrics();
+
  private:
   struct Offset {
     enum {
@@ -42,65 +100,7 @@ class HorizontalHeaderTable : public Table,
     };
   };
 
- private:
   HorizontalHeaderTable(Header* header, ReadableFontData* data);
-
- public:
-  virtual ~HorizontalHeaderTable();
-  int32_t version();
-  int32_t ascender();
-  int32_t descender();
-  int32_t lineGap();
-  int32_t advanceWidthMax();
-  int32_t minLeftSideBearing();
-  int32_t minRightSideBearing();
-  int32_t xMaxExtent();
-  int32_t caretSlopeRise();
-  int32_t caretSlopeRun();
-  int32_t caretOffset();
-  int32_t metricDataFormat();
-  int32_t numberOfHMetrics();
-
- public:
-  class Builder : public Table::TableBasedTableBuilder,
-                  public RefCounted<Builder> {
-   public:
-    // Constructor scope altered to public because C++ does not allow base
-    // class to instantiate derived class with protected constructors.
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            ReadableFontData* data);
-    virtual ~Builder();
-    virtual CALLER_ATTACH FontDataTable* subBuildTable(ReadableFontData* data);
-
-    int32_t version();
-    void setVersion(int32_t version);
-    int32_t ascender();
-    void setAscender(int32_t ascender);
-    int32_t descender();
-    void setDescender(int32_t descender);
-    int32_t lineGap();
-    void setLineGap(int32_t line_gap);
-    int32_t advanceWidthMax();
-    void setAdvanceWidthMax(int32_t value);
-    int32_t minLeftSideBearing();
-    void setMinLeftSideBearing(int32_t value);
-    int32_t minRightSideBearing();
-    void setMinRightSideBearing(int32_t value);
-    int32_t xMaxExtent();
-    void setXMaxExtent(int32_t value);
-    int32_t caretSlopeRise();
-    void setCaretSlopeRise(int32_t value);
-    int32_t caretSlopeRun();
-    void setCaretSlopeRun(int32_t value);
-    int32_t caretOffset();
-    void setCaretOffset(int32_t value);
-    int32_t metricDataFormat();
-    void setMetricDataFormat(int32_t value);
-    int32_t numberOfHMetrics();
-    void setNumberOfHMetrics(int32_t value);
-  };
 };
 typedef Ptr<HorizontalHeaderTable> HorizontalHeaderTablePtr;
 typedef Ptr<HorizontalHeaderTable::Builder> HorizontalHeaderTableBuilderPtr;
