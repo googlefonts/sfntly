@@ -47,7 +47,8 @@ void FontFactory::LoadFonts(InputStream* is, FontArray* output) {
     LoadCollection(pbis, output);
     return;
   }
-  FontPtr font = LoadSingleOTF(pbis);
+  FontPtr font;
+  font.attach(loadSingleOTF(pbis));
   if (font) {
     output->push_back(font);
   }
