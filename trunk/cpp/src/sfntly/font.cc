@@ -398,18 +398,51 @@ void Font::Builder::BuildTablesFromBuilders(TableBuilderMap* builder_map,
   }
 }
 
+static Table::Builder* GetBuilder(TableBuilderMap* builder_map, int32_t tag) {
+  if (builder_map) {
+    TableBuilderMap::iterator target = builder_map->find(tag);
+    if (target != builder_map->end()) {
+      return target->second.p_;
+    }
+  }
+
+  return NULL;
+}
+
 void Font::Builder::InterRelateBuilders(TableBuilderMap* builder_map) {
-  FontHeaderTableBuilderPtr header_table_builder =
-      down_cast<FontHeaderTable::Builder*>((*builder_map)[Tag::head].p_);
-  HorizontalHeaderTableBuilderPtr horizontal_header_builder =
-      down_cast<HorizontalHeaderTable::Builder*>((*builder_map)[Tag::hhea].p_);
-  MaximumProfileTableBuilderPtr max_profile_builder =
-      down_cast<MaximumProfileTable::Builder*>((*builder_map)[Tag::maxp].p_);
-  LocaTableBuilderPtr loca_table_builder =
-      down_cast<LocaTable::Builder*>((*builder_map)[Tag::loca].p_);
-  HorizontalMetricsTableBuilderPtr horizontal_metrics_builder =
-      down_cast<HorizontalMetricsTable::Builder*>(
-          (*builder_map)[Tag::hmtx].p_);
+  Table::Builder* raw_head_builder = GetBuilder(builder_map, Tag::head);
+  FontHeaderTableBuilderPtr header_table_builder;
+  if (raw_head_builder != NULL) {
+      header_table_builder =
+          down_cast<FontHeaderTable::Builder*>(raw_head_builder);
+  }
+
+  Table::Builder* raw_hhea_builder = GetBuilder(builder_map, Tag::hhea);
+  HorizontalHeaderTableBuilderPtr horizontal_header_builder;
+  if (raw_head_builder != NULL) {
+      horizontal_header_builder =
+          down_cast<HorizontalHeaderTable::Builder*>(raw_hhea_builder);
+  }
+
+  Table::Builder* raw_maxp_builder = GetBuilder(builder_map, Tag::maxp);
+  MaximumProfileTableBuilderPtr max_profile_builder;
+  if (raw_maxp_builder != NULL) {
+      max_profile_builder =
+          down_cast<MaximumProfileTable::Builder*>(raw_maxp_builder);
+  }
+
+  Table::Builder* raw_loca_builder = GetBuilder(builder_map, Tag::loca);
+  LocaTableBuilderPtr loca_table_builder;
+  if (raw_loca_builder != NULL) {
+      loca_table_builder = down_cast<LocaTable::Builder*>(raw_loca_builder);
+  }
+
+  Table::Builder* raw_hmtx_builder = GetBuilder(builder_map, Tag::hmtx);
+  HorizontalMetricsTableBuilderPtr horizontal_metrics_builder;
+  if (raw_hmtx_builder != NULL) {
+      horizontal_metrics_builder =
+          down_cast<HorizontalMetricsTable::Builder*>(raw_hmtx_builder);
+  }
 
   // set the inter table data required to build certain tables
   if (horizontal_metrics_builder != NULL) {
