@@ -62,7 +62,7 @@ int32_t LocaTable::Loca(int32_t index) {
 #endif
   }
   if (version_ == IndexToLocFormat::kShortOffset) {
-    return 2 * data_->ReadShort(index * DataSize::kUSHORT);
+    return 2 * data_->ReadUShort(index * DataSize::kUSHORT);
   }
   return data_->ReadULongAsInt(index * DataSize::kULONG);
 }
