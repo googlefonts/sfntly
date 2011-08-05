@@ -48,7 +48,7 @@ class FontDataTable : virtual public RefCount {
     CALLER_ATTACH WritableFontData* InternalNewData(int32_t size);
 
     bool data_changed() { return data_changed_; }
-    bool modelChanged() { return model_changed_; }
+    bool model_changed() { return model_changed_; }
     bool set_model_changed() { return set_model_changed(true); }
     bool set_model_changed(bool changed) {
       bool old = model_changed_;
@@ -110,6 +110,7 @@ class FontDataTable : virtual public RefCount {
   ReadableFontDataPtr data_;
 };
 typedef Ptr<FontDataTable> FontDataTablePtr;
+typedef Ptr<FontDataTable::Builder> FontDataTableBuilderPtr;
 
 }  // namespace sfntly
 

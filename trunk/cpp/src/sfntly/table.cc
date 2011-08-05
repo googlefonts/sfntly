@@ -100,7 +100,7 @@ Table::Builder::~Builder() {
 }
 
 void Table::Builder::NotifyPostTableBuild(FontDataTable* table) {
-  if (modelChanged() || data_changed()) {
+  if (model_changed() || data_changed()) {
     Table* derived_table = down_cast<Table*>(table);
     header_ = new Header(header()->tag(),
                          derived_table->ReadFontData()->Length());
