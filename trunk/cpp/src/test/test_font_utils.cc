@@ -18,6 +18,7 @@
 
 #include "gtest/gtest.h"
 #include "sfntly/data/memory_byte_array.h"
+#include "sfntly/data/growable_memory_byte_array.h"
 #include "sfntly/port/file_input_stream.h"
 #include "test/test_font_utils.h"
 
@@ -46,6 +47,19 @@ void LoadFont(const char* font_path, FontFactory* factory, FontArray* fonts) {
   is.Open(font_path);
   factory->LoadFonts(&is, fonts);
   is.Close();
+}
+
+void LoadFontUsingByteArray(const char* font_path,
+                            bool fingerprint,
+                            FontArray* fonts) {
+  ByteArrayPtr b = new GrowableMemoryByteArray;
+  ByteVector bv;
+  LoadFile(font_path, &bv);
+  b->Put(0, &bv);
+  FontFactoryPtr factory;
+  factory.Attach(FontFactory::GetInstance());
+  factory->FingerprintFont(fingerprint);
+  factory->LoadFonts(b, fonts);
 }
 
 void LoadFile(const char* input_file_path, ByteVector* input_buffer) {
