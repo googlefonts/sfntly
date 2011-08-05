@@ -27,6 +27,9 @@ void BuilderForFontFile(const char* font_path, FontFactory* factory,
                         FontBuilderArray* builders);
 void SerializeFont(const char* font_path, FontFactory* factory, Font* font);
 void LoadFont(const char* font_path, FontFactory* factory, FontArray* fonts);
+void LoadFontUsingByteArray(const char* font_path,
+                            bool fingerprint,
+                            FontArray* fonts);
 
 void LoadFile(const char* input_file_path, ByteVector* input_buffer);
 void SerializeToFile(MemoryOutputStream* output_stream, const char* file_path);
