@@ -82,11 +82,24 @@ struct Tag {
   static const int32_t bloc;
 };
 
+// Create integer tag value for human readable tag name.
 inline int32_t GenerateTag(char a, char b, char c, char d) {
   return (((int32_t)(a) << 24) |
           ((int32_t)(b) << 16) |
           ((int32_t)(c) <<  8) |
            (int32_t)(d));
+}
+
+// Translate tag to human readable string.
+// The Caller must delete[] the returned value.
+inline char* TagToString(int32_t tag) {
+  char *name = new char[5];
+  name[0] = (tag & 0xff000000) >> 24;
+  name[1] = (tag & 0x00ff0000) >> 16;
+  name[2] = (tag & 0x0000ff00) >> 8;
+  name[3] = (tag & 0x000000ff);
+  name[4] = 0;
+  return name;
 }
 
 // Note: For Java, these two orderings are in Font class.  Moved here to avoid
