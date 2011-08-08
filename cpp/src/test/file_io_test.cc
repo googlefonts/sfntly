@@ -152,3 +152,9 @@ bool TestFontInputStreamTableLoading() {
 }
 
 }  // namespace sfntly
+
+TEST(FileIO, All) {
+  ASSERT_TRUE(sfntly::TestFileInputStream());
+  ASSERT_TRUE(sfntly::TestFontInputStreamBasic());
+  ASSERT_TRUE(sfntly::TestFontInputStreamTableLoading());
+}

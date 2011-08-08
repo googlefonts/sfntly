@@ -23,14 +23,14 @@
 #include "sfntly/port/endian.h"
 #include "sfntly/port/file_input_stream.h"
 #include "sfntly/port/memory_output_stream.h"
-#include "test/otf_basic_editing_test.h"
 #include "test/test_data.h"
 #include "test/test_font_utils.h"
 
 namespace sfntly {
 
 bool TestOTFBasicEditing() {
-  FontFactoryPtr factory = FontFactory::GetInstance();
+  FontFactoryPtr factory;
+  factory.Attach(FontFactory::GetInstance());
   FontBuilderArray font_builder_array;
   BuilderForFontFile(SAMPLE_TTF_FILE, factory, &font_builder_array);
   FontBuilderPtr font_builder = font_builder_array[0];
@@ -79,3 +79,7 @@ bool TestOTFBasicEditing() {
 }
 
 }  // namespace sfntly
+
+TEST(OTFBasicEditing, All) {
+  ASSERT_TRUE(sfntly::TestOTFBasicEditing());
+}

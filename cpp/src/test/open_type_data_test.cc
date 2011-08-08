@@ -17,7 +17,6 @@
 #include "gtest/gtest.h"
 #include "sfntly/data/writable_font_data.h"
 #include "sfntly/data/memory_byte_array.h"
-#include "test/open_type_data_test.h"
 
 namespace sfntly {
 
@@ -64,3 +63,8 @@ bool TestOTFCopy() {
 }
 
 }  // namespace sfntly
+
+TEST(OpenTypeData, All) {
+  ASSERT_TRUE(sfntly::TestOTFRead());
+  ASSERT_TRUE(sfntly::TestOTFCopy());
+}

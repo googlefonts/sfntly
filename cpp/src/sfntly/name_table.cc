@@ -421,7 +421,8 @@ void NameTable::Builder::Initialize(ReadableFontData* data) {
     NameTablePtr table = new NameTable(header(), data);
     NameEntryIterator name_iter(table, NULL);
     while (name_iter.HasNext()) {
-      NameEntryPtr name_entry = name_iter.Next();
+      NameEntryPtr name_entry;
+      name_entry.Attach(name_iter.Next());
       NameEntryBuilderPtr name_entry_builder = new NameEntryBuilder(name_entry);
       NameEntry* builder_entry = name_entry_builder->name_entry();
       NameEntryId probe = builder_entry->name_entry_id();

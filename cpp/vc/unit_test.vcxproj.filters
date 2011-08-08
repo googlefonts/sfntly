@@ -14,9 +14,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\test\main.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\test\font_data_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -64,40 +61,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\test\byte_array_test.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\test\smart_pointer_test.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\test\endian_test.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\test\font_data_test.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\test\open_type_data_test.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\test\otf_basic_editing_test.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\test\name_editing_test.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\test\test_font_utils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\test\file_io_test.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\test\font_parsing_test.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\test\test_data.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\test\test_utils_test.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\test_utils.h">

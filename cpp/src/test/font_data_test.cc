@@ -21,7 +21,6 @@
 #include "sfntly/port/type.h"
 #include "sfntly/data/writable_font_data.h"
 #include "sfntly/data/memory_byte_array.h"
-#include "test/font_data_test.h"
 
 namespace sfntly {
 
@@ -145,20 +144,23 @@ bool ReadComparison(int32_t offset,
 }
 
 void SlicingReadTest(ReadableFontData* rfd) {
+  fprintf(stderr, "read - trim = ");
   for (int32_t trim = 0; trim < (rfd->Length() / 2) + 1;
        trim += (rfd->Length() / 21) + 1) {
-    fprintf(stderr, "\tread - trim = %d\n", trim);
+    fprintf(stderr, "%d ", trim);
     int32_t length = rfd->Length() - 2 * trim;
     ReadableFontDataPtr slice;
     slice.Attach(down_cast<ReadableFontData*>(rfd->Slice(trim, length)));
     EXPECT_TRUE(ReadComparison(trim, length, rfd, slice));
   }
+  fprintf(stderr, "\n");
 }
 
 void SlicingWriteTest(ReadableFontData* rfd, WritableFontData* wfd) {
+  fprintf(stderr, "write - trim = ");
   for (int32_t trim = 0; trim < (rfd->Length() / 2) + 1;
        trim += (rfd->Length() / 21) + 1) {
-    fprintf(stderr, "\twrite - trim = %d\n", trim);
+    fprintf(stderr, "%d ", trim);
     int32_t length = rfd->Length() - 2 * trim;
     WritableFontDataPtr w_slice;
     ReadableFontDataPtr r_slice;
@@ -187,6 +189,7 @@ void SlicingWriteTest(ReadableFontData* rfd, WritableFontData* wfd) {
       EXPECT_TRUE(ReadComparison(trim, length, rfd, w_slice));
     }
   }
+  fprintf(stderr, "\n");
 }
 
 bool TestReadableFontData() {
@@ -215,3 +218,8 @@ bool TestWritableFontData() {
 }
 
 }  // namespace sfntly
+
+TEST(FontData, All) {
+  ASSERT_TRUE(sfntly::TestReadableFontData());
+  ASSERT_TRUE(sfntly::TestWritableFontData());
+}

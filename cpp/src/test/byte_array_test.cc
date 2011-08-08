@@ -19,7 +19,6 @@
 #include "gtest/gtest.h"
 #include "sfntly/data/memory_byte_array.h"
 #include "sfntly/data/growable_memory_byte_array.h"
-#include "test/byte_array_test.h"
 
 namespace sfntly {
 namespace byte_array_test {
@@ -112,27 +111,36 @@ bool ByteArrayTester(ByteArray* ba) {
 }  // namespace byte_array_test
 
 bool TestMemoryByteArray() {
+  fprintf(stderr, "fixed mem: size ");
   for (size_t i = 0;
        i < sizeof(byte_array_test::BYTE_ARRAY_SIZES) / sizeof(int32_t); ++i) {
     int32_t size = byte_array_test::BYTE_ARRAY_SIZES[i];
-    fprintf(stderr, "fixed mem: iteration %ld, size %d\n", i, size);
+    fprintf(stderr, "%d ", size);
     ByteArrayPtr ba = new MemoryByteArray(size);
     byte_array_test::FillTestByteArray(ba, size);
     EXPECT_TRUE(byte_array_test::ByteArrayTester(ba));
   }
+  fprintf(stderr, "\n");
   return true;
 }
 
 bool TestGrowableMemoryByteArray() {
+  fprintf(stderr, "growable mem: size ");
   for (size_t i = 0;
        i < sizeof(byte_array_test::BYTE_ARRAY_SIZES) / sizeof(int32_t); ++i) {
     int32_t size = byte_array_test::BYTE_ARRAY_SIZES[i];
-    fprintf(stderr, "growable mem: iteration %ld, size %d\n", i, size);
+    fprintf(stderr, "%d ", size);
     ByteArrayPtr ba = new GrowableMemoryByteArray();
     byte_array_test::FillTestByteArray(ba, size);
     EXPECT_TRUE(byte_array_test::ByteArrayTester(ba));
   }
+  fprintf(stderr, "\n");
   return true;
 }
 
 }  // namespace sfntly
+
+TEST(ByteArray, All) {
+  ASSERT_TRUE(sfntly::TestMemoryByteArray());
+  ASSERT_TRUE(sfntly::TestGrowableMemoryByteArray());
+}

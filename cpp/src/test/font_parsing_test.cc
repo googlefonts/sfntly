@@ -24,7 +24,6 @@
 #include "sfntly/data/font_input_stream.h"
 #include "sfntly/data/memory_byte_array.h"
 #include "sfntly/port/file_input_stream.h"
-#include "test/font_parsing_test.h"
 #include "test/test_data.h"
 #include "test/test_font_utils.h"
 
@@ -36,7 +35,8 @@ bool TestFontParsing() {
   ByteArrayPtr ba = new MemoryByteArray(&(input_buffer[0]),
                                         input_buffer.size());
 
-  FontFactoryPtr factory = FontFactory::GetInstance();
+  FontFactoryPtr factory;
+  factory.Attach(FontFactory::GetInstance());
   // File based
   FontBuilderArray font_builder_array;
   BuilderForFontFile(SAMPLE_TTF_FILE, factory, &font_builder_array);
@@ -61,7 +61,8 @@ bool TestFontParsing() {
   EXPECT_EQ(gdef_header->checksum(), TTF_CHECKSUM[SAMPLE_TTF_GDEF]);
   EXPECT_TRUE(gdef_header->checksum_valid());
 
-  WritableFontDataPtr wfd = gdef_builder->Data();
+  WritableFontDataPtr wfd;
+  wfd.Attach(gdef_builder->Data());
   ByteVector b;
   b.resize(TTF_LENGTH[SAMPLE_TTF_GDEF]);
   wfd->ReadBytes(0, &b, 0, TTF_LENGTH[SAMPLE_TTF_GDEF]);
@@ -86,8 +87,10 @@ bool TestFontParsing() {
         font_builder->GetTableBuilder(TTF_KNOWN_TAGS[i]);
     TableBuilderPtr builder2 =
         font_builder2->GetTableBuilder(TTF_KNOWN_TAGS[i]);
-    WritableFontDataPtr wfd1 = builder1->Data();
-    WritableFontDataPtr wfd2 = builder2->Data();
+    WritableFontDataPtr wfd1;
+    wfd1.Attach(builder1->Data());
+    WritableFontDataPtr wfd2;
+    wfd2.Attach(builder2->Data());
     wfd1->ReadBytes(0, &b1, 0, TTF_LENGTH[i]);
     wfd2->ReadBytes(0, &b2, 0, TTF_LENGTH[i]);
     EXPECT_EQ(memcmp(&(b1[0]), &(b2[0]), TTF_LENGTH[i]), 0);
@@ -97,11 +100,13 @@ bool TestFontParsing() {
 }
 
 bool TestTTFReadWrite() {
-  FontFactoryPtr factory = FontFactory::GetInstance();
+  FontFactoryPtr factory;
+  factory.Attach(FontFactory::GetInstance());
   FontBuilderArray font_builder_array;
   BuilderForFontFile(SAMPLE_TTF_FILE, factory, &font_builder_array);
   FontBuilderPtr font_builder = font_builder_array[0];
-  FontPtr font = font_builder->Build();
+  FontPtr font;
+  font.Attach(font_builder->Build());
   MemoryOutputStream output_stream;
   factory->SerializeFont(font, &output_stream);
   EXPECT_GE(output_stream.Size(), SAMPLE_TTF_SIZE);
@@ -113,13 +118,15 @@ bool TestTTFMemoryBasedReadWrite() {
   ByteVector input_buffer;
   LoadFile(SAMPLE_TTF_FILE, &input_buffer);
 
-  FontFactoryPtr factory = FontFactory::GetInstance();
+  FontFactoryPtr factory;
+  factory.Attach(FontFactory::GetInstance());
   FontBuilderArray font_builder_array;
   ByteArrayPtr ba = new MemoryByteArray(&(input_buffer[0]),
                                         input_buffer.size());
   factory->LoadFontsForBuilding(ba, &font_builder_array);
   FontBuilderPtr font_builder = font_builder_array[0];
-  FontPtr font = font_builder->Build();
+  FontPtr font;
+  font.Attach(font_builder->Build());
   MemoryOutputStream output_stream;
   factory->SerializeFont(font, &output_stream);
   EXPECT_GE(output_stream.Size(), input_buffer.size());
@@ -128,3 +135,9 @@ bool TestTTFMemoryBasedReadWrite() {
 }
 
 }  // namespace sfntly
+
+TEST(FontParsing, All) {
+  ASSERT_TRUE(sfntly::TestFontParsing());
+  ASSERT_TRUE(sfntly::TestTTFReadWrite());
+  ASSERT_TRUE(sfntly::TestTTFMemoryBasedReadWrite());
+}

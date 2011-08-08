@@ -17,7 +17,6 @@
 #include "gtest/gtest.h"
 #define ENABLE_OBJECT_COUNTER
 #include "sfntly/port/refcount.h"
-#include "test/smart_pointer_test.h"
 
 using sfntly::RefCounted;
 using sfntly::Ptr;
@@ -73,4 +72,8 @@ bool TestSmartPointer() {
   }
   EXPECT_EQ(size_t(0), RefCounted<Foo>::object_counter_);
   return true;
+}
+
+TEST(SmartPointer, All) {
+  ASSERT_TRUE(TestSmartPointer());
 }
