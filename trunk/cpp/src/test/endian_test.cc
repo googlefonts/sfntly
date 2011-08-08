@@ -21,7 +21,6 @@
 #include "sfntly/math/fixed1616.h"
 #include "sfntly/port/memory_output_stream.h"
 #include "sfntly/data/font_output_stream.h"
-#include "test/endian_test.h"
 
 namespace sfntly {
 
@@ -72,3 +71,7 @@ bool TestEndian() {
 }
 
 }  // namespace sfntly
+
+TEST(Endian, All) {
+  ASSERT_TRUE(sfntly::TestEndian());
+}

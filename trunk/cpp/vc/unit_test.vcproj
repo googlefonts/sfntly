@@ -185,15 +185,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\test\byte_array_test.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\test\endian_test.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\test\endian_test.h"
 				>
 			</File>
 			<File
@@ -201,15 +193,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\test\file_io_test.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\test\font_data_test.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\test\font_data_test.h"
 				>
 			</File>
 			<File
@@ -217,19 +201,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\test\font_parsing_test.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\test\main.cc"
-				>
-			</File>
-			<File
 				RelativePath="..\src\test\name_editing_test.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\test\name_editing_test.h"
 				>
 			</File>
 			<File
@@ -237,23 +209,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\test\open_type_data_test.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\test\otf_basic_editing_test.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\src\test\otf_basic_editing_test.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\test\smart_pointer_test.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\test\smart_pointer_test.h"
 				>
 			</File>
 			<File
@@ -282,10 +242,6 @@
 			</File>
 			<File
 				RelativePath="..\src\test\test_utils_test.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\src\test\test_utils_test.h"
 				>
 			</File>
 		</Filter>

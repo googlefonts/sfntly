@@ -29,26 +29,27 @@
 #include "sfntly/port/memory_output_stream.h"
 #include "test/test_data.h"
 #include "test/test_font_utils.h"
-#include "test/name_editing_test.h"
 
 namespace sfntly {
 
 static ByteVector input_buffer;
-static ByteArrayPtr ba;
 
 void LoadTestFile(FontFactory* factory, FontBuilderArray* font_builders) {
   assert(factory);
   assert(font_builders);
-  if (ba == NULL) {
+  if (input_buffer.empty()) {
     LoadFile(SAMPLE_TTF_FILE, &input_buffer);
-    ba = new MemoryByteArray(&(input_buffer[0]), input_buffer.size());
   }
+
+  ByteArrayPtr ba =
+      new MemoryByteArray(&(input_buffer[0]), input_buffer.size());
 
   factory->LoadFontsForBuilding(ba, font_builders);
 }
 
 bool TestChangeOneName() {
-  FontFactoryPtr factory = FontFactory::GetInstance();
+  FontFactoryPtr factory;
+  factory.Attach(FontFactory::GetInstance());
   FontBuilderArray font_builder_array;
   LoadTestFile(factory, &font_builder_array);
   FontBuilderPtr font_builder = font_builder_array[0];
@@ -66,7 +67,8 @@ bool TestChangeOneName() {
   neb->SetName(new_name);
 
   // Build the font.
-  FontPtr font = font_builder->Build();
+  FontPtr font;
+  font.Attach(font_builder->Build());
 
   // Serialize and reload the serialized font.
   MemoryOutputStream os;
@@ -89,7 +91,8 @@ bool TestChangeOneName() {
 }
 
 bool TestModifyNameTableAndRevert() {
-  FontFactoryPtr factory = FontFactory::GetInstance();
+  FontFactoryPtr factory;
+  factory.Attach(FontFactory::GetInstance());
   FontBuilderArray font_builder_array;
   LoadTestFile(factory, &font_builder_array);
   FontBuilderPtr font_builder = font_builder_array[0];
@@ -112,7 +115,8 @@ bool TestModifyNameTableAndRevert() {
   name_builder->RevertNames();
 
   // Build the font.
-  FontPtr font = font_builder->Build();
+  FontPtr font;
+  font.Attach(font_builder->Build());
 
   // Serialize and reload the serialized font.
   MemoryOutputStream os;
@@ -137,7 +141,8 @@ bool TestModifyNameTableAndRevert() {
 }
 
 bool TestRemoveOneName() {
-  FontFactoryPtr factory = FontFactory::GetInstance();
+  FontFactoryPtr factory;
+  factory.Attach(FontFactory::GetInstance());
   FontBuilderArray font_builder_array;
   LoadTestFile(factory, &font_builder_array);
   FontBuilderPtr font_builder = font_builder_array[0];
@@ -155,7 +160,8 @@ bool TestRemoveOneName() {
                                    NameId::kFontFamilyName));
 
   // Build the font.
-  FontPtr font = font_builder->Build();
+  FontPtr font;
+  font.Attach(font_builder->Build());
 
   // Serialize and reload the serialized font.
   MemoryOutputStream os;
@@ -180,7 +186,8 @@ bool TestRemoveOneName() {
 //       when NameTable::clear() is implemented.
 /*
 bool TestClearAllNamesAndSetOne() {
-  FontFactoryPtr factory = FontFactory::GetInstance();
+  FontFactoryPtr factory;
+  factory.Attach(FontFactory::GetInstance());
   FontBuilderArray font_builder_array;
   LoadTestFile(factory, &font_builder_array);
   FontBuilderPtr font_builder = font_builder_array[0];
@@ -227,3 +234,9 @@ bool TestClearAllNamesAndSetOne() {
 */
 
 }  // namespace sfntly
+
+TEST(NameEditing, All) {
+  EXPECT_TRUE(sfntly::TestChangeOneName());
+  EXPECT_TRUE(sfntly::TestModifyNameTableAndRevert());
+  EXPECT_TRUE(sfntly::TestRemoveOneName());
+}

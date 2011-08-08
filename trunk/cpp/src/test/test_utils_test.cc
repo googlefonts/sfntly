@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#include "test/test_utils_test.h"
+// Must include at the first line to avoid ICU / stdint conflict.
+#include "sfntly/port/type.h"
 
 #include <stdio.h>
 #include <unicode/ucnv.h>
@@ -76,3 +77,8 @@ bool TestExtension() {
 }
 
 }  // namespace sfntly
+
+TEST(TestUtils, All) {
+  ASSERT_TRUE(sfntly::TestExtension());
+  ASSERT_TRUE(sfntly::TestEncoding());
+}
