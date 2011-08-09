@@ -75,6 +75,10 @@ bool TestOTFBasicEditing() {
       down_cast<FontHeaderTable*>(font->GetTable(Tag::head));
   int64_t after_mod_date = header->Modified();
   EXPECT_EQ(mod_date + 1, after_mod_date);
+
+  // Checksum correctness of builder.
+  TablePtr post = font->GetTable(Tag::post);
+  EXPECT_EQ(post->CalculatedChecksum(), TTF_CHECKSUM[SAMPLE_TTF_POST]);
   return true;
 }
 

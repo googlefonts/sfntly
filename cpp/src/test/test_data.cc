@@ -32,6 +32,7 @@ const size_t SAMPLE_TTF_TABLES = 16;
 const size_t SAMPLE_TTF_KNOWN_TAGS = 15;
 const size_t SAMPLE_TTF_GDEF = 0;
 const size_t SAMPLE_TTF_HEAD = 8;
+const size_t SAMPLE_TTF_POST = 14;
 
 const int32_t TTF_KNOWN_TAGS[] = {
     Tag::GDEF, Tag::GPOS, Tag::GSUB, Tag::OS_2, Tag::cmap, Tag::cvt,
