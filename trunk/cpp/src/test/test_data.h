@@ -29,6 +29,7 @@ extern const size_t SAMPLE_TTF_TABLES;
 extern const size_t SAMPLE_TTF_KNOWN_TAGS;
 extern const size_t SAMPLE_TTF_GDEF;
 extern const size_t SAMPLE_TTF_HEAD;
+extern const size_t SAMPLE_TTF_POST;
 
 extern const int32_t TTF_KNOWN_TAGS[];
 extern const int64_t TTF_CHECKSUM[];
