@@ -94,10 +94,10 @@ inline int32_t GenerateTag(char a, char b, char c, char d) {
 // The Caller must delete[] the returned value.
 inline char* TagToString(int32_t tag) {
   char *name = new char[5];
-  name[0] = (tag & 0xff000000) >> 24;
-  name[1] = (tag & 0x00ff0000) >> 16;
-  name[2] = (tag & 0x0000ff00) >> 8;
-  name[3] = (tag & 0x000000ff);
+  name[0] = (char)((tag & 0xff000000) >> 24);
+  name[1] = (char)((tag & 0x00ff0000) >> 16);
+  name[2] = (char)((tag & 0x0000ff00) >> 8);
+  name[3] = (char)(tag & 0x000000ff);
   name[4] = 0;
   return name;
 }
