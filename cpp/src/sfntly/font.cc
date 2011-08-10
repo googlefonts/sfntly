@@ -387,6 +387,7 @@ void Font::Builder::BuildTablesFromBuilders(TableBuilderMap* builder_map,
     }
     if (table == NULL) {
 #if defined (SFNTLY_NO_EXCEPTION)
+      table_map->clear();
       return;
 #else
       std::string builder_string = "Unable to build table - ";

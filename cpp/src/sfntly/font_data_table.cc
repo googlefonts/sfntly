@@ -89,6 +89,11 @@ CALLER_ATTACH FontDataTable* FontDataTable::Builder::Build() {
     SubSerialize(new_data);
     data = new_data;
   }
+
+  if (data == NULL) {
+    return NULL;  // Do not build table with NULL data.
+  }
+
   FontDataTablePtr table = SubBuildTable(data);
   NotifyPostTableBuild(table);
   return table;
