@@ -213,6 +213,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\test\serialization_test.cc"
+				>
+			</File>
+			<File
 				RelativePath="..\src\test\smart_pointer_test.cc"
 				>
 			</File>
