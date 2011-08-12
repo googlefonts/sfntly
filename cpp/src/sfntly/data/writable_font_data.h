@@ -26,6 +26,24 @@ class WritableFontData : public ReadableFontData {
   explicit WritableFontData(ByteArray* ba);
   virtual ~WritableFontData();
 
+  // Constructs a writable font data object. If the length is specified as
+  // positive then a fixed size font data object will be created. If the length
+  // is zero or less then a growable font data object will be created and the
+  // size will be used as an estimate to help in allocating the original space.
+  //
+  // @param length if length > 0 create a fixed length font data; otherwise
+  //        create a growable font data
+  // @return a new writable font data
+  static CALLER_ATTACH WritableFontData* CreateWritableFontData(int32_t length);
+
+  // Constructs a writable font data object. The new font data object will wrap
+  // the bytes passed in to the factory and it will take make a copy of those
+  // bytes.
+  //
+  // @param b the byte vector to wrap
+  // @return a new writable font data
+  static CALLER_ATTACH WritableFontData* CreateWritableFontData(ByteVector* b);
+
   virtual int32_t WriteByte(int32_t index, byte_t b);
   virtual int32_t WriteBytes(int32_t offset,
                              ByteVector* b,
