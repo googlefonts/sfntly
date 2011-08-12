@@ -16,12 +16,38 @@
 
 #include "sfntly/data/writable_font_data.h"
 
+#include "sfntly/data/memory_byte_array.h"
+#include "sfntly/data/growable_memory_byte_array.h"
+
 namespace sfntly {
 
 WritableFontData::WritableFontData(ByteArray* ba) : ReadableFontData(ba) {
 }
 
 WritableFontData::~WritableFontData() {}
+
+// static
+CALLER_ATTACH
+WritableFontData* WritableFontData::CreateWritableFontData(int32_t length) {
+  ByteArrayPtr ba;
+  if (length > 0) {
+    ba = new MemoryByteArray(length);
+    ba->SetFilledLength(length);
+  } else {
+    ba = new GrowableMemoryByteArray();
+  }
+  WritableFontDataPtr wfd = new WritableFontData(ba);
+  return wfd.Detach();
+}
+
+// static
+CALLER_ATTACH
+WritableFontData* WritableFontData::CreateWritableFontData(ByteVector* b) {
+  ByteArrayPtr ba = new GrowableMemoryByteArray();
+  ba->Put(0, b);
+  WritableFontDataPtr wfd = new WritableFontData(ba);
+  return wfd.Detach();
+}
 
 int32_t WritableFontData::WriteByte(int32_t index, byte_t b) {
   array_->Put(BoundOffset(index), b);
