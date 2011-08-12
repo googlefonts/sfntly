@@ -208,7 +208,7 @@ int32_t OS2Table::STypoAscender() {
   return data_->ReadShort(Offset::kSTypoAscender);
 }
 
-int32_t OS2Table::STypoDecender() {
+int32_t OS2Table::STypoDescender() {
   return data_->ReadShort(Offset::kSTypoDescender);
 }
 

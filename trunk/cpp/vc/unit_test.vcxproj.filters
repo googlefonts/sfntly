@@ -62,6 +62,27 @@
     <ClCompile Include="..\src\test\serialization_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\verify_hhea.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\verify_hmtx.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\verify_os2.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\verify_maxp.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\verify_glyf.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\verify_loca.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test\verify_name.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\test\test_font_utils.h">
@@ -71,6 +92,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\test_utils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\serialization_test.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

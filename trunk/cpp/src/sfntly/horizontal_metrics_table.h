@@ -55,6 +55,7 @@ class HorizontalMetricsTable : public Table,
   int32_t HMetricLSB(int32_t entry);
   int32_t LsbTableEntry(int32_t entry);
   int32_t AdvanceWidth(int32_t glyph_id);
+  int32_t LeftSideBearing(int32_t glyph_id);
 
  private:
   struct Offset {

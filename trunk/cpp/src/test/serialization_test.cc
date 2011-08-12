@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-#include <set>
-
 #include "gtest/gtest.h"
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
 #include "sfntly/data/memory_byte_array.h"
 #include "test/test_data.h"
 #include "test/test_font_utils.h"
+#include "test/serialization_test.h"
 
 namespace sfntly {
 
@@ -70,6 +69,22 @@ bool TestSerialization() {
               serialized_table->CalculatedChecksum());
     EXPECT_EQ(((original_table->Length() + 3) & ~3),
               ((serialized_table->Length() + 3) & ~3));
+
+    if (TTF_KNOWN_TAGS[i] == Tag::hhea) {
+      EXPECT_TRUE(VerifyHHEA(original_table, serialized_table));
+    } else if (TTF_KNOWN_TAGS[i] == Tag::glyf) {
+        EXPECT_TRUE(VerifyGLYF(original_table, serialized_table));
+    } else if (TTF_KNOWN_TAGS[i] == Tag::hmtx) {
+        EXPECT_TRUE(VerifyHMTX(original_table, serialized_table));
+    } else if (TTF_KNOWN_TAGS[i] == Tag::loca) {
+        EXPECT_TRUE(VerifyLOCA(original_table, serialized_table));
+    } else if (TTF_KNOWN_TAGS[i] == Tag::maxp) {
+        EXPECT_TRUE(VerifyMAXP(original_table, serialized_table));
+    } else if (TTF_KNOWN_TAGS[i] == Tag::name) {
+        EXPECT_TRUE(VerifyNAME(original_table, serialized_table));
+    } else if (TTF_KNOWN_TAGS[i] == Tag::OS_2) {
+        EXPECT_TRUE(VerifyOS_2(original_table, serialized_table));
+    }
   }
 
   return true;

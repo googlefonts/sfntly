@@ -54,20 +54,9 @@ endif(NOT CMAKE_BUILD_TYPE)
     src/sample/subsetter/main.cc
     src/sample/subsetter/subset_util.cc)
   target_link_libraries(subsetter sfntly icuuc)
+  file(GLOB TEST_CASES src/test/*.cc)
   add_executable(unit_test
-    src/test/byte_array_test.cc
-    src/test/endian_test.cc
-    src/test/file_io_test.cc
-    src/test/font_data_test.cc
-    src/test/font_parsing_test.cc
-    src/test/name_editing_test.cc
-    src/test/open_type_data_test.cc
-    src/test/otf_basic_editing_test.cc
-    src/test/smart_pointer_test.cc
-    src/test/test_data.cc
-    src/test/test_font_utils.cc
-    src/test/test_utils.cc
-    src/test/test_utils_test.cc
+    ${TEST_CASES}
     ext/gtest/src/gtest-all.cc
     ext/gtest/src/gtest_main.cc)
   target_link_libraries(unit_test sfntly icuuc pthread)

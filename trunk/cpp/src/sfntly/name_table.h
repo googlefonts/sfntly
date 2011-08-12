@@ -454,7 +454,7 @@ class NameTable : public Table, public RefCounted<NameTable> {
     NameEntryId& name_entry_id() { return name_entry_id_; }
     int32_t platform_id() const { return name_entry_id_.platform_id(); }
     int32_t encoding_id() const { return name_entry_id_.encoding_id(); }
-    int32_t language_id() const { return name_entry_id_.language_id(); };
+    int32_t language_id() const { return name_entry_id_.language_id(); }
     int32_t name_id() const { return name_entry_id_.name_id(); }
 
     // Get the bytes for name.  Returned pointer is the address of private
@@ -649,7 +649,7 @@ class NameTable : public Table, public RefCounted<NameTable> {
   // encoding conversion available for the name record then a best attempt
   // UChar* will be returned.
   // Note: ICU UChar* convention requires caller to delete[] it.
-  virtual UChar* Name(int index);
+  virtual UChar* Name(int32_t index);
 
   // Get the name as a UChar* for the specified name. If there is no entry for
   // the requested name then NULL is returned. If there is no encoding
