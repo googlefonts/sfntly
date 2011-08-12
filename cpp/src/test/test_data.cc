@@ -19,13 +19,14 @@
 
 namespace sfntly {
 
-#if defined WIN32
+// If the TTF file used in test changed, the verify*.cc in test need to be
+// changed also.
+// TODO(arthurhsu): Refactor this into a test class and have all const inside.
+//                  This way we can test multiple fonts using same set of
+//                  code.
+
 const char* SAMPLE_TTF_FILE = "Tuffy.ttf";
 const char* SAMPLE_OTF_FILE = "Tuffy.otf";
-#else
-const char* SAMPLE_TTF_FILE = "Tuffy.ttf";
-const char* SAMPLE_OTF_FILE = "Tuffy.otf";
-#endif
 
 const size_t SAMPLE_TTF_SIZE = 18444;
 const size_t SAMPLE_TTF_TABLES = 16;

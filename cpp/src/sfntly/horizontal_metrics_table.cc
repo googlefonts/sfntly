@@ -77,6 +77,13 @@ int32_t HorizontalMetricsTable::AdvanceWidth(int32_t glyph_id) {
   return HMetricAdvanceWidth(glyph_id - num_hmetrics_);
 }
 
+int32_t HorizontalMetricsTable::LeftSideBearing(int32_t glyph_id) {
+  if (glyph_id < num_hmetrics_) {
+    return HMetricLSB(glyph_id);
+  }
+  return LsbTableEntry(glyph_id - num_hmetrics_);
+}
+
 HorizontalMetricsTable::HorizontalMetricsTable(Header* header,
                                                ReadableFontData* data)
     : Table(header, data) {

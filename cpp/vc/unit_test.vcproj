@@ -217,6 +217,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\test\serialization_test.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\test\smart_pointer_test.cc"
 				>
 			</File>
@@ -246,6 +250,34 @@
 			</File>
 			<File
 				RelativePath="..\src\test\test_utils_test.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\verify_glyf.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\verify_hhea.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\verify_hmtx.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\verify_loca.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\verify_maxp.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\verify_name.cc"
+				>
+			</File>
+			<File
+				RelativePath="..\src\test\verify_os2.cc"
 				>
 			</File>
 		</Filter>

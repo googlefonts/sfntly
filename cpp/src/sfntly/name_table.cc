@@ -494,7 +494,7 @@ void NameTable::NameAsBytes(int32_t platform_id,
   }
 }
 
-UChar* NameTable::Name(int index) {
+UChar* NameTable::Name(int32_t index) {
   ByteVector b;
   NameAsBytes(index, &b);
   return ConvertFromNameBytes(&b, PlatformId(index), EncodingId(index));

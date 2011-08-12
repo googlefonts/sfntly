@@ -341,7 +341,7 @@ class OS2Table : public Table, public RefCounted<OS2Table> {
   int32_t UsFirstCharIndex();
   int32_t UsLastCharIndex();
   int32_t STypoAscender();
-  int32_t STypoDecender();
+  int32_t STypoDescender();
   int32_t STypoLineGap();
   int32_t UsWinAscent();
   int32_t UsWinDescent();
@@ -400,6 +400,7 @@ class OS2Table : public Table, public RefCounted<OS2Table> {
 
   OS2Table(Header* header, ReadableFontData* data);
 };
+typedef Ptr<OS2Table> OS2TablePtr;
 
 }  // namespace sfntly
 
