@@ -20,4 +20,4 @@ It's strongly suggested to run unit_tests with valgrind.  The following example 
 valgrind --leak-check=full -v ./unit_test --gtest_filter=*.*-FontData.*
 }}}
 
-FontData.* tests are the longest and you may want to bypass them during development.  They shall be run in bots, however.
+FontData tests are the longest and you may want to bypass them during development.  They shall be run in bots, however.
