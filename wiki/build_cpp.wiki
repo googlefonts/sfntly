@@ -17,7 +17,7 @@ sfntly is dependent on several external packages.
   sfntly C++ port had been tested with gTest 1.6.0.
 
   * ICU
-  For Linux/Mac, default ICU headers in system will be used.  Linux users please make sure you have dev packages for ICU.  For example, you can run
+  For Linux, default ICU headers in system will be used.  Linux users please make sure you have dev packages for ICU.  For example, you can run
 {{{
 sudo apt-get install libicu-dev
 }}}
@@ -27,22 +27,37 @@ sudo apt-get install libicu-dev
 
   Tested with ICU 4.6.1 binary release.
 
+  For Mac users, please download ICU source tarball from [http://site.icu-project.org/download] and install according to ICU documents.
+
 ==Building on Windows==
-  # Open sfntly.vc10.sln (if using Visual C++ 2010) or sfntly.vc9.sln (if using Visual C++ 2008).  Since sfntly use STL extensively, please patch your Visual Studio for any STL-related hotfixes/service packs.
+  # If you don't have cmake installed, extract from ext/redist.  Let's assume your folder for sfntly is {{{d:\src\sfntly}}} and the extracted {{{cmake.exe}}} is in {{{d:\src\sfntly\ext\cmake\bin\cmake.exe}}}.
+  # Run following commands
+{{{
+d:
+cd d:\src\sfntly
+md build
+cd build
+..\ext\cmake\bin\cmake ..
+}}}
+
+You shall see {{{sfntly.sln}}} in {{{d:\src\sfntly\build}}}.
+
+  # Open sfntly.sln.  Since sfntly use STL extensively, please patch your Visual Studio for any STL-related hotfixes/service packs.
   # Build the solution.
 
 ==Building on Linux/Mac==
-
-===Default In-Source Building===
-  # {{{cd}}} _<sfntly dir>_
-  # {{{cmake .}}}
-  # {{{make}}}
 
 ===Recommended Out-of-Source Building===
   # {{{cd}}} _<sfntly dir>_
   # {{{mkdir build}}}
   # {{{cd build}}}
   # {{{cmake ..}}}
+  # {{{make}}}
+
+===Default In-Source Building===
+  This is not recommended.  Please use out-of-source whenever possible.
+  # {{{cd}}} _<sfntly dir>_
+  # {{{cmake .}}}
   # {{{make}}}
 
 ===Using clang Instead===
@@ -55,7 +70,9 @@ The generated Makefile will use clang.  Please note that sfntly uses a lot of ad
 sfntly is tested to compile and run correctly on clang 3.0 (trunk 135314).  clang 2.9 might work but unfortunately we don't have the resource to test it.
 
 ===Debug and Release Builds===
-Currently Linux/Mac build Debug builds by default.  To build Release builds, you can either modify the {{{CMakeList.txt}}}, or set environment variable {{{CMAKE_BUILD_TYPE}}} to {{{Release}}} before invoking {{{cmake}}}.
+Currently Debug builds are set as default.  To build Release builds, you can either modify the {{{CMakeList.txt}}}, or set environment variable {{{CMAKE_BUILD_TYPE}}} to {{{Release}}} before invoking {{{cmake}}}.
+
+Windows users can just switch the configuration in Visual Studio.
 
 ==Running Unit Test==
 A program named {{{unit_test}}} will be generated after a full compilation.  It expects {{{Tuffy.ttf}}} to be in the same directory it resides to execute the unit tests.  {{{Tuffy.ttf}}} can be found at {{{data/ext}}}.  Windows users also needs to copy {{{icudt.dll}}} and {{{icuuc.dll}}} to that directory.
