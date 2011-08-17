@@ -39,7 +39,7 @@ class TestUtils {
   // @param offset2 offset for comparison in byte array 2
   // @param length the length of the byte arrays to compare
   // @return true if the array segments are equal; false otherwise
-  // TODO(dfilimon): implement sometime in the future :)
+  // TODO(dfilimon): implement
   static bool Equals(ByteArray* b1,
                      int32_t offset1,
                      ByteArray* b2,

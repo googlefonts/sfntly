@@ -61,6 +61,9 @@ class WritableFontData : public ReadableFontData {
   virtual int32_t WriteFixed(int32_t index, int32_t l);
   virtual int32_t WriteDateTime(int32_t index, int64_t date);
 
+  virtual void CopyFrom(InputStream* is, int32_t length);
+  virtual void CopyFrom(InputStream* is);
+
   // Makes a slice of this FontData. The returned slice will share the data with
   // the original FontData.
   // @param offset the start of the slice

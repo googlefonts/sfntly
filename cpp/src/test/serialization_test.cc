@@ -67,8 +67,7 @@ bool TestSerialization() {
       TablePtr serialized_table = serialized->GetTable(TTF_KNOWN_TAGS[i]);
     EXPECT_EQ(original_table->CalculatedChecksum(),
               serialized_table->CalculatedChecksum());
-    EXPECT_EQ(((original_table->Length() + 3) & ~3),
-              ((serialized_table->Length() + 3) & ~3));
+    EXPECT_EQ(original_table->Length(), serialized_table->Length());
 
     if (TTF_KNOWN_TAGS[i] == Tag::hhea) {
       EXPECT_TRUE(VerifyHHEA(original_table, serialized_table));
