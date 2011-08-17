@@ -198,15 +198,18 @@ void ReadableFontData::ComputeChecksum() {
 int64_t ReadableFontData::ComputeCheckSum(int32_t low_bound,
                                           int32_t high_bound) {
   int64_t sum = 0;
-  for (int32_t i = low_bound; i < high_bound; i += 4) {
-    int32_t b3 = ReadUByte(i);
-    b3 = (b3 == -1) ? 0 : b3;
-    int32_t b2 = ReadUByte(i + 1);
-    b2 = (b2 == -1) ? 0 : b2;
-    int32_t b1 = ReadUByte(i + 2);
-    b1 = (b1 == -1) ? 0 : b1;
-    int32_t b0 = ReadUByte(i + 3);
-    b0 = (b0 == -1) ? 0 : b0;
+  // Checksum all whole 4-byte chunks.
+  for (int32_t i = low_bound; i <= high_bound - 4; i += 4) {
+    sum += ReadULong(i);
+  }
+
+  // Add last fragment if not 4-byte multiple
+  int32_t off = high_bound & -4;
+  if (off < high_bound) {
+    int32_t b3 = ReadUByte(off);
+    int32_t b2 = (off + 1 < high_bound) ? ReadUByte(off + 1) : 0;
+    int32_t b1 = (off + 2 < high_bound) ? ReadUByte(off + 2) : 0;
+    int32_t b0 = 0;
     sum += (b3 << 24) | (b2 << 16) | (b1 << 8) | b0;
   }
   return sum;

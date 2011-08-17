@@ -125,6 +125,14 @@ int32_t WritableFontData::WriteDateTime(int32_t index, int64_t date) {
   return 8;
 }
 
+void WritableFontData::CopyFrom(InputStream* is, int32_t length) {
+  array_->CopyFrom(is, length);
+}
+
+void WritableFontData::CopyFrom(InputStream* is) {
+  array_->CopyFrom(is);
+}
+
 CALLER_ATTACH FontData* WritableFontData::Slice(int32_t offset,
                                                 int32_t length) {
   if (offset < 0 || offset + length > Size()) {

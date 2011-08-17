@@ -521,11 +521,10 @@ void Font::Builder::LoadTableData(TableHeaderSortedSet* headers,
            table_header != table_end; ++table_header) {
     is->Skip((*table_header)->offset() - is->position());
     FontInputStream table_is(is, (*table_header)->length());
-    int32_t roundup_length = ((*table_header)->length() + 3) & ~3;
-    ByteArrayPtr array;
-    array.Attach(factory_->GetNewArray(roundup_length));
-    array->CopyFrom(&table_is, (*table_header)->length());
-    WritableFontDataPtr data = new WritableFontData(array);
+    WritableFontDataPtr data;
+    data.Attach(
+        WritableFontData::CreateWritableFontData((*table_header)->length()));
+    data->CopyFrom(&table_is, (*table_header)->length());
     table_data->insert(DataBlockEntry(*table_header, data));
   }
 }
@@ -536,9 +535,9 @@ void Font::Builder::LoadTableData(TableHeaderSortedSet* headers,
   for (TableHeaderSortedSet::iterator
            table_header = headers->begin(), table_end = headers->end();
            table_header != table_end; ++table_header) {
-    int32_t roundup_length = ((*table_header)->length() + 3) & ~3;
     FontDataPtr sliced_data;
-    sliced_data.Attach(fd->Slice((*table_header)->offset(), roundup_length));
+    sliced_data.Attach(
+        fd->Slice((*table_header)->offset(), (*table_header)->length()));
     WritableFontDataPtr data = down_cast<WritableFontData*>(sliced_data.p_);
     table_data->insert(DataBlockEntry(*table_header, data));
   }
