@@ -25,7 +25,7 @@ FontInputStream::FontInputStream(InputStream* is)
 }
 
 FontInputStream::FontInputStream(InputStream* is, size_t length)
-    : stream_(is), position_(0), length_(length), bounded_(false) {
+    : stream_(is), position_(0), length_(length), bounded_(true) {
 }
 
 FontInputStream::~FontInputStream() {

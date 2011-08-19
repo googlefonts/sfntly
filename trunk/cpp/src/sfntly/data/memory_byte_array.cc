@@ -20,23 +20,25 @@
 
 namespace sfntly {
 
-// Note: this constructor can fail under low-memory situation.
 MemoryByteArray::MemoryByteArray(int32_t length)
     : ByteArray(0, length), b_(NULL), allocated_(true) {
 }
 
-MemoryByteArray::MemoryByteArray(byte_t* b, int32_t buffer_length)
-    : ByteArray(buffer_length, buffer_length), b_(b), allocated_(false) {
-}
-
-MemoryByteArray::MemoryByteArray(byte_t* b,
-                                 int32_t buffer_length,
-                                 int32_t filled_length)
-    : ByteArray(filled_length, buffer_length), b_(b), allocated_(false) {
+MemoryByteArray::MemoryByteArray(byte_t* b, int32_t filled_length)
+    : ByteArray(filled_length, filled_length), b_(b), allocated_(false) {
+  assert(b);
 }
 
 MemoryByteArray::~MemoryByteArray() {
   Close();
+}
+
+int32_t MemoryByteArray::CopyTo(OutputStream* os,
+                                int32_t offset,
+                                int32_t length) {
+  assert(os);
+  os->Write(b_, offset, length);
+  return length;
 }
 
 void MemoryByteArray::Init() {
@@ -46,18 +48,18 @@ void MemoryByteArray::Init() {
   }
 }
 
-bool MemoryByteArray::InternalPut(int32_t index, byte_t b) {
+void MemoryByteArray::InternalPut(int32_t index, byte_t b) {
   Init();
   b_[index] = b;
-  return true;
 }
 
 int32_t MemoryByteArray::InternalPut(int32_t index,
-                                     ByteVector* b,
+                                     byte_t* b,
                                      int32_t offset,
                                      int32_t length) {
+  assert(b);
   Init();
-  memcpy(b_ + index, &((*b)[offset]), length);
+  memcpy(b_ + index, b + offset, length);
   return length;
 }
 
@@ -67,11 +69,12 @@ byte_t MemoryByteArray::InternalGet(int32_t index) {
 }
 
 int32_t MemoryByteArray::InternalGet(int32_t index,
-                                     ByteVector* b,
+                                     byte_t* b,
                                      int32_t offset,
                                      int32_t length) {
+  assert(b);
   Init();
-  memcpy(&((*b)[offset]), b_ + index, length);
+  memcpy(b + offset, b_ + index, length);
   return length;
 }
 

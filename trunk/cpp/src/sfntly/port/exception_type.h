@@ -23,18 +23,23 @@
 
 #include <exception>
 #include <string>
+#include <sstream>
 
 namespace sfntly {
 
 class Exception : public std::exception {
  public:
-  explicit Exception(const char* message) throw() {
+  Exception() : what_("Unknown exception") {}
+  explicit Exception(const char* message) throw() { SetMessage(message); }
+  virtual ~Exception() throw() {}
+  virtual const char* what() const throw() { return what_.c_str(); }
+
+ protected:
+  void SetMessage(const char* message) throw() {
     try {
       what_ = message;
     } catch (...) {}
   }
-  virtual ~Exception() throw() {}
-  virtual const char* what() const throw() { return what_.c_str(); }
 
  private:
   std::string what_;
@@ -45,6 +50,15 @@ class IndexOutOfBoundException : public Exception {
   IndexOutOfBoundException() throw() : Exception("Index out of bound") {}
   explicit IndexOutOfBoundException(const char* message) throw()
       : Exception(message) {}
+  IndexOutOfBoundException(const char* message, int32_t index) throw() {
+    try {
+      std::ostringstream msg;
+      msg << message;
+      msg << ":";
+      msg << index;
+      SetMessage(msg.str().c_str());
+    } catch (...) {}
+  }
   virtual ~IndexOutOfBoundException() throw() {}
 };
 

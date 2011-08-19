@@ -58,7 +58,7 @@ FontData::FontData(FontData* data, int32_t offset, int32_t length) {
 
 FontData::FontData(FontData* data, int32_t offset) {
   Init(data->array_);
-  Bound(offset);
+  Bound(data->bound_offset_ + offset);
 }
 
 FontData::~FontData() {}

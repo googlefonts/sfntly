@@ -477,7 +477,7 @@ void NameTable::NameAsBytes(int32_t index, ByteVector* b) {
   int32_t length = NameLength(index);
   b->clear();
   b->resize(length);
-  data_->ReadBytes(NameOffset(index), b, 0, length);
+  data_->ReadBytes(NameOffset(index), &((*b)[0]), 0, length);
 }
 
 void NameTable::NameAsBytes(int32_t platform_id,

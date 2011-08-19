@@ -48,13 +48,14 @@ struct DataSize {
 
 class FontData : virtual public RefCount {
  public:
-  // Get the maximum size of the FontData. This is the maximum number of bytes
+  // Gets the maximum size of the FontData. This is the maximum number of bytes
   // that the font data can hold and all of it may not be filled with data or
   // even fully allocated yet.
-  // @return the size of this array
+  // @return the maximum size of this font data
   virtual int32_t Size() const;
 
-  // Sets limits on the size of the FontData. The font data is
+  // Sets limits on the size of the FontData. The FontData is then only
+  // visible within the bounds set.
   // @param offset the start of the new bounds
   // @param length the number of bytes in the bounded array
   // @return true if the bounding range was successful; false otherwise
@@ -69,19 +70,19 @@ class FontData : virtual public RefCount {
   virtual bool Bound(int32_t offset);
 
   // Makes a slice of this FontData. The returned slice will share the data with
-  // the original FontData.
+  // the original <code>FontData</code>.
   // @param offset the start of the slice
   // @param length the number of bytes in the slice
   // @return a slice of the original FontData
   virtual CALLER_ATTACH FontData* Slice(int32_t offset, int32_t length) = 0;
 
   // Makes a bottom bound only slice of this array. The returned slice will
-  // share the data with the original FontData.
+  // share the data with the original <code>FontData</code>.
   // @param offset the start of the slice
   // @return a slice of the original FontData
   virtual CALLER_ATTACH FontData* Slice(int32_t offset) = 0;
 
-  // Get the length of the data.
+  // Gets the length of the data.
   virtual int32_t Length() const;
 
  protected:
@@ -102,7 +103,17 @@ class FontData : virtual public RefCount {
   virtual ~FontData();
 
   void Init(ByteArray* ba);
+
+  // Gets the offset in the underlying data taking into account any bounds on
+  // the data.
+  // @param offset the offset to get the bound compensated offset for
+  // @return the bound compensated offset
   int32_t BoundOffset(int32_t offset);
+
+  // Gets the length in the underlying data taking into account any bounds on the data.
+  // @param offset the offset that the length is being used at
+  // @param length the length to get the bound compensated length for
+  // @return the bound compensated length
   int32_t BoundLength(int32_t offset, int32_t length);
 
   // TODO(arthurhsu): style guide violation: refactor this protected member

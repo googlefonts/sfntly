@@ -593,7 +593,7 @@ void GlyphTable::CompositeGlyph::Transformation(int32_t contour,
   }
   int32_t tsize = TransformationSize(contour);
   transformation->resize(tsize);
-  data_->ReadBytes(index, transformation, 0, tsize);
+  data_->ReadBytes(index, &((*transformation)[0]), 0, tsize);
 }
 
 int32_t GlyphTable::CompositeGlyph::InstructionSize() {

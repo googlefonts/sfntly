@@ -24,56 +24,62 @@
 
 namespace sfntly {
 
-// An interface abstraction to a byte array. Can be implemented to map to
-// various types of data storage.
+// An abstraction to a contiguous array of bytes.
 // C++ port of this class assumes that the data are stored in a linear region
 // like std::vector.
 class ByteArray : virtual public RefCount {
  public:
   virtual ~ByteArray();
 
-  // Get the current filled and readable length of the array.
+  // Gets the current filled and readable length of the array.
   int32_t Length();
 
-  // Get the maximum size of the array. This is the maximum number of bytes that
+  // Gets the maximum size of the array. This is the maximum number of bytes that
   // the array can hold and all of it may not be filled with data or even fully
   // allocated yet.
   int32_t Size();
 
+  // Determines whether or not this array is growable or of fixed size.
   bool growable() { return growable_; }
+
   int32_t SetFilledLength(int32_t filled_length);
 
-  // Get the byte from the given index.
-  virtual byte_t Get(int32_t index);
+  // Gets the byte from the given index.
+  // @param index the index into the byte array
+  // @return the byte or -1 if reading beyond the bounds of the data
+  virtual int32_t Get(int32_t index);
 
-  // Get the bytes from the given index and fill the buffer with them. As many
+  // Gets the bytes from the given index and fill the buffer with them. As many
   // bytes as will fit into the buffer are read unless that would go past the
   // end of the array.
+  // @param index the index into the byte array
+  // @param b the buffer to put the bytes read into
+  // @return the number of bytes read from the buffer
   virtual int32_t Get(int32_t index, ByteVector* b);
 
-  // Get the bytes from the given index and fill the buffer with them starting
+  // Gets the bytes from the given index and fill the buffer with them starting
   // at the offset given. As many bytes as the specified length are read unless
   // that would go past the end of the array.
   // @param index the index into the byte array
   // @param b the buffer to put the bytes read into
   // @param offset the location in the buffer to start putting the bytes
   // @param length the number of bytes to put into the buffer
-  // @return the number of bytes put into the buffer
+  // @return the number of bytes read from the buffer
   virtual int32_t Get(int32_t index,
-                      ByteVector* b,
+                      byte_t* b,
                       int32_t offset,
                       int32_t length);
 
-  // Put the specified byte into the array at the given index unless that would
+  // Puts the specified byte into the array at the given index unless that would
   // be beyond the length of the array and it isn't growable.
-  virtual bool Put(int32_t index, byte_t b);
+  virtual void Put(int32_t index, byte_t b);
 
-  // Put the specified bytes into the array at the given index. The entire
+  // Puts the specified bytes into the array at the given index. The entire
   // buffer is put into the array unless that would extend beyond the length and
   // the array isn't growable.
   virtual int32_t Put(int32_t index, ByteVector* b);
 
-  // Put the specified bytes into the array at the given index. All of the bytes
+  // Puts the specified bytes into the array at the given index. All of the bytes
   // specified are put into the array unless that would extend beyond the length
   // and the array isn't growable. The bytes to be put into the array are those
   // in the buffer from the given offset and for the given length.
@@ -83,22 +89,22 @@ class ByteArray : virtual public RefCount {
   // @param length the number of bytes to copy into the array
   // @return the number of bytes actually written
   virtual int32_t Put(int32_t index,
-                      ByteVector* b,
+                      byte_t* b,
                       int32_t offset,
                       int32_t length);
 
-  // Fully copy this ByteArray to another ByteArray to the extent that the
+  // Fully copies this ByteArray to another ByteArray to the extent that the
   // destination array has storage for the data copied.
   virtual int32_t CopyTo(ByteArray* array);
 
-  // Copy a segment of this ByteArray to another ByteArray.
+  // Copies a segment of this ByteArray to another ByteArray.
   // @param array the destination
   // @param offset the offset in this ByteArray to start copying from
   // @param length the maximum length in bytes to copy
   // @return the number of bytes copied
   virtual int32_t CopyTo(ByteArray* array, int32_t offset, int32_t length);
 
-  // Copy this ByteArray to another ByteArray.
+  // Copies this ByteArray to another ByteArray.
   // @param dstOffset the offset in the destination array to start copying to
   // @param array the destination
   // @param srcOffset the offset in this ByteArray to start copying from
@@ -109,9 +115,25 @@ class ByteArray : virtual public RefCount {
                          int32_t src_offset,
                          int32_t length);
 
+  // Copies this ByteArray to an OutputStream.
+  // @param os the destination
+  // @return the number of bytes copied
   virtual int32_t CopyTo(OutputStream* os);
+
+  // Copies this ByteArray to an OutputStream.
+  // @param os the destination
+  // @param offset
+  // @param length
+  // @return the number of bytes copied
   virtual int32_t CopyTo(OutputStream* os, int32_t offset, int32_t length);
+
+  // Copies from the InputStream into this ByteArray.
+  // @param is the source
+  // @param length the number of bytes to copy
   virtual bool CopyFrom(InputStream* is, int32_t length);
+
+  // Copies everything from the InputStream into this ByteArray.
+  // @param is the source
   virtual bool CopyFrom(InputStream* is);
 
  protected:
@@ -122,24 +144,52 @@ class ByteArray : virtual public RefCount {
   ByteArray(int32_t filled_length, int32_t storage_length);
   void Init(int32_t filled_length, int32_t storage_length, bool growable);
 
-  virtual bool InternalPut(int32_t index, byte_t b) = 0;
+  // Internal subclass API
+
+  // Stores the byte at the index given.
+  // @param index the location to store at
+  // @param b the byte to store
+  virtual void InternalPut(int32_t index, byte_t b) = 0;
+
+  // Stores the array of bytes at the given index.
+  // @param index the location to store at
+  // @param b the bytes to store
+  // @param offset the offset to start from in the byte array
+  // @param length the length of the byte array to store from the offset
+  // @return the number of bytes actually stored
   virtual int32_t InternalPut(int32_t index,
-                              ByteVector* b,
+                              byte_t* b,
                               int32_t offset,
                               int32_t length) = 0;
+
+  // Gets the byte at the index given.
+  // @param index the location to get from
+  // @return the byte stored at the index
   virtual byte_t InternalGet(int32_t index) = 0;
+
+  // Gets the bytes at the index given of the given length.
+  // @param index the location to start getting from
+  // @param b the array to put the bytes into
+  // @param offset the offset in the array to put the bytes into
+  // @param length the length of bytes to read
+  // @return the number of bytes actually ready
   virtual int32_t InternalGet(int32_t index,
-                              ByteVector* b,
+                              byte_t* b,
                               int32_t offset,
                               int32_t length) = 0;
+
+  // Close this instance of the ByteArray.
   virtual void Close() = 0;
 
   // C++ port only, raw pointer to the first element of storage.
   virtual byte_t* Begin() = 0;
 
+  // Java toString() not ported.
+
   static const int32_t COPY_BUFFER_SIZE;
 
  private:
+  //bool bound_;  // unused, comment out
   int32_t filled_length_;
   int32_t storage_length_;
   bool growable_;

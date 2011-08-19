@@ -23,20 +23,47 @@ namespace sfntly {
 
 class MemoryByteArray : public ByteArray, public RefCounted<MemoryByteArray> {
  public:
+  // Construct a new MemoryByteArray with a new array of the size given. It is
+  // assumed that none of the array is filled and readable.
   explicit MemoryByteArray(int32_t length);
-  MemoryByteArray(byte_t* b, int32_t buffer_length);
-  MemoryByteArray(byte_t* b, int32_t buffer_length, int32_t filled_length);
+
+  // Note: not implemented due to dangerous operations in constructor.
+  //explicit MemoryByteArray(ByteVector* b);
+
+  // Construct a new MemoryByteArray using byte array.
+  // @param b the byte array that provides the actual storage
+  // @param filled_length the index of the last byte in the array has data
+  // Note: This is different from Java version, it does not take over the
+  //       ownership of b.  Caller is responsible for handling the lifetime
+  //       of b.  C++ port also assumes filled_length is buffer_length since
+  //       there is not a reliable way to identify the actual size of buffer.
+  MemoryByteArray(byte_t* b, int32_t filled_length);
+
   virtual ~MemoryByteArray();
+  virtual int32_t CopyTo(OutputStream* os, int32_t offset, int32_t length);
+
+  // Make gcc -Woverloaded-virtual happy.
+  virtual int32_t CopyTo(ByteArray* array) { return ByteArray::CopyTo(array); }
+  virtual int32_t CopyTo(ByteArray* array, int32_t offset, int32_t length) {
+    return ByteArray::CopyTo(array, offset, length);
+  }
+  virtual int32_t CopyTo(int32_t dst_offset,
+                         ByteArray* array,
+                         int32_t src_offset,
+                         int32_t length) {
+    return ByteArray::CopyTo(dst_offset, array, src_offset, length);
+  }
+  virtual int32_t CopyTo(OutputStream* os) { return ByteArray::CopyTo(os); }
 
  protected:
-  virtual bool InternalPut(int32_t index, byte_t b);
+  virtual void InternalPut(int32_t index, byte_t b);
   virtual int32_t InternalPut(int32_t index,
-                              ByteVector* b,
+                              byte_t* b,
                               int32_t offset,
                               int32_t length);
   virtual byte_t InternalGet(int32_t index);
   virtual int32_t InternalGet(int32_t index,
-                              ByteVector* b,
+                              byte_t* b,
                               int32_t offset,
                               int32_t length);
   virtual void Close();

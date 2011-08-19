@@ -43,11 +43,35 @@ void FontOutputStream::Write(ByteVector* b) {
   }
 }
 
-void FontOutputStream::Write(ByteVector* b, int32_t offset, int32_t length) {
-  if (stream_ && b) {
-    stream_->Write(b, offset, length);
-    position_ += length;
+void FontOutputStream::Write(ByteVector* b, int32_t off, int32_t len) {
+  assert(b);
+  assert(stream_);
+  if (off < 0 || len < 0 || off + len < 0 ||
+      static_cast<size_t>(off + len) > b->size()) {
+#if !defined (SFNTLY_NO_EXCEPTION)
+    throw IndexOutOfBoundException();
+#else
+    return;
+#endif
   }
+
+  stream_->Write(b, off, len);
+  position_ += len;
+}
+
+void FontOutputStream::Write(byte_t* b, int32_t off, int32_t len) {
+  assert(b);
+  assert(stream_);
+  if (off < 0 || len < 0 || off + len < 0) {
+#if !defined (SFNTLY_NO_EXCEPTION)
+    throw IndexOutOfBoundException();
+#else
+    return;
+#endif
+  }
+
+  stream_->Write(b, off, len);
+  position_ += len;
 }
 
 void FontOutputStream::WriteChar(byte_t c) {
