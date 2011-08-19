@@ -65,7 +65,7 @@ bool TestFontParsing() {
   wfd.Attach(gdef_builder->Data());
   ByteVector b;
   b.resize(TTF_LENGTH[SAMPLE_TTF_GDEF]);
-  wfd->ReadBytes(0, &b, 0, TTF_LENGTH[SAMPLE_TTF_GDEF]);
+  wfd->ReadBytes(0, &(b[0]), 0, TTF_LENGTH[SAMPLE_TTF_GDEF]);
   EXPECT_EQ(memcmp(&(b[0]), TTF_GDEF_DATA, TTF_LENGTH[SAMPLE_TTF_GDEF]), 0);
 
   // Header table
@@ -91,8 +91,8 @@ bool TestFontParsing() {
     wfd1.Attach(builder1->Data());
     WritableFontDataPtr wfd2;
     wfd2.Attach(builder2->Data());
-    wfd1->ReadBytes(0, &b1, 0, TTF_LENGTH[i]);
-    wfd2->ReadBytes(0, &b2, 0, TTF_LENGTH[i]);
+    wfd1->ReadBytes(0, &(b1[0]), 0, TTF_LENGTH[i]);
+    wfd2->ReadBytes(0, &(b2[0]), 0, TTF_LENGTH[i]);
     EXPECT_EQ(memcmp(&(b1[0]), &(b2[0]), TTF_LENGTH[i]), 0);
   }
 

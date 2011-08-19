@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "sfntly/data/memory_byte_array.h"
 #include "sfntly/data/readable_font_data.h"
 #include "sfntly/data/writable_font_data.h"
 #include "sfntly/port/exception_type.h"
@@ -27,6 +28,18 @@ ReadableFontData::ReadableFontData(ByteArray* array)
 }
 
 ReadableFontData::~ReadableFontData() {}
+
+// TODO(arthurhsu): re-investigate the memory model of this function.  It's
+//                  not too useful without copying, but it's not performance
+//                  savvy to do copying.
+CALLER_ATTACH
+ReadableFontData* ReadableFontData::CreateReadableFontData(ByteVector* b) {
+  assert(b);
+  ByteArrayPtr ba = new MemoryByteArray(b->size());
+  ba->Put(0, b);
+  ReadableFontDataPtr wfd = new ReadableFontData(ba);
+  return wfd.Detach();
+}
 
 int64_t ReadableFontData::Checksum() {
   // TODO(arthurhsu): IMPLEMENT: atomicity
@@ -42,15 +55,29 @@ void ReadableFontData::SetCheckSumRanges(const IntegerList& ranges) {
 }
 
 int32_t ReadableFontData::ReadUByte(int32_t index) {
-  return 0xff & array_->Get(BoundOffset(index));
+  int32_t b = array_->Get(BoundOffset(index));
+#if !defined (SFNTLY_NO_EXCEPTION)
+  if (b < 0) {
+    throw IndexOutOfBoundException(
+        "Index attempted to be read from is out of bounds", index);
+  }
+#endif
+  return b;
 }
 
 int32_t ReadableFontData::ReadByte(int32_t index) {
-  return (array_->Get(BoundOffset(index)) << 24) >> 24;
+  int32_t b = array_->Get(BoundOffset(index));
+#if !defined (SFNTLY_NO_EXCEPTION)
+  if (b < 0) {
+    throw IndexOutOfBoundException(
+        "Index attempted to be read from is out of bounds", index);
+  }
+#endif
+  return (b << 24) >> 24;
 }
 
 int32_t ReadableFontData::ReadBytes(int32_t index,
-                                    ByteVector* b,
+                                    byte_t* b,
                                     int32_t offset,
                                     int32_t length) {
   return array_->Get(BoundOffset(index), b, offset, BoundLength(index, length));
@@ -88,7 +115,7 @@ int32_t ReadableFontData::ReadULongAsInt(int32_t index) {
     throw ArithmeticException("Long value too large to fit into an integer.");
   }
 #endif
-  return ((int32_t)ulong) & ~0x80000000;
+  return static_cast<int32_t>(ulong);
 }
 
 int32_t ReadableFontData::ReadLong(int32_t index) {
@@ -164,17 +191,6 @@ ReadableFontData::ReadableFontData(ReadableFontData* data,
       checksum_(0) {
 }
 
-/* OpenType checksum
-ULONG
-CalcTableChecksum(ULONG *Table, ULONG Length)
-{
-ULONG Sum = 0L;
-ULONG *Endptr = Table+((Length+3) & ~3) / sizeof(ULONG);
-while (Table < EndPtr)
-  Sum += *Table++;
-return Sum;
-}
-*/
 void ReadableFontData::ComputeChecksum() {
   // TODO(arthurhsu): IMPLEMENT: synchronization/atomicity
   int64_t sum = 0;

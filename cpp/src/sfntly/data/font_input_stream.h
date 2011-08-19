@@ -22,6 +22,25 @@
 
 namespace sfntly {
 
+// An input stream for reading font data.
+// The data types used are as listed:
+// BYTE       8-bit unsigned integer.
+// CHAR       8-bit signed integer.
+// USHORT     16-bit unsigned integer.
+// SHORT      16-bit signed integer.
+// UINT24     24-bit unsigned integer.
+// ULONG      32-bit unsigned integer.
+// LONG       32-bit signed integer.
+// Fixed      32-bit signed fixed-point number (16.16)
+// FUNIT      Smallest measurable distance in the em space.
+// FWORD      16-bit signed integer (SHORT) that describes a quantity in FUnits.
+// UFWORD     16-bit unsigned integer (USHORT) that describes a quantity in
+//            FUnits.
+// F2DOT14    16-bit signed fixed number with the low 14 bits of fraction (2.14)
+// LONGDATETIME  Date represented in number of seconds since 12:00 midnight,
+//               January 1, 1904. The value is represented as a signed 64-bit
+//               integer.
+
 // Note: Original class inherits from Java's FilterOutputStream, which wraps
 //       an InputStream within.  In C++, we directly do the wrapping without
 //       defining another layer of abstraction.  The wrapped output stream is
@@ -29,9 +48,17 @@ namespace sfntly {
 //       stream).
 class FontInputStream : public InputStream {
  public:
+  // Constructor.
+  // @param is input stream to wrap
   explicit FontInputStream(InputStream* is);
+
+  // Constructor for a bounded font input stream.
+  // @param is input stream to wrap
+  // @param length the maximum length of bytes to read
   FontInputStream(InputStream* is, size_t length);
+
   virtual ~FontInputStream();
+
 
   virtual int32_t Available();
   virtual void Close();
@@ -43,6 +70,8 @@ class FontInputStream : public InputStream {
   virtual int32_t Read(ByteVector* buffer);
   virtual int32_t Read(ByteVector* buffer, int32_t offset, int32_t length);
 
+  // Get the current position in the stream in bytes.
+  // @return the current position in bytes
   virtual int64_t position() { return position_; }
 
   virtual int32_t ReadChar();

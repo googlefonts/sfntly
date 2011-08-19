@@ -17,6 +17,7 @@
 #include "sfntly/data/growable_memory_byte_array.h"
 
 #include <limits.h>
+#include <string.h>
 
 #include <algorithm>
 
@@ -24,28 +25,37 @@ namespace sfntly {
 
 GrowableMemoryByteArray::GrowableMemoryByteArray()
     : ByteArray(0, INT_MAX, true) {
+  // Note: We did not set an initial size of array like Java because STL
+  //       implementation will determine the best strategy.
 }
 
 GrowableMemoryByteArray::~GrowableMemoryByteArray() {}
 
-bool GrowableMemoryByteArray::InternalPut(int32_t index, byte_t b) {
-  if ((size_t)index >= b_.capacity()) {
-    b_.resize((size_t)(index + 1) << 2);  // Grow exponentially.
+int32_t GrowableMemoryByteArray::CopyTo(OutputStream* os,
+                                        int32_t offset,
+                                        int32_t length) {
+  assert(os);
+  os->Write(&b_, offset, length);
+  return length;
+}
+
+void GrowableMemoryByteArray::InternalPut(int32_t index, byte_t b) {
+  if ((size_t)index >= b_.size()) {
+    b_.resize((size_t)(index + 1));
   }
   b_[index] = b;
-  return true;
 }
 
 int32_t GrowableMemoryByteArray::InternalPut(int32_t index,
-                                             ByteVector* b,
+                                             byte_t* b,
                                              int32_t offset,
                                              int32_t length) {
-  if ((size_t)index + length >= b_.capacity()) {
-    b_.resize((size_t)(index + length + 1) << 2);
+  if ((size_t)index + length >= b_.size()) {
+    // Note: We grow one byte more than Java version. VC debuggers shows
+    //       data better this way.
+    b_.resize((size_t)(index + length + 1));
   }
-  std::copy(b->begin() + offset,
-            b->begin() + (offset + length),
-            b_.begin() + index);
+  std::copy(b + offset, b + offset + length, b_.begin() + index);
   return length;
 }
 
@@ -54,12 +64,10 @@ byte_t GrowableMemoryByteArray::InternalGet(int32_t index) {
 }
 
 int32_t GrowableMemoryByteArray::InternalGet(int32_t index,
-                                             ByteVector* b,
+                                             byte_t* b,
                                              int32_t offset,
                                              int32_t length) {
-  std::copy(b_.begin() + index,
-            b_.begin() + (index + length),
-            b->begin() + offset);
+  memcpy(b + offset, &(b_[0]) + index, length);
   return length;
 }
 

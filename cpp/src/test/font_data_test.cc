@@ -48,7 +48,7 @@ void ReadFontDataWithBuffer(ReadableFontData* rfd,
 
   int32_t index = 0;
   while (index < rfd->Length()) {
-    int32_t bytes_read = rfd->ReadBytes(index, &buffer, 0, buffer.size());
+    int32_t bytes_read = rfd->ReadBytes(index, &(buffer[0]), 0, buffer.size());
     EXPECT_GE(bytes_read, 0);
     std::copy(buffer.begin(), buffer.begin() + bytes_read, b->begin() + index);
     index += bytes_read;
@@ -62,7 +62,8 @@ void ReadFontDataWithSlidingWindow(ReadableFontData* rfd, int32_t window_size,
   while (index < rfd->Length()) {
     int32_t actual_window_size =
         std::min<int32_t>(window_size, b->size() - index);
-    int32_t bytes_read = rfd->ReadBytes(index, b, index, actual_window_size);
+    int32_t bytes_read =
+        rfd->ReadBytes(index, &((*b)[0]), index, actual_window_size);
     EXPECT_GE(bytes_read, 0);
     index += bytes_read;
   }
@@ -81,8 +82,8 @@ void WriteFontDataWithBuffer(ReadableFontData* rfd,
   ByteVector buffer(buffer_size);
   int32_t index = 0;
   while (index < rfd->Length()) {
-    int32_t bytesRead = rfd->ReadBytes(index, &buffer, 0, buffer.size());
-    wfd->WriteBytes(index, &buffer, 0, buffer.size());
+    int32_t bytesRead = rfd->ReadBytes(index, &(buffer[0]), 0, buffer.size());
+    wfd->WriteBytes(index, &(buffer[0]), 0, buffer.size());
     index += bytesRead;
   }
 }
@@ -94,8 +95,8 @@ void WriteFontDataWithSlidingWindow(ReadableFontData* rfd,
   int32_t index = 0;
   while (index < rfd->Length()) {
     int32_t sliding_size = std::min<int32_t>(window_size, b.size() - index);
-    int32_t bytes_read = rfd->ReadBytes(index, &b, index, sliding_size);
-    wfd->WriteBytes(index, &b, index, sliding_size);
+    int32_t bytes_read = rfd->ReadBytes(index, &(b[0]), index, sliding_size);
+    wfd->WriteBytes(index, &(b[0]), index, sliding_size);
     index += bytes_read;
   }
 }

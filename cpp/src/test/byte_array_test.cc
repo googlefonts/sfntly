@@ -51,7 +51,7 @@ void ReadByteArrayWithSlidingWindow(ByteArray* ba, int window_size,
   while (index < ba->Length()) {
     actual_window_size =
         std::min<int32_t>(actual_window_size, b->size() - index);
-    int32_t bytes_read = ba->Get(index, b, index, actual_window_size);
+    int32_t bytes_read = ba->Get(index, &((*b)[0]), index, actual_window_size);
     index += bytes_read;
   }
 }

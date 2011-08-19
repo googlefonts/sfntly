@@ -36,6 +36,7 @@ class MemoryOutputStream : public OutputStream {
   virtual void Flush() {}  // no-op
   virtual void Write(ByteVector* buffer);
   virtual void Write(ByteVector* buffer, int32_t offset, int32_t length);
+  virtual void Write(byte_t* buffer, int32_t offset, int32_t length);
   virtual void Write(byte_t b);
 
   byte_t* Get();

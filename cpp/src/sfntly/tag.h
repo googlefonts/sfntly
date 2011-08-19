@@ -83,11 +83,8 @@ struct Tag {
 };
 
 // Create integer tag value for human readable tag name.
-inline int32_t GenerateTag(char a, char b, char c, char d) {
-  return (((int32_t)(a) << 24) |
-          ((int32_t)(b) << 16) |
-          ((int32_t)(c) <<  8) |
-           (int32_t)(d));
+inline int32_t GenerateTag(int32_t a, int32_t b, int32_t c, int32_t d) {
+  return (a << 24) | (b << 16) | (c << 8) | d;
 }
 
 // Translate tag to human readable string.

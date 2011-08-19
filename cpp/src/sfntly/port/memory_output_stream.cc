@@ -31,9 +31,27 @@ void MemoryOutputStream::Write(ByteVector* buffer) {
 void MemoryOutputStream::Write(ByteVector* buffer,
                                int32_t offset,
                                int32_t length) {
-  store_.insert(store_.end(),
-                buffer->begin() + offset,
-                buffer->begin() + offset + length);
+  assert(buffer);
+  if (offset >= 0 && length > 0) {
+    store_.insert(store_.end(),
+                  buffer->begin() + offset,
+                  buffer->begin() + offset + length);
+  } else {
+#if !defined(SFNTLY_NO_EXCEPTION)
+    throw IndexOutOfBoundException();
+#endif
+  }
+}
+
+void MemoryOutputStream::Write(byte_t* buffer, int32_t offset, int32_t length) {
+  assert(buffer);
+  if (offset >= 0 && length > 0) {
+    store_.insert(store_.end(), buffer + offset, buffer + offset + length);
+  } else {
+#if !defined(SFNTLY_NO_EXCEPTION)
+    throw IndexOutOfBoundException();
+#endif
+  }
 }
 
 void MemoryOutputStream::Write(byte_t b) {
@@ -41,6 +59,9 @@ void MemoryOutputStream::Write(byte_t b) {
 }
 
 byte_t* MemoryOutputStream::Get() {
+  if (store_.empty()) {
+    return NULL;
+  }
   return &(store_[0]);
 }
 

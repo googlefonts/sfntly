@@ -167,7 +167,7 @@ int32_t OS2Table::SFamilyClass() {
 void OS2Table::Panose(ByteVector* value) {
   value->clear();
   value->resize(10);
-  data_->ReadBytes(Offset::kPanose, value, 0, 10);
+  data_->ReadBytes(Offset::kPanose, &((*value)[0]), 0, 10);
 }
 
 int64_t OS2Table::UlUnicodeRange1() {
@@ -189,7 +189,7 @@ int64_t OS2Table::UlUnicodeRange4() {
 void OS2Table::AchVendId(ByteVector* b) {
   b->clear();
   b->resize(4);
-  data_->ReadBytes(Offset::kAchVendId, b, 0, 4);
+  data_->ReadBytes(Offset::kAchVendId, &((*b)[0]), 0, 4);
 }
 
 int32_t OS2Table::FsSelection() {

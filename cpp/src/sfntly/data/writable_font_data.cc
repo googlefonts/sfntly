@@ -40,7 +40,9 @@ WritableFontData* WritableFontData::CreateWritableFontData(int32_t length) {
   return wfd.Detach();
 }
 
-// static
+// TODO(arthurhsu): re-investigate the memory model of this function.  It's
+//                  not too useful without copying, but it's not performance
+//                  savvy to do copying.
 CALLER_ATTACH
 WritableFontData* WritableFontData::CreateWritableFontData(ByteVector* b) {
   ByteArrayPtr ba = new GrowableMemoryByteArray();
@@ -54,18 +56,19 @@ int32_t WritableFontData::WriteByte(int32_t index, byte_t b) {
   return 1;
 }
 
-int32_t WritableFontData::WriteBytes(int32_t offset,
-                                     ByteVector* b,
-                                     int32_t index,
+int32_t WritableFontData::WriteBytes(int32_t index,
+                                     byte_t* b,
+                                     int32_t offset,
                                      int32_t length) {
-  return array_->Put(BoundOffset(offset),
+  return array_->Put(BoundOffset(index),
                      b,
-                     index,
-                     BoundLength(offset, length));
+                     offset,
+                     BoundLength(index, length));
 }
 
 int32_t WritableFontData::WriteBytes(int32_t index, ByteVector* b) {
-  return WriteBytes(index, b, 0, b->size());
+  assert(b);
+  return WriteBytes(index, &((*b)[0]), 0, b->size());
 }
 
 int32_t WritableFontData::WriteChar(int32_t index, byte_t c) {
@@ -115,8 +118,8 @@ int32_t WritableFontData::WriteLong(int32_t index, int64_t l) {
   return WriteULong(index, l);
 }
 
-int32_t WritableFontData::WriteFixed(int32_t index, int32_t l) {
-  return WriteLong(index, l);
+int32_t WritableFontData::WriteFixed(int32_t index, int32_t f) {
+  return WriteLong(index, f);
 }
 
 int32_t WritableFontData::WriteDateTime(int32_t index, int64_t date) {

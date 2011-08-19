@@ -34,51 +34,57 @@ int32_t ByteArray::SetFilledLength(int32_t filled_length) {
   return filled_length_;
 }
 
-byte_t ByteArray::Get(int32_t index) {
-  return InternalGet(index);
+int32_t ByteArray::Get(int32_t index) {
+  return InternalGet(index) & 0xff;
 }
 
 int32_t ByteArray::Get(int32_t index, ByteVector* b) {
   assert(b);
-  return Get(index, b, 0, b->size());
+  return Get(index, &((*b)[0]), 0, b->size());
 }
 
 int32_t ByteArray::Get(int32_t index,
-                       ByteVector* b,
+                       byte_t* b,
                        int32_t offset,
                        int32_t length) {
   assert(b);
   if (index < 0 || index >= filled_length_) {
-    return -1;
+    return 0;
   }
   int32_t actual_length = std::min<int32_t>(length, filled_length_ - index);
-  if (actual_length < 0) {
-      return -1;
-  }
   return InternalGet(index, b, offset, actual_length);
 }
 
-bool ByteArray::Put(int32_t index, byte_t b) {
+void ByteArray::Put(int32_t index, byte_t b) {
   if (index < 0 || index >= Size()) {
-    return false;
+#if defined (SFNTLY_NO_EXCEPTION)
+    return;
+#else
+    throw IndexOutOfBoundException(
+        "Attempt to write outside the bounds of the data");
+#endif
   }
-  bool result = InternalPut(index, b);
+  InternalPut(index, b);
   filled_length_ = std::max<int32_t>(filled_length_, index + 1);
-  return result;
 }
 
 int32_t ByteArray::Put(int index, ByteVector* b) {
   assert(b);
-  return Put(index, b, 0, b->size());
+  return Put(index, &((*b)[0]), 0, b->size());
 }
 
 int32_t ByteArray::Put(int32_t index,
-                       ByteVector* b,
+                       byte_t* b,
                        int32_t offset,
                        int32_t length) {
   assert(b);
   if (index < 0 || index >= Size()) {
+#if defined (SFNTLY_NO_EXCEPTION)
     return 0;
+#else
+    throw IndexOutOfBoundException(
+        "Attempt to write outside the bounds of the data");
+#endif
   }
   int32_t actual_length = std::min<int32_t>(length, Size() - index);
   int32_t bytes_written = InternalPut(index, b, offset, actual_length);
@@ -106,8 +112,9 @@ int32_t ByteArray::CopyTo(int32_t dst_offset, ByteArray* array,
   int32_t index = 0;
   int32_t remaining_length = length;
   int32_t buffer_length = std::min<int32_t>(COPY_BUFFER_SIZE, length);
-  while ((bytes_read = Get(index + src_offset, &b, 0, buffer_length)) > 0) {
-    int bytes_written = array->Put(index + dst_offset, &b, 0, bytes_read);
+  while ((bytes_read =
+              Get(index + src_offset, &(b[0]), 0, buffer_length)) > 0) {
+    int bytes_written = array->Put(index + dst_offset, &(b[0]), 0, bytes_read);
     if (bytes_written != bytes_read) {
 #if defined (SFNTLY_NO_EXCEPTION)
       return 0;
@@ -131,7 +138,7 @@ int32_t ByteArray::CopyTo(OutputStream* os, int32_t offset, int32_t length) {
   int32_t bytes_read = 0;
   int32_t index = 0;
   int32_t buffer_length = std::min<int32_t>(COPY_BUFFER_SIZE, length);
-  while ((bytes_read = Get(index + offset, &b, 0, buffer_length)) > 0) {
+  while ((bytes_read = Get(index + offset, &(b[0]), 0, buffer_length)) > 0) {
     os->Write(&b, 0, bytes_read);
     index += bytes_read;
     buffer_length = std::min<int32_t>(b.size(), length - index);
@@ -145,7 +152,7 @@ bool ByteArray::CopyFrom(InputStream* is, int32_t length) {
   int32_t index = 0;
   int32_t buffer_length = std::min<int32_t>(COPY_BUFFER_SIZE, length);
   while ((bytes_read = is->Read(&b, 0, buffer_length)) > 0) {
-    if (Put(index, &b, 0, bytes_read) != bytes_read) {
+    if (Put(index, &(b[0]), 0, bytes_read) != bytes_read) {
 #if defined (SFNTLY_NO_EXCEPTION)
       return 0;
 #else
@@ -165,7 +172,7 @@ bool ByteArray::CopyFrom(InputStream* is) {
   int32_t index = 0;
   int32_t buffer_length = COPY_BUFFER_SIZE;
   while ((bytes_read = is->Read(&b, 0, buffer_length)) > 0) {
-    if (Put(index, &b, 0, bytes_read) != bytes_read) {
+    if (Put(index, &b[0], 0, bytes_read) != bytes_read) {
 #if defined (SFNTLY_NO_EXCEPTION)
       return 0;
 #else
