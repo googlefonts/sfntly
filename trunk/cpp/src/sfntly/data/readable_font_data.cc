@@ -16,6 +16,9 @@
 
 #include "sfntly/data/memory_byte_array.h"
 #include "sfntly/data/readable_font_data.h"
+
+#include <stdio.h>
+
 #include "sfntly/data/writable_font_data.h"
 #include "sfntly/port/exception_type.h"
 
@@ -154,6 +157,71 @@ int32_t ReadableFontData::CopyTo(WritableFontData* wfd) {
 
 int32_t ReadableFontData::CopyTo(ByteArray* ba) {
   return array_->CopyTo(ba, BoundOffset(0), Length());
+}
+
+int32_t ReadableFontData::SearchUShort(int32_t start_index,
+                                       int32_t start_offset,
+                                       int32_t end_index,
+                                       int32_t end_offset,
+                                       int32_t length,
+                                       int32_t key) {
+  int32_t location = 0;
+  int32_t bottom = 0;
+  int32_t top = length;
+  while (top != bottom) {
+    location = (top + bottom) / 2;
+    int32_t location_start = ReadUShort(start_index + location * start_offset);
+    if (key < location_start) {
+      // location is below current location
+      top = location;
+    } else {
+      // is key below the upper bound?
+      int32_t location_end = ReadUShort(end_index + location * end_offset);
+#if defined (SFNTLY_DEBUG_FONTDATA)
+      fprintf(stderr, "**start: %d; end: %d\n", location_start, location_end);
+#endif
+      if (key <= location_end) {
+        return location;
+      } else {
+        // location is above the current location
+        bottom = location + 1;
+      }
+    }
+  }
+  return -1;
+}
+
+int32_t ReadableFontData::SearchULong(int32_t start_index,
+                                      int32_t start_offset,
+                                      int32_t end_index,
+                                      int32_t end_offset,
+                                      int32_t length,
+                                      int32_t key) {
+  int32_t location = 0;
+  int32_t bottom = 0;
+  int32_t top = length;
+  while (top != bottom) {
+    location = (top + bottom) / 2;
+    int32_t location_start = ReadULongAsInt(start_index
+                                            + location * start_offset);
+    if (key < location_start) {
+      // location is below current location
+      top = location;
+    } else {
+      // is key below the upper bound?
+      int32_t location_end = ReadULongAsInt(end_index + location * end_offset);
+#if defined (SFNTLY_DEBUG_FONTDATA)
+      fprintf(stderr, "**start: %d; end: %d\n", location_start, location_end);
+#endif
+      if (key <= location_end) {
+        return location;
+      } else {
+        // location is above the current location
+        bottom = location + 1;
+      }
+    }
+  }
+  return -1;
 }
 
 CALLER_ATTACH FontData* ReadableFontData::Slice(int32_t offset,
