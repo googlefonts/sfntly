@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_DATA_MEMORY_BYTE_ARRAY_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_DATA_MEMORY_BYTE_ARRAY_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_DATA_MEMORY_BYTE_ARRAY_H_
+#define SFNTLY_CPP_SRC_SFNTLY_DATA_MEMORY_BYTE_ARRAY_H_
 
 #include "sfntly/data/byte_array.h"
 
@@ -78,4 +78,4 @@ class MemoryByteArray : public ByteArray, public RefCounted<MemoryByteArray> {
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_DATA_MEMORY_BYTE_ARRAY_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_DATA_MEMORY_BYTE_ARRAY_H_

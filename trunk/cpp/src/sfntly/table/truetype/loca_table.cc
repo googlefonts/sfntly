@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "sfntly/loca_table.h"
+#include "sfntly/table/truetype/loca_table.h"
 #include "sfntly/port/exception_type.h"
 
 namespace sfntly {

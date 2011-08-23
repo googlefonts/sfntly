@@ -16,9 +16,9 @@
 
 #include "sfntly/tools/subsetter/glyph_table_subsetter.h"
 
+#include "sfntly/table/truetype/glyph_table.h"
+#include "sfntly/table/truetype/loca_table.h"
 #include "sfntly/tag.h"
-#include "sfntly/glyph_table.h"
-#include "sfntly/loca_table.h"
 #include "sfntly/tools/subsetter/subsetter.h"
 #include "sfntly/port/exception_type.h"
 

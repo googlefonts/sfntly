@@ -17,17 +17,19 @@
 // Remove VC++ nag on fopen.
 #define _CRT_SECURE_NO_WARNINGS
 
+#include "sample/subsetter/subset_util.h"
+
 #include <stdio.h>
+
 #include <vector>
 #include <memory>
 
-#include "sfntly/port/type.h"
 #include "sfntly/font.h"
-#include "sfntly/tools/subsetter/subsetter.h"
-#include "sample/subsetter/subset_util.h"
 #include "sfntly/data/memory_byte_array.h"
 #include "sfntly/port/memory_output_stream.h"
+#include "sfntly/port/type.h"
 #include "sfntly/tag.h"
+#include "sfntly/tools/subsetter/subsetter.h"
 
 namespace sfntly {
 

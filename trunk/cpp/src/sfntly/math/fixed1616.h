@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_MATH_FIXED1616_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_MATH_FIXED1616_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_MATH_FIXED1616_H_
+#define SFNTLY_CPP_SRC_SFNTLY_MATH_FIXED1616_H_
 
 #include "sfntly/port/type.h"
 
@@ -38,4 +38,4 @@ class Fixed1616 {
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_MATH_FIXED1616_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_MATH_FIXED1616_H_

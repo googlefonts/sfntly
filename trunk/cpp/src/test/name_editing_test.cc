@@ -21,11 +21,11 @@
 #include <unicode/unistr.h>
 
 #include "gtest/gtest.h"
+#include "sfntly/data/memory_byte_array.h"
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
-#include "sfntly/name_table.h"
+#include "sfntly/table/core/name_table.h"
 #include "sfntly/tag.h"
-#include "sfntly/data/memory_byte_array.h"
 #include "sfntly/port/memory_output_stream.h"
 #include "test/test_data.h"
 #include "test/test_font_utils.h"

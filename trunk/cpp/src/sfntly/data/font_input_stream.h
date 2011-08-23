@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_DATA_FONT_INPUT_STREAM_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_DATA_FONT_INPUT_STREAM_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_DATA_FONT_INPUT_STREAM_H_
+#define SFNTLY_CPP_SRC_SFNTLY_DATA_FONT_INPUT_STREAM_H_
 
 #include "sfntly/port/type.h"
 #include "sfntly/port/input_stream.h"
@@ -94,4 +94,4 @@ class FontInputStream : public InputStream {
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_DATA_FONT_INPUT_STREAM_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_DATA_FONT_INPUT_STREAM_H_

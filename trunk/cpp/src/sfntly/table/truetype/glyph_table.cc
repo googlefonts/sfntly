@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "sfntly/glyph_table.h"
+#include "sfntly/table/truetype/glyph_table.h"
 
 #include <stdlib.h>
 

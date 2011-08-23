@@ -16,7 +16,7 @@
 
 #include "gtest/gtest.h"
 #include "sfntly/font.h"
-#include "sfntly/name_table.h"
+#include "sfntly/table/core/name_table.h"
 #include "test/serialization_test.h"
 
 namespace sfntly {

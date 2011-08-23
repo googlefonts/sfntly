@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_SERIALIZATION_TEST_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_SERIALIZATION_TEST_H_
+#ifndef SFNTLY_CPP_SRC_TEST_SERIALIZATION_TEST_H_
+#define SFNTLY_CPP_SRC_TEST_SERIALIZATION_TEST_H_
 
-#include "sfntly/table.h"
+#include "sfntly/table/table.h"
 
 namespace sfntly {
 
@@ -31,4 +31,4 @@ bool VerifyOS_2(Table* original, Table* target);
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_SERIALIZATION_TEST_H_
+#endif  // SFNTLY_CPP_SRC_TEST_SERIALIZATION_TEST_H_

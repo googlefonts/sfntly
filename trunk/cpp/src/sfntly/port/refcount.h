@@ -63,8 +63,8 @@
 //    end_scope_pointer.Attach(passThrough);
 //    If you are not passing that object back, you are the end of scope.
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_REFCOUNT_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_REFCOUNT_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_PORT_REFCOUNT_H_
+#define SFNTLY_CPP_SRC_SFNTLY_PORT_REFCOUNT_H_
 
 #if !defined (NDEBUG)
   #define ENABLE_OBJECT_COUNTER
@@ -274,4 +274,4 @@ class Ptr {
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_REFCOUNT_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_PORT_REFCOUNT_H_

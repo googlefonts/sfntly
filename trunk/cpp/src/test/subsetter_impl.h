@@ -16,8 +16,8 @@
 // File is originally from Chromium third_party/sfntly/src/subsetter.
 // Use as test case in sfntly so that problems can be caught in upstream early.
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_SUBSETTER_IMPL_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_SUBSETTER_IMPL_H_
+#ifndef SFNTLY_CPP_SRC_TEST_SUBSETTER_IMPL_H_
+#define SFNTLY_CPP_SRC_TEST_SUBSETTER_IMPL_H_
 
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
@@ -72,4 +72,4 @@ class SubsetterImpl {
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_SUBSETTER_IMPL_H_
+#endif  // SFNTLY_CPP_SRC_TEST_SUBSETTER_IMPL_H_

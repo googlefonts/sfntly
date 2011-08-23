@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_TEST_FONT_UTILS_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_TEST_FONT_UTILS_H_
+#ifndef SFNTLY_CPP_SRC_TEST_TEST_FONT_UTILS_H_
+#define SFNTLY_CPP_SRC_TEST_TEST_FONT_UTILS_H_
 
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
@@ -38,4 +38,4 @@ void HexDump(const unsigned char* byte_data, size_t length);
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_TEST_FONT_UTILS_H_
+#endif  // SFNTLY_CPP_SRC_TEST_TEST_FONT_UTILS_H_

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_GLYPH_TABLE_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_GLYPH_TABLE_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_TRUETYPE_GLYPH_TABLE_H_
+#define SFNTLY_CPP_SRC_SFNTLY_TABLE_TRUETYPE_GLYPH_TABLE_H_
 
 #include <vector>
 
-#include "sfntly/table.h"
-#include "sfntly/subtable.h"
+#include "sfntly/table/table.h"
+#include "sfntly/table/subtable.h"
 
 namespace sfntly {
 
@@ -327,4 +327,4 @@ typedef Ptr<GlyphTable::Glyph::Builder> GlyphBuilderPtr;
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_GLYPH_TABLE_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_TABLE_TRUETYPE_GLYPH_TABLE_H_

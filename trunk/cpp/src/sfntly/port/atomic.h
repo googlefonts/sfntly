@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_ATOMIC_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_ATOMIC_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_PORT_ATOMIC_H_
+#define SFNTLY_CPP_SRC_SFNTLY_PORT_ATOMIC_H_
 
 #if defined (WIN32)
 
@@ -68,4 +68,4 @@ static inline size_t AtomicDecrement(size_t* address) {
 
 #endif  // WIN32
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_ATOMIC_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_PORT_ATOMIC_H_

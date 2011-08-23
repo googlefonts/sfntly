@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_FONT_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_FONT_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_FONT_H_
+#define SFNTLY_CPP_SRC_SFNTLY_FONT_H_
 
 #include <vector>
 
 #include "sfntly/port/refcount.h"
 #include "sfntly/port/type.h"
 #include "sfntly/port/endian.h"
-#include "sfntly/table.h"
 #include "sfntly/font_data_table_builder_container.h"
 #include "sfntly/data/font_input_stream.h"
 #include "sfntly/data/font_output_stream.h"
 #include "sfntly/data/writable_font_data.h"
+#include "sfntly/table/table.h"
 
 namespace sfntly {
 
@@ -293,4 +293,4 @@ typedef std::vector<FontBuilderPtr> FontBuilderArray;
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_FONT_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_FONT_H_

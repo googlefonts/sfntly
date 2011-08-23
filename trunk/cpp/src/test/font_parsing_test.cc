@@ -16,13 +16,13 @@
 
 #include "gtest/gtest.h"
 
-#include "sfntly/font.h"
-#include "sfntly/font_factory.h"
-#include "sfntly/font_header_table.h"
-#include "sfntly/tag.h"
-#include "sfntly/table.h"
 #include "sfntly/data/font_input_stream.h"
 #include "sfntly/data/memory_byte_array.h"
+#include "sfntly/font.h"
+#include "sfntly/font_factory.h"
+#include "sfntly/table/core/font_header_table.h"
+#include "sfntly/table/table.h"
+#include "sfntly/tag.h"
 #include "sfntly/port/file_input_stream.h"
 #include "test/test_data.h"
 #include "test/test_font_utils.h"

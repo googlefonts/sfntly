@@ -18,8 +18,8 @@
 
 #include <cstdlib>
 
-#include "sfntly/cmap_table.h"
-#include "sfntly/name_table.h"
+#include "sfntly/table/core/cmap_table.h"
+#include "sfntly/table/core/name_table.h"
 #include "sfntly/font.h"
 #include "sfntly/port/endian.h"
 

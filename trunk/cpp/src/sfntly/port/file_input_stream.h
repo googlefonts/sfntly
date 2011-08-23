@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_FILE_INPUT_STREAM_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_FILE_INPUT_STREAM_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_PORT_FILE_INPUT_STREAM_H_
+#define SFNTLY_CPP_SRC_SFNTLY_PORT_FILE_INPUT_STREAM_H_
 
 #include <stdio.h>
 
@@ -54,4 +54,4 @@ class FileInputStream : public PushbackInputStream {
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_FILE_INPUT_STREAM_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_PORT_FILE_INPUT_STREAM_H_

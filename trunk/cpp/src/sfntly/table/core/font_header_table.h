@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_FONT_HEADER_TABLE_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_FONT_HEADER_TABLE_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_FONT_HEADER_TABLE_H_
+#define SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_FONT_HEADER_TABLE_H_
 
-#include "sfntly/table.h"
+#include "sfntly/table/table.h"
 
 namespace sfntly {
 
@@ -164,4 +164,4 @@ typedef Ptr<FontHeaderTable::Builder> FontHeaderTableBuilderPtr;
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_FONT_HEADER_TABLE_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_FONT_HEADER_TABLE_H_

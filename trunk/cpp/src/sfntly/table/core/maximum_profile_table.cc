@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "sfntly/maximum_profile_table.h"
+#include "sfntly/table/core/maximum_profile_table.h"
 
 namespace sfntly {
 /******************************************************************************

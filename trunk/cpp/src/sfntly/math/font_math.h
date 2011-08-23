@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_MATH_FONT_MATH_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_MATH_FONT_MATH_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_MATH_FONT_MATH_H_
+#define SFNTLY_CPP_SRC_SFNTLY_MATH_FONT_MATH_H_
 
 #include "sfntly/port/type.h"
 
@@ -35,4 +35,4 @@ class FontMath {
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_MATH_FONT_MATH_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_MATH_FONT_MATH_H_

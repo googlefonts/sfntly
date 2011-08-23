@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_MEMORY_OUTPUT_STREAM_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_MEMORY_OUTPUT_STREAM_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_PORT_MEMORY_OUTPUT_STREAM_H_
+#define SFNTLY_CPP_SRC_SFNTLY_PORT_MEMORY_OUTPUT_STREAM_H_
 
 #include <cstddef>
 #include <vector>
@@ -48,4 +48,4 @@ class MemoryOutputStream : public OutputStream {
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_MEMORY_OUTPUT_STREAM_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_PORT_MEMORY_OUTPUT_STREAM_H_

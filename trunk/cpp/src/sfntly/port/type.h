@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_TYPE_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_TYPE_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_PORT_TYPE_H_
+#define SFNTLY_CPP_SRC_SFNTLY_PORT_TYPE_H_
 
 #include <assert.h>
 
@@ -93,4 +93,4 @@ inline To down_cast(From* f) {                   // so we only accept pointers
   #define UNREFERENCED_PARAMETER(p) do { (void)p; } while (0)
 #endif
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_TYPE_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_PORT_TYPE_H_

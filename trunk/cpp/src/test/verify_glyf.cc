@@ -16,7 +16,7 @@
 
 #include "gtest/gtest.h"
 #include "sfntly/font.h"
-#include "sfntly/glyph_table.h"
+#include "sfntly/table/truetype/glyph_table.h"
 #include "test/serialization_test.h"
 
 namespace sfntly {

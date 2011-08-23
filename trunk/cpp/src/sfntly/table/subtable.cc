@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "sfntly/subtable.h"
+#include "sfntly/table/subtable.h"
 
 namespace sfntly {
 /******************************************************************************

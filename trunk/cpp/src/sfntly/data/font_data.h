@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_DATA_FONT_DATA_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_DATA_FONT_DATA_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_DATA_FONT_DATA_H_
+#define SFNTLY_CPP_SRC_SFNTLY_DATA_FONT_DATA_H_
 
 #include <vector>
 
@@ -127,4 +127,4 @@ typedef Ptr<FontData> FontDataPtr;
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_DATA_FONT_DATA_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_DATA_FONT_DATA_H_

@@ -17,7 +17,7 @@
 #include "gtest/gtest.h"
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
-#include "sfntly/font_header_table.h"
+#include "sfntly/table/core/font_header_table.h"
 #include "sfntly/tag.h"
 #include "sfntly/data/memory_byte_array.h"
 #include "sfntly/port/endian.h"
