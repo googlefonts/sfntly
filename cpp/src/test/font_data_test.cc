@@ -25,7 +25,114 @@
 namespace sfntly {
 
 const int32_t BYTE_ARRAY_SIZES[] =
-    {1, 7, 127, 128, 129, 255, 256, 257, 666, 1023, 0x10000};
+  {1, 7, 127, 128, 129, 255, 256, 257, 666, 1023, 0x10000};
+
+// array data for searching
+const int32_t LOWER_BYTE_ARRAY_FOR_SEARCHING[] = {2, 4, 7, 13, 127};
+const int32_t UPPER_BYTE_ARRAY_FOR_SEARCHING[] = {2, 5, 12, 16, 256};
+const int32_t kLowerByteArrayForSearchingLength = 5;
+const int32_t kUpperByteArrayForSearchingLength = 5;
+
+// search test result pairs - number to search for; index found at
+const int32_t SEARCH_TEST_PAIRS[][2] = {
+  {0, -1}, {1, -1}, {2, 0}, {3, -1}, {4, 1}, {5, 1}, {6, -1}, {12, 2},
+  {13, 3}, {17, -1}, {126, -1}, {127, 4}, {256, 4}, {257, -1}, {0x1000, -1}
+};
+const int32_t kSearchTestPairsLength = 15;
+
+// offset and start index data for searching data
+// array data size, lower_start_index, lower_offset, upper_start_index,
+// upper_offset
+const int32_t SEARCH_TEST_OFFSETS[][5] = {
+  // lower[], upper[]
+  { (kLowerByteArrayForSearchingLength + kUpperByteArrayForSearchingLength)
+    * sizeof(ushort),
+    0,
+    sizeof(ushort),
+    kLowerByteArrayForSearchingLength * sizeof(ushort),
+    sizeof(ushort) },
+
+  // {lower, upper} []
+  { (kLowerByteArrayForSearchingLength + kUpperByteArrayForSearchingLength)
+    * sizeof(ushort),
+    0,
+    2 * sizeof(ushort),
+    sizeof(ushort),
+    2 * sizeof(ushort) },
+
+  // upper[], lower[]
+  { (kLowerByteArrayForSearchingLength + kUpperByteArrayForSearchingLength)
+    * sizeof(ushort),
+    kLowerByteArrayForSearchingLength * sizeof(ushort),
+    sizeof(ushort),
+    0,
+    sizeof(ushort) },
+
+  // {upper, lower} []
+  { (kLowerByteArrayForSearchingLength + kUpperByteArrayForSearchingLength)
+    * sizeof(ushort),
+    sizeof(ushort),
+    2 * sizeof(ushort),
+    0,
+    2 * sizeof(ushort) }
+};
+const int32_t kSearchTestOffsetLength = 4;
+
+ReadableFontData*
+FillTestFontDataWithShortsForSearching(WritableFontData* wfd,
+                                       const int32_t* lower_data,
+                                       int32_t lower_start_index,
+                                       int32_t lower_offset,
+                                       const int32_t* upper_data,
+                                       int32_t upper_start_index,
+                                       int32_t upper_offset) {
+  // lower data
+  int offset = lower_start_index;
+  for (int32_t i = 0; i < kLowerByteArrayForSearchingLength; ++i) {
+    wfd->WriteUShort(offset, lower_data[i]);
+    offset += lower_offset;
+  }
+
+  // upper data
+  offset = upper_start_index;
+  for (int32_t i = 0; i < kUpperByteArrayForSearchingLength; ++i) {
+    wfd->WriteUShort(offset, upper_data[i]);
+    offset += upper_offset;
+  }
+
+  return wfd;
+}
+
+bool TestReadableFontDataSearching() {
+  for (int32_t i = 0; i < kSearchTestOffsetLength; ++i) {
+    const int32_t* array_setup_offset = SEARCH_TEST_OFFSETS[i];
+    WritableFontDataPtr wfd;
+    wfd.Attach(WritableFontData::CreateWritableFontData(array_setup_offset[0]));
+    FillTestFontDataWithShortsForSearching(wfd,
+                                           LOWER_BYTE_ARRAY_FOR_SEARCHING,
+                                           array_setup_offset[1],
+                                           array_setup_offset[2],
+                                           UPPER_BYTE_ARRAY_FOR_SEARCHING,
+                                           array_setup_offset[3],
+                                           array_setup_offset[4]);
+    for (int32_t j = 0; j < kSearchTestPairsLength; ++j) {
+      const int32_t* test_case = SEARCH_TEST_PAIRS[j];
+      int32_t found = wfd->SearchUShort(array_setup_offset[1],
+                                        array_setup_offset[2],
+                                        array_setup_offset[3],
+                                        array_setup_offset[4],
+                                        kLowerByteArrayForSearchingLength,
+                                        test_case[0]);
+#if defined (SFNTLY_DEBUG_FONTDATA)
+      fprintf(stderr, "Searching for %d; Got %d; Expected %d; "
+              "[test %d][offset %d]\n",
+              test_case[0], found, test_case[1], j, i);
+#endif
+      EXPECT_EQ(test_case[1], found);
+    }
+  }
+  return true;
+}
 
 void FillTestByteArray(ByteArray* ba, int32_t size) {
   for (int32_t i = 0; i < size; ++i) {
@@ -219,6 +326,10 @@ bool TestWritableFontData() {
 }
 
 }  // namespace sfntly
+
+TEST(FontData, ReadableFontDataSearching) {
+  ASSERT_TRUE(sfntly::TestReadableFontDataSearching());
+}
 
 TEST(FontData, All) {
   ASSERT_TRUE(sfntly::TestReadableFontData());

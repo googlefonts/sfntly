@@ -180,15 +180,55 @@ class ReadableFontData : public FontData,
   // Make gcc -Woverloaded-virtual happy.
   virtual int32_t CopyTo(ByteArray* ba);
 
-  // TODO(dfilimon): Implementation of following in review, need to merge.
+  // Search for the key value in the range tables provided.
+  //
+  //  The search looks through the start-end pairs looking for the key value. It
+  // is assumed that the start-end pairs are both represented by UShort values,
+  // ranges do not overlap, and are monotonically increasing.
+  //
+  // @param startIndex the position to read the first start value from
+  // @param startOffset the offset between subsequent start values
+  // @param endIndex the position to read the first end value from
+  // @param endOffset the offset between subsequent end values
+  // @param length the number of start-end pairs
+  // @param key the value to search for
+  // @return the index of the start-end pairs in which the key was found; -1
+  //         otherwise
+  int32_t SearchUShort(int32_t start_index,
+                       int32_t start_offset,
+                       int32_t end_index,
+                       int32_t end_offset,
+                       int32_t length,
+                       int32_t key);
+
+  // Search for the key value in the range tables provided.
+  //
+  // The search looks through the start-end pairs looking for the key value. It
+  // is assumed that the start-end pairs are both represented by ULong values
+  // that can be represented within 31 bits, ranges do not overlap, and are
+  // monotonically increasing.
+  //
+  // @param startIndex the position to read the first start value from
+  // @param startOffset the offset between subsequent start values
+  // @param endIndex the position to read the first end value from
+  // @param endOffset the offset between subsequent end values
+  // @param length the number of start-end pairs
+  // @param key the value to search for
+  // @return the index of the start-end pairs in which the key was found; -1
+  //         otherwise
+  int32_t SearchULong(int32_t start_index,
+                      int32_t start_offset,
+                      int32_t end_index,
+                      int32_t end_offset,
+                      int32_t length,
+                      int32_t key);
+
+
+  // TODO(arthurhsu): IMPLEMENT
   /*
-  virtual int32_t SearchUShort(int32_t start, int32_t length, int32_t key);
-  virtual int32_t SearchUShort(int32_t start_index, int32_t start_offset,
-                               int32_t count_index, int32_t count_offset,
-                               int32_t length, int32_t key);
-  virtual int32_t SearchULong(int32_t start_index, int32_t start_offset,
-                              int32_t end_index, int32_t end_offset,
-                              int32_t length, int32_t key);
+  virtual int32_t ReadFUnit(int32_t index);
+  virtual int64_t ReadF2Dot14(int32_t index);
+  virtual int64_t ReadLongDateTime(int32_t index);
   */
 
   // Makes a slice of this FontData. The returned slice will share the data with
