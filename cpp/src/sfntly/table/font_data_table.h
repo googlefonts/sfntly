@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_FONT_DATA_TABLE_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_FONT_DATA_TABLE_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_FONT_DATA_TABLE_H_
+#define SFNTLY_CPP_SRC_SFNTLY_TABLE_FONT_DATA_TABLE_H_
 
 #include "sfntly/data/readable_font_data.h"
 #include "sfntly/font_data_table_builder_container.h"
@@ -114,4 +114,4 @@ typedef Ptr<FontDataTable::Builder> FontDataTableBuilderPtr;
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_FONT_DATA_TABLE_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_TABLE_FONT_DATA_TABLE_H_

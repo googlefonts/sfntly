@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_FONT_FACTORY_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_FONT_FACTORY_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_FONT_FACTORY_H_
+#define SFNTLY_CPP_SRC_SFNTLY_FONT_FACTORY_H_
 
 #include <vector>
 
@@ -143,4 +143,4 @@ typedef Ptr<FontFactory> FontFactoryPtr;
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_FONT_FACTORY_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_FONT_FACTORY_H_

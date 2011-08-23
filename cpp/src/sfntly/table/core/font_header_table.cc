@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "sfntly/font_header_table.h"
+#include "sfntly/table/core/font_header_table.h"
 
 namespace sfntly {
 /******************************************************************************

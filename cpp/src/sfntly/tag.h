@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_TAG_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_TAG_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_TAG_H_
+#define SFNTLY_CPP_SRC_SFNTLY_TAG_H_
 
 #include <cstddef>
 
@@ -108,4 +108,4 @@ extern const size_t TRUE_TYPE_TABLE_ORDERING_SIZE;
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_TAG_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_TAG_H_

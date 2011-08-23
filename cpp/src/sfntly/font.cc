@@ -25,12 +25,12 @@
 #include "sfntly/font_factory.h"
 #include "sfntly/math/fixed1616.h"
 #include "sfntly/math/font_math.h"
-#include "sfntly/font_header_table.h"
-#include "sfntly/horizontal_header_table.h"
-#include "sfntly/horizontal_metrics_table.h"
-#include "sfntly/loca_table.h"
-#include "sfntly/maximum_profile_table.h"
 #include "sfntly/port/exception_type.h"
+#include "sfntly/table/core/font_header_table.h"
+#include "sfntly/table/core/horizontal_header_table.h"
+#include "sfntly/table/core/horizontal_metrics_table.h"
+#include "sfntly/table/core/maximum_profile_table.h"
+#include "sfntly/table/truetype/loca_table.h"
 #include "sfntly/tag.h"
 
 namespace sfntly {

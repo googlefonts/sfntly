@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_ENDIAN_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_ENDIAN_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_PORT_ENDIAN_H_
+#define SFNTLY_CPP_SRC_SFNTLY_PORT_ENDIAN_H_
 
 #include "sfntly/port/config.h"
 #include "sfntly/port/type.h"
@@ -74,4 +74,4 @@ static inline uint64_t EndianSwap64(uint64_t value) {
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_PORT_ENDIAN_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_PORT_ENDIAN_H_

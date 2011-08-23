@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_DATA_BYTE_ARRAY_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_DATA_BYTE_ARRAY_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_DATA_BYTE_ARRAY_H_
+#define SFNTLY_CPP_SRC_SFNTLY_DATA_BYTE_ARRAY_H_
 
 #include "sfntly/port/refcount.h"
 #include "sfntly/port/type.h"
@@ -198,4 +198,4 @@ typedef Ptr<ByteArray> ByteArrayPtr;
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_DATA_BYTE_ARRAY_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_DATA_BYTE_ARRAY_H_

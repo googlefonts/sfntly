@@ -15,15 +15,15 @@
  */
 
 // TODO(arthurhsu): IMPLEMENT: not really used and tested, need cleanup
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_CMAP_TABLE_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_CMAP_TABLE_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_CMAP_TABLE_H_
+#define SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_CMAP_TABLE_H_
 
 #include <vector>
 #include <map>
 
 #include "sfntly/port/refcount.h"
-#include "sfntly/table.h"
-#include "sfntly/subtable.h"
+#include "sfntly/table/table.h"
+#include "sfntly/table/subtable.h"
 
 namespace sfntly {
 
@@ -444,4 +444,4 @@ typedef Ptr<CMapTable> CMapTablePtr;
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_CMAP_TABLE_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_CMAP_TABLE_H_

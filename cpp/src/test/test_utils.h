@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_TEST_UTILS_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_TEST_UTILS_H_
+#ifndef SFNTLY_CPP_SRC_TEST_TEST_UTILS_H_
+#define SFNTLY_CPP_SRC_TEST_TEST_UTILS_H_
 
 // Must include this before ICU to avoid stdint redefinition issue.
 #include "sfntly/port/type.h"
@@ -107,4 +107,4 @@ class TestUtils {
   static const char* Extension(const char* file_path);
 };
 }
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_TEST_TEST_UTILS_H_
+#endif  // SFNTLY_CPP_SRC_TEST_TEST_UTILS_H_

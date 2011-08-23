@@ -46,35 +46,35 @@ const int32_t kSearchTestPairsLength = 15;
 const int32_t SEARCH_TEST_OFFSETS[][5] = {
   // lower[], upper[]
   { (kLowerByteArrayForSearchingLength + kUpperByteArrayForSearchingLength)
-    * sizeof(ushort),
+    * DataSize::kUSHORT,
     0,
-    sizeof(ushort),
-    kLowerByteArrayForSearchingLength * sizeof(ushort),
-    sizeof(ushort) },
+    DataSize::kUSHORT,
+    kLowerByteArrayForSearchingLength * DataSize::kUSHORT,
+    DataSize::kUSHORT },
 
   // {lower, upper} []
   { (kLowerByteArrayForSearchingLength + kUpperByteArrayForSearchingLength)
-    * sizeof(ushort),
+    * DataSize::kUSHORT,
     0,
-    2 * sizeof(ushort),
-    sizeof(ushort),
-    2 * sizeof(ushort) },
+    2 * DataSize::kUSHORT,
+    DataSize::kUSHORT,
+    2 * DataSize::kUSHORT },
 
   // upper[], lower[]
   { (kLowerByteArrayForSearchingLength + kUpperByteArrayForSearchingLength)
-    * sizeof(ushort),
-    kLowerByteArrayForSearchingLength * sizeof(ushort),
-    sizeof(ushort),
+    * DataSize::kUSHORT,
+    kLowerByteArrayForSearchingLength * DataSize::kUSHORT,
+    DataSize::kUSHORT,
     0,
-    sizeof(ushort) },
+    DataSize::kUSHORT },
 
   // {upper, lower} []
   { (kLowerByteArrayForSearchingLength + kUpperByteArrayForSearchingLength)
-    * sizeof(ushort),
-    sizeof(ushort),
-    2 * sizeof(ushort),
+    * DataSize::kUSHORT,
+    DataSize::kUSHORT,
+    2 * DataSize::kUSHORT,
     0,
-    2 * sizeof(ushort) }
+    2 * DataSize::kUSHORT }
 };
 const int32_t kSearchTestOffsetLength = 4;
 

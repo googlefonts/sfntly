@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "sfntly/os2_table.h"
+#include "sfntly/table/core/os2_table.h"
 
 namespace sfntly {
 /******************************************************************************

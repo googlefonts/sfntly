@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_SUBTABLE_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_SUBTABLE_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_SUBTABLE_H_
+#define SFNTLY_CPP_SRC_SFNTLY_TABLE_SUBTABLE_H_
 
-#include "sfntly/font_data_table.h"
+#include "sfntly/table/font_data_table.h"
 
 namespace sfntly {
 
@@ -46,4 +46,4 @@ class SubTable : public FontDataTable {
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_SUBTABLE_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_TABLE_SUBTABLE_H_

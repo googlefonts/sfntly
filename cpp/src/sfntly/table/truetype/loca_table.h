@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_LOCA_TABLE_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_LOCA_TABLE_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_TRUETYPE_LOCA_TABLE_H_
+#define SFNTLY_CPP_SRC_SFNTLY_TABLE_TRUETYPE_LOCA_TABLE_H_
 
-#include "sfntly/table.h"
-#include "sfntly/font_header_table.h"
+#include "sfntly/table/table.h"
+#include "sfntly/table/core/font_header_table.h"
 
 namespace sfntly {
 
@@ -143,4 +143,4 @@ typedef Ptr<LocaTable::Builder> LocaTableBuilderPtr;
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_LOCA_TABLE_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_TABLE_TRUETYPE_LOCA_TABLE_H_

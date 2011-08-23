@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-#include "sfntly/table.h"
+#include "sfntly/table/table.h"
 
 #include "sfntly/font.h"
 #include "sfntly/tag.h"
-#include "sfntly/cmap_table.h"
-#include "sfntly/font_header_table.h"
-#include "sfntly/glyph_table.h"
-#include "sfntly/horizontal_header_table.h"
-#include "sfntly/horizontal_metrics_table.h"
-#include "sfntly/loca_table.h"
-#include "sfntly/maximum_profile_table.h"
-#include "sfntly/name_table.h"
-#include "sfntly/os2_table.h"
+#include "sfntly/table/core/cmap_table.h"
+#include "sfntly/table/core/font_header_table.h"
+#include "sfntly/table/core/horizontal_header_table.h"
+#include "sfntly/table/core/horizontal_metrics_table.h"
+#include "sfntly/table/core/maximum_profile_table.h"
+#include "sfntly/table/core/name_table.h"
+#include "sfntly/table/core/os2_table.h"
+#include "sfntly/table/truetype/glyph_table.h"
+#include "sfntly/table/truetype/loca_table.h"
 
 namespace sfntly {
 

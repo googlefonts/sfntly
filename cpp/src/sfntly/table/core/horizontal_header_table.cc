@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-// Note: original Java version is inconsistent itself (e.g. readUShort in
-//       Builder but readShort in Table.  Need Fix.
-// TODO(arthurhsu): check with Stuart G and fix it.
-
-#include "sfntly/horizontal_header_table.h"
+#include "sfntly/table/core/horizontal_header_table.h"
 
 namespace sfntly {
 /******************************************************************************
@@ -117,27 +113,27 @@ void HorizontalHeaderTable::Builder::SetVersion(int32_t version) {
 }
 
 int32_t HorizontalHeaderTable::Builder::Ascender() {
-  return InternalReadData()->ReadUShort(Offset::kAscender);
+  return InternalReadData()->ReadShort(Offset::kAscender);
 }
 
 void HorizontalHeaderTable::Builder::SetAscender(int32_t ascender) {
-  InternalWriteData()->WriteUShort(Offset::kVersion, ascender);
+  InternalWriteData()->WriteShort(Offset::kVersion, ascender);
 }
 
 int32_t HorizontalHeaderTable::Builder::Descender() {
-  return InternalReadData()->ReadUShort(Offset::kDescender);
+  return InternalReadData()->ReadShort(Offset::kDescender);
 }
 
 void HorizontalHeaderTable::Builder::SetDescender(int32_t descender) {
-  InternalWriteData()->WriteUShort(Offset::kDescender, descender);
+  InternalWriteData()->WriteShort(Offset::kDescender, descender);
 }
 
 int32_t HorizontalHeaderTable::Builder::LineGap() {
-  return InternalReadData()->ReadUShort(Offset::kLineGap);
+  return InternalReadData()->ReadShort(Offset::kLineGap);
 }
 
 void HorizontalHeaderTable::Builder::SetLineGap(int32_t line_gap) {
-  InternalWriteData()->WriteUShort(Offset::kLineGap, line_gap);
+  InternalWriteData()->WriteShort(Offset::kLineGap, line_gap);
 }
 
 int32_t HorizontalHeaderTable::Builder::AdvanceWidthMax() {
@@ -149,27 +145,27 @@ void HorizontalHeaderTable::Builder::SetAdvanceWidthMax(int32_t value) {
 }
 
 int32_t HorizontalHeaderTable::Builder::MinLeftSideBearing() {
-  return InternalReadData()->ReadUShort(Offset::kMinLeftSideBearing);
+  return InternalReadData()->ReadShort(Offset::kMinLeftSideBearing);
 }
 
 void HorizontalHeaderTable::Builder::SetMinLeftSideBearing(int32_t value) {
-  InternalWriteData()->WriteUShort(Offset::kMinLeftSideBearing, value);
+  InternalWriteData()->WriteShort(Offset::kMinLeftSideBearing, value);
 }
 
 int32_t HorizontalHeaderTable::Builder::MinRightSideBearing() {
-  return InternalReadData()->ReadUShort(Offset::kMinRightSideBearing);
+  return InternalReadData()->ReadShort(Offset::kMinRightSideBearing);
 }
 
 void HorizontalHeaderTable::Builder::SetMinRightSideBearing(int32_t value) {
-  InternalWriteData()->WriteUShort(Offset::kMinRightSideBearing, value);
+  InternalWriteData()->WriteShort(Offset::kMinRightSideBearing, value);
 }
 
 int32_t HorizontalHeaderTable::Builder::XMaxExtent() {
-  return InternalReadData()->ReadUShort(Offset::kXMaxExtent);
+  return InternalReadData()->ReadShort(Offset::kXMaxExtent);
 }
 
 void HorizontalHeaderTable::Builder::SetXMaxExtent(int32_t value) {
-  InternalWriteData()->WriteUShort(Offset::kXMaxExtent, value);
+  InternalWriteData()->WriteShort(Offset::kXMaxExtent, value);
 }
 
 int32_t HorizontalHeaderTable::Builder::CaretSlopeRise() {

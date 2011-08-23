@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "sfntly/font_data_table.h"
+#include "sfntly/table/font_data_table.h"
 
 #include "sfntly/data/font_output_stream.h"
 

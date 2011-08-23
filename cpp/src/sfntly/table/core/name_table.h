@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_NAME_TABLE_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_NAME_TABLE_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_NAME_TABLE_H_
+#define SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_NAME_TABLE_H_
 
 // Must include this before ICU to avoid stdint redefinition issue.
 #include "sfntly/port/type.h"
@@ -26,7 +26,7 @@
 #include <map>
 #include <utility>
 
-#include "sfntly/table.h"
+#include "sfntly/table/table.h"
 
 #if defined U_USING_ICU_NAMESPACE
   U_NAMESPACE_USE
@@ -734,4 +734,4 @@ typedef Ptr<NameTable::NameEntryBuilder> NameEntryBuilderPtr;
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_NAME_TABLE_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_NAME_TABLE_H_

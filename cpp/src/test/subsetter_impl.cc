@@ -23,9 +23,9 @@
 #include <map>
 #include <set>
 
-#include "sfntly/glyph_table.h"
-#include "sfntly/loca_table.h"
-#include "sfntly/name_table.h"
+#include "sfntly/table/core/name_table.h"
+#include "sfntly/table/truetype/glyph_table.h"
+#include "sfntly/table/truetype/loca_table.h"
 #include "sfntly/tag.h"
 #include "sfntly/data/memory_byte_array.h"
 #include "sfntly/port/memory_output_stream.h"

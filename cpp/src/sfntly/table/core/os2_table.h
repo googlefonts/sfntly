@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_OS2_TABLE_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_OS2_TABLE_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_OS2_TABLE_H_
+#define SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_OS2_TABLE_H_
 
 #include "sfntly/port/refcount.h"
-#include "sfntly/table.h"
+#include "sfntly/table/table.h"
 
 namespace sfntly {
 
@@ -404,4 +404,4 @@ typedef Ptr<OS2Table> OS2TablePtr;
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_OS2_TABLE_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_OS2_TABLE_H_

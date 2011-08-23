@@ -33,9 +33,30 @@ if(MSVC10 OR MSVC90)
   link_directories(${CMAKE_CURRENT_SOURCE_DIR}/ext/icu/lib)
 endif(MSVC10 OR MSVC90)
 
-  file(GLOB_RECURSE SFNTLY_FILES src/sfntly/*.h src/sfntly/*.cc)
-  add_library(sfntly ${SFNTLY_FILES})
-  file(GLOB_RECURSE SIMPLE_SUBSETTER src/sample/subsetter/*.h src/sample/subsetter/*.cc)
+  file(GLOB SFNTLY_CORE_FILES src/sfntly/*.h src/sfntly/*.cc)
+  file(GLOB SFNTLY_PORT_FILES src/sfntly/port/*.h src/sfntly/port/*.cc)
+  file(GLOB SFNTLY_DATA_FILES src/sfntly/data/*.h src/sfntly/data/*.cc)
+  file(GLOB SFNTLY_MATH_FILES src/sfntly/math/*.h src/sfntly/math/*.cc)
+  file(GLOB SFNTLY_TABLE_COMMON_FILES src/sfntly/table/*.h src/sfntly/table/*.cc)
+  file(GLOB SFNTLY_TABLE_CORE_FILES src/sfntly/table/core/*.h src/sfntly/table/core/*.cc)
+  file(GLOB SFNTLY_TABLE_TTF_FILES src/sfntly/table/truetype/*.h src/sfntly/table/truetype/*.cc)
+  source_group(core FILES ${SFNTLY_CORE_FILES})
+  source_group(ports FILES ${SFNTLY_PORT_FILES})
+  source_group(data FILES ${SFNTLY_DATA_FILES})
+  source_group(math FILES ${SFNTLY_MATH_FILES})
+  source_group(table FILES ${SFNTLY_TABLE_COMMON_FILES})
+  source_group(table\\core FILES ${SFNTLY_TABLE_CORE_FILES})
+  source_group(table\\truetype FILES ${SFNTLY_TABLE_TTF_FILES})  
+  add_library(sfntly 
+              ${SFNTLY_CORE_FILES}
+              ${SFNTLY_PORT_FILES}
+              ${SFNTLY_DATA_FILES}
+              ${SFNTLY_MATH_FILES}
+              ${SFNTLY_TABLE_COMMON_FILES}
+              ${SFNTLY_TABLE_CORE_FILES}
+              ${SFNTLY_TABLE_TTF_FILES})
+  file(GLOB_RECURSE SIMPLE_SUBSETTER src/sample/subsetter/*.h src/sample/subsetter/*.cc
+                                     src/sfntly/tools/*.h src/sfntly/tools/*.cc)
   add_executable(subsetter ${SIMPLE_SUBSETTER})
   target_link_libraries(subsetter sfntly icuuc)
   file(GLOB TEST_CASES src/test/*.cc)

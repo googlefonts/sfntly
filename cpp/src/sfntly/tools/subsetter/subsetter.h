@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_TOOLS_SUBSETTER_SUBSETTER_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_TOOLS_SUBSETTER_SUBSETTER_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_TOOLS_SUBSETTER_SUBSETTER_H_
+#define SFNTLY_CPP_SRC_SFNTLY_TOOLS_SUBSETTER_SUBSETTER_H_
 
 #include <vector>
 
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
-#include "sfntly/cmap_table.h"
+#include "sfntly/table/core/cmap_table.h"
 #include "sfntly/tools/subsetter/table_subsetter.h"
 
 namespace sfntly {
@@ -69,4 +69,4 @@ class Subsetter : public RefCounted<Subsetter> {
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_TOOLS_SUBSETTER_SUBSETTER_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_TOOLS_SUBSETTER_SUBSETTER_H_

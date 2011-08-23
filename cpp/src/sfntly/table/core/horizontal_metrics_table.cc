@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "sfntly/horizontal_metrics_table.h"
+#include "sfntly/table/core/horizontal_metrics_table.h"
 #include "sfntly/port/exception_type.h"
 
 namespace sfntly {

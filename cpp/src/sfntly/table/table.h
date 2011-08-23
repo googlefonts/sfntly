@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_TABLE_H_
-#define TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_TABLE_H_
+#ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_TABLE_H_
+#define SFNTLY_CPP_SRC_SFNTLY_TABLE_TABLE_H_
 
 #include <set>
 #include <map>
@@ -23,7 +23,7 @@
 #include <utility>
 
 #include "sfntly/port/type.h"
-#include "sfntly/font_data_table.h"
+#include "sfntly/table/font_data_table.h"
 
 namespace sfntly {
 class Font;
@@ -180,4 +180,4 @@ typedef std::set<TableHeaderPtr, TableHeaderComparator> TableHeaderSortedSet;
 
 }  // namespace sfntly
 
-#endif  // TYPOGRAPHY_FONT_SFNTLY_SRC_SFNTLY_TABLE_H_
+#endif  // SFNTLY_CPP_SRC_SFNTLY_TABLE_TABLE_H_
