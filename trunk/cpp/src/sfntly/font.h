@@ -150,9 +150,9 @@ class Font : public RefCounted<Font> {
     // builder for that table.
     // @return new empty table of the type specified by tag; if tag is not known
     //         then a generic OpenTypeTable is returned
-    virtual CALLER_ATTACH Table::Builder* NewTableBuilder(int32_t tag);
-    virtual CALLER_ATTACH Table::Builder*
-        NewTableBuilder(int32_t tag, ReadableFontData* src_data);
+    virtual Table::Builder* NewTableBuilder(int32_t tag);
+    virtual Table::Builder* NewTableBuilder(int32_t tag,
+                                            ReadableFontData* src_data);
     virtual TableBuilderMap* table_builders() { return &table_builders_; }
     virtual void TableBuilderTags(IntegerSet* key_set);
     // Note: different from Java: we don't return object in removeTableBuilder

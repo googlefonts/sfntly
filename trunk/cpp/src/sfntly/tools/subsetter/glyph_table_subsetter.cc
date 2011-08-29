@@ -53,12 +53,12 @@ bool GlyphTableSubsetter::Subset(Subsetter* subsetter,
 #endif
   }
 
-  GlyphTableBuilderPtr glyph_table_builder;
-  glyph_table_builder.Attach(down_cast<GlyphTable::Builder*>(
-       font_builder->NewTableBuilder(Tag::glyf)));
-  LocaTableBuilderPtr loca_table_builder;
-  loca_table_builder.Attach(down_cast<LocaTable::Builder*>(
-       font_builder->NewTableBuilder(Tag::loca)));
+  GlyphTableBuilderPtr glyph_table_builder =
+      down_cast<GlyphTable::Builder*>
+      (font_builder->NewTableBuilder(Tag::glyf));
+  LocaTableBuilderPtr loca_table_builder =
+      down_cast<LocaTable::Builder*>
+      (font_builder->NewTableBuilder(Tag::loca));
   if (glyph_table_builder == NULL || loca_table_builder == NULL) {
 #if defined (SFNTLY_NO_EXCEPTION)
     return false;

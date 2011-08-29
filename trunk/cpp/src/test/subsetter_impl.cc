@@ -274,12 +274,10 @@ CALLER_ATTACH Font* SubsetterImpl::Subset(const IntegerSet& glyph_ids) {
   FontBuilderPtr font_builder;
   font_builder.Attach(factory_->NewFontBuilder());
 
-  GlyphTableBuilderPtr glyph_table_builder;
-  glyph_table_builder.Attach(down_cast<GlyphTable::Builder*>(
-      font_builder->NewTableBuilder(Tag::glyf)));
-  LocaTableBuilderPtr loca_table_builder;
-  loca_table_builder.Attach(down_cast<LocaTable::Builder*>(
-      font_builder->NewTableBuilder(Tag::loca)));
+  GlyphTableBuilderPtr glyph_table_builder =
+      down_cast<GlyphTable::Builder*>(font_builder->NewTableBuilder(Tag::glyf));
+  LocaTableBuilderPtr loca_table_builder =
+      down_cast<LocaTable::Builder*>(font_builder->NewTableBuilder(Tag::loca));
   if (glyph_table_builder == NULL || loca_table_builder == NULL) {
     // Out of memory.
     return NULL;
@@ -328,12 +326,7 @@ CALLER_ATTACH Font* SubsetterImpl::Subset(const IntegerSet& glyph_ids) {
                           e = font_->Tables()->end(); i != e; ++i) {
     // We already build the builder for glyph and loca.
     if (i->first != Tag::glyf && i->first != Tag::loca) {
-      // The newTableBuilder() call will alter internal state of font_builder
-      // AND the reference count of returned object.  Therefore we need to
-      // dereference it.
-      TableBuilderPtr dereference;
-      dereference.Attach(
-          font_builder->NewTableBuilder(i->first, i->second->ReadFontData()));
+      font_builder->NewTableBuilder(i->first, i->second->ReadFontData());
     }
   }
 
