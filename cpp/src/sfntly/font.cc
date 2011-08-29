@@ -16,9 +16,12 @@
 
 #include "sfntly/font.h"
 
+#include <stdio.h>
+
 #include <functional>
 #include <algorithm>
 #include <map>
+#include <string>
 #include <typeinfo>
 
 #include "sfntly/data/font_input_stream.h"
@@ -280,19 +283,21 @@ Table::Builder* Font::Builder::GetTableBuilder(int32_t tag) {
   return NULL;
 }
 
-CALLER_ATTACH Table::Builder* Font::Builder::NewTableBuilder(int32_t tag) {
+Table::Builder* Font::Builder::NewTableBuilder(int32_t tag) {
   TableHeaderPtr header = new Table::Header(tag);
-  TableBuilderPtr builder = Table::Builder::GetBuilder(this, header, NULL);
+  TableBuilderPtr builder;
+  builder.Attach(Table::Builder::GetBuilder(this, header, NULL));
   table_builders_.insert(TableBuilderEntry(header->tag(), builder));
   return builder;
 }
 
-CALLER_ATTACH Table::Builder*
-    Font::Builder::NewTableBuilder(int32_t tag, ReadableFontData* src_data) {
+Table::Builder* Font::Builder::NewTableBuilder(int32_t tag,
+                                               ReadableFontData* src_data) {
   WritableFontDataPtr data;
   data.Attach(GetNewGrowableData(src_data));
   TableHeaderPtr header = new Table::Header(tag);
-  TableBuilderPtr builder = Table::Builder::GetBuilder(this, header, data);
+  TableBuilderPtr builder;
+  builder.Attach(Table::Builder::GetBuilder(this, header, data));
   table_builders_.insert(TableBuilderEntry(tag, builder));
   return builder;
 }
@@ -369,7 +374,7 @@ void Font::Builder::BuildTablesFromBuilders(TableBuilderMap* builder_map,
   // Now build all the tables.
   for (TableBuilderMap::iterator builder = builder_map->begin(),
                                  builder_end = builder_map->end();
-                                 builder != builder_end; ++builder) {
+       builder != builder_end; ++builder) {
     TablePtr table;
     if (builder->second && builder->second->ReadyToBuild()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
@@ -379,19 +384,26 @@ void Font::Builder::BuildTablesFromBuilders(TableBuilderMap* builder_map,
 #if !defined (SFNTLY_NO_EXCEPTION)
       } catch(IOException& e) {
         std::string builder_string = "Unable to build table - ";
-        builder_string += typeid(builder->second).name();
-        builder_string += e.what();
+        char *table_name = TagToString(builder->first);
+        builder_string += table_name;
+        delete[] table_name;
         throw RuntimeException(builder_string.c_str());
       }
 #endif
     }
     if (table == NULL) {
+      std::string builder_string = "Unable to build table - ";
+      char *table_name = TagToString(builder->first);
+      builder_string += table_name;
+      delete[] table_name;
 #if defined (SFNTLY_NO_EXCEPTION)
+#if defined (SFNTLY_DEBUG)
+      fprintf(stderr, "Aborting table construction: %s\n",
+              builder_string.c_str());
+#endif
       table_map->clear();
       return;
 #else
-      std::string builder_string = "Unable to build table - ";
-      builder_string += typeid(builder->second).name();
       throw RuntimeException(builder_string.c_str());
 #endif
     }

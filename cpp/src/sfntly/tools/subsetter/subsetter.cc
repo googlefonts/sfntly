@@ -85,12 +85,7 @@ CALLER_ATTACH Font::Builder* Subsetter::Subset() {
                             tag_end = table_tags.end(); tag != tag_end; ++tag) {
     Table* table = font_->GetTable(*tag);
     if (table) {
-      // The NewTableBuilder() call will alter internal state of font_builder
-      // AND the reference count of returned object.  Therefore we need to
-      // dereference it.
-      TableBuilderPtr dereference;
-      dereference.Attach(
-          font_builder->NewTableBuilder(*tag, table->ReadFontData()));
+      font_builder->NewTableBuilder(*tag, table->ReadFontData());
     }
   }
   return font_builder.Detach();
