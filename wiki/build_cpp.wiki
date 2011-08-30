@@ -29,9 +29,17 @@ sudo apt-get install libicu-dev
 
   For Mac users, please download ICU source tarball from [http://site.icu-project.org/download] and install according to ICU documents.
 
-==Building on Windows==
-  # If you don't have cmake installed, extract from ext/redist.  Let's assume your folder for sfntly is {{{d:\src\sfntly}}} and the extracted {{{cmake.exe}}} is in {{{d:\src\sfntly\ext\cmake\bin\cmake.exe}}}.
-  # Run following commands
+== Getting the Source == 
+Clone the SVN repository from [http://code.google.com/p/sfntly/source/checkout].
+
+== Building on Windows ==
+Let's assume your folder for sfntly is {{{d:\src\sfntly}}}.
+  # If you don't have cmake installed, extract from ext/redist.
+{{{
+Use your extract tool to unpack cmake from cpp\ext\redist.
+}}}
+  The extracted binary should be in {{{d:\src\sfntly\ext\cmake\bin\cmake.exe}}}.
+  # Run following commands to create the Visual Studio solution files:
 {{{
 d:
 cd d:\src\sfntly
