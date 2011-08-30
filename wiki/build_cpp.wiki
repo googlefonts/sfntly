@@ -43,8 +43,7 @@ md build
 cd build
 ..\ext\cmake\bin\cmake ..
 }}}
-You should see {{{sfntly.sln}}} in {{{d:\src\sfntly\build}}}.
-
+You should see {{{sfntly.sln}}} in {{{d:\src\sfntly\cpp\build}}}.
   # Open sfntly.sln.  Since sfntly use STL extensively, please patch your Visual Studio for any STL-related hotfixes/service packs.
   # Build the solution.
 
