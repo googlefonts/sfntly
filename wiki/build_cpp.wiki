@@ -34,8 +34,7 @@ Clone the SVN repository from [http://code.google.com/p/sfntly/source/checkout].
 
 == Building on Windows ==
 Let's assume your folder for sfntly is {{{d:\src\sfntly}}}.
-  # If you don't have cmake installed, extract the CMake zip into {{{d:\src\sfntly\cpp\ext}}}.
-The extracted binary should be in {{{d:\src\sfntly\cpp\ext\cmake\bin\cmake.exe}}}.
+  # If you don't have cmake installed, extract the cmake-XXX.zip into {{{d:\src\sfntly\cpp\ext\cmake}}} removing the "-XXX" part. The extracted binary should be in {{{d:\src\sfntly\cpp\ext\cmake\bin\cmake.exe}}}.
   # Run following commands to create the Visual Studio solution files:
 {{{
 d:
