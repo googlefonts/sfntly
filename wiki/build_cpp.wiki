@@ -34,21 +34,17 @@ Clone the SVN repository from [http://code.google.com/p/sfntly/source/checkout].
 
 == Building on Windows ==
 Let's assume your folder for sfntly is {{{d:\src\sfntly}}}.
-  # If you don't have cmake installed, extract from ext/redist.
-{{{
-Use your extract tool to unpack cmake from cpp\ext\redist.
-}}}
-  The extracted binary should be in {{{d:\src\sfntly\ext\cmake\bin\cmake.exe}}}.
+  # If you don't have cmake installed, extract the CMake zip into {{{d:\src\sfntly\cpp\ext}}}.
+The extracted binary should be in {{{d:\src\sfntly\cpp\ext\cmake\bin\cmake.exe}}}.
   # Run following commands to create the Visual Studio solution files:
 {{{
 d:
-cd d:\src\sfntly
+cd d:\src\sfntly\cpp
 md build
 cd build
 ..\ext\cmake\bin\cmake ..
 }}}
-
-You shall see {{{sfntly.sln}}} in {{{d:\src\sfntly\build}}}.
+You should see {{{sfntly.sln}}} in {{{d:\src\sfntly\build}}}.
 
   # Open sfntly.sln.  Since sfntly use STL extensively, please patch your Visual Studio for any STL-related hotfixes/service packs.
   # Build the solution.
