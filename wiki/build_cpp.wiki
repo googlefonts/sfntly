@@ -47,7 +47,7 @@ cd build
 }}}
 You should see {{{sfntly.sln}}} in {{{d:\src\sfntly\cpp\build}}}.
   # Open sfntly.sln.  Since sfntly use STL extensively, please patch your Visual Studio for any STL-related hotfixes/service packs.
-  # Build the solution.
+  # Build the solution (if the icuuc dll is not found you may need to add d:\src\sfntly\cpp\ext\icu\bin to the system path).
 
 ==Building on Linux/Mac==
 
