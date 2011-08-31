@@ -46,6 +46,7 @@ cd build
 ..\ext\cmake\bin\cmake ..
 }}}
 You should see {{{sfntly.sln}}} in {{{d:\src\sfntly\cpp\build}}}.
+  # Until the test is modified to access the fonts in the ext\data directory: copy the test fonts from d:\src\sfntly\cpp\data\ext\ to d:\src\sfntly\cpp\build\bin\Debug.
   # Open sfntly.sln.  Since sfntly use STL extensively, please patch your Visual Studio for any STL-related hotfixes/service packs.
   # Build the solution (if the icuuc dll is not found you may need to add d:\src\sfntly\cpp\ext\icu\bin to the system path).
 
