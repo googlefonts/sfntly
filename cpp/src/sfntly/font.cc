@@ -23,6 +23,7 @@
 #include <map>
 #include <string>
 #include <typeinfo>
+#include <iterator>
 
 #include "sfntly/data/font_input_stream.h"
 #include "sfntly/font_factory.h"
@@ -58,14 +59,14 @@ Table* Font::GetTable(int32_t tag) {
   return tables_[tag];
 }
 
-TableMap* Font::Tables() {
+const TableMap* Font::GetTableMap() {
   return &tables_;
 }
 
 void Font::Serialize(OutputStream* os, IntegerList* table_ordering) {
   assert(table_ordering);
   IntegerList final_table_ordering;
-  TableOrdering(table_ordering, &final_table_ordering);
+  GenerateTableOrdering(table_ordering, &final_table_ordering);
   TableHeaderList table_records;
   BuildTableHeadersForSerialization(&final_table_ordering, &table_records);
 
@@ -74,18 +75,11 @@ void Font::Serialize(OutputStream* os, IntegerList* table_ordering) {
   SerializeTables(&fos, &table_records);
 }
 
-CALLER_ATTACH WritableFontData* Font::GetNewData(int32_t size) {
-  return factory_->GetNewData(size);
-}
-
-Font::Font(FontFactory* factory, int32_t sfnt_version, ByteVector* digest,
-           TableMap* tables)
-    : factory_(factory),
-      sfnt_version_(sfnt_version) {
+Font::Font(int32_t sfnt_version, ByteVector* digest)
+    : sfnt_version_(sfnt_version) {
   // non-trivial assignments that makes debugging hard if placed in
   // initialization list
   digest_ = *digest;
-  tables_ = *tables;
 }
 
 void Font::BuildTableHeadersForSerialization(IntegerList* table_ordering,
@@ -94,19 +88,22 @@ void Font::BuildTableHeadersForSerialization(IntegerList* table_ordering,
   assert(table_ordering);
 
   IntegerList final_table_ordering;
-  TableOrdering(table_ordering, &final_table_ordering);
+  GenerateTableOrdering(table_ordering, &final_table_ordering);
   int32_t table_offset = Offset::kTableRecordBegin + num_tables() *
                          Offset::kTableRecordSize;
   for (IntegerList::iterator tag = final_table_ordering.begin(),
                              tag_end = final_table_ordering.end();
                              tag != tag_end; ++tag) {
+    if (tables_.find(*tag) == tables_.end()) {
+      continue;
+    }
     TablePtr table = tables_[*tag];
     if (table != NULL) {
       TableHeaderPtr header =
           new Table::Header(*tag, table->CalculatedChecksum(), table_offset,
-                            table->Length());
+                            table->header()->length());
       table_headers->push_back(header);
-      table_offset += (table->Length() + 3) & ~3;
+      table_offset += (table->DataLength() + 3) & ~3;
     }
   }
 }
@@ -121,9 +118,14 @@ void Font::SerializeHeader(FontOutputStream* fos,
   fos->WriteUShort(log2_of_max_power_of_2);
   fos->WriteUShort((table_headers->size() * 16) - search_range);
 
-  for (TableHeaderList::iterator record = table_headers->begin(),
-                                 record_end = table_headers->end();
-                                 record != record_end; ++record) {
+  HeaderTagSortedSet sorted_headers;
+  std::copy(table_headers->begin(),
+            table_headers->end(),
+            std::inserter(sorted_headers, sorted_headers.end()));
+
+  for (HeaderTagSortedSet::iterator record = sorted_headers.begin(),
+                                    record_end = sorted_headers.end();
+                                    record != record_end; ++record) {
     fos->WriteULong((*record)->tag());
     fos->WriteULong((int32_t)((*record)->checksum()));
     fos->WriteULong((*record)->offset());
@@ -133,30 +135,31 @@ void Font::SerializeHeader(FontOutputStream* fos,
 
 void Font::SerializeTables(FontOutputStream* fos,
                            TableHeaderList* table_headers) {
-  ByteVector SERIALIZATION_FILLER(3);
-  std::fill(SERIALIZATION_FILLER.begin(), SERIALIZATION_FILLER.end(), 0);
+  assert(fos);
+  assert(table_headers);
   for (TableHeaderList::iterator record = table_headers->begin(),
                                  end_of_headers = table_headers->end();
                                  record != end_of_headers; ++record) {
     TablePtr target_table = GetTable((*record)->tag());
     if (target_table == NULL) {
-#if defined (SFNTLY_NO_EXCEPTION)
-      return;
-#else
+#if !defined (SFNTLY_NO_EXCEPTION)
       throw IOException("Table out of sync with font header.");
 #endif
+      return;
     }
     int32_t table_size = target_table->Serialize(fos);
     if (table_size != (*record)->length()) {
       assert(false);
     }
     int32_t filler_size = ((table_size + 3) & ~3) - table_size;
-    fos->Write(&SERIALIZATION_FILLER, 0, filler_size);
+    for (int32_t i = 0; i < filler_size; ++i) {
+      fos->Write(static_cast<byte_t>(0));
+    }
   }
 }
 
-void Font::TableOrdering(IntegerList* default_table_ordering,
-                         IntegerList* table_ordering) {
+void Font::GenerateTableOrdering(IntegerList* default_table_ordering,
+                                 IntegerList* table_ordering) {
   assert(default_table_ordering);
   assert(table_ordering);
   table_ordering->clear();
@@ -207,17 +210,19 @@ void Font::DefaultTableOrdering(IntegerList* default_table_ordering) {
  ******************************************************************************/
 Font::Builder::~Builder() {}
 
-CALLER_ATTACH Font::Builder* Font::Builder::GetOTFBuilder(
-    FontFactory* factory, InputStream* is) {
+CALLER_ATTACH Font::Builder* Font::Builder::GetOTFBuilder(FontFactory* factory,
+                                                          InputStream* is) {
   FontBuilderPtr builder = new Builder(factory);
   builder->LoadFont(is);
   return builder.Detach();
 }
 
 CALLER_ATTACH Font::Builder* Font::Builder::GetOTFBuilder(
-    FontFactory* factory, ByteArray* ba, int32_t offset_to_offset_table) {
+    FontFactory* factory,
+    WritableFontData* wfd,
+    int32_t offset_to_offset_table) {
   FontBuilderPtr builder = new Builder(factory);
-  builder->LoadFont(ba, offset_to_offset_table);
+  builder->LoadFont(wfd, offset_to_offset_table);
   return builder.Detach();
 }
 
@@ -233,7 +238,7 @@ bool Font::Builder::ReadyToBuild() {
     return true;
   }
 
-  // TODO(stuartg): font level checks - required tables etc.
+  // TODO(stuartg): font level checks - required tables etc?
   for (TableBuilderMap::iterator table_builder = table_builders_.begin(),
                                  table_builder_end = table_builders_.end();
                                  table_builder != table_builder_end;
@@ -245,23 +250,17 @@ bool Font::Builder::ReadyToBuild() {
 }
 
 CALLER_ATTACH Font* Font::Builder::Build() {
-  TableMap tables;
+  FontPtr font = new Font(sfnt_version_, &digest_);
+
   if (!table_builders_.empty()) {
-    BuildTablesFromBuilders(&table_builders_, &tables);
+    // Note: Different from Java. Directly use font->tables_ here to avoid
+    //       STL container copying.
+    BuildTablesFromBuilders(font, &table_builders_, &font->tables_);
   }
-  FontPtr font = new Font(factory_, sfnt_version_, &digest_, &tables);
+
   table_builders_.clear();
   data_blocks_.clear();
   return font.Detach();
-}
-
-CALLER_ATTACH WritableFontData* Font::Builder::GetNewData(int32_t capacity) {
-  return factory_->GetNewData(capacity);
-}
-
-CALLER_ATTACH WritableFontData* Font::Builder::GetNewGrowableData(
-    ReadableFontData* src_data) {
-  return factory_->GetNewGrowableData(src_data);
 }
 
 void Font::Builder::SetDigest(ByteVector* digest) {
@@ -269,7 +268,7 @@ void Font::Builder::SetDigest(ByteVector* digest) {
   digest_ = *digest;
 }
 
-void Font::Builder::CleanTableBuilders() {
+void Font::Builder::ClearTableBuilders() {
   table_builders_.clear();
 }
 
@@ -286,29 +285,30 @@ Table::Builder* Font::Builder::GetTableBuilder(int32_t tag) {
 Table::Builder* Font::Builder::NewTableBuilder(int32_t tag) {
   TableHeaderPtr header = new Table::Header(tag);
   TableBuilderPtr builder;
-  builder.Attach(Table::Builder::GetBuilder(this, header, NULL));
+  builder.Attach(Table::Builder::GetBuilder(header, NULL));
   table_builders_.insert(TableBuilderEntry(header->tag(), builder));
   return builder;
 }
 
 Table::Builder* Font::Builder::NewTableBuilder(int32_t tag,
                                                ReadableFontData* src_data) {
+  assert(src_data);
   WritableFontDataPtr data;
-  data.Attach(GetNewGrowableData(src_data));
-  TableHeaderPtr header = new Table::Header(tag);
+  data.Attach(WritableFontData::CreateWritableFontData(src_data->Length()));
+#if !defined (SFNTLY_NO_EXCEPTION)
+  try {
+#endif
+    src_data->CopyTo(data);
+#if !defined (SFNTLY_NO_EXCEPTION)
+  } catch (IOException& e) {
+    return NULL;
+  }
+#endif
+  TableHeaderPtr header = new Table::Header(tag, data->Length());
   TableBuilderPtr builder;
-  builder.Attach(Table::Builder::GetBuilder(this, header, data));
+  builder.Attach(Table::Builder::GetBuilder(header, data));
   table_builders_.insert(TableBuilderEntry(tag, builder));
   return builder;
-}
-
-void Font::Builder::TableBuilderTags(IntegerSet* key_set) {
-  assert(key_set);
-  key_set->clear();
-  for (TableBuilderMap::iterator i = table_builders_.begin(),
-                                 e = table_builders_.end(); i != e; ++i) {
-    key_set->insert(i->first);
-  }
 }
 
 void Font::Builder::RemoveTableBuilder(int32_t tag) {
@@ -326,21 +326,20 @@ void Font::Builder::LoadFont(InputStream* is) {
   // Note: we do not throw exception here for is.  This is more of an assertion.
   assert(is);
   FontInputStream font_is(is);
-  TableHeaderSortedSet records;
+  HeaderOffsetSortedSet records;
   ReadHeader(&font_is, &records);
   LoadTableData(&records, &font_is, &data_blocks_);
   BuildAllTableBuilders(&data_blocks_, &table_builders_);
   font_is.Close();
 }
 
-void Font::Builder::LoadFont(ByteArray* ba,
+void Font::Builder::LoadFont(WritableFontData* wfd,
                              int32_t offset_to_offset_table) {
   // Note: we do not throw exception here for is.  This is more of an assertion.
-  assert(ba);
-  WritableFontDataPtr fd = new WritableFontData(ba);
-  TableHeaderSortedSet records;
-  ReadHeader(fd, offset_to_offset_table, &records);
-  LoadTableData(&records, fd, &data_blocks_);
+  assert(wfd);
+  HeaderOffsetSortedSet records;
+  ReadHeader(wfd, offset_to_offset_table, &records);
+  LoadTableData(&records, wfd, &data_blocks_);
   BuildAllTableBuilders(&data_blocks_, &table_builders_);
 }
 
@@ -361,14 +360,16 @@ void Font::Builder::BuildAllTableBuilders(DataBlockMap* table_data,
   InterRelateBuilders(&table_builders_);
 }
 
-CALLER_ATTACH Table::Builder*
-    Font::Builder::GetTableBuilder(Table::Header* header,
-                                   WritableFontData* data) {
-  return Table::Builder::GetBuilder(this, header, data);
+CALLER_ATTACH
+Table::Builder* Font::Builder::GetTableBuilder(Table::Header* header,
+                                               WritableFontData* data) {
+  return Table::Builder::GetBuilder(header, data);
 }
 
-void Font::Builder::BuildTablesFromBuilders(TableBuilderMap* builder_map,
+void Font::Builder::BuildTablesFromBuilders(Font* font,
+                                            TableBuilderMap* builder_map,
                                             TableMap* table_map) {
+  UNREFERENCED_PARAMETER(font);
   InterRelateBuilders(builder_map);
 
   // Now build all the tables.
@@ -384,7 +385,7 @@ void Font::Builder::BuildTablesFromBuilders(TableBuilderMap* builder_map,
 #if !defined (SFNTLY_NO_EXCEPTION)
       } catch(IOException& e) {
         std::string builder_string = "Unable to build table - ";
-        char *table_name = TagToString(builder->first);
+        char* table_name = TagToString(builder->first);
         builder_string += table_name;
         delete[] table_name;
         throw RuntimeException(builder_string.c_str());
@@ -392,20 +393,19 @@ void Font::Builder::BuildTablesFromBuilders(TableBuilderMap* builder_map,
 #endif
     }
     if (table == NULL) {
-      std::string builder_string = "Unable to build table - ";
-      char *table_name = TagToString(builder->first);
-      builder_string += table_name;
-      delete[] table_name;
-#if defined (SFNTLY_NO_EXCEPTION)
 #if defined (SFNTLY_DEBUG)
       fprintf(stderr, "Aborting table construction: %s\n",
               builder_string.c_str());
 #endif
       table_map->clear();
-      return;
-#else
+#if !defined (SFNTLY_NO_EXCEPTION)
+      std::string builder_string = "Unable to build table - ";
+      char* table_name = TagToString(builder->first);
+      builder_string += table_name;
+      delete[] table_name;
       throw RuntimeException(builder_string.c_str());
 #endif
+      return;
     }
     table_map->insert(TableMapEntry(table->header()->tag(), table));
   }
@@ -474,14 +474,14 @@ void Font::Builder::InterRelateBuilders(TableBuilderMap* builder_map) {
       loca_table_builder->SetNumGlyphs(max_profile_builder->NumGlyphs());
     }
     if (header_table_builder != NULL) {
-      loca_table_builder->SetFormatVersion(
+      loca_table_builder->set_format_version(
           header_table_builder->IndexToLocFormat());
     }
   }
 }
 
 void Font::Builder::ReadHeader(FontInputStream* is,
-                               TableHeaderSortedSet* records) {
+                               HeaderOffsetSortedSet* records) {
   assert(records);
   sfnt_version_ = is->ReadFixed();
   num_tables_ = is->ReadUShort();
@@ -503,7 +503,7 @@ void Font::Builder::ReadHeader(FontInputStream* is,
 
 void Font::Builder::ReadHeader(ReadableFontData* fd,
                                int32_t offset,
-                               TableHeaderSortedSet* records) {
+                               HeaderOffsetSortedSet* records) {
   assert(records);
   sfnt_version_ = fd->ReadFixed(offset + Offset::kSfntVersion);
   num_tables_ = fd->ReadUShort(offset + Offset::kNumTables);
@@ -524,13 +524,14 @@ void Font::Builder::ReadHeader(ReadableFontData* fd,
   }
 }
 
-void Font::Builder::LoadTableData(TableHeaderSortedSet* headers,
+void Font::Builder::LoadTableData(HeaderOffsetSortedSet* headers,
                                   FontInputStream* is,
                                   DataBlockMap* table_data) {
   assert(table_data);
-  for (TableHeaderSortedSet::iterator
-           table_header = headers->begin(), table_end = headers->end();
-           table_header != table_end; ++table_header) {
+  for (HeaderOffsetSortedSet::iterator table_header = headers->begin(),
+                                       table_end = headers->end();
+                                       table_header != table_end;
+                                       ++table_header) {
     is->Skip((*table_header)->offset() - is->position());
     FontInputStream table_is(is, (*table_header)->length());
     WritableFontDataPtr data;
@@ -541,12 +542,13 @@ void Font::Builder::LoadTableData(TableHeaderSortedSet* headers,
   }
 }
 
-void Font::Builder::LoadTableData(TableHeaderSortedSet* headers,
+void Font::Builder::LoadTableData(HeaderOffsetSortedSet* headers,
                                   WritableFontData* fd,
                                   DataBlockMap* table_data) {
-  for (TableHeaderSortedSet::iterator
-           table_header = headers->begin(), table_end = headers->end();
-           table_header != table_end; ++table_header) {
+  for (HeaderOffsetSortedSet::iterator table_header = headers->begin(),
+                                       table_end = headers->end();
+                                       table_header != table_end;
+                                       ++table_header) {
     FontDataPtr sliced_data;
     sliced_data.Attach(
         fd->Slice((*table_header)->offset(), (*table_header)->length()));

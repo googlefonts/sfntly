@@ -100,7 +100,7 @@ int32_t UnicodeRange::range(int32_t bit) {
  ******************************************************************************/
 OS2Table::~OS2Table() {}
 
-int32_t OS2Table::Version() {
+int32_t OS2Table::TableVersion() {
   return data_->ReadUShort(Offset::kVersion);
 }
 
@@ -165,6 +165,7 @@ int32_t OS2Table::SFamilyClass() {
 }
 
 void OS2Table::Panose(ByteVector* value) {
+  assert(value);
   value->clear();
   value->resize(10);
   data_->ReadBytes(Offset::kPanose, &((*value)[0]), 0, 10);
@@ -187,6 +188,7 @@ int64_t OS2Table::UlUnicodeRange4() {
 }
 
 void OS2Table::AchVendId(ByteVector* b) {
+  assert(b);
   b->clear();
   b->resize(4);
   data_->ReadBytes(Offset::kAchVendId, &((*b)[0]), 0, 4);
@@ -232,14 +234,12 @@ int64_t OS2Table::UlCodePageRange2() {
   return data_->ReadULong(Offset::kUlCodePageRange2);
 }
 
-int64_t OS2Table::UlCodePageRange() {
-  // TODO(arthurhsu): Possible bug point, check with stuartg.
-  return ((0xffffffff & UlCodePageRange2()) << 32) |
-         (0xffffffff & UlCodePageRange1());
-}
-
 int32_t OS2Table::SxHeight() {
   return data_->ReadShort(Offset::kSxHeight);
+}
+
+int32_t OS2Table::SCapHeight() {
+  return data_->ReadShort(Offset::kSCapHeight);
 }
 
 int32_t OS2Table::UsDefaultChar() {
@@ -261,9 +261,12 @@ OS2Table::OS2Table(Header* header, ReadableFontData* data)
 /******************************************************************************
  * class OS2Table::Builder
  ******************************************************************************/
-OS2Table::Builder::Builder(FontDataTableBuilderContainer* font_builder,
-                           Header* header, WritableFontData* data) :
-    Table::TableBasedTableBuilder(font_builder, header, data) {
+OS2Table::Builder::Builder(Header* header, WritableFontData* data) :
+    Table::TableBasedTableBuilder(header, data) {
+}
+
+OS2Table::Builder::Builder(Header* header, ReadableFontData* data) :
+    Table::TableBasedTableBuilder(header, data) {
 }
 
 OS2Table::Builder::~Builder() {}
@@ -272,6 +275,333 @@ CALLER_ATTACH FontDataTable* OS2Table::Builder::SubBuildTable(
     ReadableFontData* data) {
   FontDataTablePtr table = new OS2Table(header(), data);
   return table.Detach();
+}
+
+CALLER_ATTACH OS2Table::Builder*
+    OS2Table::Builder::CreateBuilder(Header* header,
+                                     WritableFontData* data) {
+  Ptr<OS2Table::Builder> builder;
+  builder = new OS2Table::Builder(header, data);
+  return builder.Detach();
+}
+
+int32_t OS2Table::Builder::TableVersion() {
+  return InternalReadData()->ReadUShort(Offset::kVersion);
+}
+
+void OS2Table::Builder::SetTableVersion(int32_t version) {
+  InternalWriteData()->WriteUShort(Offset::kVersion, version);
+}
+
+int32_t OS2Table::Builder::XAvgCharWidth() {
+  return InternalReadData()->ReadShort(Offset::kXAvgCharWidth);
+}
+
+void OS2Table::Builder::SetXAvgCharWidth(int32_t width) {
+  InternalWriteData()->WriteShort(Offset::kXAvgCharWidth, width);
+}
+
+int32_t OS2Table::Builder::UsWeightClass() {
+  return InternalReadData()->ReadUShort(Offset::kUsWeightClass);
+}
+
+void OS2Table::Builder::SetUsWeightClass(int32_t weight) {
+  InternalWriteData()->WriteUShort(Offset::kUsWeightClass, weight);
+}
+
+int32_t OS2Table::Builder::UsWidthClass() {
+  return InternalReadData()->ReadUShort(Offset::kUsWidthClass);
+}
+
+void OS2Table::Builder::SetUsWidthClass(int32_t width) {
+  InternalWriteData()->WriteUShort(Offset::kUsWidthClass, width);
+}
+
+int32_t OS2Table::Builder::FsType() {
+  return InternalReadData()->ReadUShort(Offset::kFsType);
+}
+
+void OS2Table::Builder::SetFsType(int32_t fs_type) {
+  InternalWriteData()->WriteUShort(Offset::kFsType, fs_type);
+}
+
+int32_t OS2Table::Builder::YSubscriptXSize() {
+  return InternalReadData()->ReadShort(Offset::kYSubscriptXSize);
+}
+
+void OS2Table::Builder::SetYSubscriptXSize(int32_t size) {
+  InternalWriteData()->WriteShort(Offset::kYSubscriptXSize, size);
+}
+
+int32_t OS2Table::Builder::YSubscriptYSize() {
+  return InternalReadData()->ReadShort(Offset::kYSubscriptYSize);
+}
+
+void OS2Table::Builder::SetYSubscriptYSize(int32_t size) {
+  InternalWriteData()->WriteShort(Offset::kYSubscriptYSize, size);
+}
+
+int32_t OS2Table::Builder::YSubscriptXOffset() {
+  return InternalReadData()->ReadShort(Offset::kYSubscriptXOffset);
+}
+
+void OS2Table::Builder::SetYSubscriptXOffset(int32_t offset) {
+  InternalWriteData()->WriteShort(Offset::kYSubscriptXOffset, offset);
+}
+
+int32_t OS2Table::Builder::YSubscriptYOffset() {
+  return InternalReadData()->ReadShort(Offset::kYSubscriptYOffset);
+}
+
+void OS2Table::Builder::SetYSubscriptYOffset(int32_t offset) {
+  InternalWriteData()->WriteShort(Offset::kYSubscriptYOffset, offset);
+}
+
+int32_t OS2Table::Builder::YSuperscriptXSize() {
+  return InternalReadData()->ReadShort(Offset::kYSuperscriptXSize);
+}
+
+void OS2Table::Builder::SetYSuperscriptXSize(int32_t size) {
+  InternalWriteData()->WriteShort(Offset::kYSuperscriptXSize, size);
+}
+
+int32_t OS2Table::Builder::YSuperscriptYSize() {
+  return InternalReadData()->ReadShort(Offset::kYSuperscriptYSize);
+}
+
+void OS2Table::Builder::SetYSuperscriptYSize(int32_t size) {
+  InternalWriteData()->WriteShort(Offset::kYSuperscriptYSize, size);
+}
+
+int32_t OS2Table::Builder::YSuperscriptXOffset() {
+  return InternalReadData()->ReadShort(Offset::kYSuperscriptXOffset);
+}
+
+void OS2Table::Builder::SetYSuperscriptXOffset(int32_t offset) {
+  InternalWriteData()->WriteShort(Offset::kYSuperscriptXOffset, offset);
+}
+
+int32_t OS2Table::Builder::YSuperscriptYOffset() {
+  return InternalReadData()->ReadShort(Offset::kYSuperscriptYOffset);
+}
+
+void OS2Table::Builder::SetYSuperscriptYOffset(int32_t offset) {
+  InternalWriteData()->WriteShort(Offset::kYSuperscriptYOffset, offset);
+}
+
+int32_t OS2Table::Builder::YStrikeoutSize() {
+  return InternalReadData()->ReadShort(Offset::kYStrikeoutSize);
+}
+
+void OS2Table::Builder::SetYStrikeoutSize(int32_t size) {
+  InternalWriteData()->WriteShort(Offset::kYStrikeoutSize, size);
+}
+
+int32_t OS2Table::Builder::YStrikeoutPosition() {
+  return InternalReadData()->ReadShort(Offset::kYStrikeoutPosition);
+}
+
+void OS2Table::Builder::SetYStrikeoutPosition(int32_t position) {
+  InternalWriteData()->WriteShort(Offset::kYStrikeoutPosition, position);
+}
+
+int32_t OS2Table::Builder::SFamilyClass() {
+  return InternalReadData()->ReadShort(Offset::kSFamilyClass);
+}
+
+void OS2Table::Builder::SetSFamilyClass(int32_t family) {
+  InternalWriteData()->WriteShort(Offset::kSFamilyClass, family);
+}
+
+void OS2Table::Builder::Panose(ByteVector* value) {
+  assert(value);
+  value->clear();
+  value->resize(Offset::kPanoseLength);
+  InternalReadData()->ReadBytes(Offset::kPanose,
+                                &((*value)[0]),
+                                0,
+                                Offset::kPanoseLength);
+}
+
+void OS2Table::Builder::SetPanose(ByteVector* panose) {
+  assert(panose);
+  if (panose->size() != Offset::kPanoseLength) {
+#if !defined (SFNTLY_NO_EXCEPTION)
+    throw IllegalArgumentException("Panose bytes must be exactly 10 in length");
+#endif
+    return;
+  }
+  InternalWriteData()->WriteBytes(Offset::kPanose, panose);
+}
+
+int64_t OS2Table::Builder::UlUnicodeRange1() {
+  return InternalReadData()->ReadULong(Offset::kUlUnicodeRange1);
+}
+
+void OS2Table::Builder::SetUlUnicodeRange1(int64_t range) {
+  InternalWriteData()->WriteULong(Offset::kUlUnicodeRange1, range);
+}
+
+int64_t OS2Table::Builder::UlUnicodeRange2() {
+  return InternalReadData()->ReadULong(Offset::kUlUnicodeRange2);
+}
+
+void OS2Table::Builder::SetUlUnicodeRange2(int64_t range) {
+  InternalWriteData()->WriteULong(Offset::kUlUnicodeRange2, range);
+}
+
+int64_t OS2Table::Builder::UlUnicodeRange3() {
+  return InternalReadData()->ReadULong(Offset::kUlUnicodeRange3);
+}
+
+void OS2Table::Builder::SetUlUnicodeRange3(int64_t range) {
+  InternalWriteData()->WriteULong(Offset::kUlUnicodeRange3, range);
+}
+
+int64_t OS2Table::Builder::UlUnicodeRange4() {
+  return InternalReadData()->ReadULong(Offset::kUlUnicodeRange4);
+}
+
+void OS2Table::Builder::SetUlUnicodeRange4(int64_t range) {
+  InternalWriteData()->WriteULong(Offset::kUlUnicodeRange4, range);
+}
+
+void OS2Table::Builder::AchVendId(ByteVector* b) {
+  assert(b);
+  b->clear();
+  b->resize(4);
+  InternalReadData()->ReadBytes(Offset::kAchVendId, &((*b)[0]), 0, 4);
+}
+
+void OS2Table::Builder::SetAchVendId(ByteVector* b) {
+  assert(b);
+  assert(b->size());
+  InternalWriteData()->WriteBytes(Offset::kAchVendId,
+                                  &((*b)[0]),
+                                  0,
+                                  std::min<size_t>(
+                                      (size_t)Offset::kAchVendIdLength,
+                                      b->size()));
+}
+
+int32_t OS2Table::Builder::FsSelection() {
+  return InternalReadData()->ReadUShort(Offset::kFsSelection);
+}
+
+void OS2Table::Builder::SetFsSelection(int32_t fs_selection) {
+  InternalWriteData()->WriteUShort(Offset::kFsSelection, fs_selection);
+}
+
+int32_t OS2Table::Builder::UsFirstCharIndex() {
+  return InternalReadData()->ReadUShort(Offset::kUsFirstCharIndex);
+}
+
+void OS2Table::Builder::SetUsFirstCharIndex(int32_t first_index) {
+  InternalWriteData()->WriteUShort(Offset::kUsFirstCharIndex, first_index);
+}
+
+int32_t OS2Table::Builder::UsLastCharIndex() {
+  return InternalReadData()->ReadUShort(Offset::kUsLastCharIndex);
+}
+
+void OS2Table::Builder::SetUsLastCharIndex(int32_t last_index) {
+  InternalWriteData()->WriteUShort(Offset::kUsLastCharIndex, last_index);
+}
+
+int32_t OS2Table::Builder::STypoAscender() {
+  return InternalReadData()->ReadShort(Offset::kSTypoAscender);
+}
+
+void OS2Table::Builder::SetSTypoAscender(int32_t ascender) {
+  InternalWriteData()->WriteShort(Offset::kSTypoAscender, ascender);
+}
+
+int32_t OS2Table::Builder::STypoDescender() {
+  return InternalReadData()->ReadShort(Offset::kSTypoDescender);
+}
+
+void OS2Table::Builder::SetSTypoDescender(int32_t descender) {
+  InternalWriteData()->WriteShort(Offset::kSTypoDescender, descender);
+}
+
+int32_t OS2Table::Builder::STypoLineGap() {
+  return InternalReadData()->ReadShort(Offset::kSTypoLineGap);
+}
+
+void OS2Table::Builder::SetSTypoLineGap(int32_t line_gap) {
+  InternalWriteData()->WriteShort(Offset::kSTypoLineGap, line_gap);
+}
+
+int32_t OS2Table::Builder::UsWinAscent() {
+  return InternalReadData()->ReadUShort(Offset::kUsWinAscent);
+}
+
+void OS2Table::Builder::SetUsWinAscent(int32_t ascent) {
+  InternalWriteData()->WriteUShort(Offset::kUsWinAscent, ascent);
+}
+
+int32_t OS2Table::Builder::UsWinDescent() {
+  return InternalReadData()->ReadUShort(Offset::kUsWinDescent);
+}
+
+void OS2Table::Builder::SetUsWinDescent(int32_t descent) {
+  InternalWriteData()->WriteUShort(Offset::kUsWinDescent, descent);
+}
+
+int64_t OS2Table::Builder::UlCodePageRange1() {
+  return InternalReadData()->ReadULong(Offset::kUlCodePageRange1);
+}
+
+void OS2Table::Builder::SetUlCodePageRange1(int64_t range) {
+  InternalWriteData()->WriteULong(Offset::kUlCodePageRange1, range);
+}
+
+int64_t OS2Table::Builder::UlCodePageRange2() {
+  return InternalReadData()->ReadULong(Offset::kUlCodePageRange2);
+}
+
+void OS2Table::Builder::SetUlCodePageRange2(int64_t range) {
+  InternalWriteData()->WriteULong(Offset::kUlCodePageRange2, range);
+}
+
+int32_t OS2Table::Builder::SxHeight() {
+  return InternalReadData()->ReadShort(Offset::kSxHeight);
+}
+
+void OS2Table::Builder::SetSxHeight(int32_t height) {
+  InternalWriteData()->WriteShort(Offset::kSxHeight, height);
+}
+
+int32_t OS2Table::Builder::SCapHeight() {
+  return InternalReadData()->ReadShort(Offset::kSCapHeight);
+}
+
+void OS2Table::Builder::SetSCapHeight(int32_t height) {
+  InternalWriteData()->WriteShort(Offset::kSCapHeight, height);
+}
+
+int32_t OS2Table::Builder::UsDefaultChar() {
+  return InternalReadData()->ReadUShort(Offset::kUsDefaultChar);
+}
+
+void OS2Table::Builder::SetUsDefaultChar(int32_t default_char) {
+  InternalWriteData()->WriteUShort(Offset::kUsDefaultChar, default_char);
+}
+
+int32_t OS2Table::Builder::UsBreakChar() {
+  return InternalReadData()->ReadUShort(Offset::kUsBreakChar);
+}
+
+void OS2Table::Builder::SetUsBreakChar(int32_t break_char) {
+  InternalWriteData()->WriteUShort(Offset::kUsBreakChar, break_char);
+}
+
+int32_t OS2Table::Builder::UsMaxContext() {
+  return InternalReadData()->ReadUShort(Offset::kUsMaxContext);
+}
+
+void OS2Table::Builder::SetUsMaxContext(int32_t max_context) {
+  InternalWriteData()->WriteUShort(Offset::kUsMaxContext, max_context);
 }
 
 }  // namespace sfntly

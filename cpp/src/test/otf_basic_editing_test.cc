@@ -39,6 +39,7 @@ bool TestOTFBasicEditing() {
   EXPECT_TRUE(font_builder != NULL);
   TableBuilderMap* builder_map = font_builder->table_builders();
   EXPECT_TRUE(builder_map != NULL);
+  IntegerSet builder_tags;
   for (TableBuilderMap::iterator i = builder_map->begin(),
                                  e = builder_map->end(); i != e; ++i) {
     EXPECT_TRUE(i->second != NULL);
@@ -47,11 +48,11 @@ bool TestOTFBasicEditing() {
       int32_t value = ToBE32(i->first);
       memcpy(tag, &value, 4);
       fprintf(stderr, "tag %s does not have valid builder\n", tag);
+    } else {
+      builder_tags.insert(i->first);
     }
   }
 
-  IntegerSet builder_tags;
-  font_builder->TableBuilderTags(&builder_tags);
   FontHeaderTableBuilderPtr header_builder =
       down_cast<FontHeaderTable::Builder*>(
           font_builder->GetTableBuilder(Tag::head));
@@ -61,9 +62,9 @@ bool TestOTFBasicEditing() {
   font.Attach(font_builder->Build());
 
   // ensure every table had a builder
-  TableMap* table_map = font->Tables();
-  for (TableMap::iterator i = table_map->begin(), e = table_map->end();
-                          i != e; ++i) {
+  const TableMap* table_map = font->GetTableMap();
+  for (TableMap::const_iterator i = table_map->begin(), e = table_map->end();
+                                i != e; ++i) {
     TablePtr table = (*i).second;
     TableHeaderPtr header = table->header();
     EXPECT_TRUE(builder_tags.find(header->tag()) != builder_tags.end());

@@ -102,14 +102,12 @@ FontHeaderTable::FontHeaderTable(Header* header, ReadableFontData* data)
 /******************************************************************************
  * FontHeaderTable::Builder class
  ******************************************************************************/
-FontHeaderTable::Builder::Builder(FontDataTableBuilderContainer* font_builder,
-                                  Header* header, WritableFontData* data) :
-    Table::TableBasedTableBuilder(font_builder, header, data) {
+FontHeaderTable::Builder::Builder(Header* header, WritableFontData* data)
+    : Table::TableBasedTableBuilder(header, data) {
 }
 
-FontHeaderTable::Builder::Builder(FontDataTableBuilderContainer* font_builder,
-                                  Header* header, ReadableFontData* data) :
-    Table::TableBasedTableBuilder(font_builder, header, data) {
+FontHeaderTable::Builder::Builder(Header* header, ReadableFontData* data)
+    : Table::TableBasedTableBuilder(header, data) {
 }
 
 FontHeaderTable::Builder::~Builder() {}
@@ -254,6 +252,14 @@ int32_t FontHeaderTable::Builder::GlyphDataFormat() {
 
 void FontHeaderTable::Builder::SetGlyphDataFormat(int32_t format) {
   InternalWriteData()->WriteShort(Offset::kGlyphDataFormat, format);
+}
+
+CALLER_ATTACH FontHeaderTable::Builder*
+    FontHeaderTable::Builder::CreateBuilder(Header* header,
+                                            WritableFontData* data) {
+  Ptr<FontHeaderTable::Builder> builder;
+  builder = new FontHeaderTable::Builder(header, data);
+  return builder.Detach();
 }
 
 }  // namespace sfntly

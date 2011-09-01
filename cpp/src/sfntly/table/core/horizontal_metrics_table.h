@@ -21,29 +21,28 @@
 
 namespace sfntly {
 
+// A Horizontal Metrics table - 'hmtx'.
 class HorizontalMetricsTable : public Table,
                                public RefCounted<HorizontalMetricsTable> {
  public:
+  // Builder for a Horizontal Metrics Table - 'hmtx'.
   class Builder : public Table::TableBasedTableBuilder,
                   public RefCounted<Builder> {
    public:
     // Constructor scope altered to public because C++ does not allow base
     // class to instantiate derived class with protected constructors.
-    Builder(FontDataTableBuilderContainer* font_builder,
-            Header* header,
-            WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* font_builder,
-            Header* header,
-            ReadableFontData* data);
+    Builder(Header* header, WritableFontData* data);
+    Builder(Header* header, ReadableFontData* data);
     virtual ~Builder();
 
     virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
+    static CALLER_ATTACH Builder* CreateBuilder(Header* header,
+                                                WritableFontData* data);
+
     void SetNumberOfHMetrics(int32_t num_hmetrics);
     void SetNumGlyphs(int32_t num_glyphs);
 
    private:
-    void Init();
-
     int32_t num_hmetrics_;
     int32_t num_glyphs_;
   };
@@ -72,7 +71,6 @@ class HorizontalMetricsTable : public Table,
     };
   };
 
-  HorizontalMetricsTable(Header* header, ReadableFontData* data);
   HorizontalMetricsTable(Header* header,
                          ReadableFontData* data,
                          int32_t num_hmetrics,

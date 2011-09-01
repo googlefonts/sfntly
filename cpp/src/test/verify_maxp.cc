@@ -42,13 +42,12 @@ static bool VerifyMAXP(Table* table) {
     return false;
   }
 
-  EXPECT_EQ(maxp->Version(), SFNTVERSION_1);
+  EXPECT_EQ(maxp->TableVersion(), SFNTVERSION_1);
   EXPECT_EQ(maxp->NumGlyphs(), MAXP_NUM_GLYPHS);
   EXPECT_EQ(maxp->MaxPoints(), MAXP_MAX_POINTS);
   EXPECT_EQ(maxp->MaxContours(), MAXP_MAX_CONTOURS);
   EXPECT_EQ(maxp->MaxCompositePoints(), MAXP_MAX_COMPOSITE_POINTS);
-  // TODO(arthurhsu): maxCompositeContours observed in Microsoft TTF report.
-  //                  Check with stuartg and see if this is a miss.
+  EXPECT_EQ(maxp->MaxCompositeContours(), MAXP_MAX_COMPOSITE_CONTOURS);
   EXPECT_EQ(maxp->MaxZones(), MAXP_MAX_ZONES);
   EXPECT_EQ(maxp->MaxTwilightPoints(), MAXP_MAX_TWILIGHT_POINTS);
   EXPECT_EQ(maxp->MaxStorage(), MAXP_MAX_STORAGE);

@@ -56,6 +56,7 @@ struct WidthClass {
   };
 };
 
+// Flags to indicate the embedding licensing rights for a font.
 struct EmbeddingFlags {
   enum {
     kReserved0 = 1 << 0,
@@ -79,8 +80,8 @@ struct EmbeddingFlags {
 
 struct UnicodeRange {
   enum {
-    // This enum relies on the ordering of the data matching the ordinal numbers
-    // of the properties.
+    // Do NOT reorder. This enum relies on the ordering of the data matching the
+    // ordinal numbers of the properties.
     kBasicLatin,
     kLatin1Supplement,
     kLatinExtendedA,
@@ -213,6 +214,7 @@ struct UnicodeRange {
   int32_t range(int32_t bit);
   // UNIMPLEMENTED: EnumSet<UnicodeRange> asSet(long range1, long range2,
   //                                            long range3, long range4)
+  //                long[] asArray(EnumSet<UnicodeRange> rangeSet)
 };
 
 struct FsSelection {
@@ -228,6 +230,9 @@ struct FsSelection {
     kWWS = 1 << 8,
     kOBLIQUE = 1 << 9
   };
+  // UNIMPLEMENTED: EnumSet<FsSelection> asSet(long range1, long range2,
+  //                                           long range3, long range4)
+  //                long[] asArray(EnumSet<FsSelection> rangeSet)
 };
 
 // C++ port only: C++ does not support 64-bit enums until C++0x.  For better
@@ -297,22 +302,113 @@ struct CodePageRange {
   static const int64_t kArabic_708;
   static const int64_t kLatin1_850;
   static const int64_t kUS_437;
+
+  // UNIMPLEMENTED: EnumSet<CodePageRange> asSet(long range1, long range2,
+  //                                             long range3, long range4)
+  //                long[] asArray(EnumSet<CodePageRange> rangeSet)
 };
 
+// An OS/2 table - 'OS/2'.
 class OS2Table : public Table, public RefCounted<OS2Table> {
  public:
+  // A builder for the OS/2 table = 'OS/2'.
   class Builder : public Table::TableBasedTableBuilder,
                   public RefCounted<Builder> {
    public:
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            WritableFontData* data);
+    Builder(Header* header, WritableFontData* data);
+    Builder(Header* header, ReadableFontData* data);
     virtual ~Builder();
     virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
+
+    static CALLER_ATTACH Builder* CreateBuilder(Header* header,
+                                                WritableFontData* data);
+
+    int32_t TableVersion();
+    void SetTableVersion(int32_t version);
+    int32_t XAvgCharWidth();
+    void SetXAvgCharWidth(int32_t width);
+    int32_t UsWeightClass();
+    void SetUsWeightClass(int32_t weight);
+    int32_t UsWidthClass();
+    void SetUsWidthClass(int32_t width);
+    // UNIMPLEMENTED: EnumSet<EmbeddingFlags> fsType()
+    //                void setFsType(EnumSeT<EmbeddingFlags> flagSet)
+    int32_t FsType();
+    void SetFsType(int32_t fs_type);
+    int32_t YSubscriptXSize();
+    void SetYSubscriptXSize(int32_t size);
+    int32_t YSubscriptYSize();
+    void SetYSubscriptYSize(int32_t size);
+    int32_t YSubscriptXOffset();
+    void SetYSubscriptXOffset(int32_t offset);
+    int32_t YSubscriptYOffset();
+    void SetYSubscriptYOffset(int32_t offset);
+    int32_t YSuperscriptXSize();
+    void SetYSuperscriptXSize(int32_t size);
+    int32_t YSuperscriptYSize();
+    void SetYSuperscriptYSize(int32_t size);
+    int32_t YSuperscriptXOffset();
+    void SetYSuperscriptXOffset(int32_t offset);
+    int32_t YSuperscriptYOffset();
+    void SetYSuperscriptYOffset(int32_t offset);
+    int32_t YStrikeoutSize();
+    void SetYStrikeoutSize(int32_t size);
+    int32_t YStrikeoutPosition();
+    void SetYStrikeoutPosition(int32_t position);
+    int32_t SFamilyClass();
+    void SetSFamilyClass(int32_t family);
+    void Panose(ByteVector* value);
+    void SetPanose(ByteVector* panose);
+    int64_t UlUnicodeRange1();
+    void SetUlUnicodeRange1(int64_t range);
+    int64_t UlUnicodeRange2();
+    void SetUlUnicodeRange2(int64_t range);
+    int64_t UlUnicodeRange3();
+    void SetUlUnicodeRange3(int64_t range);
+    int64_t UlUnicodeRange4();
+    void SetUlUnicodeRange4(int64_t range);
+    // UNIMPLEMENTED: EnumSet<UnicodeRange> UlUnicodeRange()
+    //                setUlUnicodeRange(EnumSet<UnicodeRange> rangeSet)
+    void AchVendId(ByteVector* b);
+    void SetAchVendId(ByteVector* b);
+    // UNIMPLEMENTED: public EnumSet<FsSelection> fsSelection()
+    int32_t FsSelection();
+    void SetFsSelection(int32_t fs_selection);
+    int32_t UsFirstCharIndex();
+    void SetUsFirstCharIndex(int32_t first_index);
+    int32_t UsLastCharIndex();
+    void SetUsLastCharIndex(int32_t last_index);
+    int32_t STypoAscender();
+    void SetSTypoAscender(int32_t ascender);
+    int32_t STypoDescender();
+    void SetSTypoDescender(int32_t descender);
+    int32_t STypoLineGap();
+    void SetSTypoLineGap(int32_t line_gap);
+    int32_t UsWinAscent();
+    void SetUsWinAscent(int32_t ascent);
+    int32_t UsWinDescent();
+    void SetUsWinDescent(int32_t descent);
+    int64_t UlCodePageRange1();
+    void SetUlCodePageRange1(int64_t range);
+    int64_t UlCodePageRange2();
+    void SetUlCodePageRange2(int64_t range);
+    // UNIMPLEMENTED: EnumSet<CodePageRange> ulCodePageRange()
+    //                void setUlCodePageRange(EnumSet<CodePageRange> rangeSet)
+    int32_t SxHeight();
+    void SetSxHeight(int32_t height);
+    int32_t SCapHeight();
+    void SetSCapHeight(int32_t height);
+    int32_t UsDefaultChar();
+    void SetUsDefaultChar(int32_t default_char);
+    int32_t UsBreakChar();
+    void SetUsBreakChar(int32_t break_char);
+    int32_t UsMaxContext();
+    void SetUsMaxContext(int32_t max_context);
   };
 
   ~OS2Table();
 
-  int32_t Version();
+  int32_t TableVersion();
   int32_t XAvgCharWidth();
   int32_t UsWeightClass();
   int32_t UsWidthClass();
@@ -348,7 +444,6 @@ class OS2Table : public Table, public RefCounted<OS2Table> {
   int64_t UlCodePageRange1();
   int64_t UlCodePageRange2();
   // UNIMPLEMENTED: public EnumSet<CodePageRange> ulCodePageRange()
-  int64_t UlCodePageRange();
   int32_t SxHeight();
   int32_t SCapHeight();
   int32_t UsDefaultChar();
@@ -375,11 +470,13 @@ class OS2Table : public Table, public RefCounted<OS2Table> {
       kYStrikeoutPosition = 28,
       kSFamilyClass = 30,
       kPanose = 32,
+      kPanoseLength = 10,  // Length of panose bytes.
       kUlUnicodeRange1 = 42,
       kUlUnicodeRange2 = 46,
       kUlUnicodeRange3 = 50,
       kUlUnicodeRange4 = 54,
       kAchVendId = 58,
+      kAchVendIdLength = 4,  // Length of ach vend id bytes.
       kFsSelection = 62,
       kUsFirstCharIndex = 64,
       kUsLastCharIndex = 66,

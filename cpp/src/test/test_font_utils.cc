@@ -49,17 +49,15 @@ void LoadFont(const char* font_path, FontFactory* factory, FontArray* fonts) {
   is.Close();
 }
 
-void LoadFontUsingByteArray(const char* font_path,
+void LoadFontUsingByteVector(const char* font_path,
                             bool fingerprint,
                             FontArray* fonts) {
-  ByteArrayPtr b = new GrowableMemoryByteArray;
   ByteVector bv;
   LoadFile(font_path, &bv);
-  b->Put(0, &bv);
   FontFactoryPtr factory;
   factory.Attach(FontFactory::GetInstance());
   factory->FingerprintFont(fingerprint);
-  factory->LoadFonts(b, fonts);
+  factory->LoadFonts(&bv, fonts);
 }
 
 void LoadFile(const char* input_file_path, ByteVector* input_buffer) {

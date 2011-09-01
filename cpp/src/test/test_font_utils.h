@@ -27,7 +27,7 @@ void BuilderForFontFile(const char* font_path, FontFactory* factory,
                         FontBuilderArray* builders);
 void SerializeFont(const char* font_path, FontFactory* factory, Font* font);
 void LoadFont(const char* font_path, FontFactory* factory, FontArray* fonts);
-void LoadFontUsingByteArray(const char* font_path,
+void LoadFontUsingByteVector(const char* font_path,
                             bool fingerprint,
                             FontArray* fonts);
 

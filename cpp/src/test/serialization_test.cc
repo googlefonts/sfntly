@@ -17,7 +17,8 @@
 #include "gtest/gtest.h"
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
-#include "sfntly/data/memory_byte_array.h"
+#include "sfntly/port/memory_input_stream.h"
+#include "sfntly/port/memory_output_stream.h"
 #include "test/test_data.h"
 #include "test/test_font_utils.h"
 #include "test/serialization_test.h"
@@ -43,20 +44,21 @@ bool TestSerialization() {
 
   factory3.Attach(FontFactory::GetInstance());
   FontArray new_font_array;
-  ByteArrayPtr ba = new MemoryByteArray(os.Get(), os.Size());
-  factory3->LoadFonts(ba, &new_font_array);
+  MemoryInputStream is;
+  is.Attach(os.Get(), os.Size());
+  factory3->LoadFonts(&is, &new_font_array);
   FontPtr serialized = new_font_array[0];
 
   // Check number of tables
   EXPECT_EQ(original->num_tables(), serialized->num_tables());
 
   // Check if same set of tables
-  TableMap* original_tables = original->Tables();
-  TableMap* serialized_tables = serialized->Tables();
+  const TableMap* original_tables = original->GetTableMap();
+  const TableMap* serialized_tables = serialized->GetTableMap();
   EXPECT_EQ(original_tables->size(), serialized_tables->size());
-  TableMap::iterator not_found = serialized_tables->end();
-  for (TableMap::iterator b = original_tables->begin(),
-                          e = original_tables->end(); b != e; ++b) {
+  TableMap::const_iterator not_found = serialized_tables->end();
+  for (TableMap::const_iterator b = original_tables->begin(),
+                                e = original_tables->end(); b != e; ++b) {
     EXPECT_TRUE((serialized_tables->find(b->first) != not_found));
   }
 
@@ -67,7 +69,7 @@ bool TestSerialization() {
       TablePtr serialized_table = serialized->GetTable(TTF_KNOWN_TAGS[i]);
     EXPECT_EQ(original_table->CalculatedChecksum(),
               serialized_table->CalculatedChecksum());
-    EXPECT_EQ(original_table->Length(), serialized_table->Length());
+    EXPECT_EQ(original_table->DataLength(), serialized_table->DataLength());
 
     if (TTF_KNOWN_TAGS[i] == Tag::hhea) {
       EXPECT_TRUE(VerifyHHEA(original_table, serialized_table));

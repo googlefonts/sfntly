@@ -19,8 +19,6 @@
 #include <string.h>
 
 #include "sfntly/tag.h"
-#include "sfntly/data/memory_byte_array.h"
-#include "sfntly/data/growable_memory_byte_array.h"
 
 namespace sfntly {
 
@@ -54,13 +52,15 @@ void FontFactory::LoadFonts(InputStream* is, FontArray* output) {
   }
 }
 
-void FontFactory::LoadFonts(ByteArray* ba, FontArray* output) {
-  if (IsCollection(ba)) {
-    LoadCollection(ba, output);
+void FontFactory::LoadFonts(ByteVector* b, FontArray* output) {
+  WritableFontDataPtr wfd;
+  wfd.Attach(WritableFontData::CreateWritableFontData(b));
+  if (IsCollection(wfd)) {
+    LoadCollection(wfd, output);
     return;
   }
   FontPtr font;
-  font.Attach(LoadSingleOTF(ba));
+  font.Attach(LoadSingleOTF(wfd));
   if (font) {
     output->push_back(font);
   }
@@ -80,57 +80,19 @@ void FontFactory::LoadFontsForBuilding(InputStream* is,
   }
 }
 
-void FontFactory::LoadFontsForBuilding(ByteArray* ba,
+void FontFactory::LoadFontsForBuilding(ByteVector* b,
                                        FontBuilderArray* output) {
-  if (IsCollection(ba)) {
-    LoadCollectionForBuilding(ba, output);
+  WritableFontDataPtr wfd;
+  wfd.Attach(WritableFontData::CreateWritableFontData(b));
+  if (IsCollection(wfd)) {
+    LoadCollectionForBuilding(wfd, output);
     return;
   }
   FontBuilderPtr builder;
-  builder.Attach(LoadSingleOTFForBuilding(ba, 0));
+  builder.Attach(LoadSingleOTFForBuilding(wfd, 0));
   if (builder) {
     output->push_back(builder);
   }
-}
-
-CALLER_ATTACH WritableFontData* FontFactory::GetNewData(int32_t capacity) {
-  // UNIMPLMENTED: if (capacity > 0) { this.GetNewFixedData(capacity); }
-  // Seems a no-op.
-  return GetNewGrowableData(capacity);
-}
-
-CALLER_ATTACH WritableFontData* FontFactory::GetNewFixedData(int32_t capacity) {
-  ByteArrayPtr buffer;
-  buffer.Attach(GetNewArray(capacity));
-  WritableFontDataPtr new_fixed_data = new WritableFontData(buffer);
-  return new_fixed_data.Detach();
-}
-
-CALLER_ATTACH WritableFontData* FontFactory::GetNewGrowableData(
-    int32_t capacity) {
-  ByteArrayPtr buffer;
-  buffer.Attach(GetNewGrowableArray(capacity));
-  WritableFontDataPtr new_growable_data = new WritableFontData(buffer);
-  return new_growable_data.Detach();
-}
-
-CALLER_ATTACH WritableFontData* FontFactory::GetNewGrowableData(
-    ReadableFontData* src_data) {
-  WritableFontDataPtr data;
-  data.Attach(GetNewGrowableData(src_data->Length()));
-  src_data->CopyTo(data);
-  return data.Detach();
-}
-
-CALLER_ATTACH ByteArray* FontFactory::GetNewArray(int32_t length) {
-  ByteArrayPtr new_fixed_array = new MemoryByteArray(length);
-  return new_fixed_array.Detach();
-}
-
-CALLER_ATTACH ByteArray* FontFactory::GetNewGrowableArray(int32_t length) {
-  UNREFERENCED_PARAMETER(length);
-  ByteArrayPtr new_growable_array = new GrowableMemoryByteArray();
-  return new_growable_array.Detach();
 }
 
 void FontFactory::SerializeFont(Font* font, OutputStream* os) {
@@ -152,9 +114,9 @@ CALLER_ATTACH Font* FontFactory::LoadSingleOTF(InputStream* is) {
   return builder->Build();
 }
 
-CALLER_ATTACH Font* FontFactory::LoadSingleOTF(ByteArray* ba) {
+CALLER_ATTACH Font* FontFactory::LoadSingleOTF(WritableFontData* wfd) {
   FontBuilderPtr builder;
-  builder.Attach(LoadSingleOTFForBuilding(ba, 0));
+  builder.Attach(LoadSingleOTFForBuilding(wfd, 0));
   return builder->Build();
 }
 
@@ -170,21 +132,21 @@ void FontFactory::LoadCollection(InputStream* is, FontArray* output) {
   }
 }
 
-void FontFactory::LoadCollection(ByteArray* ba, FontArray* output) {
+void FontFactory::LoadCollection(WritableFontData* wfd, FontArray* output) {
   FontBuilderArray builders;
-  LoadCollectionForBuilding(ba, &builders);
-  output->reserve(ba->Size());
-  for (FontBuilderArray::iterator
-           builder = builders.begin(), builders_end = builders.end();
-       builder != builders_end; ++builder) {
+  LoadCollectionForBuilding(wfd, &builders);
+  output->reserve(builders.size());
+  for (FontBuilderArray::iterator builder = builders.begin(),
+                                  builders_end = builders.end();
+                                  builder != builders_end; ++builder) {
     FontPtr font;
     font.Attach((*builder)->Build());
     output->push_back(font);
   }
 }
 
-CALLER_ATTACH Font::Builder*
-    FontFactory::LoadSingleOTFForBuilding(InputStream* is) {
+CALLER_ATTACH
+Font::Builder* FontFactory::LoadSingleOTFForBuilding(InputStream* is) {
   // UNIMPLEMENTED: SHA-1 hash checking via Java DigestStream
   Font::Builder* builder = Font::Builder::GetOTFBuilder(this, is);
   // UNIMPLEMENTED: setDigest
@@ -192,38 +154,41 @@ CALLER_ATTACH Font::Builder*
 }
 
 CALLER_ATTACH Font::Builder*
-    FontFactory::LoadSingleOTFForBuilding(ByteArray* ba,
+    FontFactory::LoadSingleOTFForBuilding(WritableFontData* wfd,
                                           int32_t offset_to_offset_table) {
   // UNIMPLEMENTED: SHA-1 hash checking via Java DigestStream
   Font::Builder* builder =
-      Font::Builder::GetOTFBuilder(this, ba, offset_to_offset_table);
+      Font::Builder::GetOTFBuilder(this, wfd, offset_to_offset_table);
   // UNIMPLEMENTED: setDigest
   return builder;
 }
 
 void FontFactory::LoadCollectionForBuilding(InputStream* is,
                                             FontBuilderArray* builders) {
-  ByteArrayPtr ba = new GrowableMemoryByteArray();
-  ba->CopyFrom(is);
-  LoadCollectionForBuilding(ba, builders);
+  assert(is);
+  assert(builders);
+  WritableFontDataPtr wfd;
+  wfd.Attach(WritableFontData::CreateWritableFontData(is->Available()));
+  wfd->CopyFrom(is);
+  LoadCollectionForBuilding(wfd, builders);
 }
 
-void FontFactory::LoadCollectionForBuilding(ByteArray* ba,
+void FontFactory::LoadCollectionForBuilding(WritableFontData* wfd,
                                             FontBuilderArray* builders) {
-  ReadableFontDataPtr rfd = new ReadableFontData(ba);
-  int32_t ttc_tag = rfd->ReadULongAsInt(Offset::kTTCTag);
+  int32_t ttc_tag = wfd->ReadULongAsInt(Offset::kTTCTag);
   UNREFERENCED_PARAMETER(ttc_tag);
-  int32_t version = rfd->ReadFixed(Offset::kVersion);
+  int32_t version = wfd->ReadFixed(Offset::kVersion);
   UNREFERENCED_PARAMETER(version);
-  int32_t num_fonts = rfd->ReadULongAsInt(Offset::kNumFonts);
+  int32_t num_fonts = wfd->ReadULongAsInt(Offset::kNumFonts);
 
   builders->reserve(num_fonts);
   int32_t offset_table_offset = Offset::kOffsetTable;
-  for (int32_t font_number = 0; font_number < num_fonts;
-       font_number++, offset_table_offset += DataSize::kULONG) {
-    int32_t offset = rfd->ReadULongAsInt(offset_table_offset);
+  for (int32_t font_number = 0;
+               font_number < num_fonts;
+               font_number++, offset_table_offset += DataSize::kULONG) {
+    int32_t offset = wfd->ReadULongAsInt(offset_table_offset);
     FontBuilderPtr builder;
-    builder.Attach(LoadSingleOTFForBuilding(ba, offset));
+    builder.Attach(LoadSingleOTFForBuilding(wfd, offset));
     builders->push_back(builder);
   }
 }
@@ -235,9 +200,11 @@ bool FontFactory::IsCollection(PushbackInputStream* pbis) {
   return Tag::ttcf == GenerateTag(tag[0], tag[1], tag[2], tag[3]);
 }
 
-bool FontFactory::IsCollection(ByteArray* ba) {
+bool FontFactory::IsCollection(ReadableFontData* rfd) {
+  ByteVector tag(4);
+  rfd->ReadBytes(0, &(tag[0]), 0, tag.size());
   return Tag::ttcf ==
-         GenerateTag(ba->Get(0), ba->Get(1), ba->Get(2), ba->Get(3));
+         GenerateTag(tag[0], tag[1], tag[2], tag[3]);
 }
 
 FontFactory::FontFactory()

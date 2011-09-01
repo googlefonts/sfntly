@@ -39,10 +39,6 @@ int64_t Table::CalculatedChecksum() {
   return data_->Checksum();
 }
 
-WritableFontData* Table::GetNewData(int32_t size) {
-  return font_->GetNewData(size);
-}
-
 void Table::SetFont(Font* font) {
   font_ = font;
 }
@@ -58,8 +54,9 @@ Table::Table(Header* header, ReadableFontData* data)
 Table::Header::Header(int32_t tag)
     : tag_(tag),
       offset_(0),
-      length_(0),
       offset_valid_(false),
+      length_(0),
+      length_valid_(false),
       checksum_(0),
       checksum_valid_(false) {
 }
@@ -67,8 +64,9 @@ Table::Header::Header(int32_t tag)
 Table::Header::Header(int32_t tag, int32_t length)
     : tag_(tag),
       offset_(0),
-      length_(length),
       offset_valid_(false),
+      length_(length),
+      length_valid_(true),
       checksum_(0),
       checksum_valid_(false) {
 }
@@ -79,17 +77,23 @@ Table::Header::Header(int32_t tag,
                       int32_t length)
     : tag_(tag),
       offset_(offset),
-      length_(length),
       offset_valid_(true),
+      length_(length),
+      length_valid_(true),
       checksum_(checksum),
       checksum_valid_(true) {
 }
 
 Table::Header::~Header() {}
 
-bool TableHeaderComparator::operator() (const TableHeaderPtr lhs,
-                                        const TableHeaderPtr rhs) {
+bool HeaderComparatorByOffset::operator() (const TableHeaderPtr lhs,
+                                           const TableHeaderPtr rhs) {
   return lhs->offset_ > rhs->offset_;
+}
+
+bool HeaderComparatorByTag::operator() (const TableHeaderPtr lhs,
+                                        const TableHeaderPtr rhs) {
+  return lhs->tag_ > rhs->tag_;
 }
 
 /******************************************************************************
@@ -102,91 +106,77 @@ Table::Builder::~Builder() {
 void Table::Builder::NotifyPostTableBuild(FontDataTable* table) {
   if (model_changed() || data_changed()) {
     Table* derived_table = down_cast<Table*>(table);
-    header_ = new Header(header()->tag(),
-                         derived_table->ReadFontData()->Length());
+    derived_table->header_ = new Header(header()->tag(),
+                                        derived_table->DataLength());
   }
 }
 
-WritableFontData* Table::Builder::GetNewData(int32_t size) {
-  UNREFERENCED_PARAMETER(size);
-  return InternalWriteData();
-}
-
-CALLER_ATTACH Table::Builder*
-    Table::Builder::GetBuilder(FontDataTableBuilderContainer* font_builder,
-                               Header* header,
-                               WritableFontData* table_data) {
+CALLER_ATTACH
+Table::Builder* Table::Builder::GetBuilder(Header* header,
+                                           WritableFontData* table_data) {
   int32_t tag = header->tag();
-  TableBuilderPtr builder;
   Table::Builder* builder_raw = NULL;
 
   // Note: Tables are commented out when they are not used/ported.
   // TODO(arthurhsu): IMPLEMENT: finish tables that are not ported.
   /*if (tag == Tag::cmap) {
     builder_raw = static_cast<Table::Builder*>(
-        new CMapTable::Builder(font_builder, header, table_data));
+        CMapTable::CreateBuilder(font_builder, header, table_data));
   } else*/ if (tag == Tag::head) {
     builder_raw = static_cast<Table::Builder*>(
-        new FontHeaderTable::Builder(font_builder, header, table_data));
+        FontHeaderTable::Builder::CreateBuilder(header, table_data));
   } else if (tag == Tag::hhea) {
     builder_raw = static_cast<Table::Builder*>(
-        new HorizontalHeaderTable::Builder(font_builder, header, table_data));
+        HorizontalHeaderTable::Builder::CreateBuilder(header, table_data));
   } else if (tag == Tag::hmtx) {
     builder_raw = static_cast<Table::Builder*>(
-        new HorizontalMetricsTable::Builder(font_builder, header, table_data));
+        HorizontalMetricsTable::Builder::CreateBuilder(header, table_data));
   } else if (tag == Tag::maxp) {
     builder_raw = static_cast<Table::Builder*>(
-        new MaximumProfileTable::Builder(font_builder, header, table_data));
+        MaximumProfileTable::Builder::CreateBuilder(header, table_data));
   } else if (tag == Tag::name) {
     builder_raw = static_cast<Table::Builder*>(
-        new NameTable::Builder(font_builder, header, table_data));
+        NameTable::Builder::CreateBuilder(header, table_data));
   } else if (tag == Tag::OS_2) {
     builder_raw = static_cast<Table::Builder*>(
-        new OS2Table::Builder(font_builder, header, table_data));
+        OS2Table::Builder::CreateBuilder(header, table_data));
   }/* else if (tag == Tag::PostScript) {
     builder_raw = static_cast<Table::Builder*>(
-        new PostScriptTable::Builder(font_builder, header, table_data));
+        PostScriptTable::Builder::CreateBuilder(header, table_data));
   } else if (tag == Tag::cvt) {
     builder_raw = static_cast<Table::Builder*>(
-        new ControlValueTable::Builder(font_builder, header, table_data));
+        ControlValueTable::Builder::CreateBuilder(header, table_data));
   }*/ else if (tag == Tag::glyf) {
     builder_raw = static_cast<Table::Builder*>(
-        new GlyphTable::Builder(font_builder, header, table_data));
+        GlyphTable::Builder::CreateBuilder(header, table_data));
   } else if (tag == Tag::loca) {
     builder_raw = static_cast<Table::Builder*>(
-        new LocaTable::Builder(font_builder, header, table_data));
+        LocaTable::Builder::CreateBuilder(header, table_data));
   }/* else if (tag == Tag::prep) {
     builder_raw = static_cast<Table::Builder*>(
-        new ControlProgramTable::Builder(font_builder, header, table_data));
+        ControlProgramTable::Builder::CreateBuilder(header, table_data));
   }*/ else if (tag == Tag::bhed) {
     builder_raw = static_cast<Table::Builder*>(
-        new FontHeaderTable::Builder(font_builder, header, table_data));
+        FontHeaderTable::Builder::CreateBuilder(header, table_data));
   } else {
     builder_raw = static_cast<Table::Builder*>(
-        new Table::GenericTableBuilder(font_builder, header, table_data));
+        Table::GenericTableBuilder::CreateBuilder(header, table_data));
   }
 
-  builder = builder_raw;
-  return builder.Detach();
+  return builder_raw;
 }
 
-Table::Builder::Builder(FontDataTableBuilderContainer* font_builder,
-                        Header* header,
-                        WritableFontData* data)
-    : FontDataTable::Builder(font_builder, data) {
+Table::Builder::Builder(Header* header, WritableFontData* data)
+    : FontDataTable::Builder(data) {
   header_ = header;
 }
 
-Table::Builder::Builder(FontDataTableBuilderContainer* font_builder,
-                        Header* header,
-                        ReadableFontData* data)
-    : FontDataTable::Builder(font_builder, data) {
+Table::Builder::Builder(Header* header, ReadableFontData* data)
+    : FontDataTable::Builder(data) {
   header_ = header;
 }
 
-Table::Builder::Builder(FontDataTableBuilderContainer* font_builder,
-                        Header* header)
-    : FontDataTable::Builder(font_builder) {
+Table::Builder::Builder(Header* header) {
   header_ = header;
 }
 
@@ -212,24 +202,23 @@ void Table::TableBasedTableBuilder::SubDataSet() {
   table_ = NULL;
 }
 
-Table::TableBasedTableBuilder::TableBasedTableBuilder(
-    FontDataTableBuilderContainer* font_builder,
-    Header* header,
-    WritableFontData* data)
-    : Builder(font_builder, header, data) {
+CALLER_ATTACH FontDataTable* Table::TableBasedTableBuilder::Build() {
+  FontDataTablePtr table = static_cast<FontDataTable*>(GetTable());
+  return table.Detach();
 }
 
-Table::TableBasedTableBuilder::TableBasedTableBuilder(
-    FontDataTableBuilderContainer* font_builder,
-    Header* header,
-    ReadableFontData* data)
-    : Builder(font_builder, header, data) {
+Table::TableBasedTableBuilder::TableBasedTableBuilder(Header* header,
+                                                      WritableFontData* data)
+    : Builder(header, data) {
 }
 
-Table::TableBasedTableBuilder::TableBasedTableBuilder(
-    FontDataTableBuilderContainer* font_builder,
-    Header* header)
-    : Builder(font_builder, header) {
+Table::TableBasedTableBuilder::TableBasedTableBuilder(Header* header,
+                                                      ReadableFontData* data)
+    : Builder(header, data) {
+}
+
+Table::TableBasedTableBuilder::TableBasedTableBuilder(Header* header)
+    : Builder(header) {
 }
 
 Table* Table::TableBasedTableBuilder::GetTable() {
@@ -242,11 +231,9 @@ Table* Table::TableBasedTableBuilder::GetTable() {
 /******************************************************************************
  * Table::GenericTableBuilder class
  ******************************************************************************/
-Table::GenericTableBuilder::GenericTableBuilder(
-    FontDataTableBuilderContainer* font_builder,
-    Header* header,
-    WritableFontData* data)
-    : TableBasedTableBuilder(font_builder, header, data) {
+Table::GenericTableBuilder::GenericTableBuilder(Header* header,
+                                                WritableFontData* data)
+    : TableBasedTableBuilder(header, data) {
 }
 
 CALLER_ATTACH FontDataTable*
@@ -257,23 +244,12 @@ CALLER_ATTACH FontDataTable*
   return table.Detach();
 }
 
-/******************************************************************************
- * Table::ArrayElementTableBuilder class
- ******************************************************************************/
-Table::ArrayElementTableBuilder::~ArrayElementTableBuilder() {}
-
-Table::ArrayElementTableBuilder::ArrayElementTableBuilder(
-    FontDataTableBuilderContainer* font_builder,
-    Header* header,
-    WritableFontData* data)
-    : Builder(font_builder, header, data) {
-}
-
-Table::ArrayElementTableBuilder::ArrayElementTableBuilder(
-    FontDataTableBuilderContainer* font_builder,
-    Header* header,
-    ReadableFontData* data)
-    : Builder(font_builder, header, data) {
+CALLER_ATTACH Table::GenericTableBuilder*
+    Table::GenericTableBuilder::CreateBuilder(Header* header,
+                                              WritableFontData* data) {
+  Ptr<Table::GenericTableBuilder> builder =
+      new Table::GenericTableBuilder(header, data);
+  return builder.Detach();
 }
 
 }  // namespace sfntly

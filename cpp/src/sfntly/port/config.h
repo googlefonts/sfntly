@@ -19,9 +19,9 @@
 
 #if !defined(SFNTLY_BIG_ENDIAN) && !defined(SFNTLY_LITTLE_ENDIAN)
   #if defined (__ppc__) || defined (__ppc64__)
-    #define SFNTLY_CPP_BIG_ENDIAN
+    #define SFNTLY_BIG_ENDIAN
   #else
-    #define SFNTLY_CPP_LITTLE_ENDIAN
+    #define SFNTLY_LITTLE_ENDIAN
   #endif
 #endif
 

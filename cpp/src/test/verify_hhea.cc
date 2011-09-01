@@ -37,7 +37,7 @@ static bool VerifyHHEA(Table* table) {
     return false;
   }
 
-  EXPECT_EQ(hhea->Version(), SFNTVERSION_1);
+  EXPECT_EQ(hhea->TableVersion(), SFNTVERSION_1);
   EXPECT_EQ(hhea->Ascender(), HHEA_ASCENDER);
   EXPECT_EQ(hhea->Descender(), HHEA_DESCENDER);
   EXPECT_EQ(hhea->AdvanceWidthMax(), HHEA_ADVANCE_WIDTH_MAX);

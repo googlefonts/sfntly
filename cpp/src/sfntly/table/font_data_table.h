@@ -18,11 +18,13 @@
 #define SFNTLY_CPP_SRC_SFNTLY_TABLE_FONT_DATA_TABLE_H_
 
 #include "sfntly/data/readable_font_data.h"
-#include "sfntly/font_data_table_builder_container.h"
+#include "sfntly/data/writable_font_data.h"
 #include "sfntly/port/refcount.h"
 
 namespace sfntly {
 
+// An abstract base for any table that contains a FontData. This is the root of
+// the table class hierarchy.
 class FontDataTable : virtual public RefCount {
  public:
   // Note: original version is abstract Builder<T extends FontDataTable>
@@ -45,10 +47,14 @@ class FontDataTable : virtual public RefCount {
 
     ReadableFontData* InternalReadData();
     WritableFontData* InternalWriteData();
-    CALLER_ATTACH WritableFontData* InternalNewData(int32_t size);
 
     bool data_changed() { return data_changed_; }
-    bool model_changed() { return model_changed_; }
+    bool model_changed() {
+      return current_model_changed() || contained_model_changed();
+    }
+    bool current_model_changed() { return model_changed_; }
+    bool contained_model_changed() { return contained_model_changed_; }
+
     bool set_model_changed() { return set_model_changed(true); }
     bool set_model_changed(bool changed) {
       bool old = model_changed_;
@@ -57,12 +63,10 @@ class FontDataTable : virtual public RefCount {
     }
 
    protected:
-    explicit Builder(FontDataTableBuilderContainer* container);
-    Builder(FontDataTableBuilderContainer* container, WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* container, ReadableFontData* data);
+    explicit Builder();
+    Builder(WritableFontData* data);
+    Builder(ReadableFontData* data);
     virtual ~Builder();
-
-    void Init(FontDataTableBuilderContainer* container);
 
     // subclass API
     virtual void NotifyPostTableBuild(FontDataTable* table);
@@ -77,10 +81,10 @@ class FontDataTable : virtual public RefCount {
     void InternalSetData(WritableFontData* data, bool data_changed);
     void InternalSetData(ReadableFontData* data, bool data_changed);
 
-    FontDataTableBuilderContainer* container_;  // avoid circular ref-counting
     WritableFontDataPtr w_data_;
     ReadableFontDataPtr r_data_;
     bool model_changed_;
+    bool contained_model_changed_;  // may expand to list of submodel states
     bool data_changed_;
   };
 
@@ -91,21 +95,15 @@ class FontDataTable : virtual public RefCount {
   ReadableFontData* ReadFontData();
 
   // Get the length of the data for this table in bytes. This is the full
-  // allocated length of the data and may or may not include any padding.
-  virtual int32_t Length();
-
-  // Get the number of bytes of padding used in the table. The padding bytes are
-  // used to align the table length to a 4 byte boundary.
-  virtual int32_t Padding();
-
-  // Return the number of bytes of non-padded data in the table. If the padding
-  // is unknown or unknowable then the total number of bytes of data in the
-  // tables is returned.
+  // allocated length of the data underlying the table and may or may not
+  // include any padding.
   virtual int32_t DataLength();
 
   virtual int32_t Serialize(OutputStream* os);
 
  protected:
+  virtual int32_t Serialize(WritableFontData* data);
+
   // TODO(arthurhsu): style guide violation: protected member, need refactoring
   ReadableFontDataPtr data_;
 };

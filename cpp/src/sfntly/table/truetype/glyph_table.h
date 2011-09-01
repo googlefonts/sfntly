@@ -21,6 +21,7 @@
 
 #include "sfntly/table/table.h"
 #include "sfntly/table/subtable.h"
+#include "sfntly/table/subtable_container_table.h"
 
 namespace sfntly {
 
@@ -31,10 +32,8 @@ struct GlyphType {
   };
 };
 
-// Note: due to the complexity of this class, the order of declaration is
-//       different from its Java counter part.  GlyphTable::Glyph is defined
-//       before GlyphTable::Builder to avoid compilation errors.
-class GlyphTable : public Table, public RefCounted<GlyphTable> {
+class GlyphTable : public SubTableContainerTable,
+                   public RefCounted<GlyphTable> {
  public:
   class Builder;
   class Glyph : public SubTable {
@@ -54,16 +53,14 @@ class GlyphTable : public Table, public RefCounted<GlyphTable> {
       // Incoming table_builder is GlyphTable::Builder*.
       // Note: constructor refactored in C++ to avoid heavy lifting.
       //       caller need to do data->Slice(offset, length) beforehand.
-      Builder(FontDataTableBuilderContainer* table_builder,
-              WritableFontData* data);
-      Builder(FontDataTableBuilderContainer* table_builder,
-              ReadableFontData* data);
+      Builder(WritableFontData* data);
+      Builder(ReadableFontData* data);
 
       static CALLER_ATTACH Builder*
-          GetBuilder(FontDataTableBuilderContainer* table_builder,
+          GetBuilder(GlyphTable::Builder* table_builder,
                      ReadableFontData* data);
       static CALLER_ATTACH Builder*
-          GetBuilder(FontDataTableBuilderContainer* table_builder,
+          GetBuilder(GlyphTable::Builder* table_builder,
                      ReadableFontData* data,
                      int32_t offset,
                      int32_t length);
@@ -78,7 +75,8 @@ class GlyphTable : public Table, public RefCounted<GlyphTable> {
     };
 
     virtual ~Glyph();
-    static CALLER_ATTACH Glyph* GetGlyph(ReadableFontData* data,
+    static CALLER_ATTACH Glyph* GetGlyph(GlyphTable* table,
+                                         ReadableFontData* data,
                                          int32_t offset,
                                          int32_t length);
     virtual int32_t GlyphType();
@@ -87,7 +85,6 @@ class GlyphTable : public Table, public RefCounted<GlyphTable> {
     virtual int32_t XMax();
     virtual int32_t YMin();
     virtual int32_t YMax();
-    virtual int32_t Padding();  // override FontDataTable::Padding()
 
     virtual int32_t InstructionSize() = 0;
     virtual ReadableFontData* Instructions() = 0;
@@ -96,9 +93,6 @@ class GlyphTable : public Table, public RefCounted<GlyphTable> {
     // Note: constructor refactored in C++ to avoid heavy lifting.
     //       caller need to do data->Slice(offset, length) beforehand.
     Glyph(ReadableFontData* data, int32_t glyph_type);
-
-    // TODO(arthurhsu): violating C++ style guide, need refactoring.
-    int32_t padding_;
 
    private:
     static int32_t GlyphType(ReadableFontData* data,
@@ -111,17 +105,18 @@ class GlyphTable : public Table, public RefCounted<GlyphTable> {
   typedef Ptr<GlyphTable::Glyph::Builder> GlyphBuilderPtr;
   typedef std::vector<GlyphBuilderPtr> GlyphBuilderList;
 
-  class Builder : public Table::ArrayElementTableBuilder,
+  class Builder : public SubTableContainerTable::Builder,
                   public RefCounted<GlyphTable::Builder> {
    public:
     // Note: Constructor scope altered to public for base class to instantiate.
-    Builder(FontDataTableBuilderContainer* font_builder,
-            Header* header,
-            WritableFontData* data);
+    Builder(Header* header, ReadableFontData* data);
     virtual ~Builder();
 
     virtual void SetLoca(const IntegerList& loca);
     virtual void GenerateLocaList(IntegerList* locas);
+
+    static CALLER_ATTACH Builder* CreateBuilder(Header* header,
+                                                WritableFontData* data);
 
     // Gets the List of glyph builders for the glyph table builder. These may be
     // manipulated in any way by the caller and the changes will be reflected in
@@ -178,10 +173,8 @@ class GlyphTable : public Table, public RefCounted<GlyphTable> {
      protected:
       // Note: constructor refactored in C++ to avoid heavy lifting.
       //       caller need to do data->Slice(offset, length) beforehand.
-      SimpleGlyphBuilder(FontDataTableBuilderContainer* table_builder,
-                         WritableFontData* data);
-      SimpleGlyphBuilder(FontDataTableBuilderContainer* table_builder,
-                         ReadableFontData* data);
+      SimpleGlyphBuilder(WritableFontData* data);
+      SimpleGlyphBuilder(ReadableFontData* data);
       virtual CALLER_ATTACH FontDataTable*
           SubBuildTable(ReadableFontData* data);
 
@@ -251,10 +244,8 @@ class GlyphTable : public Table, public RefCounted<GlyphTable> {
      protected:
       // Note: constructor refactored in C++ to avoid heavy lifting.
       //       caller need to do data->Slice(offset, length) beforehand.
-      CompositeGlyphBuilder(FontDataTableBuilderContainer* table_builder,
-                            WritableFontData* data);
-      CompositeGlyphBuilder(FontDataTableBuilderContainer* table_builder,
-                            ReadableFontData* data);
+      CompositeGlyphBuilder(WritableFontData* data);
+      CompositeGlyphBuilder(ReadableFontData* data);
 
       virtual CALLER_ATTACH FontDataTable*
           SubBuildTable(ReadableFontData* data);

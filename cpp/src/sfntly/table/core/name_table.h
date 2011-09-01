@@ -26,7 +26,7 @@
 #include <map>
 #include <utility>
 
-#include "sfntly/table/table.h"
+#include "sfntly/table/subtable_container_table.h"
 
 #if defined U_USING_ICU_NAMESPACE
   U_NAMESPACE_USE
@@ -412,7 +412,7 @@ struct WindowsLanguageId {
   };
 };
 
-class NameTable : public Table, public RefCounted<NameTable> {
+class NameTable : public SubTableContainerTable, public RefCounted<NameTable> {
  public:
   // Unique identifier for a given name record.
   class NameEntryId {
@@ -433,6 +433,9 @@ class NameTable : public Table, public RefCounted<NameTable> {
     bool operator==(const NameEntryId& rhs) const;
     bool operator<(const NameEntryId& rhs) const;
 
+    // UNIMPLEMENTED: int hashCode()
+    //                String toString()
+
    private:
     mutable int32_t platform_id_;
     mutable int32_t encoding_id_;
@@ -447,8 +450,11 @@ class NameTable : public Table, public RefCounted<NameTable> {
    public:
     NameEntry();
     NameEntry(const NameEntryId& name_entry_id, const ByteVector& name_bytes);
-    NameEntry(int32_t platform_id, int32_t encoding_id, int32_t language_id,
-              int32_t name_id, const ByteVector& name_bytes);
+    NameEntry(int32_t platform_id,
+              int32_t encoding_id,
+              int32_t language_id,
+              int32_t name_id,
+              const ByteVector& name_bytes);
     virtual ~NameEntry();
 
     NameEntryId& name_entry_id() { return name_entry_id_; }
@@ -468,6 +474,9 @@ class NameTable : public Table, public RefCounted<NameTable> {
     // Note: ICU UChar* convention requires caller to delete[] it.
     UChar* Name();
     bool operator==(const NameEntry& rhs) const;
+
+    // UNIMPLEMENTED: String toString()
+    //                int hashCode()
 
    private:
     void Init(int32_t platform_id, int32_t encoding_id, int32_t language_id,
@@ -494,7 +503,8 @@ class NameTable : public Table, public RefCounted<NameTable> {
 
     virtual void SetName(const UChar* name);
     virtual void SetName(const ByteVector& name_bytes);
-    virtual void SetName(const ByteVector& name_bytes, int32_t offset,
+    virtual void SetName(const ByteVector& name_bytes,
+                         int32_t offset,
                          int32_t length);
 
     // C++ port only. CALLER_ATTACH is not added because the lifetime shall be
@@ -515,8 +525,10 @@ class NameTable : public Table, public RefCounted<NameTable> {
   // returned.
   class NameEntryFilter {
    public:
-    virtual bool Accept(int32_t platform_id, int32_t encoding_id,
-                        int32_t language_id, int32_t name_id) = 0;
+    virtual bool Accept(int32_t platform_id,
+                        int32_t encoding_id,
+                        int32_t language_id,
+                        int32_t name_id) = 0;
     // Make gcc -Wnon-virtual-dtor happy.
     virtual ~NameEntryFilter() {}
   };
@@ -524,13 +536,17 @@ class NameTable : public Table, public RefCounted<NameTable> {
   // C++ port only: an in-place filter to mimic Java Iterator's filtering.
   class NameEntryFilterInPlace : public NameEntryFilter {
    public:
-    NameEntryFilterInPlace(int32_t platform_id, int32_t encoding_id,
-                           int32_t language_id, int32_t name_id);
+    NameEntryFilterInPlace(int32_t platform_id,
+                           int32_t encoding_id,
+                           int32_t language_id,
+                           int32_t name_id);
     // Make gcc -Wnon-virtual-dtor happy.
     virtual ~NameEntryFilterInPlace() {}
 
-    virtual bool Accept(int32_t platform_id, int32_t encoding_id,
-                        int32_t language_id, int32_t name_id);
+    virtual bool Accept(int32_t platform_id,
+                        int32_t encoding_id,
+                        int32_t language_id,
+                        int32_t name_id);
 
    private:
     int32_t platform_id_;
@@ -561,15 +577,16 @@ class NameTable : public Table, public RefCounted<NameTable> {
   };
 
   // The builder to construct name table for outputting.
-  class Builder : public Table::ArrayElementTableBuilder,
+  class Builder : public SubTableContainerTable::Builder,
                   public RefCounted<Builder> {
    public:
     // Constructor scope altered to public because C++ does not allow base
     // class to instantiate derived class with protected constructors.
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            ReadableFontData* data);
+    Builder(Header* header, WritableFontData* data);
+    Builder(Header* header, ReadableFontData* data);
+
+    static CALLER_ATTACH Builder* CreateBuilder(Header* header,
+                                                WritableFontData* data);
 
     // Revert the name builders for the name table to the last version that came
     // from data.
