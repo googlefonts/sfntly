@@ -52,20 +52,18 @@ GlyphTable::~GlyphTable() {
 }
 
 GlyphTable::Glyph* GlyphTable::GetGlyph(int32_t offset, int32_t length) {
-  return GlyphTable::Glyph::GetGlyph(data_, offset, length);
+  return GlyphTable::Glyph::GetGlyph(this, this->data_, offset, length);
 }
 
 GlyphTable::GlyphTable(Header* header, ReadableFontData* data)
-    : Table(header, data) {
+    : SubTableContainerTable(header, data) {
 }
 
 /******************************************************************************
  * GlyphTable::Builder class
  ******************************************************************************/
-GlyphTable::Builder::Builder(FontDataTableBuilderContainer* font_builder,
-                             Header* header,
-                             WritableFontData* data)
-    : Table::ArrayElementTableBuilder(font_builder, header, data) {
+GlyphTable::Builder::Builder(Header* header, ReadableFontData* data)
+    : SubTableContainerTable::Builder(header, data) {
 }
 
 GlyphTable::Builder::~Builder() {
@@ -94,6 +92,13 @@ void GlyphTable::Builder::GenerateLocaList(IntegerList* locas) {
       total += size;
     }
   }
+}
+
+CALLER_ATTACH GlyphTable::Builder*
+    GlyphTable::Builder::CreateBuilder(Header* header, WritableFontData* data) {
+  Ptr<GlyphTable::Builder> builder;
+  builder = new GlyphTable::Builder(header, data);
+  return builder.Detach();
 }
 
 GlyphTable::GlyphBuilderList* GlyphTable::Builder::GlyphBuilders() {
@@ -157,12 +162,11 @@ void GlyphTable::Builder::Initialize(ReadableFontData* data,
                                      const IntegerList& loca) {
   if (data != NULL) {
     if (loca_.empty()) {
-#if defined (SFNTLY_NO_EXCEPTION)
-      return;
-#else
+#if !defined (SFNTLY_NO_EXCEPTION)
       throw IllegalStateException(
           "Loca values not set - unable to parse glyph data.");
 #endif
+      return;
     }
     int32_t loca_value;
     int32_t last_loca_value = loca[0];
@@ -199,9 +203,11 @@ void GlyphTable::Builder::Revert() {
 GlyphTable::Glyph::~Glyph() {}
 
 CALLER_ATTACH GlyphTable::Glyph*
-    GlyphTable::Glyph::GetGlyph(ReadableFontData* data,
+    GlyphTable::Glyph::GetGlyph(GlyphTable* table,
+                                ReadableFontData* data,
                                 int32_t offset,
                                 int32_t length) {
+  UNREFERENCED_PARAMETER(table);
   int32_t type = GlyphType(data, offset, length);
   GlyphPtr glyph;
 
@@ -239,10 +245,6 @@ int32_t GlyphTable::Glyph::YMax() {
   return data_->ReadShort(Offset::kYMax);
 }
 
-int32_t GlyphTable::Glyph::Padding() {
-  return padding_;
-}
-
 GlyphTable::Glyph::Glyph(ReadableFontData* data, int32_t glyph_type)
     : SubTable(data),
       glyph_type_(glyph_type) {
@@ -273,38 +275,36 @@ int32_t GlyphTable::Glyph::GlyphType(ReadableFontData* data,
 GlyphTable::Glyph::Builder::~Builder() {
 }
 
-GlyphTable::Glyph::Builder::Builder(FontDataTableBuilderContainer* font_builder,
-                                    WritableFontData* data)
-    : SubTable::Builder(font_builder, data) {
+GlyphTable::Glyph::Builder::Builder(WritableFontData* data)
+    : SubTable::Builder(data) {
 }
 
-GlyphTable::Glyph::Builder::Builder(FontDataTableBuilderContainer* font_builder,
-                                    ReadableFontData* data)
-    : SubTable::Builder(font_builder, data) {
+GlyphTable::Glyph::Builder::Builder(ReadableFontData* data)
+    : SubTable::Builder(data) {
 }
 
 CALLER_ATTACH GlyphTable::Glyph::Builder*
     GlyphTable::Glyph::Builder::GetBuilder(
-        FontDataTableBuilderContainer* table_builder,
+        GlyphTable::Builder* table_builder,
         ReadableFontData* data) {
   return GetBuilder(table_builder, data, 0, data->Length());
 }
 
 CALLER_ATTACH GlyphTable::Glyph::Builder*
     GlyphTable::Glyph::Builder::GetBuilder(
-        FontDataTableBuilderContainer* table_builder,
+        GlyphTable::Builder* table_builder,
         ReadableFontData* data,
         int32_t offset,
         int32_t length) {
+  UNREFERENCED_PARAMETER(table_builder);
   int32_t type = Glyph::GlyphType(data, offset, length);
   GlyphBuilderPtr builder;
   ReadableFontDataPtr sliced_data;
   sliced_data.Attach(down_cast<ReadableFontData*>(data->Slice(offset, length)));
   if (type == GlyphType::kSimple) {
-    builder = new SimpleGlyph::SimpleGlyphBuilder(table_builder, sliced_data);
+    builder = new SimpleGlyph::SimpleGlyphBuilder(sliced_data);
   } else {
-    builder = new CompositeGlyph::CompositeGlyphBuilder(table_builder,
-                                                        sliced_data);
+    builder = new CompositeGlyph::CompositeGlyphBuilder(sliced_data);
   }
   return builder.Detach();
 }
@@ -411,7 +411,7 @@ void GlyphTable::SimpleGlyph::Initialize() {
     (flag_byte_count_ * DataSize::kBYTE) +
     (x_byte_count_ * DataSize::kBYTE) +
     (y_byte_count_ * DataSize::kBYTE);
-  padding_ = Length() - non_padded_data_length;
+  set_padding(DataLength() - non_padded_data_length);
   initialized_ = true;
 }
 
@@ -505,15 +505,13 @@ GlyphTable::SimpleGlyph::SimpleGlyphBuilder::~SimpleGlyphBuilder() {
 }
 
 GlyphTable::SimpleGlyph::SimpleGlyphBuilder::SimpleGlyphBuilder(
-    FontDataTableBuilderContainer* table_builder,
     WritableFontData* data)
-    : Glyph::Builder(table_builder, data) {
+    : Glyph::Builder(data) {
 }
 
 GlyphTable::SimpleGlyph::SimpleGlyphBuilder::SimpleGlyphBuilder(
-    FontDataTableBuilderContainer* table_builder,
     ReadableFontData* data)
-    : Glyph::Builder(table_builder, data) {
+    : Glyph::Builder(data) {
 }
 
 CALLER_ATTACH FontDataTable*
@@ -635,7 +633,7 @@ void GlyphTable::CompositeGlyph::ParseData() {
       instructions_offset_ = index;
       non_padded_data_length = index + (instruction_size_ * DataSize::kBYTE);
     }
-    padding_ = Length() - non_padded_data_length;
+    set_padding(DataLength() - non_padded_data_length);
   }
 }
 
@@ -646,15 +644,13 @@ GlyphTable::CompositeGlyph::CompositeGlyphBuilder::~CompositeGlyphBuilder() {
 }
 
 GlyphTable::CompositeGlyph::CompositeGlyphBuilder::CompositeGlyphBuilder(
-    FontDataTableBuilderContainer* table_builder,
     WritableFontData* data)
-    : Glyph::Builder(table_builder, data) {
+    : Glyph::Builder(data) {
 }
 
 GlyphTable::CompositeGlyph::CompositeGlyphBuilder::CompositeGlyphBuilder(
-    FontDataTableBuilderContainer* table_builder,
     ReadableFontData* data)
-    : Glyph::Builder(table_builder, data) {
+    : Glyph::Builder(data) {
 }
 
 CALLER_ATTACH FontDataTable*

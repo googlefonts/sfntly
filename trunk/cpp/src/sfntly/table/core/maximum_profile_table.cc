@@ -22,7 +22,7 @@ namespace sfntly {
  ******************************************************************************/
 MaximumProfileTable::~MaximumProfileTable() {}
 
-int32_t MaximumProfileTable::Version() {
+int32_t MaximumProfileTable::TableVersion() {
   return data_->ReadFixed(Offset::kVersion);
 }
 
@@ -40,6 +40,10 @@ int32_t MaximumProfileTable::MaxContours() {
 
 int32_t MaximumProfileTable::MaxCompositePoints() {
   return data_->ReadUShort(Offset::kMaxCompositePoints);
+}
+
+int32_t MaximumProfileTable::MaxCompositeContours() {
+  return data_->ReadUShort(Offset::kMaxCompositeContours);
 }
 
 int32_t MaximumProfileTable::MaxZones() {
@@ -82,18 +86,12 @@ MaximumProfileTable::MaximumProfileTable(Header* header,
 /******************************************************************************
  * MaximumProfileTable::Builder class
  ******************************************************************************/
-MaximumProfileTable::Builder::Builder(
-    FontDataTableBuilderContainer* font_builder,
-    Header* header,
-    WritableFontData* data)
-    : Table::TableBasedTableBuilder(font_builder, header, data) {
+MaximumProfileTable::Builder::Builder(Header* header, WritableFontData* data)
+    : Table::TableBasedTableBuilder(header, data) {
 }
 
-MaximumProfileTable::Builder::Builder(
-    FontDataTableBuilderContainer* font_builder,
-    Header* header,
-    ReadableFontData* data)
-    : Table::TableBasedTableBuilder(font_builder, header, data) {
+MaximumProfileTable::Builder::Builder(Header* header, ReadableFontData* data)
+    : Table::TableBasedTableBuilder(header, data) {
 }
 
 MaximumProfileTable::Builder::~Builder() {}
@@ -104,11 +102,19 @@ CALLER_ATTACH FontDataTable*
   return table.Detach();
 }
 
-int32_t MaximumProfileTable::Builder::Version() {
+CALLER_ATTACH MaximumProfileTable::Builder*
+    MaximumProfileTable::Builder::CreateBuilder(Header* header,
+                                                WritableFontData* data) {
+  Ptr<MaximumProfileTable::Builder> builder;
+  builder = new MaximumProfileTable::Builder(header, data);
+  return builder.Detach();
+}
+
+int32_t MaximumProfileTable::Builder::TableVersion() {
   return InternalReadData()->ReadUShort(Offset::kVersion);
 }
 
-void MaximumProfileTable::Builder::SetVersion(int32_t version) {
+void MaximumProfileTable::Builder::SetTableVersion(int32_t version) {
   InternalWriteData()->WriteUShort(Offset::kVersion, version);
 }
 
@@ -144,6 +150,16 @@ void MaximumProfileTable::Builder::SetMaxCompositePoints(
     int32_t max_composite_points) {
   InternalWriteData()->WriteUShort(Offset::kMaxCompositePoints,
                                    max_composite_points);
+}
+
+int32_t MaximumProfileTable::Builder::MaxCompositeContours() {
+  return InternalReadData()->ReadUShort(Offset::kMaxCompositeContours);
+}
+
+void MaximumProfileTable::Builder::SetMaxCompositeContours(
+    int32_t max_composite_contours) {
+  InternalWriteData()->WriteUShort(Offset::kMaxCompositeContours,
+      max_composite_contours);
 }
 
 int32_t MaximumProfileTable::Builder::MaxZones() {

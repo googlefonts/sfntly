@@ -137,8 +137,8 @@ NameTable::NameEntryBuilder::NameEntryBuilder() {
   Init(0, 0, 0, 0, NULL);
 }
 
-NameTable::NameEntryBuilder::NameEntryBuilder(
-    const NameEntryId& name_entry_id, const ByteVector& name_bytes) {
+NameTable::NameEntryBuilder::NameEntryBuilder(const NameEntryId& name_entry_id,
+                                              const ByteVector& name_bytes) {
   Init(name_entry_id.platform_id(),
        name_entry_id.encoding_id(),
        name_entry_id.language_id(),
@@ -263,7 +263,7 @@ CALLER_ATTACH NameTable::NameEntry* NameTable::NameEntryIterator::Next() {
 void NameTable::NameEntryIterator::Remove() {
 #if !defined (SFNTLY_NO_EXCEPTION)
   throw UnsupportedOperationException(
-            "Cannot remove a CMap table from an existing font.");
+            "Cannot remove a name table from an existing font.");
 #endif
 }
 
@@ -277,16 +277,20 @@ void NameTable::NameEntryIterator::Init(NameTable* table,
 /******************************************************************************
  * NameTable::Builder class
  ******************************************************************************/
-NameTable::Builder::Builder(FontDataTableBuilderContainer* font_builder,
-                            Header* header,
-                            WritableFontData* data)
-    : Table::ArrayElementTableBuilder(font_builder, header, data) {
+NameTable::Builder::Builder(Header* header, WritableFontData* data)
+    : SubTableContainerTable::Builder(header, data) {
 }
 
-NameTable::Builder::Builder(FontDataTableBuilderContainer* font_builder,
-                            Header* header,
-                            ReadableFontData* data)
-    : Table::ArrayElementTableBuilder(font_builder, header, data) {
+NameTable::Builder::Builder(Header* header, ReadableFontData* data)
+    : SubTableContainerTable::Builder(header, data) {
+}
+
+CALLER_ATTACH NameTable::Builder*
+    NameTable::Builder::CreateBuilder(Header* header,
+                                      WritableFontData* data) {
+  Ptr<NameTable::Builder> builder;
+  builder = new NameTable::Builder(header, data);
+  return builder.Detach();
 }
 
 void NameTable::Builder::RevertNames() {
@@ -546,7 +550,7 @@ NameTable::NameEntryIterator* NameTable::Iterator(NameEntryFilter* filter) {
 }
 
 NameTable::NameTable(Header* header, ReadableFontData* data)
-    : Table(header, data) {}
+    : SubTableContainerTable(header, data) {}
 
 int32_t NameTable::StringOffset() {
   return data_->ReadUShort(Offset::kStringOffset);

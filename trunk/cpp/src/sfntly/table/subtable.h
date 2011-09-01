@@ -32,16 +32,22 @@ class SubTable : public FontDataTable {
     virtual ~Builder();
 
    protected:
-    Builder(FontDataTableBuilderContainer* container, WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* container, ReadableFontData* data);
+    Builder(WritableFontData* data);
+    Builder(ReadableFontData* data);
   };
 
   virtual ~SubTable();
+
+  int32_t padding() { return padding_; }
+  void set_padding(int32_t padding) { padding_ = padding; }
 
  protected:
   // Note: constructor refactored in C++ to avoid heavy lifting.
   //       caller need to do data->Slice(offset, length) beforehand.
   explicit SubTable(ReadableFontData* data);
+
+ private:
+  int32_t padding_;
 };
 
 }  // namespace sfntly

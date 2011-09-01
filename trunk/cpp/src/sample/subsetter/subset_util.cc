@@ -56,12 +56,11 @@ void SubsetUtil::Subset(const char *input_file_path,
   UNREFERENCED_PARAMETER(bytes_read);
   fclose(input_file);
 
-  ByteArrayPtr ba = new MemoryByteArray(&(input_buffer[0]), file_size);
   FontFactoryPtr factory;
   factory.Attach(FontFactory::GetInstance());
 
   FontArray font_array;
-  factory->LoadFonts(ba, &font_array);
+  factory->LoadFonts(&input_buffer, &font_array);
   if (font_array.empty() || font_array[0] == NULL)
     return;
 

@@ -46,11 +46,10 @@ bool GlyphTableSubsetter::Subset(Subsetter* subsetter,
   GlyphTablePtr glyph_table = down_cast<GlyphTable*>(font->GetTable(Tag::glyf));
   LocaTablePtr loca_table = down_cast<LocaTable*>(font->GetTable(Tag::loca));
   if (glyph_table == NULL || loca_table == NULL) {
-#if defined (SFNTLY_NO_EXCEPTION)
-    return false;
-#else
+#if !defined (SFNTLY_NO_EXCEPTION)
     throw RuntimeException("Font to subset is not valid.");
 #endif
+    return false;
   }
 
   GlyphTableBuilderPtr glyph_table_builder =
@@ -60,11 +59,10 @@ bool GlyphTableSubsetter::Subset(Subsetter* subsetter,
       down_cast<LocaTable::Builder*>
       (font_builder->NewTableBuilder(Tag::loca));
   if (glyph_table_builder == NULL || loca_table_builder == NULL) {
-#if defined (SFNTLY_NO_EXCEPTION)
-    return false;
-#else
+#if !defined (SFNTLY_NO_EXCEPTION)
     throw RuntimeException("Builder for subset is not valid.");
 #endif
+    return false;
   }
   GlyphTable::GlyphBuilderList* glyph_builders =
       glyph_table_builder->GlyphBuilders();
@@ -77,7 +75,7 @@ bool GlyphTableSubsetter::Subset(Subsetter* subsetter,
     glyph.Attach(glyph_table->GetGlyph(old_offset, old_length));
     ReadableFontDataPtr data = glyph->ReadFontData();
     WritableFontDataPtr copy_data;
-    copy_data.Attach(font_builder->GetNewData(data->Length()));
+    copy_data.Attach(WritableFontData::CreateWritableFontData(data->Length()));
     data->CopyTo(copy_data);
     GlyphBuilderPtr glyph_builder;
     glyph_builder.Attach(glyph_table_builder->GlyphBuilder(copy_data));

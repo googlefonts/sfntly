@@ -32,8 +32,6 @@ namespace sfntly {
 bool TestFontParsing() {
   ByteVector input_buffer;
   LoadFile(SAMPLE_TTF_FILE, &input_buffer);
-  ByteArrayPtr ba = new MemoryByteArray(&(input_buffer[0]),
-                                        input_buffer.size());
 
   FontFactoryPtr factory;
   factory.Attach(FontFactory::GetInstance());
@@ -43,7 +41,7 @@ bool TestFontParsing() {
   FontBuilderPtr font_builder = font_builder_array[0];
   // Memory based
   FontBuilderArray font_builder_array2;
-  factory->LoadFontsForBuilding(ba, &font_builder_array2);
+  factory->LoadFontsForBuilding(&input_buffer, &font_builder_array2);
   FontBuilderPtr font_builder2 = font_builder_array2[0];
 
   for (size_t i = 0; i < SAMPLE_TTF_KNOWN_TAGS; ++i) {
@@ -121,9 +119,7 @@ bool TestTTFMemoryBasedReadWrite() {
   FontFactoryPtr factory;
   factory.Attach(FontFactory::GetInstance());
   FontBuilderArray font_builder_array;
-  ByteArrayPtr ba = new MemoryByteArray(&(input_buffer[0]),
-                                        input_buffer.size());
-  factory->LoadFontsForBuilding(ba, &font_builder_array);
+  factory->LoadFontsForBuilding(&input_buffer, &font_builder_array);
   FontBuilderPtr font_builder = font_builder_array[0];
   FontPtr font;
   font.Attach(font_builder->Build());

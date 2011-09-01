@@ -45,10 +45,8 @@ class FontHeaderTable : public Table, public RefCounted<FontHeaderTable> {
    public:
     // Constructor scope altered to public because C++ does not allow base
     // class to instantiate derived class with protected constructors.
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            ReadableFontData* data);
+    Builder(Header* header, WritableFontData* data);
+    Builder(Header* header, ReadableFontData* data);
     virtual ~Builder();
     virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
 
@@ -90,6 +88,9 @@ class FontHeaderTable : public Table, public RefCounted<FontHeaderTable> {
     virtual void SetIndexToLocFormat(int32_t format);
     virtual int32_t GlyphDataFormat();
     virtual void SetGlyphDataFormat(int32_t format);
+
+    static CALLER_ATTACH Builder* CreateBuilder(Header* header,
+                                                WritableFontData* data);
   };
 
   virtual ~FontHeaderTable();

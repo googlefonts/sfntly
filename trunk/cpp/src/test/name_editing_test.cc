@@ -24,9 +24,10 @@
 #include "sfntly/data/memory_byte_array.h"
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
+#include "sfntly/port/memory_input_stream.h"
+#include "sfntly/port/memory_output_stream.h"
 #include "sfntly/table/core/name_table.h"
 #include "sfntly/tag.h"
-#include "sfntly/port/memory_output_stream.h"
 #include "test/test_data.h"
 #include "test/test_font_utils.h"
 
@@ -40,11 +41,7 @@ void LoadTestFile(FontFactory* factory, FontBuilderArray* font_builders) {
   if (input_buffer.empty()) {
     LoadFile(SAMPLE_TTF_FILE, &input_buffer);
   }
-
-  ByteArrayPtr ba =
-      new MemoryByteArray(&(input_buffer[0]), input_buffer.size());
-
-  factory->LoadFontsForBuilding(ba, font_builders);
+  factory->LoadFontsForBuilding(&input_buffer, font_builders);
 }
 
 bool TestChangeOneName() {
@@ -73,9 +70,10 @@ bool TestChangeOneName() {
   // Serialize and reload the serialized font.
   MemoryOutputStream os;
   factory->SerializeFont(font, &os);
+  MemoryInputStream is;
+  is.Attach(os.Get(), os.Size());
   FontArray font_array;
-  ByteArrayPtr new_ba = new MemoryByteArray(os.Get(), os.Size());
-  factory->LoadFonts(new_ba, &font_array);
+  factory->LoadFonts(&is, &font_array);
   FontPtr new_font = font_array[0];
 
   // Check the font name.
@@ -121,9 +119,10 @@ bool TestModifyNameTableAndRevert() {
   // Serialize and reload the serialized font.
   MemoryOutputStream os;
   factory->SerializeFont(font, &os);
+  MemoryInputStream is;
+  is.Attach(os.Get(), os.Size());
   FontArray font_array;
-  ByteArrayPtr new_ba = new MemoryByteArray(os.Get(), os.Size());
-  factory->LoadFonts(new_ba, &font_array);
+  factory->LoadFonts(&is, &font_array);
   FontPtr new_font = font_array[0];
 
   // Check the font name.
@@ -166,9 +165,10 @@ bool TestRemoveOneName() {
   // Serialize and reload the serialized font.
   MemoryOutputStream os;
   factory->SerializeFont(font, &os);
+  MemoryInputStream is;
+  is.Attach(os.Get(), os.Size());
   FontArray font_array;
-  ByteArrayPtr new_ba = new MemoryByteArray(os.Get(), os.Size());
-  factory->LoadFonts(new_ba, &font_array);
+  factory->LoadFonts(&is, &font_array);
   FontPtr new_font = font_array[0];
 
   // Check the font name.

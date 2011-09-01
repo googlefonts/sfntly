@@ -22,24 +22,26 @@
 
 namespace sfntly {
 
+// A Maximum Profile table - 'maxp'.
 class MaximumProfileTable : public Table,
                             public RefCounted<MaximumProfileTable> {
  public:
+  // Builder for a Maximum Profile table - 'maxp'.
   class Builder : public Table::TableBasedTableBuilder,
                   public RefCounted<Builder> {
    public:
     // Constructor scope altered to public because C++ does not allow base
     // class to instantiate derived class with protected constructors.
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            ReadableFontData* data);
+    Builder(Header* header, WritableFontData* data);
+    Builder(Header* header, ReadableFontData* data);
     virtual ~Builder();
 
     virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
+    static CALLER_ATTACH Builder* CreateBuilder(Header* header,
+                                                WritableFontData* data);
 
-    int32_t Version();
-    void SetVersion(int32_t version);
+    int32_t TableVersion();
+    void SetTableVersion(int32_t version);
     int32_t NumGlyphs();
     void SetNumGlyphs(int32_t num_glyphs);
     int32_t MaxPoints();
@@ -48,6 +50,8 @@ class MaximumProfileTable : public Table,
     void SetMaxContours(int32_t max_contours);
     int32_t MaxCompositePoints();
     void SetMaxCompositePoints(int32_t max_composite_points);
+    int32_t MaxCompositeContours();
+    void SetMaxCompositeContours(int32_t max_composite_contours);
     int32_t MaxZones();
     void SetMaxZones(int32_t max_zones);
     int32_t MaxTwilightPoints();
@@ -67,11 +71,12 @@ class MaximumProfileTable : public Table,
   };
 
   virtual ~MaximumProfileTable();
-  int32_t Version();
+  int32_t TableVersion();
   int32_t NumGlyphs();
   int32_t MaxPoints();
   int32_t MaxContours();
   int32_t MaxCompositePoints();
+  int32_t MaxCompositeContours();
   int32_t MaxZones();
   int32_t MaxTwilightPoints();
   int32_t MaxStorage();

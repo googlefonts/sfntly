@@ -56,7 +56,7 @@ class FontFactory : public RefCounted<FontFactory> {
   // than one font and in this case multiple font objects will be returned. If
   // the data in the stream cannot be parsed or is invalid an array of size zero
   // will be returned.
-  void LoadFonts(ByteArray* ba, FontArray* output);
+  void LoadFonts(ByteVector* b, FontArray* output);
 
   // Load the font(s) from the input stream into font builders. The current
   // settings on the factory are used during the loading process. One or more
@@ -72,15 +72,7 @@ class FontFactory : public RefCounted<FontFactory> {
   // font container formats may have more than one font and in this case
   // multiple font builder objects will be returned. If the data in the stream
   // cannot be parsed or is invalid an array of size zero will be returned.
-  void LoadFontsForBuilding(ByteArray* ba, FontBuilderArray* output);
-
-  CALLER_ATTACH WritableFontData* GetNewData(int32_t capacity);
-  CALLER_ATTACH WritableFontData* GetNewFixedData(int32_t capacity);
-  CALLER_ATTACH WritableFontData* GetNewGrowableData(int32_t capacity);
-  CALLER_ATTACH WritableFontData*
-      GetNewGrowableData(ReadableFontData* src_data);
-  CALLER_ATTACH ByteArray* GetNewArray(int32_t length);
-  CALLER_ATTACH ByteArray* GetNewGrowableArray(int32_t length);
+  void LoadFontsForBuilding(ByteVector* b, FontBuilderArray* output);
 
   // Font serialization
   // Serialize the font to the output stream.
@@ -121,20 +113,22 @@ class FontFactory : public RefCounted<FontFactory> {
   FontFactory();
 
   CALLER_ATTACH Font* LoadSingleOTF(InputStream* is);
-  CALLER_ATTACH Font* LoadSingleOTF(ByteArray* ba);
+  CALLER_ATTACH Font* LoadSingleOTF(WritableFontData* wfd);
 
   void LoadCollection(InputStream* is, FontArray* output);
-  void LoadCollection(ByteArray* ba, FontArray* output);
+  void LoadCollection(WritableFontData* wfd, FontArray* output);
 
   CALLER_ATTACH Font::Builder* LoadSingleOTFForBuilding(InputStream* is);
   CALLER_ATTACH Font::Builder*
-      LoadSingleOTFForBuilding(ByteArray* ba, int32_t offset_to_offset_table);
+      LoadSingleOTFForBuilding(WritableFontData* wfd,
+                               int32_t offset_to_offset_table);
 
   void LoadCollectionForBuilding(InputStream* is, FontBuilderArray* builders);
-  void LoadCollectionForBuilding(ByteArray* ba, FontBuilderArray* builders);
+  void LoadCollectionForBuilding(WritableFontData* ba,
+                                 FontBuilderArray* builders);
 
   static bool IsCollection(PushbackInputStream* pbis);
-  static bool IsCollection(ByteArray* ba);
+  static bool IsCollection(ReadableFontData* wfd);
 
   bool fingerprint_;
   IntegerList table_ordering_;

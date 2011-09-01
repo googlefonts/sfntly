@@ -22,7 +22,7 @@ namespace sfntly {
  ******************************************************************************/
 HorizontalHeaderTable:: ~HorizontalHeaderTable() {}
 
-int32_t HorizontalHeaderTable::Version() {
+int32_t HorizontalHeaderTable::TableVersion() {
   return data_->ReadFixed(Offset::kVersion);
 }
 
@@ -82,18 +82,12 @@ HorizontalHeaderTable:: HorizontalHeaderTable(Header* header,
 /******************************************************************************
  * HorizontalHeaderTable::Builder class
  ******************************************************************************/
-HorizontalHeaderTable::Builder::Builder(
-    FontDataTableBuilderContainer* font_builder,
-    Header* header,
-    WritableFontData* data)
-    : Table::TableBasedTableBuilder(font_builder, header, data) {
+HorizontalHeaderTable::Builder::Builder(Header* header, WritableFontData* data)
+    : Table::TableBasedTableBuilder(header, data) {
 }
 
-HorizontalHeaderTable::Builder::Builder(
-    FontDataTableBuilderContainer* font_builder,
-    Header* header,
-    ReadableFontData* data)
-    : Table::TableBasedTableBuilder(font_builder, header, data) {
+HorizontalHeaderTable::Builder::Builder(Header* header, ReadableFontData* data)
+    : Table::TableBasedTableBuilder(header, data) {
 }
 
 HorizontalHeaderTable::Builder::~Builder() {}
@@ -104,11 +98,19 @@ CALLER_ATTACH FontDataTable*
   return table.Detach();
 }
 
-int32_t HorizontalHeaderTable::Builder::Version() {
+CALLER_ATTACH HorizontalHeaderTable::Builder*
+    HorizontalHeaderTable::Builder::CreateBuilder(Header* header,
+                                                  WritableFontData* data) {
+  Ptr<HorizontalHeaderTable::Builder> builder;
+  builder = new HorizontalHeaderTable::Builder(header, data);
+  return builder.Detach();
+}
+
+int32_t HorizontalHeaderTable::Builder::TableVersion() {
   return InternalReadData()->ReadFixed(Offset::kVersion);
 }
 
-void HorizontalHeaderTable::Builder::SetVersion(int32_t version) {
+void HorizontalHeaderTable::Builder::SetTableVersion(int32_t version) {
   InternalWriteData()->WriteFixed(Offset::kVersion, version);
 }
 

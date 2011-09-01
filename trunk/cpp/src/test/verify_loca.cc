@@ -230,7 +230,7 @@ static bool VerifyLOCA(Table* table) {
   }
 
   EXPECT_EQ(loca->NumLocas(), LOCA_NUM_LOCAS);
-  EXPECT_EQ(loca->NumGlyphs(), LOCA_NUM_LOCAS - 1);
+  EXPECT_EQ(loca->num_glyphs(), LOCA_NUM_LOCAS - 1);
 
   for (int32_t i = 0; i < LOCA_NUM_LOCAS - 1; ++i) {
     EXPECT_EQ(loca->GlyphOffset(i), LOCAS[i]);

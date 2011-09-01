@@ -60,7 +60,7 @@ static bool VerifyOS_2(Table* table) {
     return false;
   }
 
-  EXPECT_EQ(os2->Version(), OS2_VERSION);
+  EXPECT_EQ(os2->TableVersion(), OS2_VERSION);
   EXPECT_EQ(os2->XAvgCharWidth(), OS2_XAVG_CHAR_WIDTH);
   EXPECT_EQ(os2->UsWeightClass(), OS2_US_WEIGHT_CLASS);
   EXPECT_EQ(os2->UsWidthClass(), OS2_US_WIDTH_CLASS);
@@ -107,7 +107,6 @@ static bool VerifyOS_2(Table* table) {
   EXPECT_EQ(os2->UlCodePageRange1(), OS2_UL_CODE_PAGE_RANGE1);
   EXPECT_EQ(os2->UlCodePageRange2(), OS2_UL_CODE_PAGE_RANGE2);
 
-  // TODO(arthurhsu): UlCodePageRange() not tested
   // TODO(arthurhsu): SxHeight() not tested
   // TODO(arthurhsu): SCapHeight() not tested
   // TODO(arthurhsu): UsDefaultChar() not tested

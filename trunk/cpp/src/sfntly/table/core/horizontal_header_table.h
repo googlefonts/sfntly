@@ -21,25 +21,26 @@
 
 namespace sfntly {
 
+// A Horizontal Header table - 'hhea'.
 class HorizontalHeaderTable : public Table,
                               public RefCounted<HorizontalHeaderTable> {
  public:
+  // Builder for a Horizontal Header table - 'hhea'.
   class Builder : public Table::TableBasedTableBuilder,
                   public RefCounted<Builder> {
    public:
     // Constructor scope altered to public because C++ does not allow base
     // class to instantiate derived class with protected constructors.
-    Builder(FontDataTableBuilderContainer* font_builder,
-            Header* header,
-            WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* font_builder,
-            Header* header,
-            ReadableFontData* data);
+    Builder(Header* header, WritableFontData* data);
+    Builder(Header* header, ReadableFontData* data);
     virtual ~Builder();
     virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
 
-    int32_t Version();
-    void SetVersion(int32_t version);
+    static CALLER_ATTACH Builder* CreateBuilder(Header* header,
+                                                WritableFontData* data);
+
+    int32_t TableVersion();
+    void SetTableVersion(int32_t version);
     int32_t Ascender();
     void SetAscender(int32_t ascender);
     int32_t Descender();
@@ -67,7 +68,7 @@ class HorizontalHeaderTable : public Table,
   };
 
   virtual ~HorizontalHeaderTable();
-  int32_t Version();
+  int32_t TableVersion();
   int32_t Ascender();
   int32_t Descender();
   int32_t LineGap();

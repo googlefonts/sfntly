@@ -56,8 +56,8 @@ CALLER_ATTACH Font::Builder* Subsetter::Subset() {
   font_builder.Attach(font_factory_->NewFontBuilder());
 
   IntegerSet table_tags;
-  for (TableMap::iterator i = font_->Tables()->begin(),
-                          e = font_->Tables()->end(); i != e; ++i) {
+  for (TableMap::const_iterator i = font_->GetTableMap()->begin(),
+                                e = font_->GetTableMap()->end(); i != e; ++i) {
     table_tags.insert(i->first);
   }
   if (!remove_tables_.empty()) {

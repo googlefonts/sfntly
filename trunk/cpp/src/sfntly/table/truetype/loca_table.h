@@ -22,6 +22,7 @@
 
 namespace sfntly {
 
+// A Loca table - 'loca'.
 class LocaTable : public Table, public RefCounted<LocaTable> {
  public:
   // Note: different implementation than Java, caller to instantiate this class
@@ -37,24 +38,33 @@ class LocaTable : public Table, public RefCounted<LocaTable> {
     LocaTable* table_;  // use dumb pointer since it's a composition object
   };
 
-  class Builder : public Table::ArrayElementTableBuilder,
-                  public RefCounted<Builder> {
+  class Builder : public Table::Builder, public RefCounted<Builder> {
    public:
     // Constructor scope altered to public for base class to instantiate.
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* font_builder, Header* header,
-            ReadableFontData* data);
+    Builder(Header* header, WritableFontData* data);
+    Builder(Header* header, ReadableFontData* data);
     virtual ~Builder();
 
-    void SetFormatVersion(int32_t format_version);
+    static CALLER_ATTACH Builder* CreateBuilder(Header* header,
+                                                WritableFontData* data);
+
+    // Get the format version that will be used when the loca table is
+    // generated.
+    // @return the loca table format version
+    int32_t format_version() { return format_version_; }
+    void set_format_version(int32_t value) { format_version_ = value; }
 
     // Gets the List of locas for loca table builder. These may be manipulated
     // in any way by the caller and the changes will be reflected in the final
-    // loca table produced.
+    // loca table produced as long as no subsequent call is made to the
+    // SetLocaList(List) method.
     // If there is no current data for the loca table builder or the loca list
     // have not been previously set then this will return an empty List.
     IntegerList* LocaList();
+
+    // Set the list of locas to be used for building this table. If any existing
+    // list was already retrieved with the LocaList() method then the
+    // connection of that previous list to this builder will be broken.
     void SetLocaList(IntegerList* list);
 
     // Return the offset for the given glyph id. Valid glyph ids are from 0 to
@@ -75,15 +85,25 @@ class LocaTable : public Table, public RefCounted<LocaTable> {
     // to be called (and <b>must</b> be) when the raw data for this builder has
     // been changed.
     void SetNumGlyphs(int32_t num_glyphs);
+
+    // Get the number of glyphs that this builder has support for.
     int NumGlyphs();
 
+    // Revert the loca table builder to the state contained in the last raw data
+    // set on the builder. That raw data may be that read from a font file when
+    // the font builder was created, that set by a user of the loca table
+    // builder, or null data if this builder was created as a new empty builder.
     void Revert();
-    void Clear();
 
     // Get the number of locations or locas. This will be one more than the
     // number of glyphs for this table since the last loca position is used to
     // indicate the size of the final glyph.
     int32_t NumLocas();
+
+    // Get the value from the loca table for the index specified. These are the
+    // raw values from the table that are used to compute the offset and size of
+    // a glyph in the glyph table. Valid index values run from 0 to the number
+    // of glyphs in the font.
     int32_t Loca(int32_t index);
 
     virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
@@ -93,8 +113,15 @@ class LocaTable : public Table, public RefCounted<LocaTable> {
     virtual int32_t SubSerialize(WritableFontData* new_data);
 
    private:
-    void Init();  // short hand for common code in ctors, C++ port only
-    void Initialize(ReadableFontData* data);  // ported from Java
+    // Initialize the internal state from the data. Done lazily since in many
+    // cases the builder will be just creating a table object with no parsing
+    // required.
+    // @param data the data to initialize from
+    void Initialize(ReadableFontData* data);
+
+    // Internal method to get the loca list if already generated and if not to
+    // initialize the state of the builder.
+    // @return the loca list
     IntegerList* GetLocaList();
 
     int32_t format_version_;  // Note: IndexToLocFormat
@@ -103,7 +130,9 @@ class LocaTable : public Table, public RefCounted<LocaTable> {
   };
 
   virtual ~LocaTable();
-  int32_t NumGlyphs();
+
+  int32_t format_version() { return format_version_; }
+  int32_t num_glyphs() { return num_glyphs_; }
 
   // Return the offset for the given glyph id. Valid glyph ids are from 0 to the
   // one less than the number of glyphs. The zero entry is the special entry for
@@ -127,13 +156,12 @@ class LocaTable : public Table, public RefCounted<LocaTable> {
   int32_t Loca(int32_t index);
 
  private:
-  LocaTable(Header* header, ReadableFontData* data);
   LocaTable(Header* header,
             ReadableFontData* data,
-            int32_t version,
+            int32_t format_version,
             int32_t num_glyphs);
 
-  int32_t version_;  // Note: IndexToLocFormat
+  int32_t format_version_;  // Note: Java's version, renamed to format_version_
   int32_t num_glyphs_;
 
   friend class LocaIterator;

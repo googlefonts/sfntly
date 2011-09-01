@@ -33,11 +33,10 @@ int32_t HorizontalMetricsTable::NumberOfLSBs() {
 
 int32_t HorizontalMetricsTable::HMetricAdvanceWidth(int32_t entry) {
   if (entry > num_hmetrics_) {
-#if defined (SFNTLY_NO_EXCEPTION)
-    return 0;
-#else
+#if !defined (SFNTLY_NO_EXCEPTION)
     throw IndexOutOfBoundException();
 #endif
+    return 0;
   }
   int32_t offset = Offset::kHMetricsStart + (entry * Offset::kHMetricsSize) +
                    Offset::kHMetricsAdvanceWidth;
@@ -46,11 +45,10 @@ int32_t HorizontalMetricsTable::HMetricAdvanceWidth(int32_t entry) {
 
 int32_t HorizontalMetricsTable::HMetricLSB(int32_t entry) {
   if (entry > num_hmetrics_) {
-#if defined (SFNTLY_NO_EXCEPTION)
-    return 0;
-#else
+#if !defined (SFNTLY_NO_EXCEPTION)
     throw IndexOutOfBoundException();
 #endif
+    return 0;
   }
   int32_t offset = Offset::kHMetricsStart + (entry * Offset::kHMetricsSize) +
                    Offset::kHMetricsLeftSideBearing;
@@ -59,11 +57,10 @@ int32_t HorizontalMetricsTable::HMetricLSB(int32_t entry) {
 
 int32_t HorizontalMetricsTable::LsbTableEntry(int32_t entry) {
   if (entry > num_hmetrics_) {
-#if defined (SFNTLY_NO_EXCEPTION)
-    return 0;
-#else
+#if !defined (SFNTLY_NO_EXCEPTION)
     throw IndexOutOfBoundException();
 #endif
+    return 0;
   }
   int32_t offset = Offset::kHMetricsStart + (entry * Offset::kHMetricsSize) +
                    Offset::kLeftSideBearingSize;
@@ -85,11 +82,6 @@ int32_t HorizontalMetricsTable::LeftSideBearing(int32_t glyph_id) {
 }
 
 HorizontalMetricsTable::HorizontalMetricsTable(Header* header,
-                                               ReadableFontData* data)
-    : Table(header, data) {
-}
-
-HorizontalMetricsTable::HorizontalMetricsTable(Header* header,
                                                ReadableFontData* data,
                                                int32_t num_hmetrics,
                                                int32_t num_glyphs)
@@ -101,20 +93,16 @@ HorizontalMetricsTable::HorizontalMetricsTable(Header* header,
 /******************************************************************************
  * HorizontalMetricsTable::Builder class
  ******************************************************************************/
-HorizontalMetricsTable::Builder::Builder(
-    FontDataTableBuilderContainer* font_builder,
-    Header* header,
-    WritableFontData* data)
-    : Table::TableBasedTableBuilder(font_builder, header, data) {
-  Init();
+HorizontalMetricsTable::Builder::Builder(Header* header, WritableFontData* data)
+    : Table::TableBasedTableBuilder(header, data),
+      num_hmetrics_(-1),
+      num_glyphs_(-1) {
 }
 
-HorizontalMetricsTable::Builder::Builder(
-    FontDataTableBuilderContainer* font_builder,
-    Header* header,
-    ReadableFontData* data)
-    : Table::TableBasedTableBuilder(font_builder, header, data) {
-  Init();
+HorizontalMetricsTable::Builder::Builder(Header* header, ReadableFontData* data)
+    : Table::TableBasedTableBuilder(header, data),
+      num_hmetrics_(-1),
+      num_glyphs_(-1) {
 }
 
 HorizontalMetricsTable::Builder::~Builder() {}
@@ -124,6 +112,14 @@ CALLER_ATTACH FontDataTable*
   FontDataTablePtr table =
       new HorizontalMetricsTable(header(), data, num_hmetrics_, num_glyphs_);
   return table.Detach();
+}
+
+CALLER_ATTACH HorizontalMetricsTable::Builder*
+    HorizontalMetricsTable::Builder::CreateBuilder(Header* header,
+                                                   WritableFontData* data) {
+  Ptr<HorizontalMetricsTable::Builder> builder;
+  builder = new HorizontalMetricsTable::Builder(header, data);
+  return builder.Detach();
 }
 
 void HorizontalMetricsTable::Builder::SetNumberOfHMetrics(
@@ -141,11 +137,6 @@ void HorizontalMetricsTable::Builder::SetNumGlyphs(int32_t num_glyphs) {
   HorizontalMetricsTable* table =
       down_cast<HorizontalMetricsTable*>(this->GetTable());
   table->num_glyphs_ = num_glyphs;
-}
-
-void HorizontalMetricsTable::Builder::Init() {
-  num_hmetrics_ = -1;
-  num_glyphs_ = -1;
 }
 
 }  // namespace sfntly

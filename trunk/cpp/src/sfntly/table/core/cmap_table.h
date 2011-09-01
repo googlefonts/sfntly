@@ -22,8 +22,8 @@
 #include <map>
 
 #include "sfntly/port/refcount.h"
-#include "sfntly/table/table.h"
 #include "sfntly/table/subtable.h"
+#include "sfntly/table/subtable_container_table.h"
 
 namespace sfntly {
 
@@ -43,7 +43,7 @@ struct CMapFormat {
 };
 
 // A CMap table
-class CMapTable : public Table, public RefCounted<CMapTable> {
+class CMapTable : public SubTableContainerTable, public RefCounted<CMapTable> {
 public:
   // CMapTable::CMapId
   class CMapId {
@@ -113,8 +113,7 @@ public:
       virtual ~Builder();
 
       CALLER_ATTACH static Builder*
-          GetBuilder(FontDataTableBuilderContainer* container,
-                     ReadableFontData* data,
+          GetBuilder(ReadableFontData* data,
                      int32_t offset,
                      const CMapId& cmap_id);
 
@@ -124,12 +123,10 @@ public:
       virtual int32_t encoding_id() { return cmap_id_.encoding_id(); }
 
      protected:
-      Builder(FontDataTableBuilderContainer* container,
-              ReadableFontData* data,
+      Builder(ReadableFontData* data,
               int32_t format,
               const CMapId& cmap_id);
-      Builder(FontDataTableBuilderContainer* container,
-              WritableFontData* data,
+      Builder(WritableFontData* data,
               int32_t format,
               const CMapId& cmap_id);
 
@@ -186,12 +183,10 @@ public:
     class Builder : public CMap::Builder,
                     public RefCounted<Builder> {
      public:
-      Builder(FontDataTableBuilderContainer* container,
-              ReadableFontData* data,
+      Builder(ReadableFontData* data,
               int32_t offset,
               const CMapId& cmap_id);
-      Builder(FontDataTableBuilderContainer* container,
-              WritableFontData* data,
+      Builder(WritableFontData* data,
               int32_t offset,
               const CMapId& cmap_id);
       virtual ~Builder();
@@ -218,12 +213,10 @@ public:
     class Builder : public CMap::Builder,
                     public RefCounted<Builder> {
      public:
-      Builder(FontDataTableBuilderContainer* container,
-              ReadableFontData* data,
+      Builder(ReadableFontData* data,
               int32_t offset,
               const CMapId& cmap_id);
-      Builder(FontDataTableBuilderContainer* container,
-              WritableFontData* data,
+      Builder(WritableFontData* data,
               int32_t offset,
               const CMapId& cmap_id);
       virtual ~Builder();
@@ -254,17 +247,13 @@ public:
   };
 
   // CMapTable::Builder
-  class Builder : public Table::ArrayElementTableBuilder,
+  class Builder : public SubTableContainerTable::Builder,
                   public RefCounted<Builder> {
    public:
     // Constructor scope altered to public because C++ does not allow base
     // class to instantiate derived class with protected constructors.
-    Builder(FontDataTableBuilderContainer* font_builder,
-            Header* header,
-            WritableFontData* data);
-    Builder(FontDataTableBuilderContainer* font_builder,
-            Header* header,
-            ReadableFontData* data);
+    Builder(Header* header, WritableFontData* data);
+    Builder(Header* header, ReadableFontData* data);
     virtual ~Builder();
 
     virtual int32_t SubSerialize(WritableFontData* new_data);
@@ -273,11 +262,12 @@ public:
     virtual void SubDataSet();
     virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
 
+    static CALLER_ATTACH Builder* CreateBuilder(Header* header,
+                                                WritableFontData* data);
+
    protected:
-    static CALLER_ATTACH CMap::Builder*
-        CMapBuilder(FontDataTableBuilderContainer* container,
-                    ReadableFontData* data,
-                    int32_t index);
+    static CALLER_ATTACH CMap::Builder* CMapBuilder(ReadableFontData* data,
+                                                    int32_t index);
 
    private:
     static int32_t NumCMaps(ReadableFontData* data);
@@ -354,6 +344,7 @@ public:
       kFormat4EntrySelector = 10,
       kFormat4RangeShift = 12,
       kFormat4EndCount = 14,
+      kFormat4FixedSize = 16,
 
       // format 6: Trimmed table mapping
       kFormat6Format = 0,
@@ -437,7 +428,7 @@ public:
 
   // Get the offset in the table data for the encoding record for the cmap with
   // the given index. The offset is from the beginning of the table.
-  int32_t OffsetForEncodingRecord(int32_t index);
+  static int32_t OffsetForEncodingRecord(int32_t index);
 };
 typedef std::vector<CMapTable::CMapId> CMapIdList;
 typedef Ptr<CMapTable> CMapTablePtr;

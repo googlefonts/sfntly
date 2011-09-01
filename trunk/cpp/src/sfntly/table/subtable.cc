@@ -23,7 +23,7 @@ namespace sfntly {
 SubTable::~SubTable() {}
 
 SubTable::SubTable(ReadableFontData* data)
-    : FontDataTable(data) {
+    : FontDataTable(data), padding_(0) {
 }
 
 /******************************************************************************
@@ -31,14 +31,12 @@ SubTable::SubTable(ReadableFontData* data)
  ******************************************************************************/
 SubTable::Builder::~Builder() {}
 
-SubTable::Builder::Builder(FontDataTableBuilderContainer* container,
-                           WritableFontData* data)
-    : FontDataTable::Builder(container, data) {
+SubTable::Builder::Builder(WritableFontData* data)
+    : FontDataTable::Builder(data) {
 }
 
-SubTable::Builder::Builder(FontDataTableBuilderContainer* container,
-                           ReadableFontData* data)
-    : FontDataTable::Builder(container, data) {
+SubTable::Builder::Builder(ReadableFontData* data)
+    : FontDataTable::Builder(data) {
 }
 
 }  // namespace sfntly

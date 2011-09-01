@@ -22,7 +22,6 @@
 #include "sfntly/port/refcount.h"
 #include "sfntly/port/type.h"
 #include "sfntly/port/endian.h"
-#include "sfntly/font_data_table_builder_container.h"
 #include "sfntly/data/font_input_stream.h"
 #include "sfntly/data/font_output_stream.h"
 #include "sfntly/data/writable_font_data.h"
@@ -121,10 +120,16 @@ struct MacintoshEncodingId {
 extern const int32_t SFNTVERSION_1;
 
 class FontFactory;
+
+// An sfnt container font object. This object is immutable and thread safe. To
+// construct one use an instance of Font::Builder.
 class Font : public RefCounted<Font> {
  public:
-  class Builder : public FontDataTableBuilderContainer,
-                  public RefCounted<Builder> {
+  // A builder for a font object. The builder allows the for the creation of
+  // immutable Font objects. The builder is a one use non-thread safe object and
+  // once the Font object has been created it is no longer usable. To create a
+  // further Font object new builder will be required.
+  class Builder : public RefCounted<Builder> {
    public:
     virtual ~Builder();
 
@@ -132,18 +137,31 @@ class Font : public RefCounted<Font> {
         GetOTFBuilder(FontFactory* factory, InputStream* is);
     static CALLER_ATTACH Builder*
         GetOTFBuilder(FontFactory* factory,
-                      ByteArray* ba,
+                      WritableFontData* ba,
                       int32_t offset_to_offset_table);
     static CALLER_ATTACH Builder* GetOTFBuilder(FontFactory* factory);
-    virtual bool ReadyToBuild();
-    virtual CALLER_ATTACH Font* Build();
-    virtual CALLER_ATTACH WritableFontData* GetNewData(int32_t capacity);
-    virtual CALLER_ATTACH WritableFontData*
-        GetNewGrowableData(ReadableFontData* data);
-    virtual void SetDigest(ByteVector* digest);
-    virtual void CleanTableBuilders();
-    virtual bool HasTableBuilder(int32_t tag);
-    virtual Table::Builder* GetTableBuilder(int32_t tag);
+
+    // Get the font factory that created this font builder.
+    FontFactory* GetFontFactory() { return factory_; }
+
+    // Is the font ready to build?
+    bool ReadyToBuild();
+
+    // Build the Font. After this call this builder will no longer be usable.
+    CALLER_ATTACH Font* Build();
+
+    // Set a unique fingerprint for the font object.
+    void SetDigest(ByteVector* digest);
+
+    // Clear all table builders.
+    void ClearTableBuilders();
+
+    // Does this font builder have the specified table builder.
+    bool HasTableBuilder(int32_t tag);
+
+    // Get the table builder for the given tag. If there is no builder for that
+    // tag then return a null.
+    Table::Builder* GetTableBuilder(int32_t tag);
 
     // Creates a new table builder for the table type given by the table id tag.
     // This new table has been added to the font and will replace any existing
@@ -151,12 +169,23 @@ class Font : public RefCounted<Font> {
     // @return new empty table of the type specified by tag; if tag is not known
     //         then a generic OpenTypeTable is returned
     virtual Table::Builder* NewTableBuilder(int32_t tag);
+
+    // Creates a new table builder for the table type given by the table id tag.
+    // It makes a copy of the data provided and uses that copy for the table.
+    // This new table has been added to the font and will replace any existing
+    // builder for that table.
     virtual Table::Builder* NewTableBuilder(int32_t tag,
                                             ReadableFontData* src_data);
+
+    // Get a map of the table builders in this font builder accessed by table
+    // tag.
     virtual TableBuilderMap* table_builders() { return &table_builders_; }
-    virtual void TableBuilderTags(IntegerSet* key_set);
+
+    // Remove the specified table builder from the font builder.
     // Note: different from Java: we don't return object in removeTableBuilder
     virtual void RemoveTableBuilder(int32_t tag);
+
+    // Get the number of table builders in the font builder.
     virtual int32_t number_of_table_builders() {
       return (int32_t)table_builders_.size();
     }
@@ -164,23 +193,30 @@ class Font : public RefCounted<Font> {
    private:
     explicit Builder(FontFactory* factory);
     virtual void LoadFont(InputStream* is);
-    virtual void LoadFont(ByteArray* buffer, int32_t offset_to_offset_table);
+    virtual void LoadFont(WritableFontData* wfd,
+                          int32_t offset_to_offset_table);
     int32_t SfntWrapperSize();
     void BuildAllTableBuilders(DataBlockMap* table_data,
                                TableBuilderMap* builder_map);
     CALLER_ATTACH Table::Builder*
         GetTableBuilder(Table::Header* header, WritableFontData* data);
-    void BuildTablesFromBuilders(TableBuilderMap* builder_map,
+    void BuildTablesFromBuilders(Font* font,
+                                 TableBuilderMap* builder_map,
                                  TableMap* tables);
     static void InterRelateBuilders(TableBuilderMap* builder_map);
-    void ReadHeader(FontInputStream* is, TableHeaderSortedSet* records);
+
+    void ReadHeader(FontInputStream* is,
+                    HeaderOffsetSortedSet* records);
+
     void ReadHeader(ReadableFontData* fd,
                     int32_t offset,
-                    TableHeaderSortedSet* records);
-    void LoadTableData(TableHeaderSortedSet* headers,
+                    HeaderOffsetSortedSet* records);
+
+    void LoadTableData(HeaderOffsetSortedSet* headers,
                        FontInputStream* is,
                        DataBlockMap* table_data);
-    void LoadTableData(TableHeaderSortedSet* headers,
+
+    void LoadTableData(HeaderOffsetSortedSet* headers,
                        WritableFontData* fd,
                        DataBlockMap* table_data);
 
@@ -198,7 +234,7 @@ class Font : public RefCounted<Font> {
   virtual ~Font();
 
   // Gets the sfnt version set in the sfnt wrapper of the font.
-  int32_t version() { return sfnt_version_; }
+  int32_t sfnt_version() { return sfnt_version_; }
 
   // Gets a copy of the fonts digest that was created when the font was read. If
   // no digest was set at creation time then the return result will be null.
@@ -223,23 +259,15 @@ class Font : public RefCounted<Font> {
 
   // Get a map of the tables in this font accessed by table tag.
   // @return an unmodifiable view of the tables in this font
-  TableMap* Tables();
+  // Note: renamed tableMap() to GetTableMap()
+  const TableMap* GetTableMap();
+
+  // UNIMPLEMENTED: toString()
 
   // Serialize the font to the output stream.
   // @param os the destination for the font serialization
   // @param tableOrdering the table ordering to apply
   void Serialize(OutputStream* os, IntegerList* table_ordering);
-
-  // Get a new data object. The size is a request for a data object and the
-  // returned data object will support at least that amount. A value greater
-  // than zero for the size is a request for a fixed size data object. A
-  // negative or zero value for the size is a request for a variable sized data
-  // object with the absolute value of the size being an estimate of the space
-  // required.
-  // @param size greater than zero is a request for a fixed size data object of
-  //        the given size; less than or equal to zero is a request for a
-  //        variable size data object with the absolute size as an estimate
-  CALLER_ATTACH WritableFontData* GetNewData(int32_t size);
 
  private:
   // Offsets to specific elements in the underlying data. These offsets are
@@ -269,18 +297,48 @@ class Font : public RefCounted<Font> {
 //  static const int32_t CFF_TABLE_ORDERING[];
 //  static const int32_t TRUE_TYPE_TABLE_ORDERING[];
 
-  Font(FontFactory* factory, int32_t sfnt_version, ByteVector* digest,
-       TableMap* tables);
+  // Constructor.
+  // @param sfntVersion the sfnt version
+  // @param digest the computed digest for the font; null if digest was not
+  //        computed
+  // Note: Current C++ port does not support SHA digest validation.
+  Font(int32_t sfnt_version, ByteVector* digest);
 
+  // Build the table headers to be used for serialization. These headers will be
+  // filled out with the data required for serialization. The headers will be
+  // sorted in the order specified and only those specified will have headers
+  // generated.
+  // @param tableOrdering the tables to generate headers for and the order to
+  //        sort them
+  // @return a list of table headers ready for serialization
   void BuildTableHeadersForSerialization(IntegerList* table_ordering,
                                          TableHeaderList* table_headers);
+
+  // Searialize the headers.
+  // @param fos the destination stream for the headers
+  // @param tableHeaders the headers to serialize
+  // @throws IOException
   void SerializeHeader(FontOutputStream* fos, TableHeaderList* table_headers);
+
+  // Serialize the tables.
+  // @param fos the destination stream for the headers
+  // @param tableHeaders the headers for the tables to serialize
+  // @throws IOException
   void SerializeTables(FontOutputStream* fos, TableHeaderList* table_headers);
-  void TableOrdering(IntegerList* default_table_ordering,
-                     IntegerList* table_ordering);
+
+  // Generate the full table ordering to used for serialization. The full
+  // ordering uses the partial ordering as a seed and then adds all remaining
+  // tables in the font in an undefined order.
+  // @param defaultTableOrdering the partial ordering to be used as a seed for
+  //        the full ordering
+  // @param (out) table_ordering the full ordering for serialization
+  void GenerateTableOrdering(IntegerList* default_table_ordering,
+                             IntegerList* table_ordering);
+
+  // Get the default table ordering based on the type of the font.
+  // @param (out) default_table_ordering the default table ordering
   void DefaultTableOrdering(IntegerList* default_table_ordering);
 
-  FontFactory* factory_;  // dumb pointer, avoid circular ref-counting
   int32_t sfnt_version_;
   ByteVector digest_;
   int64_t checksum_;
