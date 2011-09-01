@@ -50,6 +50,35 @@ You should see {{{sfntly.sln}}} in {{{d:\src\sfntly\cpp\build}}}.
   # Open sfntly.sln.  Since sfntly use STL extensively, please patch your Visual Studio for any STL-related hotfixes/service packs.
   # Build the solution (if the icuuc dll is not found you may need to add d:\src\sfntly\cpp\ext\icu\bin to the system path).
 
+===Building on Windows via Command Line===
+Visual Studio 2008 and 2010 support command line building, therefore you don't need the IDE to build the project.  
+
+For Visual Studio 2008 (assume it's installed at {{{c:\vs08}}})
+{{{
+cd d:\src\sfntly\cpp\build
+..\ext\cmake\bin\cmake .. -G "Visual Studio 9 2008"
+c:\vs08\common7\tools\vsvars32.bat
+vcbuild sfntly.sln
+}}}
+
+We invoke the cmake with {{{-G}}} to make sure Visual Studio 2008 solution/project files are generated.  You can also use 
+
+{{{
+devenv sfntly.sln /build
+}}}
+
+to build the solution instead of using {{{vcbuild}}}.  There are subtle differences between {{{devenv}}} and {{{vcbuild}}}.  Please refer to your Visual Studio manual for more details.
+
+For Visual Studio 2010 (assume it's installed at {{{c:\vs10}}})
+{{{
+cd d:\src\sfntly\cpp\build
+..\ext\cmake\bin\cmake .. -G "Visual Studio 10"
+c:\vs10\common7\tools\vsvars32.bat
+msbuild sfntly.sln
+}}}
+
+If you install both Visual Studio 2008 and 2010 on your system, you can't run the scripts above in the same Command Prompt window.  {{{vsvars32.bat}}} assumes that it is run from a clean Command Prompt.
+
 ==Building on Linux/Mac==
 
 ===Recommended Out-of-Source Building===
