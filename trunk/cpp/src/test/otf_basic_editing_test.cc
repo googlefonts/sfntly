@@ -66,7 +66,7 @@ bool TestOTFBasicEditing() {
   for (TableMap::const_iterator i = table_map->begin(), e = table_map->end();
                                 i != e; ++i) {
     TablePtr table = (*i).second;
-    TableHeaderPtr header = table->header();
+    HeaderPtr header = table->header();
     EXPECT_TRUE(builder_tags.find(header->tag()) != builder_tags.end());
     builder_tags.erase(header->tag());
   }

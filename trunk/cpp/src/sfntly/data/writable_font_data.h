@@ -69,6 +69,22 @@ class WritableFontData : public ReadableFontData {
   //         the FontData's range
   virtual int32_t WriteBytes(int32_t index, ByteVector* b);
 
+  // Write the bytes from the array and pad if necessary.
+  // Write to the length given using the byte array provided and if there are
+  // not enough bytes in the array then pad to the requested length using the
+  // pad byte specified.
+  // @param index index into the font data
+  // @param b the source for the bytes to be written
+  // @param offset offset in the byte array
+  // @param length the length of the bytes to be written
+  // @param pad the padding byte to be used if necessary
+  // @return the number of bytes actually written
+  virtual int32_t WriteBytesPad(int32_t index,
+                                ByteVector* b,
+                                int32_t offset,
+                                int32_t length,
+                                byte_t pad);
+
   // Write the CHAR at the given index.
   // @param index index into the font data
   // @param c the CHAR

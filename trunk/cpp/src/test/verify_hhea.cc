@@ -21,15 +21,15 @@
 
 namespace sfntly {
 
-const int32_t HHEA_ASCENDER = 1993;
-const int32_t HHEA_DESCENDER = -449;
+const int32_t HHEA_ASCENDER = 2023;
+const int32_t HHEA_DESCENDER = -648;
 const int32_t HHEA_LINE_GAP = 93;
-const int32_t HHEA_ADVANCE_WIDTH_MAX = 3969;
-const int32_t HHEA_MIN_LSB = -119;
-const int32_t HHEA_MIN_RSB = -32768;
-const int32_t HHEA_X_MAX_EXTENT = 1565;
+const int32_t HHEA_ADVANCE_WIDTH_MAX = 2753;
+const int32_t HHEA_MIN_LSB = -968;
+const int32_t HHEA_MIN_RSB = -411;
+const int32_t HHEA_X_MAX_EXTENT = 2628;
 const int32_t HHEA_METRIC_DATA_FORMAT = 0;
-const int32_t HHEA_NUM_METRICS = 197;
+const int32_t HHEA_NUM_METRICS = 1499;
 
 static bool VerifyHHEA(Table* table) {
   HorizontalHeaderTablePtr hhea = down_cast<HorizontalHeaderTable*>(table);

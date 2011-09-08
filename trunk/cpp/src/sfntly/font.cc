@@ -99,9 +99,9 @@ void Font::BuildTableHeadersForSerialization(IntegerList* table_ordering,
     }
     TablePtr table = tables_[*tag];
     if (table != NULL) {
-      TableHeaderPtr header =
-          new Table::Header(*tag, table->CalculatedChecksum(), table_offset,
-                            table->header()->length());
+      HeaderPtr header =
+          new Header(*tag, table->CalculatedChecksum(), table_offset,
+                     table->header()->length());
       table_headers->push_back(header);
       table_offset += (table->DataLength() + 3) & ~3;
     }
@@ -283,7 +283,7 @@ Table::Builder* Font::Builder::GetTableBuilder(int32_t tag) {
 }
 
 Table::Builder* Font::Builder::NewTableBuilder(int32_t tag) {
-  TableHeaderPtr header = new Table::Header(tag);
+  HeaderPtr header = new Header(tag);
   TableBuilderPtr builder;
   builder.Attach(Table::Builder::GetBuilder(header, NULL));
   table_builders_.insert(TableBuilderEntry(header->tag(), builder));
@@ -304,7 +304,7 @@ Table::Builder* Font::Builder::NewTableBuilder(int32_t tag,
     return NULL;
   }
 #endif
-  TableHeaderPtr header = new Table::Header(tag, data->Length());
+  HeaderPtr header = new Header(tag, data->Length());
   TableBuilderPtr builder;
   builder.Attach(Table::Builder::GetBuilder(header, data));
   table_builders_.insert(TableBuilderEntry(tag, builder));
@@ -361,7 +361,7 @@ void Font::Builder::BuildAllTableBuilders(DataBlockMap* table_data,
 }
 
 CALLER_ATTACH
-Table::Builder* Font::Builder::GetTableBuilder(Table::Header* header,
+Table::Builder* Font::Builder::GetTableBuilder(Header* header,
                                                WritableFontData* data) {
   return Table::Builder::GetBuilder(header, data);
 }
@@ -375,7 +375,7 @@ void Font::Builder::BuildTablesFromBuilders(Font* font,
   // Now build all the tables.
   for (TableBuilderMap::iterator builder = builder_map->begin(),
                                  builder_end = builder_map->end();
-       builder != builder_end; ++builder) {
+                                 builder != builder_end; ++builder) {
     TablePtr table;
     if (builder->second && builder->second->ReadyToBuild()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
@@ -393,10 +393,6 @@ void Font::Builder::BuildTablesFromBuilders(Font* font,
 #endif
     }
     if (table == NULL) {
-#if defined (SFNTLY_DEBUG)
-      fprintf(stderr, "Aborting table construction: %s\n",
-              builder_string.c_str());
-#endif
       table_map->clear();
 #if !defined (SFNTLY_NO_EXCEPTION)
       std::string builder_string = "Unable to build table - ";
@@ -496,7 +492,7 @@ void Font::Builder::ReadHeader(FontInputStream* is,
     int64_t checksum = is->ReadULong();
     int32_t offset = is->ReadULongAsInt();
     int32_t length = is->ReadULongAsInt();
-    TableHeaderPtr table = new Table::Header(tag, checksum, offset, length);
+    HeaderPtr table = new Header(tag, checksum, offset, length);
     records->insert(table);
   }
 }
@@ -519,7 +515,7 @@ void Font::Builder::ReadHeader(ReadableFontData* fd,
     int64_t checksum = fd->ReadULong(table_offset + Offset::kTableCheckSum);
     int32_t offset = fd->ReadULongAsInt(table_offset + Offset::kTableOffset);
     int32_t length = fd->ReadULongAsInt(table_offset + Offset::kTableLength);
-    TableHeaderPtr table = new Table::Header(tag, checksum, offset, length);
+    HeaderPtr table = new Header(tag, checksum, offset, length);
     records->insert(table);
   }
 }

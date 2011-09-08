@@ -22,6 +22,7 @@
 #include "sfntly/font_factory.h"
 #include "sfntly/table/core/font_header_table.h"
 #include "sfntly/table/table.h"
+#include "sfntly/table/table_based_table_builder.h"
 #include "sfntly/tag.h"
 #include "sfntly/port/file_input_stream.h"
 #include "test/test_data.h"
@@ -50,27 +51,26 @@ bool TestFontParsing() {
   }
 
   // Generic table
-  Ptr<Table::GenericTableBuilder> gdef_builder =
-      down_cast<Table::GenericTableBuilder*>(
-          font_builder->GetTableBuilder(Tag::GDEF));
-  Ptr<Table::Header> gdef_header = gdef_builder->header();
-  EXPECT_EQ(gdef_header->length(), TTF_LENGTH[SAMPLE_TTF_GDEF]);
-  EXPECT_EQ(gdef_header->offset(), TTF_OFFSET[SAMPLE_TTF_GDEF]);
-  EXPECT_EQ(gdef_header->checksum(), TTF_CHECKSUM[SAMPLE_TTF_GDEF]);
+  Ptr<GenericTableBuilder> gdef_builder =
+      down_cast<GenericTableBuilder*>(font_builder->GetTableBuilder(Tag::feat));
+  HeaderPtr gdef_header = gdef_builder->header();
+  EXPECT_EQ(gdef_header->length(), TTF_LENGTH[SAMPLE_TTF_FEAT]);
+  EXPECT_EQ(gdef_header->offset(), TTF_OFFSET[SAMPLE_TTF_FEAT]);
+  EXPECT_EQ(gdef_header->checksum(), TTF_CHECKSUM[SAMPLE_TTF_FEAT]);
   EXPECT_TRUE(gdef_header->checksum_valid());
 
   WritableFontDataPtr wfd;
   wfd.Attach(gdef_builder->Data());
   ByteVector b;
-  b.resize(TTF_LENGTH[SAMPLE_TTF_GDEF]);
-  wfd->ReadBytes(0, &(b[0]), 0, TTF_LENGTH[SAMPLE_TTF_GDEF]);
-  EXPECT_EQ(memcmp(&(b[0]), TTF_GDEF_DATA, TTF_LENGTH[SAMPLE_TTF_GDEF]), 0);
+  b.resize(TTF_LENGTH[SAMPLE_TTF_FEAT]);
+  wfd->ReadBytes(0, &(b[0]), 0, TTF_LENGTH[SAMPLE_TTF_FEAT]);
+  EXPECT_EQ(memcmp(&(b[0]), TTF_FEAT_DATA, TTF_LENGTH[SAMPLE_TTF_FEAT]), 0);
 
   // Header table
   FontHeaderTableBuilderPtr header_builder =
       down_cast<FontHeaderTable::Builder*>(
           font_builder->GetTableBuilder(Tag::head));
-  Ptr<Table::Header> header_header = header_builder->header();
+  HeaderPtr header_header = header_builder->header();
   EXPECT_EQ(header_header->length(), TTF_LENGTH[SAMPLE_TTF_HEAD]);
   EXPECT_EQ(header_header->offset(), TTF_OFFSET[SAMPLE_TTF_HEAD]);
   EXPECT_EQ(header_header->checksum(), TTF_CHECKSUM[SAMPLE_TTF_HEAD]);

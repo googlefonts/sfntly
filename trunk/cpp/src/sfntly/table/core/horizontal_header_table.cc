@@ -83,11 +83,11 @@ HorizontalHeaderTable:: HorizontalHeaderTable(Header* header,
  * HorizontalHeaderTable::Builder class
  ******************************************************************************/
 HorizontalHeaderTable::Builder::Builder(Header* header, WritableFontData* data)
-    : Table::TableBasedTableBuilder(header, data) {
+    : TableBasedTableBuilder(header, data) {
 }
 
 HorizontalHeaderTable::Builder::Builder(Header* header, ReadableFontData* data)
-    : Table::TableBasedTableBuilder(header, data) {
+    : TableBasedTableBuilder(header, data) {
 }
 
 HorizontalHeaderTable::Builder::~Builder() {}

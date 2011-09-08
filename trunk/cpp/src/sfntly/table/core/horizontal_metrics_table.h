@@ -18,6 +18,7 @@
 #define SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_HORIZONTAL_METRICS_TABLE_H_
 
 #include "sfntly/table/table.h"
+#include "sfntly/table/table_based_table_builder.h"
 
 namespace sfntly {
 
@@ -26,8 +27,7 @@ class HorizontalMetricsTable : public Table,
                                public RefCounted<HorizontalMetricsTable> {
  public:
   // Builder for a Horizontal Metrics Table - 'hmtx'.
-  class Builder : public Table::TableBasedTableBuilder,
-                  public RefCounted<Builder> {
+  class Builder : public TableBasedTableBuilder, public RefCounted<Builder> {
    public:
     // Constructor scope altered to public because C++ does not allow base
     // class to instantiate derived class with protected constructors.

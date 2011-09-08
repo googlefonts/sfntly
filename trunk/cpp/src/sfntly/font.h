@@ -199,7 +199,7 @@ class Font : public RefCounted<Font> {
     void BuildAllTableBuilders(DataBlockMap* table_data,
                                TableBuilderMap* builder_map);
     CALLER_ATTACH Table::Builder*
-        GetTableBuilder(Table::Header* header, WritableFontData* data);
+        GetTableBuilder(Header* header, WritableFontData* data);
     void BuildTablesFromBuilders(Font* font,
                                  TableBuilderMap* builder_map,
                                  TableMap* tables);

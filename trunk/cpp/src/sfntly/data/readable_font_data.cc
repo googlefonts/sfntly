@@ -191,6 +191,29 @@ int32_t ReadableFontData::SearchUShort(int32_t start_index,
   return -1;
 }
 
+int32_t ReadableFontData::SearchUShort(int32_t start_index,
+                                       int32_t start_offset,
+                                       int32_t length,
+                                       int32_t key) {
+  int32_t location = 0;
+  int32_t bottom = 0;
+  int32_t top = length;
+  while (top != bottom) {
+    location = (top + bottom) / 2;
+    int32_t location_start = ReadUShort(start_index + location * start_offset);
+    if (key < location_start) {
+      // location is below current location
+      top = location;
+    } else if (key > location_start) {
+      // location is above current location
+      bottom = location + 1;
+    } else {
+      return location;
+    }
+  }
+  return -1;
+}
+
 int32_t ReadableFontData::SearchULong(int32_t start_index,
                                       int32_t start_offset,
                                       int32_t end_index,

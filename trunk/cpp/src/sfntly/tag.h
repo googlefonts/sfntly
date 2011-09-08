@@ -73,8 +73,20 @@ struct Tag {
   static const int32_t vhea;
   static const int32_t vmtx;
 
-  // GX Tables
-  // TODO(stuartg): add these tables
+  // AAT tables
+  static const int32_t bsln;
+  static const int32_t feat;
+  static const int32_t lcar;
+  static const int32_t morx;
+  static const int32_t opbd;
+  static const int32_t prop;
+
+  // Graphite tables
+  static const int32_t Feat;
+  static const int32_t Glat;
+  static const int32_t Gloc;
+  static const int32_t Sile;
+  static const int32_t Silf;
 
   // Bitmap font tables
   static const int32_t bhed;
@@ -91,10 +103,10 @@ inline int32_t GenerateTag(int32_t a, int32_t b, int32_t c, int32_t d) {
 // The Caller must delete[] the returned value.
 inline char* TagToString(int32_t tag) {
   char *name = new char[5];
-  name[0] = (char)((tag & 0xff000000) >> 24);
-  name[1] = (char)((tag & 0x00ff0000) >> 16);
-  name[2] = (char)((tag & 0x0000ff00) >> 8);
-  name[3] = (char)(tag & 0x000000ff);
+  name[0] = static_cast<char>((tag & 0xff000000) >> 24);
+  name[1] = static_cast<char>((tag & 0x00ff0000) >> 16);
+  name[2] = static_cast<char>((tag & 0x0000ff00) >> 8);
+  name[3] = static_cast<char>(tag & 0x000000ff);
   name[4] = 0;
   return name;
 }

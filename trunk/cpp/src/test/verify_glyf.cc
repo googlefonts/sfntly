@@ -22,7 +22,7 @@
 namespace sfntly {
 
 // We spot check only glyph id 33.
-const int32_t GLYPH33_OFFSET = 0xA70;
+const int32_t GLYPH33_OFFSET = 0xAC8;
 const int32_t GLYPH33_LENGTH = 40;
 const int32_t GLYPH33_XMIN = 92;
 const int32_t GLYPH33_YMIN = 20;

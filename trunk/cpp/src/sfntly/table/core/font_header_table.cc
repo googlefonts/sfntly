@@ -103,11 +103,11 @@ FontHeaderTable::FontHeaderTable(Header* header, ReadableFontData* data)
  * FontHeaderTable::Builder class
  ******************************************************************************/
 FontHeaderTable::Builder::Builder(Header* header, WritableFontData* data)
-    : Table::TableBasedTableBuilder(header, data) {
+    : TableBasedTableBuilder(header, data) {
 }
 
 FontHeaderTable::Builder::Builder(Header* header, ReadableFontData* data)
-    : Table::TableBasedTableBuilder(header, data) {
+    : TableBasedTableBuilder(header, data) {
 }
 
 FontHeaderTable::Builder::~Builder() {}

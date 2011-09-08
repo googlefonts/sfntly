@@ -94,15 +94,11 @@ HorizontalMetricsTable::HorizontalMetricsTable(Header* header,
  * HorizontalMetricsTable::Builder class
  ******************************************************************************/
 HorizontalMetricsTable::Builder::Builder(Header* header, WritableFontData* data)
-    : Table::TableBasedTableBuilder(header, data),
-      num_hmetrics_(-1),
-      num_glyphs_(-1) {
+    : TableBasedTableBuilder(header, data), num_hmetrics_(-1), num_glyphs_(-1) {
 }
 
 HorizontalMetricsTable::Builder::Builder(Header* header, ReadableFontData* data)
-    : Table::TableBasedTableBuilder(header, data),
-      num_hmetrics_(-1),
-      num_glyphs_(-1) {
+    : TableBasedTableBuilder(header, data), num_hmetrics_(-1), num_glyphs_(-1) {
 }
 
 HorizontalMetricsTable::Builder::~Builder() {}
