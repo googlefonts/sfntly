@@ -19,6 +19,7 @@
 
 #include "sfntly/port/refcount.h"
 #include "sfntly/table/table.h"
+#include "sfntly/table/table_based_table_builder.h"
 
 namespace sfntly {
 
@@ -312,8 +313,7 @@ struct CodePageRange {
 class OS2Table : public Table, public RefCounted<OS2Table> {
  public:
   // A builder for the OS/2 table = 'OS/2'.
-  class Builder : public Table::TableBasedTableBuilder,
-                  public RefCounted<Builder> {
+  class Builder : public TableBasedTableBuilder, public RefCounted<Builder> {
    public:
     Builder(Header* header, WritableFontData* data);
     Builder(Header* header, ReadableFontData* data);
@@ -370,6 +370,10 @@ class OS2Table : public Table, public RefCounted<OS2Table> {
     // UNIMPLEMENTED: EnumSet<UnicodeRange> UlUnicodeRange()
     //                setUlUnicodeRange(EnumSet<UnicodeRange> rangeSet)
     void AchVendId(ByteVector* b);
+    // This field is 4 bytes in length and only the first 4 bytes of the byte
+    // array will be written. If the byte array is less than 4 bytes it will be
+    // padded out with space characters (0x20).
+    // @param b ach Vendor Id
     void SetAchVendId(ByteVector* b);
     // UNIMPLEMENTED: public EnumSet<FsSelection> fsSelection()
     int32_t FsSelection();

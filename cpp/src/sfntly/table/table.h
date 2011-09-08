@@ -24,6 +24,7 @@
 
 #include "sfntly/port/type.h"
 #include "sfntly/table/font_data_table.h"
+#include "sfntly/table/header.h"
 
 namespace sfntly {
 class Font;
@@ -33,63 +34,6 @@ class Font;
 // table for all tables which have no specific implementations.
 class Table : public FontDataTable {
  public:
-  class Header : public RefCounted<Header> {
-   public:
-    // Make a partial header with only the basic info for an empty new table.
-    explicit Header(int32_t tag);
-
-    // Make a partial header with only the basic info for a new table.
-    Header(int32_t tag, int32_t length);
-
-    // Make a full header as read from an existing font.
-    Header(int32_t tag, int64_t checksum, int32_t offset, int32_t length);
-    virtual ~Header();
-
-    // Get the table tag.
-    int32_t tag() { return tag_; }
-
-    // Get the table offset. The offset is from the start of the font file.
-    int32_t offset() { return offset_; }
-
-    // Is the offset in the header valid. The offset will not be valid if the
-    // table was constructed during building and has no physical location in a
-    // font file.
-    bool offset_valid() { return offset_valid_; }
-
-    // Get the length of the table as recorded in the table record header.
-    int32_t length() { return length_; }
-
-    // Is the length in the header valid. The length will not be valid if the
-    // table was constructed during building and has no physical location in a
-    // font file.
-    bool length_valid() { return length_valid_; }
-
-    // Get the checksum for the table as recorded in the table record header.
-    int64_t checksum() { return checksum_; }
-
-    // Is the checksum valid. The checksum will not be valid if the table was
-    // constructed during building and has no physical location in a font file.
-    // Note that this does *NOT* check the validity of the checksum against
-    // the calculated checksum for the table data.
-    bool checksum_valid() { return checksum_valid_; }
-
-    // UNIMPLEMENTED: boolean equals(Object obj)
-    //                int hashCode()
-    //                string toString()
-
-   private:
-    int32_t tag_;
-    int32_t offset_;
-    bool offset_valid_;
-    int32_t length_;
-    bool length_valid_;
-    int64_t checksum_;
-    bool checksum_valid_;
-
-    friend class HeaderComparatorByOffset;
-    friend class HeaderComparatorByTag;
-  };
-
   // Note: original version is Builder<T extends Table>
   //       C++ template is not designed that way so plain old inheritance is
   //       chosen.
@@ -117,38 +61,8 @@ class Table : public FontDataTable {
     Ptr<Header> header_;
   };
 
-  class TableBasedTableBuilder : public Builder {
-   public:
-    virtual ~TableBasedTableBuilder();
-
-    virtual int32_t SubSerialize(WritableFontData* new_data);
-    virtual bool SubReadyToSerialize();
-    virtual int32_t SubDataSizeToSerialize();
-    virtual void SubDataSet();
-    virtual CALLER_ATTACH FontDataTable* Build();
-
-   protected:
-    TableBasedTableBuilder(Header* header, WritableFontData* data);
-    TableBasedTableBuilder(Header* header, ReadableFontData* data);
-    TableBasedTableBuilder(Header* header);
-
-    // C++ port: renamed table() to GetTable()
-    virtual Table* GetTable();
-
-    // TODO(arthurhsu): style guide violation: protected member, need refactor
-    Ptr<Table> table_;
-  };
-
-  class GenericTableBuilder : public TableBasedTableBuilder,
-                              public RefCounted<GenericTableBuilder> {
-   public:
-    GenericTableBuilder(Header* header, WritableFontData* data);
-    virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
-
-    static CALLER_ATTACH
-           GenericTableBuilder* CreateBuilder(Header* header,
-                                              WritableFontData* data);
-  };
+  // Note: GenericTableBuilder moved to table_based_table_builder.h to avoid
+  //       circular inclusion.
 
   virtual ~Table();
 
@@ -190,42 +104,15 @@ class GenericTable : public Table, public RefCounted<GenericTable> {
 };
 
 typedef Ptr<Table> TablePtr;
-typedef Ptr<Table::Header> TableHeaderPtr;
-typedef std::vector<TableHeaderPtr> TableHeaderList;
+typedef std::vector<HeaderPtr> TableHeaderList;
 typedef Ptr<Table::Builder> TableBuilderPtr;
 typedef std::map<int32_t, TablePtr> TableMap;
 typedef std::pair<int32_t, TablePtr> TableMapEntry;
 
-typedef std::map<TableHeaderPtr, WritableFontDataPtr> DataBlockMap;
-typedef std::pair<TableHeaderPtr, WritableFontDataPtr> DataBlockEntry;
+typedef std::map<HeaderPtr, WritableFontDataPtr> DataBlockMap;
+typedef std::pair<HeaderPtr, WritableFontDataPtr> DataBlockEntry;
 typedef std::map<int32_t, TableBuilderPtr> TableBuilderMap;
 typedef std::pair<int32_t, TableBuilderPtr> TableBuilderEntry;
-
-class HeaderComparator {
- public:
-  virtual ~HeaderComparator() {}
-  virtual bool operator()(const TableHeaderPtr h1,
-                          const TableHeaderPtr h2) = 0;
-};
-
-class HeaderComparatorByOffset : public HeaderComparator {
- public:
-  virtual ~HeaderComparatorByOffset() {}
-  virtual bool operator()(const TableHeaderPtr h1,
-                          const TableHeaderPtr h2);
-};
-
-class HeaderComparatorByTag : public HeaderComparator {
- public:
-  virtual ~HeaderComparatorByTag() {}
-  virtual bool operator()(const TableHeaderPtr h1,
-                          const TableHeaderPtr h2);
-};
-
-typedef std::set<TableHeaderPtr, HeaderComparatorByOffset>
-        HeaderOffsetSortedSet;
-typedef std::set<TableHeaderPtr, HeaderComparatorByTag>
-        HeaderTagSortedSet;
 
 }  // namespace sfntly
 

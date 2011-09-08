@@ -261,12 +261,12 @@ OS2Table::OS2Table(Header* header, ReadableFontData* data)
 /******************************************************************************
  * class OS2Table::Builder
  ******************************************************************************/
-OS2Table::Builder::Builder(Header* header, WritableFontData* data) :
-    Table::TableBasedTableBuilder(header, data) {
+OS2Table::Builder::Builder(Header* header, WritableFontData* data)
+    : TableBasedTableBuilder(header, data) {
 }
 
-OS2Table::Builder::Builder(Header* header, ReadableFontData* data) :
-    Table::TableBasedTableBuilder(header, data) {
+OS2Table::Builder::Builder(Header* header, ReadableFontData* data)
+    : TableBasedTableBuilder(header, data) {
 }
 
 OS2Table::Builder::~Builder() {}
@@ -476,12 +476,13 @@ void OS2Table::Builder::AchVendId(ByteVector* b) {
 void OS2Table::Builder::SetAchVendId(ByteVector* b) {
   assert(b);
   assert(b->size());
-  InternalWriteData()->WriteBytes(Offset::kAchVendId,
-                                  &((*b)[0]),
-                                  0,
-                                  std::min<size_t>(
-                                      (size_t)Offset::kAchVendIdLength,
-                                      b->size()));
+  InternalWriteData()->WriteBytesPad(Offset::kAchVendId,
+                                     b,
+                                     0,
+                                     std::min<size_t>(
+                                         (size_t)Offset::kAchVendIdLength,
+                                         b->size()),
+                                     static_cast<byte_t>(' '));
 }
 
 int32_t OS2Table::Builder::FsSelection() {

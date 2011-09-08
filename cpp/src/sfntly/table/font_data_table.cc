@@ -62,7 +62,9 @@ CALLER_ATTACH WritableFontData* FontDataTable::Builder::Data() {
     ReadableFontDataPtr data = InternalReadData();
     new_data.Attach(WritableFontData::CreateWritableFontData(
                         data != NULL ? data->Length() : 0));
-    data->CopyTo(new_data);
+    if (data != NULL) {
+      data->CopyTo(new_data);
+    }
   }
   return new_data.Detach();
 }
@@ -73,6 +75,7 @@ void FontDataTable::Builder::SetData(ReadableFontData* data) {
 
 
 CALLER_ATTACH FontDataTable* FontDataTable::Builder::Build() {
+  FontDataTablePtr table;  // NULL default table
   ReadableFontDataPtr data = InternalReadData();
   if (model_changed_) {
     // Let subclass serialize from model.
@@ -86,12 +89,13 @@ CALLER_ATTACH FontDataTable* FontDataTable::Builder::Build() {
     data = new_data;
   }
 
-  if (data == NULL) {
-    return NULL;  // Do not build table with NULL data.
+  if (data != NULL) {
+    table = SubBuildTable(data);
+    NotifyPostTableBuild(table);
   }
 
-  FontDataTablePtr table = SubBuildTable(data);
-  NotifyPostTableBuild(table);
+  r_data_.Release();
+  w_data_.Release();
   return table;
 }
 
@@ -117,16 +121,23 @@ WritableFontData* FontDataTable::Builder::InternalWriteData() {
   return w_data_.p_;
 }
 
-FontDataTable::Builder::Builder() {
+FontDataTable::Builder::Builder()
+    : model_changed_(false),
+      contained_model_changed_(false),
+      data_changed_(false) {
 }
 
 FontDataTable::Builder::Builder(WritableFontData* data)
-    : model_changed_(false), data_changed_(false) {
+    : model_changed_(false),
+      contained_model_changed_(false),
+      data_changed_(false) {
   w_data_ = data;
 }
 
 FontDataTable::Builder::Builder(ReadableFontData* data)
-    : model_changed_(false), data_changed_(false) {
+    : model_changed_(false),
+      contained_model_changed_(false),
+      data_changed_(false) {
   r_data_ = data;
 }
 

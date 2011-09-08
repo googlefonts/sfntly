@@ -181,11 +181,9 @@ class ReadableFontData : public FontData,
   virtual int32_t CopyTo(ByteArray* ba);
 
   // Search for the key value in the range tables provided.
-  //
-  //  The search looks through the start-end pairs looking for the key value. It
+  // The search looks through the start-end pairs looking for the key value. It
   // is assumed that the start-end pairs are both represented by UShort values,
   // ranges do not overlap, and are monotonically increasing.
-  //
   // @param startIndex the position to read the first start value from
   // @param startOffset the offset between subsequent start values
   // @param endIndex the position to read the first end value from
@@ -201,13 +199,26 @@ class ReadableFontData : public FontData,
                        int32_t length,
                        int32_t key);
 
+  // Search for the key value in the table provided.
+  // The search looks through the values looking for the key value. It is
+  // assumed that the are represented by UShort values and are monotonically
+  // increasing.
+  // @param startIndex the position to read the first start value from
+  // @param startOffset the offset between subsequent start values
+  // @param length the number of start-end pairs
+  // @param key the value to search for
+  // @return the index of the start-end pairs in which the key was found; -1
+  //         otherwise
+  int32_t SearchUShort(int32_t start_index,
+                       int32_t start_offset,
+                       int32_t length,
+                       int32_t key);
+
   // Search for the key value in the range tables provided.
-  //
   // The search looks through the start-end pairs looking for the key value. It
   // is assumed that the start-end pairs are both represented by ULong values
   // that can be represented within 31 bits, ranges do not overlap, and are
   // monotonically increasing.
-  //
   // @param startIndex the position to read the first start value from
   // @param startOffset the offset between subsequent start values
   // @param endIndex the position to read the first end value from

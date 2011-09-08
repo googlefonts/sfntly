@@ -21,19 +21,19 @@
 
 namespace sfntly {
 
-const int32_t MAXP_NUM_GLYPHS = 197;
-const int32_t MAXP_MAX_POINTS = 98;
-const int32_t MAXP_MAX_CONTOURS = 5;
-const int32_t MAXP_MAX_COMPOSITE_POINTS = 84;
-const int32_t MAXP_MAX_COMPOSITE_CONTOURS = 4;
+const int32_t MAXP_NUM_GLYPHS = 1502;
+const int32_t MAXP_MAX_POINTS = 181;
+const int32_t MAXP_MAX_CONTOURS = 9;
+const int32_t MAXP_MAX_COMPOSITE_POINTS = 172;
+const int32_t MAXP_MAX_COMPOSITE_CONTOURS = 5;
 const int32_t MAXP_MAX_ZONES = 2;
 const int32_t MAXP_MAX_TWILIGHT_POINTS = 0;
 const int32_t MAXP_MAX_STORAGE = 1;
 const int32_t MAXP_MAX_FUNCTION_DEFS = 1;
 const int32_t MAXP_MAX_INSTR_DEFS = 0;
 const int32_t MAXP_MAX_STACK_ELEMENTS = 64;
-const int32_t MAXP_MAX_INSTR_SIZE = 0;
-const int32_t MAXP_MAX_COMPONENT_ELEMENTS = 2;
+const int32_t MAXP_MAX_INSTR_SIZE = 46;
+const int32_t MAXP_MAX_COMPONENT_ELEMENTS = 4;
 const int32_t MAXP_MAX_COMPONENT_DEPTH = 3;
 
 static bool VerifyMAXP(Table* table) {

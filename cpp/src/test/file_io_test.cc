@@ -134,19 +134,12 @@ bool TestFontInputStreamTableLoading() {
   is.Open(SAMPLE_TTF_FILE);
   FontInputStream font_is(&is);
 
-  font_is.Skip(TTF_OFFSET[SAMPLE_TTF_GDEF]);
-  FontInputStream gdef_is(&font_is, TTF_LENGTH[SAMPLE_TTF_GDEF]);
-  ByteVector gdef_data;
-  gdef_is.Read(&gdef_data, 0, TTF_LENGTH[SAMPLE_TTF_GDEF]);
-  EXPECT_EQ(memcmp(&(gdef_data[0]), TTF_GDEF_DATA,
-                   TTF_LENGTH[SAMPLE_TTF_GDEF]), 0);
-
-  font_is.Skip(TTF_OFFSET[SAMPLE_TTF_HEAD] - font_is.position());
-  FontInputStream head_is(&font_is, TTF_LENGTH[SAMPLE_TTF_HEAD]);
-  ByteVector head_data;
-  head_is.Read(&head_data, 0, TTF_LENGTH[SAMPLE_TTF_HEAD]);
-  EXPECT_EQ(memcmp(&(head_data[0]), TTF_HEAD_DATA,
-                   TTF_LENGTH[SAMPLE_TTF_HEAD]), 0);
+  font_is.Skip(TTF_OFFSET[SAMPLE_TTF_FEAT]);
+  FontInputStream gdef_is(&font_is, TTF_LENGTH[SAMPLE_TTF_FEAT]);
+  ByteVector feat_data;
+  gdef_is.Read(&feat_data, 0, TTF_LENGTH[SAMPLE_TTF_FEAT]);
+  EXPECT_EQ(memcmp(&(feat_data[0]), TTF_FEAT_DATA,
+                   TTF_LENGTH[SAMPLE_TTF_FEAT]), 0);
 
   return true;
 }

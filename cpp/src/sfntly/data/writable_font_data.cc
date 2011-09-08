@@ -71,6 +71,23 @@ int32_t WritableFontData::WriteBytes(int32_t index, ByteVector* b) {
   return WriteBytes(index, &((*b)[0]), 0, b->size());
 }
 
+int32_t WritableFontData::WriteBytesPad(int32_t index,
+                                        ByteVector* b,
+                                        int32_t offset,
+                                        int32_t length,
+                                        byte_t pad) {
+  int32_t written =
+      array_->Put(BoundOffset(index),
+                  &((*b)[0]),
+                  offset,
+                  BoundLength(index,
+                              std::min<int32_t>(length, b->size() - offset)));
+  for (; written < length; written++) {
+    array_->Put(written + index, pad);
+  }
+  return written;
+}
+
 int32_t WritableFontData::WriteChar(int32_t index, byte_t c) {
   return WriteByte(index, c);
 }

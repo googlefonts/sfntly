@@ -22,7 +22,7 @@
 namespace sfntly {
 
 const int32_t NAME_FORMAT = 0;
-const int32_t NAME_COUNT = 31;
+const int32_t NAME_COUNT = 75;
 const NameTable::NameEntryId NAME_IDS[] = {
     NameTable::NameEntryId(1, 0, 0, 0),  // 0
     NameTable::NameEntryId(1, 0, 0, 1),  // 1
@@ -34,28 +34,8 @@ const NameTable::NameEntryId NAME_IDS[] = {
     NameTable::NameEntryId(1, 0, 0, 9),  // 7
     NameTable::NameEntryId(1, 0, 0, 11),  // 8
     NameTable::NameEntryId(1, 0, 0, 12),  // 9
-    NameTable::NameEntryId(1, 0, 0, 13),  // 10
-    NameTable::NameEntryId(3, 1, 1031, 2),  // 11
-    NameTable::NameEntryId(3, 1, 1033, 0),  // 12
-    NameTable::NameEntryId(3, 1, 1033, 1),  // 13
-    NameTable::NameEntryId(3, 1, 1033, 2),  // 14
-    NameTable::NameEntryId(3, 1, 1033, 3),  // 15
-    NameTable::NameEntryId(3, 1, 1033, 4),  // 16
-    NameTable::NameEntryId(3, 1, 1033, 5),  // 17
-    NameTable::NameEntryId(3, 1, 1033, 6),  // 18
-    NameTable::NameEntryId(3, 1, 1033, 9),  // 19
-    NameTable::NameEntryId(3, 1, 1033, 11),  // 20
-    NameTable::NameEntryId(3, 1, 1033, 12),  // 21
-    NameTable::NameEntryId(3, 1, 1033, 13),  // 22
-    NameTable::NameEntryId(3, 1, 1034, 2),  // 23
-    NameTable::NameEntryId(3, 1, 1036, 2),  // 24
-    NameTable::NameEntryId(3, 1, 1038, 2),  // 25
-    NameTable::NameEntryId(3, 1, 1040, 2),  // 26
-    NameTable::NameEntryId(3, 1, 1043, 2),  // 27
-    NameTable::NameEntryId(3, 1, 1044, 2),  // 28
-    NameTable::NameEntryId(3, 1, 1049, 2),  // 29
-    NameTable::NameEntryId(3, 1, 1053, 2),  // 30
 };
+const int32_t NAME_IDS_TEST = 10;
 
 static bool VerifyNAME(Table* table) {
   // TODO(arthurhsu): Better testing can be done here.  Right now we just
@@ -68,7 +48,7 @@ static bool VerifyNAME(Table* table) {
   EXPECT_EQ(name->Format(), NAME_FORMAT);
   EXPECT_EQ(name->NameCount(), NAME_COUNT);
   fprintf(stderr, "checking name entry: ");
-  for (int32_t i = 0; i < NAME_COUNT; ++i) {
+  for (int32_t i = 0; i < NAME_IDS_TEST; ++i) {
     fprintf(stderr, "%d ", i);
     EXPECT_EQ(name->PlatformId(i), NAME_IDS[i].platform_id());
     EXPECT_EQ(name->EncodingId(i), NAME_IDS[i].encoding_id());

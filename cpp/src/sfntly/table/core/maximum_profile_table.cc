@@ -87,11 +87,11 @@ MaximumProfileTable::MaximumProfileTable(Header* header,
  * MaximumProfileTable::Builder class
  ******************************************************************************/
 MaximumProfileTable::Builder::Builder(Header* header, WritableFontData* data)
-    : Table::TableBasedTableBuilder(header, data) {
+    : TableBasedTableBuilder(header, data) {
 }
 
 MaximumProfileTable::Builder::Builder(Header* header, ReadableFontData* data)
-    : Table::TableBasedTableBuilder(header, data) {
+    : TableBasedTableBuilder(header, data) {
 }
 
 MaximumProfileTable::Builder::~Builder() {}

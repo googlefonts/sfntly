@@ -19,6 +19,7 @@
 
 #include "sfntly/port/refcount.h"
 #include "sfntly/table/table.h"
+#include "sfntly/table/table_based_table_builder.h"
 
 namespace sfntly {
 
@@ -27,8 +28,7 @@ class MaximumProfileTable : public Table,
                             public RefCounted<MaximumProfileTable> {
  public:
   // Builder for a Maximum Profile table - 'maxp'.
-  class Builder : public Table::TableBasedTableBuilder,
-                  public RefCounted<Builder> {
+  class Builder : public TableBasedTableBuilder, public RefCounted<Builder> {
    public:
     // Constructor scope altered to public because C++ does not allow base
     // class to instantiate derived class with protected constructors.
