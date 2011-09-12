@@ -56,6 +56,12 @@ typedef std::vector<byte_t> ByteVector;
 typedef std::vector<int32_t> IntegerList;
 typedef std::set<int32_t> IntegerSet;
 
+// A macro to disallow the copy constructor and operator= functions.
+// This should be used in the private: declarations for a class.
+#define NO_COPY_AND_ASSIGN(TypeName) \
+  TypeName(const TypeName&);               \
+  void operator=(const TypeName&)
+
 }  // namespace sfntly
 
 // Make google3 happy since it prohibits RTTI.
