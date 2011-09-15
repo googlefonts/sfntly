@@ -15,6 +15,7 @@
  */
 
 #include "sfntly/table/core/cmap_table.h"
+#include "sfntly/port/type.h"
 
 #include <stdio.h>
 #include <stdlib.h>

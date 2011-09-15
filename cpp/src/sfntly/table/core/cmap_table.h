@@ -17,6 +17,8 @@
 #ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_CMAP_TABLE_H_
 #define SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_CMAP_TABLE_H_
 
+#include "sfntly/port/type.h"
+
 #include <vector>
 #include <map>
 
