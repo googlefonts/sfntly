@@ -74,10 +74,10 @@ Table::Builder* Table::Builder::GetBuilder(Header* header,
 
   // Note: Tables are commented out when they are not used/ported.
   // TODO(arthurhsu): IMPLEMENT: finish tables that are not ported.
-  /*if (tag == Tag::cmap) {
+  if (tag == Tag::cmap) {
     builder_raw = static_cast<Table::Builder*>(
-        CMapTable::CreateBuilder(font_builder, header, table_data));
-  } else*/ if (tag == Tag::head) {
+        CMapTable::Builder::CreateBuilder(header, table_data));
+  } else if (tag == Tag::head) {
     builder_raw = static_cast<Table::Builder*>(
         FontHeaderTable::Builder::CreateBuilder(header, table_data));
   } else if (tag == Tag::hhea) {

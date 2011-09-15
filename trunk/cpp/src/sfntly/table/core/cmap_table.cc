@@ -14,23 +14,92 @@
  * limitations under the License.
  */
 
-// TODO(arthurhsu): IMPLEMENT: not really used and tested, need cleanup
-
-#include <cstdlib>
-
 #include "sfntly/table/core/cmap_table.h"
-#include "sfntly/table/core/name_table.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <utility>
+
 #include "sfntly/font.h"
+#include "sfntly/math/font_math.h"
 #include "sfntly/port/endian.h"
+#include "sfntly/port/exception_type.h"
+#include "sfntly/table/core/name_table.h"
 
 namespace sfntly {
 
 const int32_t CMapTable::NOTDEF = 0;
 
+CMapTable::CMapId CMapTable::WINDOWS_BMP = {
+  PlatformId::kWindows,
+  WindowsEncodingId::kUnicodeUCS2
+};
+CMapTable::CMapId CMapTable::WINDOWS_UCS4 = {
+  PlatformId::kWindows,
+  WindowsEncodingId::kUnicodeUCS4
+};
+CMapTable::CMapId CMapTable::MAC_ROMAN = {
+  PlatformId::kWindows,
+  MacintoshEncodingId::kRoman
+};
+
 /******************************************************************************
  * CMapTable class
  ******************************************************************************/
+CMapTable::CMapTable(Header* header, ReadableFontData* data)
+  : SubTableContainerTable(header, data) {
+}
+
 CMapTable::~CMapTable() {}
+
+CALLER_ATTACH CMapTable::CMap* CMapTable::GetCMap(const int32_t index) {
+  if (index < 0 || index > NumCMaps()) {
+#ifndef SFNTLY_NO_EXCEPTION
+    throw IndexOutOfBoundException("Requested CMap index is out of bounds.");
+#else
+    return NULL;
+#endif
+  }
+  int32_t platform_id = PlatformId(index);
+  int32_t encoding_id = EncodingId(index);
+  CMapId cmap_id = NewCMapId(platform_id, encoding_id);
+  int32_t offset_ = Offset(index);
+  Ptr<FontDataTable::Builder> cmap_builder =
+      (CMap::Builder::GetBuilder(data_, offset_, cmap_id));
+  if (!cmap_builder) {
+#ifndef SFNTLY_NO_EXCEPTION
+    throw NoSuchElementException("Cannot find builder for requested CMap.");
+#else
+    return NULL;
+#endif
+  }
+  return reinterpret_cast<CMapTable::CMap*>(cmap_builder->Build());
+}
+
+CALLER_ATTACH CMapTable::CMap* CMapTable::GetCMap(const int32_t platform_id,
+                                                  const int32_t encoding_id) {
+  return GetCMap(NewCMapId(platform_id, encoding_id));
+}
+
+CALLER_ATTACH CMapTable::CMap*
+CMapTable::GetCMap(const CMapTable::CMapId cmap_id) {
+  CMapIdFilter* id_filter = new CMapIdFilter(cmap_id);
+  CMapIterator cmap_iterator(this, id_filter);
+  // There can only be one cmap with a particular CMapId
+  if (cmap_iterator.HasNext()) {
+    Ptr<CMapTable::CMap> cmap;
+    cmap.Attach(cmap_iterator.Next());
+    delete id_filter;
+    return cmap.Detach();
+  }
+  delete id_filter;
+#ifndef SFNTLY_NO_EXCEPTION
+  throw NoSuchElementException();
+#else
+  return NULL;
+#endif
+}
 
 int32_t CMapTable::Version() {
   return data_->ReadUShort(Offset::kVersion);
@@ -41,7 +110,7 @@ int32_t CMapTable::NumCMaps() {
 }
 
 CMapTable::CMapId CMapTable::GetCMapId(int32_t index) {
-  return CMapId(PlatformId(index), EncodingId(index));
+  return NewCMapId(PlatformId(index), EncodingId(index));
 }
 
 int32_t CMapTable::PlatformId(int32_t index) {
@@ -59,53 +128,101 @@ int32_t CMapTable::Offset(int32_t index) {
                                OffsetForEncodingRecord(index));
 }
 
-CMapTable::CMapTable(Header* header, ReadableFontData* data)
-    : SubTableContainerTable(header, data) {
-}
-
 int32_t CMapTable::OffsetForEncodingRecord(int32_t index) {
   return Offset::kEncodingRecordStart + index * Offset::kEncodingRecordSize;
+}
+
+CMapTable::CMapId CMapTable::NewCMapId(int32_t platform_id,
+                                       int32_t encoding_id) {
+  CMapId result;
+  result.platform_id = platform_id;
+  result.encoding_id = encoding_id;
+  return result;
+}
+
+CMapTable::CMapId CMapTable::NewCMapId(const CMapId& obj) {
+  CMapId result;
+  result.platform_id = obj.platform_id;
+  result.encoding_id = obj.encoding_id;
+  return result;
+}
+
+/******************************************************************************
+ * CMapTable::CMapIterator class
+ ******************************************************************************/
+CMapTable::CMapIterator::CMapIterator(CMapTable* table,
+                                      const CMapFilter* filter)
+    : table_index_(0), filter_(filter), table_(table) {
+}
+
+bool CMapTable::CMapIterator::HasNext() {
+  if (!filter_) {
+    if (table_index_ < table_->NumCMaps()) {
+      return true;
+    }
+    return false;
+  }
+
+  for (; table_index_ < table_->NumCMaps(); ++table_index_) {
+    if (filter_->accept(table_->GetCMapId(table_index_))) {
+      return true;
+    }
+  }
+  return false;
+}
+
+CALLER_ATTACH CMapTable::CMap* CMapTable::CMapIterator::Next() {
+  if (!HasNext()) {
+#ifndef SFNTLY_NO_EXCEPTION
+    throw NoSuchElementException();
+#else
+    return NULL;
+#endif
+  }
+  CMapPtr next_cmap;
+  next_cmap.Attach(table_->GetCMap(table_index_++));
+  if (next_cmap == NULL) {
+#ifndef SFNTLY_NO_EXCEPTION
+    throw NoSuchElementException("Error during the creation of the CMap");
+#else
+    return NULL;
+#endif
+  }
+  return next_cmap.Detach();
 }
 
 /******************************************************************************
  * CMapTable::CMapId class
  ******************************************************************************/
-CMapTable::CMapId::CMapId(int32_t platform_id, int32_t encoding_id)
-    : platform_id_(platform_id), encoding_id_(encoding_id) {
-}
-
-CMapTable::CMapId::CMapId(const CMapId& obj)
-    : platform_id_(obj.platform_id_), encoding_id_(obj.encoding_id_) {
-}
-
-bool CMapTable::CMapId::operator==(const CMapTable::CMapId& obj) {
-  return obj.platform_id_ == platform_id_ && obj.encoding_id_ == encoding_id_;
-}
-
-const CMapTable::CMapId& CMapTable::CMapId::operator=(
-    const CMapTable::CMapId& obj) {
-  platform_id_ = obj.platform_id_;
-  encoding_id_ = obj.encoding_id_;
-  return *this;
-}
-
-int CMapTable::CMapId::HashCode() const {
-  return platform_id_ << 8 | encoding_id_;
-}
-
-CMapTable::CMapId WINDOWS_BMP(PlatformId::kWindows,
-                              WindowsEncodingId::kUnicodeUCS2);
-CMapTable::CMapId WINDOWS_UCS4(PlatformId::kWindows,
-                               WindowsEncodingId::kUnicodeUCS4);
-CMapTable::CMapId MAC_ROMAN(PlatformId::kWindows, MacintoshEncodingId::kRoman);
 
 /******************************************************************************
  * CMapTable::CMapIdComparator class
  ******************************************************************************/
 
 bool CMapTable::CMapIdComparator::operator()(const CMapId& lhs,
-                                             const CMapId& rhs) {
-  return lhs.HashCode() > rhs.HashCode();
+                                             const CMapId& rhs) const {
+  return ((lhs.platform_id << 8 | lhs.encoding_id) >
+      (rhs.platform_id << 8 | rhs.encoding_id));
+}
+
+/******************************************************************************
+ * CMapTable::CMapIdFilter class
+ ******************************************************************************/
+CMapTable::CMapIdFilter::CMapIdFilter(const CMapId wanted_id)
+    : wanted_id_(wanted_id),
+      comparator_(NULL) {
+}
+
+CMapTable::CMapIdFilter::CMapIdFilter(const CMapId wanted_id,
+                                      const CMapIdComparator* comparator)
+    : wanted_id_(wanted_id),
+      comparator_(comparator) {
+}
+
+bool CMapTable::CMapIdFilter::accept(const CMapId& cmap_id) const {
+  if (!comparator_)
+    return wanted_id_ == cmap_id;
+  return (*comparator_)(wanted_id_, cmap_id);
 }
 
 /******************************************************************************
@@ -126,20 +243,59 @@ CMapTable::CMap::Builder::~Builder() {
 }
 
 CALLER_ATTACH CMapTable::CMap::Builder*
-    CMapTable::CMap::Builder::GetBuilder(ReadableFontData* data,
-                                         int32_t offset,
+    CMapTable::CMap::Builder::GetBuilder(ReadableFontData* data, int32_t offset,
                                          const CMapId& cmap_id) {
   // NOT IMPLEMENTED: Java enum value validation
   int32_t format = data->ReadUShort(offset);
   CMapBuilderPtr builder;
   switch (format) {
     case CMapFormat::kFormat0:
-      builder = new CMapFormat0::Builder(data, offset, cmap_id);
+      builder.Attach(CMapFormat0::Builder::NewInstance(data, offset, cmap_id));
       break;
     case CMapFormat::kFormat2:
-      builder = new CMapFormat0::Builder(data, offset, cmap_id);
+#if defined (SFNTLY_DEBUG_CMAP)
+      fprintf(stderr, "Requesting Format2 builder, but it's unsupported; "
+              "returning NULL\n");
+#endif
+      break;
+    case CMapFormat::kFormat4:
+#if defined (SFNTLY_DEBUG_CMAP)
+      fprintf(stderr, "Requesting Format4 builder, but it's unsupported; "
+              "returning NULL\n");
+#endif
       break;
     default:
+#ifdef SFNTLY_DEBUG_CMAP
+      fprintf(stderr, "Unknown builder format requested\n");
+#endif
+      break;
+  }
+  return builder.Detach();
+}
+
+CALLER_ATTACH CMapTable::CMap::Builder*
+CMapTable::CMap::Builder::GetBuilder(int32_t format, const CMapId& cmap_id) {
+  Ptr<CMapTable::CMap::Builder> builder;
+  switch (format) {
+    case CMapFormat::kFormat0:
+      builder.Attach(CMapFormat0::Builder::NewInstance(cmap_id));
+      break;
+    case CMapFormat::kFormat2:
+#if defined (SFNTLY_DEBUG_CMAP)
+      fprintf(stderr, "Requesting Format2 builder, but it's unsupported; "
+              "returning NULL\n");
+#endif
+      break;
+    case CMapFormat::kFormat4:
+#if defined (SFNTLY_DEBUG_CMAP)
+      fprintf(stderr, "Requesting Format4 builder, but it's unsupported; "
+              "returning NULL\n");
+#endif
+      break;
+    default:
+#ifdef SFNTLY_DEBUG_CMAP
+      fprintf(stderr, "Unknown builder format requested\n");
+#endif
       break;
   }
   return builder.Detach();
@@ -150,7 +306,8 @@ CMapTable::CMap::Builder::Builder(ReadableFontData* data,
                                   const CMapId& cmap_id)
     : SubTable::Builder(data),
       format_(format),
-      cmap_id_(cmap_id) {
+      cmap_id_(cmap_id),
+      language_(0) {
 }
 
 CMapTable::CMap::Builder::Builder(WritableFontData* data,
@@ -158,7 +315,8 @@ CMapTable::CMap::Builder::Builder(WritableFontData* data,
                                   const CMapId& cmap_id)
     : SubTable::Builder(data),
       format_(format),
-      cmap_id_(cmap_id) {
+      cmap_id_(cmap_id),
+      language_(0) {
 }
 
 int32_t CMapTable::CMap::Builder::SubSerialize(WritableFontData* new_data) {
@@ -170,7 +328,10 @@ bool CMapTable::CMap::Builder::SubReadyToSerialize() {
 }
 
 int32_t CMapTable::CMap::Builder::SubDataSizeToSerialize() {
-  return InternalReadData()->Length();
+  ReadableFontDataPtr read_data = InternalReadData();
+  if (!read_data)
+    return 0;
+  return read_data->Length();
 }
 
 void CMapTable::CMap::Builder::SubDataSet() {
@@ -191,7 +352,7 @@ int32_t CMapTable::CMapFormat0::GlyphId(int32_t character) {
   if (character < 0 || character > 255) {
     return CMapTable::NOTDEF;
   }
-  return data_->ReadByte(character + Offset::kFormat0GlyphIdArray);
+  return data_->ReadUByte(character + Offset::kFormat0GlyphIdArray);
 }
 
 CMapTable::CMapFormat0::CMapFormat0(ReadableFontData* data,
@@ -199,29 +360,94 @@ CMapTable::CMapFormat0::CMapFormat0(ReadableFontData* data,
     : CMap(data, CMapFormat::kFormat0, cmap_id) {
 }
 
+void
+CMapTable::CMapFormat0::Iterator(CMapTable::CMap::CharacterIterator* output) {
+  output = new CMapTable::CMapFormat0::CharacterIterator(0, 0xff);
+}
+
+
+/******************************************************************************
+ * CMapTable::CMapFormat0::CharacterIterator
+ ******************************************************************************/
+CMapTable::CMapFormat0::CharacterIterator::CharacterIterator(int32_t start,
+                                                             int32_t end)
+    : character_(start),
+    max_character_(end) {
+}
+
+CMapTable::CMapFormat0::CharacterIterator::~CharacterIterator() {}
+
+bool CMapTable::CMapFormat0::CharacterIterator::HasNext() {
+  return character_ < max_character_;
+}
+
+int32_t CMapTable::CMapFormat0::CharacterIterator::Next() {
+  if (HasNext())
+    return character_++;
+#ifndef SFNTLY_NO_EXCEPTION
+  throw NoSuchElementException("No more characters to iterate.");
+#endif
+  return -1;
+}
+
 /******************************************************************************
  * CMapTable::CMapFormat0::Builder
  ******************************************************************************/
-CMapTable::CMapFormat0::Builder::Builder(WritableFontData* data,
-                                         int32_t offset,
-                                         const CMapId& cmap_id)
-    : CMapTable::CMap::Builder(data ? down_cast<WritableFontData*>(
-                                   data->Slice(offset, data->ReadUShort(
-                                       offset + Offset::kFormat0Length)))
-                               : reinterpret_cast<WritableFontData*>(NULL),
-                               CMapFormat::kFormat0, cmap_id) {
-  // TODO(arthurhsu): FIXIT: heavy lifting and leak, need fix.
+// static
+CALLER_ATTACH CMapTable::CMapFormat0::Builder*
+CMapTable::CMapFormat0::Builder::NewInstance(WritableFontData* data,
+                                             int32_t offset,
+                                             const CMapId& cmap_id) {
+  WritableFontDataPtr wdata;
+  if (data) {
+    wdata.Attach(down_cast<WritableFontData*>(
+        data->Slice(offset,
+                    data->ReadUShort(offset + Offset::kFormat0Length))));
+  }
+  return new Builder(wdata, CMapFormat::kFormat0, cmap_id);
 }
 
-CMapTable::CMapFormat0::Builder::Builder(ReadableFontData* data,
-                                         int32_t offset,
+// static
+CALLER_ATTACH CMapTable::CMapFormat0::Builder*
+CMapTable::CMapFormat0::Builder::NewInstance(ReadableFontData* data,
+                                             int32_t offset,
+                                             const CMapId& cmap_id) {
+  ReadableFontDataPtr rdata;
+  if (data) {
+    rdata.Attach(down_cast<ReadableFontData*>(
+        data->Slice(offset,
+                    data->ReadUShort(offset + Offset::kFormat0Length))));
+  }
+  return new Builder(rdata, CMapFormat::kFormat0, cmap_id);
+}
+
+// static
+CALLER_ATTACH CMapTable::CMapFormat0::Builder*
+CMapTable::CMapFormat0::Builder::NewInstance(const CMapId& cmap_id) {
+  return new Builder(cmap_id);
+}
+
+// Always call NewInstance instead of the constructor for creating a new builder
+// object! This refactoring avoids memory leaks when slicing the font data.
+CMapTable::CMapFormat0::Builder::Builder(WritableFontData* data, int32_t offset,
                                          const CMapId& cmap_id)
-    : CMapTable::CMap::Builder(data ? down_cast<ReadableFontData*>(
-                                   data->Slice(offset, data->ReadUShort(
-                                       offset + Offset::kFormat0Length)))
-                               : reinterpret_cast<WritableFontData*>(NULL),
-                               CMapFormat::kFormat0, cmap_id) {
-  // TODO(arthurhsu): FIXIT: heavy lifting and leak, need fix.
+    : CMapTable::CMap::Builder(data, CMapFormat::kFormat0, cmap_id) {
+  UNREFERENCED_PARAMETER(offset);
+}
+
+CMapTable::CMapFormat0::Builder::Builder(
+    ReadableFontData* data,
+    int32_t offset,
+    const CMapId& cmap_id)
+    : CMapTable::CMap::Builder(data, CMapFormat::kFormat0, cmap_id) {
+  UNREFERENCED_PARAMETER(offset);
+}
+
+CMapTable::CMapFormat0::Builder::
+Builder(const CMapId& cmap_id)
+    : CMap::Builder(reinterpret_cast<ReadableFontData*>(NULL),
+                    CMapFormat::kFormat0,
+                    cmap_id) {
 }
 
 CMapTable::CMapFormat0::Builder::~Builder() {
@@ -364,28 +590,6 @@ CALLER_ATTACH FontDataTable*
 }
 
 /******************************************************************************
- * CMapTable::Iterator class
- ******************************************************************************/
-CMapTable::CMapIterator::CMapIterator(CMapTable* table, CMapFilter* filter)
-    : table_index_(0), filter_(filter), table_(table) {}
-
-bool CMapTable::CMapIterator::HasNext() {
-  if (!filter_) {
-    if (table_index_ < table_->NumCMaps()) {
-      return true;
-    }
-    return false;
-  }
-
-  for (; table_index_ < table_->NumCMaps(); ++table_index_) {
-    if (filter_->accept(table_->GetCMapId(table_index_))) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/******************************************************************************
  * CMapTable::Builder class
  ******************************************************************************/
 CMapTable::Builder::Builder(Header* header, WritableFontData* data)
@@ -403,12 +607,12 @@ int32_t CMapTable::Builder::SubSerialize(WritableFontData* new_data) {
   int32_t size = new_data->WriteUShort(CMapTable::Offset::kVersion,
                                        version_);
   size += new_data->WriteUShort(CMapTable::Offset::kNumTables,
-                                cmap_builders_.size());
+                                GetCMapBuilders()->size());
 
   int32_t index_offset = size;
-  size += cmap_builders_.size() * CMapTable::Offset::kEncodingRecordSize;
-  for (CMapBuilderMap::iterator it = cmap_builders_.begin(),
-                                e = cmap_builders_.end(); it != e; ++it) {
+  size += GetCMapBuilders()->size() * CMapTable::Offset::kEncodingRecordSize;
+  for (CMapBuilderMap::iterator it = GetCMapBuilders()->begin(),
+           e = GetCMapBuilders()->end(); it != e; ++it) {
     CMapBuilderPtr b = it->second;
     // header entry
     index_offset += new_data->WriteUShort(index_offset, b->platform_id());
@@ -424,12 +628,12 @@ int32_t CMapTable::Builder::SubSerialize(WritableFontData* new_data) {
 }
 
 bool CMapTable::Builder::SubReadyToSerialize() {
-  if (cmap_builders_.empty())
+  if (GetCMapBuilders()->empty())
     return false;
 
   // check each table
-  for (CMapBuilderMap::iterator it = cmap_builders_.begin(),
-                                e = cmap_builders_.end(); it != e; ++it) {
+  for (CMapBuilderMap::iterator it = GetCMapBuilders()->begin(),
+           e = GetCMapBuilders()->end(); it != e; ++it) {
     if (!it->second->SubReadyToSerialize())
       return false;
   }
@@ -437,16 +641,16 @@ bool CMapTable::Builder::SubReadyToSerialize() {
 }
 
 int32_t CMapTable::Builder::SubDataSizeToSerialize() {
-  if (cmap_builders_.empty())
+  if (GetCMapBuilders()->empty())
     return 0;
 
   bool variable = false;
   int32_t size = CMapTable::Offset::kEncodingRecordStart +
-                 cmap_builders_.size() * CMapTable::Offset::kEncodingRecordSize;
+      GetCMapBuilders()->size() * CMapTable::Offset::kEncodingRecordSize;
 
   // calculate size of each table
-  for (CMapBuilderMap::iterator it = cmap_builders_.begin(),
-                                e = cmap_builders_.end(); it != e; ++it) {
+  for (CMapBuilderMap::iterator it = GetCMapBuilders()->begin(),
+           e = GetCMapBuilders()->end(); it != e; ++it) {
     int32_t cmap_size = it->second->SubDataSizeToSerialize();
     size += abs(cmap_size);
     variable |= cmap_size <= 0;
@@ -455,8 +659,8 @@ int32_t CMapTable::Builder::SubDataSizeToSerialize() {
 }
 
 void CMapTable::Builder::SubDataSet() {
-  cmap_builders_.clear();
-  Table::Builder::set_model_changed(false);
+  GetCMapBuilders()->clear();
+  Table::Builder::set_model_changed();
 }
 
 CALLER_ATTACH FontDataTable*
@@ -473,6 +677,7 @@ CALLER_ATTACH CMapTable::Builder*
   return builder.Detach();
 }
 
+// static
 CALLER_ATTACH CMapTable::CMap::Builder*
     CMapTable::Builder::CMapBuilder(ReadableFontData* data, int32_t index) {
   if (index < 0 || index > NumCMaps(data)) {
@@ -489,15 +694,76 @@ CALLER_ATTACH CMapTable::CMap::Builder*
                                          OffsetForEncodingRecord(index));
   int32_t offset = data->ReadULongAsInt(Offset::kEncodingRecordOffset +
                                         OffsetForEncodingRecord(index));
-  CMapId cmap_id(platform_id, encoding_id);
-  return CMap::Builder::GetBuilder(data, offset, cmap_id);
+  return CMap::Builder::GetBuilder(data, offset,
+                                   NewCMapId(platform_id, encoding_id));
 }
 
+// static
 int32_t CMapTable::Builder::NumCMaps(ReadableFontData* data) {
   if (data == NULL) {
     return 0;
   }
   return data->ReadUShort(Offset::kNumTables);
+}
+
+int32_t CMapTable::Builder::NumCMaps() {
+  return GetCMapBuilders()->size();
+}
+
+void CMapTable::Builder::Initialize(ReadableFontData* data) {
+  int32_t num_cmaps = NumCMaps(data);
+  for (int32_t i = 0; i < num_cmaps; ++i) {
+    Ptr<CMapTable::CMap::Builder> cmap_builder;
+    cmap_builder.Attach(CMapBuilder(data, i));
+    if (!cmap_builder)
+      continue;
+    cmap_builders_[cmap_builder->cmap_id()] = cmap_builder;
+    cmap_builders_.insert(std::make_pair(cmap_builder->cmap_id(),
+                                         cmap_builder));
+  }
+}
+
+CMapTable::CMap::Builder* CMapTable::Builder::NewCMapBuilder(
+    const CMapId& cmap_id,
+    ReadableFontData* data) {
+  Ptr<WritableFontData> wfd;
+  wfd.Attach(WritableFontData::CreateWritableFontData(data->Size()));
+  data->CopyTo(wfd.p_);
+  CMapTable::CMapBuilderPtr builder;
+  builder.Attach(CMap::Builder::GetBuilder(wfd.p_, 0, cmap_id));
+  CMapBuilderMap* cmap_builders = CMapTable::Builder::GetCMapBuilders();
+  cmap_builders->insert(std::make_pair(cmap_id, builder.p_));
+  return builder.Detach();
+}
+
+CMapTable::CMap::Builder*
+CMapTable::Builder::NewCMapBuilder(int32_t format, const CMapId& cmap_id) {
+  Ptr<CMapTable::CMap::Builder> cmap_builder;
+  cmap_builder.Attach(CMap::Builder::GetBuilder(format, cmap_id));
+  CMapBuilderMap* cmap_builders = CMapTable::Builder::GetCMapBuilders();
+  cmap_builders->insert(std::make_pair(cmap_id, cmap_builder.p_));
+  return cmap_builder.Detach();
+}
+
+CMapTable::CMap::Builder*
+CMapTable::Builder::CMapBuilder(const CMapId& cmap_id) {
+  CMapBuilderMap* cmap_builders = this->GetCMapBuilders();
+  CMapBuilderMap::iterator builder = cmap_builders->find(cmap_id);
+  if (builder != cmap_builders->end())
+    return builder->second;
+#ifndef SFNTLY_NO_EXCEPTION
+  throw NoSuchElementException("No builder found for cmap_id");
+#else
+  return NULL;
+#endif
+}
+
+CMapTable::CMapBuilderMap* CMapTable::Builder::GetCMapBuilders() {
+  if (cmap_builders_.empty()) {
+    Initialize(InternalReadData());
+    set_model_changed();
+  }
+  return &cmap_builders_;
 }
 
 }  // namespace sfntly
