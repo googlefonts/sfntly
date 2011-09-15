@@ -312,7 +312,9 @@ public:
     int32_t EntryCount(int32_t sub_header_index);
     int32_t IdRangeOffset(int32_t sub_header_index);
     int32_t IdDelta(int32_t sub_header_index);
-    void Iterator(CMapTable::CMap::CharacterIterator* output) { }
+    void Iterator(CMapTable::CMap::CharacterIterator* output) {
+      UNREFERENCED_PARAMETER(output);
+    }
   };
 
   // CMapTable::Builder
