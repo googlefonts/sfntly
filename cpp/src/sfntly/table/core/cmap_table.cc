@@ -84,16 +84,14 @@ CALLER_ATTACH CMapTable::CMap* CMapTable::GetCMap(const int32_t platform_id,
 
 CALLER_ATTACH CMapTable::CMap*
 CMapTable::GetCMap(const CMapTable::CMapId cmap_id) {
-  CMapIdFilter* id_filter = new CMapIdFilter(cmap_id);
-  CMapIterator cmap_iterator(this, id_filter);
+  CMapIdFilter id_filter(cmap_id);
+  CMapIterator cmap_iterator(this, &id_filter);
   // There can only be one cmap with a particular CMapId
   if (cmap_iterator.HasNext()) {
     Ptr<CMapTable::CMap> cmap;
     cmap.Attach(cmap_iterator.Next());
-    delete id_filter;
     return cmap.Detach();
   }
-  delete id_filter;
 #ifndef SFNTLY_NO_EXCEPTION
   throw NoSuchElementException();
 #else
