@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-// TODO(arthurhsu): IMPLEMENT: not really used and tested, need cleanup
 #ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_CMAP_TABLE_H_
 #define SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_CMAP_TABLE_H_
 
@@ -46,23 +45,12 @@ struct CMapFormat {
 class CMapTable : public SubTableContainerTable, public RefCounted<CMapTable> {
 public:
   // CMapTable::CMapId
-  class CMapId {
-   public:
-    CMapId(int32_t platform_id, int32_t encoding_id);
-    CMapId(const CMapId& obj);
-
-    int32_t platform_id() { return platform_id_; }
-    int32_t encoding_id() { return encoding_id_; }
-
-    bool operator==(const CMapId& obj);
-    const CMapId& operator=(const CMapId& obj);
-    int HashCode() const;
-
-    friend class CMapIdComparator;
-
-   private:
-    int32_t platform_id_;
-    int32_t encoding_id_;
+  struct CMapId {
+    int32_t platform_id;
+    int32_t encoding_id;
+    bool operator==(const CMapId& obj) const {
+      return platform_id == obj.platform_id && encoding_id == obj.encoding_id;
+    }
   };
   static CMapId WINDOWS_BMP;
   static CMapId WINDOWS_UCS4;
@@ -71,7 +59,7 @@ public:
   // CMapTable::CMapIdComparator
   class CMapIdComparator {
    public:
-    bool operator()(const CMapId& lhs, const CMapId& rhs);
+    bool operator()(const CMapId& lhs, const CMapId& rhs) const;
   };
 
   // A filter on cmap
@@ -81,9 +69,26 @@ public:
     // Test on whether the cmap is acceptable or not
     // @param cmap_id the id of the cmap
     // @return true if the cmap is acceptable; false otherwise
-    virtual bool accept(CMapId cmap_id) = 0;
+    virtual bool accept(const CMapId& cmap_id) const = 0;
     // Make gcc -Wnon-virtual-dtor happy.
     virtual ~CMapFilter() {}
+  };
+
+  // Filters CMaps by CMapId to implement CMapTable::get()
+  // wanted_id is the CMap we'd like to find.
+  // We compare the current CMap to it either by equality (==) or using a
+  // comparator.
+  // CMapTable::CMapIdFilter
+  class CMapIdFilter : public CMapFilter {
+   public:
+    explicit CMapIdFilter(const CMapId wanted_id);
+    CMapIdFilter(const CMapId wanted_id,
+                 const CMapIdComparator* comparator);
+    ~CMapIdFilter() {}
+    virtual bool accept(const CMapId& cmap_id) const;
+   private:
+    const CMapId wanted_id_;
+    const CMapIdComparator *comparator_;
   };
 
   // The abstract base class for all cmaps.
@@ -93,7 +98,7 @@ public:
   // with a given cmap id (pair of platform and encoding ids) no matter what the
   // type of the cmap is.
   //
-  // The cmap implements {@code Iterable<Integer>} to allow iteration over
+  // The cmap offers CharacterIterator to allow iteration over
   // characters that are mapped by the cmap. This iteration mostly returns the
   // characters mapped by the cmap. It will return all characters mapped by the
   // cmap to anything but .notdef <b>but</b> it may return some that are not
@@ -101,7 +106,7 @@ public:
   // such to describe characters for lookup but without going the full way to
   // mapping to the glyph id it isn't always possible to tell if a character
   // will end up with a valid glyph id. So, some of the characters returned from
-  // the iterator may still end up pointing to the .notdef glyph. However, the
+  // the Iterator may still end up pointing to the .notdef glyph. However, the
   // number of such characters should be small in most cases with well designed
   // cmaps.
   class Builder;
@@ -116,11 +121,17 @@ public:
           GetBuilder(ReadableFontData* data,
                      int32_t offset,
                      const CMapId& cmap_id);
+      CALLER_ATTACH static Builder*
+          GetBuilder(int32_t format,
+                     const CMapId& cmap_id);
 
       // Note: yes, an object is returned on stack since it's small enough.
       virtual CMapId cmap_id() { return cmap_id_; }
-      virtual int32_t platform_id() { return cmap_id_.platform_id(); }
-      virtual int32_t encoding_id() { return cmap_id_.encoding_id(); }
+      virtual int32_t platform_id() { return cmap_id_.platform_id; }
+      virtual int32_t encoding_id() { return cmap_id_.encoding_id; }
+      virtual int32_t format() { return format_; }
+      virtual int32_t language() { return language_; }
+      virtual void set_language(int32_t language) { language_ = language; }
 
      protected:
       Builder(ReadableFontData* data,
@@ -138,16 +149,31 @@ public:
      private:
       int32_t format_;
       CMapId cmap_id_;
+      int32_t language_;
 
       friend class CMapTable::Builder;
+    };
+    // Abstract CMap character iterator
+    // The fully qualified name is CMapTable::CMap::CharacterIterator
+    class CharacterIterator {
+     public:
+      CharacterIterator() {}
+      virtual ~CharacterIterator() {}
+      virtual bool HasNext() = 0;
+      // Returns -1 if there are no more characters to iterate through
+      // and exceptions are turned off
+      virtual int32_t Next() = 0;
     };
 
     CMap(ReadableFontData* data, int32_t format, const CMapId& cmap_id);
     virtual ~CMap();
+
+    virtual void Iterator(CMapTable::CMap::CharacterIterator* output) = 0;
+
     virtual int32_t format() { return format_; }
     virtual CMapId cmap_id() { return cmap_id_; }
-    virtual int32_t platform_id() { return cmap_id_.platform_id(); }
-    virtual int32_t encoding_id() { return cmap_id_.encoding_id(); }
+    virtual int32_t platform_id() { return cmap_id_.platform_id; }
+    virtual int32_t encoding_id() { return cmap_id_.encoding_id; }
 
     // Get the language of the cmap.
     //
@@ -173,32 +199,63 @@ public:
     int32_t format_;
     CMapId cmap_id_;
   };
+  typedef Ptr<CMap> CMapPtr;
   typedef Ptr<CMap::Builder> CMapBuilderPtr;
   typedef std::map<CMapId, CMapBuilderPtr, CMapIdComparator> CMapBuilderMap;
 
   // A cmap format 0 sub table
   class CMapFormat0 : public CMap, public RefCounted<CMapFormat0> {
    public:
-    // CMapTable::CMapFormat0::Builder
+    // The fully qualified name is CMapTable::CMapFormat0::Builder
     class Builder : public CMap::Builder,
                     public RefCounted<Builder> {
      public:
+      CALLER_ATTACH static Builder* NewInstance(
+          ReadableFontData* data,
+          int32_t offset,
+          const CMapId& cmap_id);
+      CALLER_ATTACH static Builder* NewInstance(
+          WritableFontData* data,
+          int32_t offset,
+          const CMapId& cmap_id);
+      CALLER_ATTACH static Builder* NewInstance(
+          const CMapId& cmap_id);
+      virtual ~Builder();
+
+     protected:
+      virtual CALLER_ATTACH FontDataTable*
+          SubBuildTable(ReadableFontData* data);
+
+     private:
+      // When creating a new CMapFormat0 Builder, use NewInstance instead of
+      // the constructors! This avoids a memory leak when slicing the FontData.
       Builder(ReadableFontData* data,
               int32_t offset,
               const CMapId& cmap_id);
       Builder(WritableFontData* data,
               int32_t offset,
               const CMapId& cmap_id);
-      virtual ~Builder();
+      Builder(
+              const CMapId& cmap_id);
+    };
 
-     protected:
-      virtual CALLER_ATTACH FontDataTable*
-          SubBuildTable(ReadableFontData* data);
+    // The fully qualified name is CMapTable::CMapFormat0::CharacterIterator
+    class CharacterIterator : public CMap::CharacterIterator {
+     public:
+      virtual ~CharacterIterator();
+      virtual bool HasNext();
+      virtual int32_t Next();
+
+     private:
+      CharacterIterator(int32_t start, int32_t end);
+      friend class CMapFormat0;
+      int32_t character_, max_character_;
     };
 
     virtual ~CMapFormat0();
     virtual int32_t Language();
     virtual int32_t GlyphId(int32_t character);
+    virtual void Iterator(CMap::CharacterIterator* output);
 
    private:
     CMapFormat0(ReadableFontData* data, const CMapId& cmap_id);
@@ -225,8 +282,17 @@ public:
       virtual CALLER_ATTACH FontDataTable*
           SubBuildTable(ReadableFontData* data);
     };
+    // CMapTable::CMapFormat2::CharacterIterator
+    class CharacterIterator : public CMap::CharacterIterator {
+     public:
+      virtual ~CharacterIterator();
+      virtual bool hasNext();
+      virtual int32_t next();
 
-    virtual ~CMapFormat2();
+     private:
+      CharacterIterator();
+    };
+
     virtual int32_t Language();
     virtual int32_t GlyphId(int32_t character);
 
@@ -236,6 +302,8 @@ public:
     // return the number of bytes consumed from this "character" - either 1 or 2
     virtual int32_t BytesConsumed(int32_t character);
 
+    virtual ~CMapFormat2();
+
    private:
     CMapFormat2(ReadableFontData* data, const CMapId& cmap_id);
 
@@ -244,14 +312,15 @@ public:
     int32_t EntryCount(int32_t sub_header_index);
     int32_t IdRangeOffset(int32_t sub_header_index);
     int32_t IdDelta(int32_t sub_header_index);
+    void Iterator(CMapTable::CMap::CharacterIterator* output) { }
   };
 
   // CMapTable::Builder
   class Builder : public SubTableContainerTable::Builder,
                   public RefCounted<Builder> {
    public:
-    // Constructor scope altered to public because C++ does not allow base
-    // class to instantiate derived class with protected constructors.
+    // Constructor scope is public because C++ does not allow base class to
+    // instantiate derived class with protected constructors.
     Builder(Header* header, WritableFontData* data);
     Builder(Header* header, ReadableFontData* data);
     virtual ~Builder();
@@ -265,18 +334,54 @@ public:
     static CALLER_ATTACH Builder* CreateBuilder(Header* header,
                                                 WritableFontData* data);
 
+    CMap::Builder* NewCMapBuilder(const CMapId& cmap_id,
+                                  ReadableFontData* data);
+    // Create a new empty CMapBuilder of the type specified in the id.
+    CMap::Builder* NewCMapBuilder(int32_t format, const CMapId& cmap_id);
+    CMap::Builder* CMapBuilder(const CMapId& cmap_id);
+
+    int32_t NumCMaps();
+    void SetVersion(int32_t version);
+
+    CMapBuilderMap* GetCMapBuilders();
+
    protected:
     static CALLER_ATTACH CMap::Builder* CMapBuilder(ReadableFontData* data,
                                                     int32_t index);
 
    private:
+    void Initialize(ReadableFontData* data);
     static int32_t NumCMaps(ReadableFontData* data);
 
     int32_t version_;
     CMapBuilderMap cmap_builders_;
   };
+  typedef Ptr<Builder> CMapTableBuilderPtr;
 
-  virtual ~CMapTable();
+  class CMapIterator {
+   public:
+    // If filter is NULL, filter through all tables.
+    CMapIterator(CMapTable* table, const CMapFilter* filter);
+    bool HasNext();
+    CMap* Next();
+
+   private:
+    int32_t table_index_;
+    const CMapFilter* filter_;
+    CMapTable* table_;
+  };
+
+  // Make a CMapId from a platform_id, encoding_id pair
+  static CMapId NewCMapId(int32_t platform_id, int32_t encoding_id);
+  // Make a CMapId from another CMapId
+  static CMapId NewCMapId(const CMapId& obj);
+
+  // Get the CMap with the specified parameters if it exists.
+  // Returns NULL otherwise.
+  CALLER_ATTACH CMap* GetCMap(const int32_t index);
+  CALLER_ATTACH CMap* GetCMap(const int32_t platform_id,
+                              const int32_t encoding_id);
+  CALLER_ATTACH CMap* GetCMap(const CMapId GetCMap_id);
 
   // Get the table version.
   virtual int32_t Version();
@@ -296,9 +401,11 @@ public:
   // The offset is from the beginning of the table.
   virtual int32_t Offset(int32_t index);
 
- private:
+  virtual ~CMapTable();
+
   static const int32_t NOTDEF;
 
+ private:
   // Offsets to specific elements in the underlying data. These offsets are
   // relative to the start of the table or the start of sub-blocks within
   // the table.
@@ -409,19 +516,6 @@ public:
       // Non-default UVS Table
       kLast = -1
     };
-  };
-
-  class CMapIterator {
-   public:
-    // If filter is NULL, filter through all tables.
-    CMapIterator(CMapTable* table, CMapFilter* filter);
-    bool HasNext();
-    CMap* Next();
-
-   private:
-    int32_t table_index_;
-    CMapFilter* filter_;
-    CMapTable* table_;
   };
 
   CMapTable(Header* header, ReadableFontData* data);
