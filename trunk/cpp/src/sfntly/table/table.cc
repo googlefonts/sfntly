@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+// type.h needs to be included first because of building issues on Windows
+// Type aliases we delcare are defined in other headers and make the build
+// fail otherwise.
+#include "sfntly/port/type.h"
 #include "sfntly/table/table.h"
 
 #include "sfntly/font.h"

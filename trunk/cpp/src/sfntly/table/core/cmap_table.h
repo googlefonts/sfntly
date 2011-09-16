@@ -17,8 +17,10 @@
 #ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_CMAP_TABLE_H_
 #define SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_CMAP_TABLE_H_
 
+// type.h needs to be included first because of building issues on Windows
+// Type aliases we delcare are defined in other headers and make the build
+// fail otherwise.
 #include "sfntly/port/type.h"
-
 #include <vector>
 #include <map>
 
@@ -89,7 +91,6 @@ public:
     ~CMapIdFilter() {}
     virtual bool accept(const CMapId& cmap_id) const;
    private:
-    CMapIdFilter& operator=(const CMapIdFilter& that);
     const CMapId wanted_id_;
     const CMapIdComparator *comparator_;
   };
@@ -160,18 +161,22 @@ public:
     // The fully qualified name is CMapTable::CMap::CharacterIterator
     class CharacterIterator {
      public:
-      CharacterIterator() {}
       virtual ~CharacterIterator() {}
       virtual bool HasNext() = 0;
       // Returns -1 if there are no more characters to iterate through
       // and exceptions are turned off
       virtual int32_t Next() = 0;
+
+     protected:
+      // Use the CMap::Iterator method below instead of directly requesting
+      // a CharacterIterator.
+      CharacterIterator() {}
     };
 
     CMap(ReadableFontData* data, int32_t format, const CMapId& cmap_id);
     virtual ~CMap();
 
-    virtual void Iterator(CMapTable::CMap::CharacterIterator* output) = 0;
+    virtual CMap::CharacterIterator* Iterator() = 0;
 
     virtual int32_t format() { return format_; }
     virtual CMapId cmap_id() { return cmap_id_; }
@@ -213,16 +218,13 @@ public:
     class Builder : public CMap::Builder,
                     public RefCounted<Builder> {
      public:
-      CALLER_ATTACH static Builder* NewInstance(
-          ReadableFontData* data,
-          int32_t offset,
-          const CMapId& cmap_id);
-      CALLER_ATTACH static Builder* NewInstance(
-          WritableFontData* data,
-          int32_t offset,
-          const CMapId& cmap_id);
-      CALLER_ATTACH static Builder* NewInstance(
-          const CMapId& cmap_id);
+      CALLER_ATTACH static Builder* NewInstance(ReadableFontData* data,
+                                                int32_t offset,
+                                                const CMapId& cmap_id);
+      CALLER_ATTACH static Builder* NewInstance(WritableFontData* data,
+                                                int32_t offset,
+                                                const CMapId& cmap_id);
+      CALLER_ATTACH static Builder* NewInstance(const CMapId& cmap_id);
       virtual ~Builder();
 
      protected:
@@ -232,14 +234,9 @@ public:
      private:
       // When creating a new CMapFormat0 Builder, use NewInstance instead of
       // the constructors! This avoids a memory leak when slicing the FontData.
-      Builder(ReadableFontData* data,
-              int32_t offset,
-              const CMapId& cmap_id);
-      Builder(WritableFontData* data,
-              int32_t offset,
-              const CMapId& cmap_id);
-      Builder(
-              const CMapId& cmap_id);
+      Builder(ReadableFontData* data, int32_t offset, const CMapId& cmap_id);
+      Builder(WritableFontData* data, int32_t offset, const CMapId& cmap_id);
+      Builder(const CMapId& cmap_id);
     };
 
     // The fully qualified name is CMapTable::CMapFormat0::CharacterIterator
@@ -258,7 +255,7 @@ public:
     virtual ~CMapFormat0();
     virtual int32_t Language();
     virtual int32_t GlyphId(int32_t character);
-    virtual void Iterator(CMap::CharacterIterator* output);
+    CMap::CharacterIterator* Iterator();
 
    private:
     CMapFormat0(ReadableFontData* data, const CMapId& cmap_id);
@@ -315,9 +312,7 @@ public:
     int32_t EntryCount(int32_t sub_header_index);
     int32_t IdRangeOffset(int32_t sub_header_index);
     int32_t IdDelta(int32_t sub_header_index);
-    void Iterator(CMapTable::CMap::CharacterIterator* output) {
-      UNREFERENCED_PARAMETER(output);
-    }
+    CMap::CharacterIterator* Iterator();
   };
 
   // CMapTable::Builder
@@ -531,7 +526,6 @@ public:
 };
 typedef std::vector<CMapTable::CMapId> CMapIdList;
 typedef Ptr<CMapTable> CMapTablePtr;
-
 }  // namespace sfntly
 
 #endif  // SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_CMAP_TABLE_H_
