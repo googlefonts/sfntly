@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-#include "sfntly/table/core/cmap_table.h"
+// type.h needs to be included first because of building issues on Windows
+// Type aliases we delcare are defined in other headers and make the build
+// fail otherwise.
 #include "sfntly/port/type.h"
+#include "sfntly/table/core/cmap_table.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -75,7 +78,7 @@ CALLER_ATTACH CMapTable::CMap* CMapTable::GetCMap(const int32_t index) {
     return NULL;
 #endif
   }
-  return reinterpret_cast<CMapTable::CMap*>(cmap_builder->Build());
+  return down_cast<CMapTable::CMap*>(cmap_builder->Build());
 }
 
 CALLER_ATTACH CMapTable::CMap* CMapTable::GetCMap(const int32_t platform_id,
@@ -359,9 +362,8 @@ CMapTable::CMapFormat0::CMapFormat0(ReadableFontData* data,
     : CMap(data, CMapFormat::kFormat0, cmap_id) {
 }
 
-void
-CMapTable::CMapFormat0::Iterator(CMapTable::CMap::CharacterIterator* output) {
-  output = new CMapTable::CMapFormat0::CharacterIterator(0, 0xff);
+CMapTable::CMap::CharacterIterator* CMapTable::CMapFormat0::Iterator() {
+  return new CMapTable::CMapFormat0::CharacterIterator(0, 0xff);
 }
 
 
@@ -442,8 +444,7 @@ CMapTable::CMapFormat0::Builder::Builder(
   UNREFERENCED_PARAMETER(offset);
 }
 
-CMapTable::CMapFormat0::Builder::
-Builder(const CMapId& cmap_id)
+CMapTable::CMapFormat0::Builder::Builder(const CMapId& cmap_id)
     : CMap::Builder(reinterpret_cast<ReadableFontData*>(NULL),
                     CMapFormat::kFormat0,
                     cmap_id) {
@@ -552,6 +553,11 @@ int32_t CMapTable::CMapFormat2::IdDelta(int32_t sub_header_index) {
   return data_->ReadUShort(sub_header_offset +
                            Offset::kFormat2SubHeaderKeys +
                            Offset::kFormat2SubHeader_idDelta);
+}
+
+CMapTable::CMap::CharacterIterator* CMapTable::CMapFormat2::Iterator() {
+  // UNIMPLEMENTED
+  return NULL;
 }
 
 /******************************************************************************
@@ -712,13 +718,10 @@ int32_t CMapTable::Builder::NumCMaps() {
 void CMapTable::Builder::Initialize(ReadableFontData* data) {
   int32_t num_cmaps = NumCMaps(data);
   for (int32_t i = 0; i < num_cmaps; ++i) {
-    Ptr<CMapTable::CMap::Builder> cmap_builder;
-    cmap_builder.Attach(CMapBuilder(data, i));
+    CMapTable::CMap::Builder* cmap_builder = CMapBuilder(data, i);
     if (!cmap_builder)
       continue;
     cmap_builders_[cmap_builder->cmap_id()] = cmap_builder;
-    cmap_builders_.insert(std::make_pair(cmap_builder->cmap_id(),
-                                         cmap_builder));
   }
 }
 
