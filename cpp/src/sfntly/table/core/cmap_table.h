@@ -91,7 +91,7 @@ public:
     ~CMapIdFilter() {}
     virtual bool accept(const CMapId& cmap_id) const;
    private:
-    CMapId& operator=(const CMapId& that);
+    CMapIdFilter& operator=(const CMapIdFilter& that);
     const CMapId wanted_id_;
     const CMapIdComparator *comparator_;
   };
