@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "sfntly/port/type.h"
 #include <assert.h>
 #include <unicode/ucnv.h>
 
