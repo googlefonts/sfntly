@@ -146,10 +146,10 @@ void CMapTests::CompareCMaps() {
        uchar <= GetParam().high_char(); ++uchar) {
     int32_t c1 = uchar;
     if (encoder1_ != NULL)
-      c1 = TestUtils::EncodeOneChar(encoder1_, uchar);
+      c1 = TestUtils::EncodeOneChar(encoder1_, (int16_t)uchar);
     int32_t c2 = uchar;
     if (encoder2_ != NULL)
-      c2 = TestUtils::EncodeOneChar(encoder2_, uchar);
+      c2 = TestUtils::EncodeOneChar(encoder2_, (int16_t)uchar);
     int32_t glyph_id1 = cmap1_->GlyphId(c1);
     int32_t glyph_id2 = cmap2_->GlyphId(c2);
 #ifdef SFNTLY_DEBUG_CMAP
