@@ -686,6 +686,7 @@ int32_t CMapTable::CMapFormat4::StartCodeOffset(int32_t seg_count) {
 int32_t CMapTable::CMapFormat4::EndCode(ReadableFontData* data,
                                         int32_t seg_count,
                                         int32_t index) {
+  UNREFERENCED_PARAMETER(seg_count);
   int32_t end_code = data->ReadUShort(Offset::kFormat4EndCount +
                                       index * DataSize::kUSHORT);
   return end_code;
@@ -946,11 +947,13 @@ CMapTable::CMapFormat4::Builder::NewInstance(const CMapId& cmap_id) {
 CMapTable::CMapFormat4::Builder::Builder(ReadableFontData* data, int32_t offset,
                                          const CMapId& cmap_id)
     : CMap::Builder(data, CMapFormat::kFormat4, cmap_id) {
+  UNREFERENCED_PARAMETER(offset);
 }
 
 CMapTable::CMapFormat4::Builder::Builder(WritableFontData* data, int32_t offset,
                                          const CMapId& cmap_id)
     : CMap::Builder(data, CMapFormat::kFormat4, cmap_id) {
+  UNREFERENCED_PARAMETER(offset);
 }
 
 CMapTable::CMapFormat4::Builder::Builder(SegmentList* segments,
