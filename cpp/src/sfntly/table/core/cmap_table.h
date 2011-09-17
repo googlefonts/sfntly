@@ -316,6 +316,184 @@ public:
     CMap::CharacterIterator* Iterator();
   };
 
+    // CMapTable::CMapFormat4
+  class CMapFormat4 : public CMap,
+                      public RefCounted<CMapFormat4> {
+   public:
+    // CMapTable::CMapFormat4::Builder
+    class Builder : public CMap::Builder,
+                    public RefCounted<Builder> {
+     public:
+        // CMapTable::CMapFormat4::Builder::Segment
+      class Segment : public RefCounted<Segment> {
+       public:
+        Segment();
+        explicit Segment(Segment* other);
+        Segment(int32_t start_count,
+                int32_t end_count,
+                int32_t id_delta,
+                int32_t id_range_offset);
+        ~Segment();
+
+        // @return the startCount
+        int32_t start_count();
+        // @param startCount the startCount to set
+        void set_start_count(int32_t start_count);
+        // @return the endCount
+        int32_t end_count();
+        // @param endcount the endCount to set
+        void set_end_count(int32_t end_count);
+        // @return the idDelta
+        int32_t id_delta();
+        // @param idDelta the idDelta to set
+        void set_id_delta(int32_t id_delta);
+        // @return the idRangeOffset
+        int32_t id_range_offset();
+        // @param idRangeOffset the idRangeOffset to set
+        void set_id_range_offset(int32_t id_range_offset);
+
+        static CALLER_ATTACH
+        std::vector<Ptr<Segment> >*
+        DeepCopy(std::vector<Ptr<Segment> >* original);
+
+       private:
+        int32_t start_count_;
+        int32_t end_count_;
+        int32_t id_delta_;
+        int32_t id_range_offset_;
+      };
+      typedef std::vector<Ptr<Segment> > SegmentList;
+
+      static CALLER_ATTACH Builder* NewInstance(WritableFontData* data,
+                                                int32_t offset,
+                                                const CMapId& cmap_id);
+      static CALLER_ATTACH Builder* NewInstance(ReadableFontData* data,
+                                                int32_t offset,
+                                                const CMapId& cmap_id);
+      static CALLER_ATTACH Builder* NewInstance(const CMapId& cmap_id);
+      virtual ~Builder();
+      SegmentList* segments();
+      void set_segments(SegmentList* segments);
+      IntegerList* glyph_id_array();
+      void set_glyph_id_array(IntegerList* glyph_id_array);
+
+     protected:
+      Builder(WritableFontData* data, int32_t offset, const CMapId& cmap_id);
+      Builder(ReadableFontData* data, int32_t offset, const CMapId& cmap_id);
+      Builder(SegmentList* segments, IntegerList* glyph_id_array,
+              const CMapId& cmap_id);
+      explicit Builder(const CMapId& cmap_id);
+
+      virtual CALLER_ATTACH FontDataTable* SubBuildTable(
+          ReadableFontData* data);
+      virtual void SubDataSet();
+      virtual int32_t SubDataSizeToSerialize();
+      virtual bool SubReadyToSerialize();
+      virtual int32_t SubSerialize(WritableFontData* new_data);
+
+     private:
+      void Initialize(ReadableFontData* data);
+
+      SegmentList segments_;
+      IntegerList glyph_id_array_;
+    };
+
+    CMap::CharacterIterator* Iterator();
+    // CMapTable::CMapFormat4::CharacterIterator
+    class CharacterIterator : public CMap::CharacterIterator {
+     public:
+      bool HasNext();
+      int32_t Next();
+      virtual ~CharacterIterator() {}
+
+     private:
+      explicit CharacterIterator(CMapFormat4 *parent);
+      friend CMap::CharacterIterator* CMapFormat4::Iterator();
+
+      CMapFormat4* parent_;
+      int32_t segment_index_;
+      int32_t first_char_in_segment_;
+      int32_t last_char_in_segment_;
+      int32_t next_char_;
+      bool next_char_set_;
+    };
+
+    virtual int32_t GlyphId(int32_t character);
+
+    // Lower level glyph code retrieval that requires processing the Format 4
+    // segments to use.
+    // @param segment the cmap segment
+    // @param startCode the start code for the segment
+    // @param character the character to be looked up
+    // @return the glyph id for the character; CMapTable.NOTDEF if not found
+    int32_t RetrieveGlyphId(int32_t segment,
+                            int32_t start_count,
+                            int32_t character);
+    virtual int32_t Language();
+
+    // Get the count of the number of segments in this cmap.
+    // @return the number of segments
+    int32_t seg_count();
+    int32_t Length();
+    // Get the start code for a segment.
+    // @param segment the segment in the lookup table
+    // @return the start code for a segment
+    int32_t StartCode(int32_t segment);
+    // Get the end code for a segment.
+    // @param segment the segment in the look up table
+    // @return the end code for the segment
+    int32_t EndCode(int32_t segment);
+    // Get the id delta for a segment
+    // @param segment the segment in the look up table
+    // @return the id delta for the segment
+    int32_t IdDelta(int32_t segment);
+    // Get the id range offset for a segment
+    // @param segment the segment in the look up table
+    // @return the id range offset for the segment
+    int32_t IdRangeOffset(int32_t segment);
+    // Get the location of the id range offset for a segment
+    // @param segment the segment in the look up table
+    // @return the location of the id range offset for the segment
+    int32_t IdRangeOffsetLocation(int32_t segment);
+    // Declared above to allow friending inside CharacterIterator class.
+    // CMap::CharacterIterator* Iterator();
+    virtual ~CMapFormat4();
+
+   protected:
+    CMapFormat4(ReadableFontData* data, const CMapId& cmap_id);
+
+   private:
+    static int32_t Language(ReadableFontData* data);
+    static int32_t Length(ReadableFontData* data);
+    static int32_t SegCount(ReadableFontData* data);
+    static int32_t StartCode(ReadableFontData* data,
+                             int32_t seg_count,
+                             int32_t index);
+    static int32_t StartCodeOffset(int32_t seg_count);
+    static int32_t EndCode(ReadableFontData* data,
+                           int32_t seg_count,
+                           int32_t index);
+    static int32_t IdDelta(ReadableFontData* data,
+                           int32_t seg_count,
+                           int32_t index);
+    static int32_t IdDeltaOffset(int32_t seg_count);
+    static int32_t IdRangeOffset(ReadableFontData* data,
+                                 int32_t seg_count,
+                                 int32_t index);
+    static int32_t IdRangeOffsetOffset(int32_t seg_count);
+    static int32_t GlyphIdArrayOffset(int32_t seg_count);
+    // Refactored void to bool to work without exceptions.
+    bool IsValidIndex(int32_t segment);
+    int32_t GlyphIdArray(int32_t index);
+
+    int32_t seg_count_;
+    int32_t start_code_offset_;
+    int32_t end_code_offset_;
+    int32_t id_delta_offset_;
+    int32_t id_range_offset_offset_;
+    int32_t glyph_id_array_offset_;
+  };
+
   // CMapTable::Builder
   class Builder : public SubTableContainerTable::Builder,
                   public RefCounted<Builder> {
@@ -527,6 +705,7 @@ public:
 };
 typedef std::vector<CMapTable::CMapId> CMapIdList;
 typedef Ptr<CMapTable> CMapTablePtr;
+typedef std::vector<Ptr<CMapTable::CMapFormat4::Builder::Segment> > SegmentList;
 }  // namespace sfntly
 
 #endif  // SFNTLY_CPP_SRC_SFNTLY_TABLE_CORE_CMAP_TABLE_H_
