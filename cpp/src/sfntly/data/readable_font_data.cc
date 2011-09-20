@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-#include "sfntly/data/memory_byte_array.h"
 #include "sfntly/data/readable_font_data.h"
 
 #include <stdio.h>
 
+#include "sfntly/data/memory_byte_array.h"
 #include "sfntly/data/writable_font_data.h"
 #include "sfntly/port/exception_type.h"
 
@@ -45,7 +45,7 @@ ReadableFontData* ReadableFontData::CreateReadableFontData(ByteVector* b) {
 }
 
 int64_t ReadableFontData::Checksum() {
-  // TODO(arthurhsu): IMPLEMENT: atomicity
+  AutoLock lock(checksum_lock_);
   if (!checksum_set_) {
     ComputeChecksum();
   }

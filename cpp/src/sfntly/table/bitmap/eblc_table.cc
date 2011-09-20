@@ -48,7 +48,7 @@ EblcTable::EblcTable(Header* header, ReadableFontData* data)
 }
 
 BitmapSizeTableList* EblcTable::GetBitmapSizeTableList() {
-  // TODO(arthurhsu): thread locking.
+  AutoLock lock(bitmap_size_table_lock_);
   if (bitmap_size_table_.empty()) {
     CreateBitmapSizeTable(data_, NumSizes(), &bitmap_size_table_);
   }
