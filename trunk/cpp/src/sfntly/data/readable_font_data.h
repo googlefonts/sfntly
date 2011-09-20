@@ -17,8 +17,8 @@
 #ifndef SFNTLY_CPP_SRC_SFNTLY_DATA_READABLE_FONT_DATA_H_
 #define SFNTLY_CPP_SRC_SFNTLY_DATA_READABLE_FONT_DATA_H_
 
-#include "sfntly/port/refcount.h"
 #include "sfntly/data/font_data.h"
+#include "sfntly/port/lock.h"
 
 namespace sfntly {
 
@@ -290,7 +290,8 @@ class ReadableFontData : public FontData,
   // @return the checksum for the total range
   int64_t ComputeCheckSum(int32_t low_bound, int32_t high_bound);
 
-  bool checksum_set_;  // TODO(arthurhsu): IMPLEMENT: must be set atomically.
+  Lock checksum_lock_;
+  bool checksum_set_;
   int64_t checksum_;
   IntegerList checksum_range_;
 };

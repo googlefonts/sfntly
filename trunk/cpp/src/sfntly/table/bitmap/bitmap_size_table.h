@@ -19,6 +19,7 @@
 
 #include <vector>
 
+#include "sfntly/port/lock.h"
 #include "sfntly/table/bitmap/index_sub_table.h"
 
 namespace sfntly {
@@ -58,6 +59,7 @@ class BitmapSizeTable : public SubTable,
   IndexSubTableList* GetIndexSubTableList();
 
   ReadableFontDataPtr master_data_;
+  Lock atomic_subtables_lock_;
   IndexSubTableList atomic_subtables;
 };
 typedef Ptr<BitmapSizeTable> BitmapSizeTablePtr;

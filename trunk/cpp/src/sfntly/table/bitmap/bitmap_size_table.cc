@@ -134,6 +134,7 @@ IndexSubTable* BitmapSizeTable::CreateIndexSubTable(int32_t index) {
 }
 
 IndexSubTableList* BitmapSizeTable::GetIndexSubTableList() {
+  AutoLock lock(atomic_subtables_lock_);
   if (atomic_subtables.empty()) {
     for (int32_t i = 0; i < NumberOfIndexSubTables(); ++i) {
       IndexSubTablePtr table;

@@ -17,6 +17,7 @@
 #ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_BITMAP_EBLC_TABLE_H_
 #define SFNTLY_CPP_SRC_SFNTLY_TABLE_BITMAP_EBLC_TABLE_H_
 
+#include "sfntly/port/lock.h"
 #include "sfntly/table/bitmap/bitmap_glyph.h"
 #include "sfntly/table/bitmap/bitmap_size_table.h"
 #include "sfntly/table/subtable_container_table.h"
@@ -145,7 +146,7 @@ class EblcTable : public SubTableContainerTable,
                                     int32_t num_sizes,
                                     BitmapSizeTableList* output);
 
-  // TODO(arthurhsu): this table must be accessed atomically.
+  Lock bitmap_size_table_lock_;
   BitmapSizeTableList bitmap_size_table_;
 };
 typedef Ptr<EblcTable> EblcTablePtr;
