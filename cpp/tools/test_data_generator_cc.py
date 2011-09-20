@@ -73,8 +73,8 @@ class TestDataGenerator(object):
 
   def PostprocessHeader(self):
     self.h_file.write(
-        Template("""\n const {$test_struct} {$array_name} = {
-{$tests}};""").substitute(test_struct=
+        Template("""\n const $test_struct $array_name[] = {
+$tests};""").substitute(test_struct=
                           self.table_data_generator.TestStructName(),
                           array_name=self.table_data_generator.TestArrayName(),
                           tests=join(self.var_names, ',\n')))

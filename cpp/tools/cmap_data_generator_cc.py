@@ -31,12 +31,14 @@ class CMapDataGenerator(TableDataGenerator):
   int32_t format;
   int32_t platform_id;
   int32_t encoding_id;
+  int32_t num_mappings;
   int32_t chars[$num_mappings];
   int32_t glyph_ids[$num_mappings];
 };
 """)
   test_struct = Template("""struct $test_struct_name {
   const char* name;
+  int32_t num_cmaps;
   ProtoCMap cmaps[$num_cmaps];
 };
 """)
@@ -68,8 +70,8 @@ class CMapDataGenerator(TableDataGenerator):
       cmap_infos.append(self.CMapInfoToString(self.GetCMapInfo(cmap)))
     path = (prefix_dir +
             doc.getElementsByTagName('font_test_data')[0].getAttribute('path'))
-    return ('{\n"' + path +
-            '",\n{\n' + join(cmap_infos, ',\n') + '\n}\n}')
+    return ('{\n"' + path + '",\n' + str(len(cmap_infos)) +
+            ',\n{\n' + join(cmap_infos, ',\n') + '\n}\n}')
 
   def GetCMapInfo(self, cmap):
 
@@ -80,8 +82,9 @@ class CMapDataGenerator(TableDataGenerator):
     chars_to_glyph_ids = [(int(mapping.getAttribute('char'), 16),
                            int(mapping.getAttribute('gid')))
                           for mapping in cmap.getElementsByTagName('map')]
+    chars_to_glyph_ids.sort()
     return (length, cmap_format, platform_id, encoding_id,
-            dict(chars_to_glyph_ids[:self.num_mappings]))
+            chars_to_glyph_ids[:self.num_mappings])
 
   def CMapInfoToString(self, info_tuple):
     """Convert CMapInfo tuple to C++ struct."""
@@ -99,9 +102,10 @@ class CMapDataGenerator(TableDataGenerator):
     result = '{\n' + (FormatInt(length) + '// length\n' +
                       FormatInt(cmap_format) + '// format\n' +
                       FormatInt(platform_id) + '// platform id\n' +
-                      FormatInt(encoding_id)) + '// encoding id\n'
-    keys = map(str, chars_to_glyph_ids.keys())
-    values = map(str, chars_to_glyph_ids.values())
+                      FormatInt(encoding_id) + '// encoding id\n' +
+                      FormatInt(len(chars_to_glyph_ids)) + '// num_mappings\n')
+    keys = map(lambda entry: str(entry[0]), chars_to_glyph_ids)
+    values = map(lambda entry: str(entry[1]), chars_to_glyph_ids)
     result += FormatString(join(keys, ', ')) + '// chars\n'
     result += FormatString(join(values, ', ')) + '// glyph ids\n}'
     return result
