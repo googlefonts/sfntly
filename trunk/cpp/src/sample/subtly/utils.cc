@@ -81,7 +81,7 @@ bool SerializeFont(const char* font_path, FontFactory* factory, Font* font) {
 #endif
   if (output_file == reinterpret_cast<FILE*>(NULL))
     return false;
-  for (int32_t i = 0; i < output_stream.Size(); ++i) {
+  for (size_t i = 0; i < output_stream.Size(); ++i) {
     fwrite(&(output_stream.Get()[i]), 1, 1, output_file);
   }
   fflush(output_file);
