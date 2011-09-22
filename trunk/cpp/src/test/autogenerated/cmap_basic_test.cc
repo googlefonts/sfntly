@@ -81,7 +81,7 @@ void CMapBasicTests::SetUp() {
 TEST_P(CMapBasicTests, BasicTest) {
   TiXmlNodeVector* cmap_table = GetNodesWithName(&document_, "cmap_table");
   // A font can only have one CMap table
-  ASSERT_EQ(cmap_table->size(), (int32_t)1);
+  ASSERT_EQ(cmap_table->size(), (size_t)1);
   TiXmlNodeVector* cmaps = GetNodesWithName(cmap_table->at(0), "cmap");
   const TiXmlAttribute* num_cmaps_attr = GetAttribute(cmap_table->at(0),
                                                       "num_cmaps");
