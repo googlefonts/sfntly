@@ -4,8 +4,8 @@ In the current directory (tools/):
 1. XML test data, run:
    $ python generate_test_data_xml.py
 
-2. C++ test data (.cc and .h), run:
-   $ python generate_cmap_data_cc.py
+2. C++ test data (.h file containing the list of fonts to be tested), run:
+   $ python generate_file_list_cc.py
    (after having generated the xml data)
 
 By default the XML files are put in the same folder as the font they were
