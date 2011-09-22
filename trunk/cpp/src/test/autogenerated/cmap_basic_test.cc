@@ -87,7 +87,7 @@ TEST_P(CMapBasicTests, BasicTest) {
                                                       "num_cmaps");
   ASSERT_NE(num_cmaps_attr, reinterpret_cast<TiXmlAttribute*>(NULL));
   // But there may be more than one CMap in this table
-  ASSERT_LE(cmaps->size(), num_cmaps_attr->IntValue());
+  ASSERT_LE(cmaps->size(), (size_t)num_cmaps_attr->IntValue());
   for (TiXmlNodeVector::iterator it = cmaps->begin();
        it != cmaps->end(); ++it) {
     int32_t platform_id = GetAttribute(*it, "platform_id")->IntValue();
