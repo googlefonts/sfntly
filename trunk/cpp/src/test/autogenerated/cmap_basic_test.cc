@@ -81,7 +81,7 @@ void CMapBasicTests::SetUp() {
 TEST_P(CMapBasicTests, BasicTest) {
   TiXmlNodeVector* cmap_table = GetNodesWithName(&document_, "cmap_table");
   // A font can only have one CMap table
-  ASSERT_EQ(cmap_table->size(), 1);
+  ASSERT_EQ(cmap_table->size(), (int32_t)1);
   TiXmlNodeVector* cmaps = GetNodesWithName(cmap_table->at(0), "cmap");
   const TiXmlAttribute* num_cmaps_attr = GetAttribute(cmap_table->at(0),
                                                       "num_cmaps");
@@ -105,7 +105,11 @@ TEST_P(CMapBasicTests, BasicTest) {
     for (TiXmlNodeVector::iterator jt = maps->begin();
          jt != maps->end(); ++jt) {
       int32_t character;
+#if defined (WIN32)
+      sscanf_s(GetAttribute(*jt, "char")->Value(), "%x", &character);
+#else
       sscanf(GetAttribute(*jt, "char")->Value(), "%x", &character);
+#endif
       int32_t glyph_id = GetAttribute(*jt, "gid")->IntValue();
       ASSERT_EQ(cmap->GlyphId(character), glyph_id);
     }
