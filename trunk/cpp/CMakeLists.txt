@@ -26,7 +26,10 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 # Use STL for TinyXML library
-   add_definitions(-DTIXML_USE_STL)
+  add_definitions(-DTIXML_USE_STL)
+
+# Enable CMap and Bitmap handling
+  add_definitions(-DSFNTLY_ENABLE_CMAP_HANDLING -DSFNTLY_ENABLE_BITMAP_HANDLING)
 
 # VC specific flags
 if(MSVC10 OR MSVC90)

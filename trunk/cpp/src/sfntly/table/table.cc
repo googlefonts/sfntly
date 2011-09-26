@@ -78,12 +78,14 @@ Table::Builder* Table::Builder::GetBuilder(Header* header,
 
   // Note: Tables are commented out when they are not used/ported.
   // TODO(arthurhsu): IMPLEMENT: finish tables that are not ported.
-  if (tag == Tag::cmap) {
-    builder_raw = static_cast<Table::Builder*>(
-        CMapTable::Builder::CreateBuilder(header, table_data));
-  } else if (tag == Tag::head) {
+  if (tag == Tag::head) {
     builder_raw = static_cast<Table::Builder*>(
         FontHeaderTable::Builder::CreateBuilder(header, table_data));
+#if defined (SFNTLY_ENABLE_CMAP_HANDLING)
+  } else if (tag == Tag::cmap) {
+    builder_raw = static_cast<Table::Builder*>(
+        CMapTable::Builder::CreateBuilder(header, table_data));
+#endif  // SFNTLY_ENABLE_CMAP_HANDLING
   } else if (tag == Tag::hhea) {
     builder_raw = static_cast<Table::Builder*>(
         HorizontalHeaderTable::Builder::CreateBuilder(header, table_data));
@@ -111,18 +113,21 @@ Table::Builder* Table::Builder::GetBuilder(Header* header,
   } else if (tag == Tag::loca) {
     builder_raw = static_cast<Table::Builder*>(
         LocaTable::Builder::CreateBuilder(header, table_data));
-  }/* else if (tag == Tag::prep) {
-    builder_raw = static_cast<Table::Builder*>(
-        ControlProgramTable::Builder::CreateBuilder(header, table_data));
-  }*/ else if (tag == Tag::EBDT || tag == Tag::bdat) {
+#if defined (SFNTLY_ENABLE_BITMAP_HANDLING)
+  } else if (tag == Tag::EBDT || tag == Tag::bdat) {
     builder_raw = static_cast<Table::Builder*>(
         EbdtTable::Builder::CreateBuilder(header, table_data));
   } else if (tag == Tag::EBLC || tag == Tag::bloc) {
     builder_raw = static_cast<Table::Builder*>(
         EblcTable::Builder::CreateBuilder(header, table_data));
-  }/* else if (tag == Tag::EBSC) {
+#endif  // SFNTLY_ENABLE_BITMAP_HANDLING
+  } /* else if (tag == Tag::EBSC) {
     builder_raw = static_cast<Table::Builder*>(
         EbscTable::Builder::CreateBuilder(header, table_data));
+  }*/
+    /* else if (tag == Tag::prep) {
+    builder_raw = static_cast<Table::Builder*>(
+        ControlProgramTable::Builder::CreateBuilder(header, table_data));
   }*/ else if (tag == Tag::bhed) {
     builder_raw = static_cast<Table::Builder*>(
         FontHeaderTable::Builder::CreateBuilder(header, table_data));
