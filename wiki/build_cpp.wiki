@@ -109,4 +109,4 @@ Currently Debug builds are set as default.  To build Release builds, you can eit
 Windows users can just switch the configuration in Visual Studio.
 
 ==Running Unit Test==
-A program named {{{unit_test}}} will be generated after a full compilation.  It expects {{{Tuffy.ttf}}} to be in the same directory it resides to execute the unit tests.  {{{Tuffy.ttf}}} can be found at {{{data/ext}}}.  Windows users also needs to copy {{{icudt.dll}}} and {{{icuuc.dll}}} to that directory.
+A program named {{{unit_test}}} will be generated after a full compilation.  It expects fonts in {{{data/ext}}} to be in the same directory it resides to execute the unit tests.  Windows users also needs to copy {{{icudt.dll}}} and {{{icuuc.dll}}} to that directory.
