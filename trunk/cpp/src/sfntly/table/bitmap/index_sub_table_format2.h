@@ -18,33 +18,81 @@
 #define SFNTLY_CPP_SRC_SFNTLY_TABLE_BITMAP_INDEX_SUBTABLE_FORMAT2_H_
 
 #include "sfntly/table/bitmap/index_sub_table.h"
+#include "sfntly/table/bitmap/big_glyph_metrics.h"
 
 namespace sfntly {
-
+// Format 2 Index Subtable Entry.
 class IndexSubTableFormat2 : public IndexSubTable,
                              public RefCounted<IndexSubTableFormat2> {
  public:
-  static int32_t GetDataLength(ReadableFontData* data,
-                               int32_t offset,
-                               int32_t first,
-                               int32_t last);
+  class Builder : public IndexSubTable::Builder,
+                  public RefCounted<Builder> {
+   public:
+    class BitmapGlyphInfoIterator
+        : public RefIterator<BitmapGlyphInfo, Builder, IndexSubTable::Builder> {
+     public:
+      explicit BitmapGlyphInfoIterator(Builder* container);
+      virtual ~BitmapGlyphInfoIterator() {}
 
-  // Note: the constructor does not implement offset/length form provided in
-  //       Java to avoid heavy lifting in constructors.  Callers to call
-  //       GetDataLength() static method of the derived class to get proper
-  //       length and slice ahead.
-  IndexSubTableFormat2(ReadableFontData* data, int32_t first, int32_t last);
+      virtual bool HasNext();
+      CALLER_ATTACH virtual BitmapGlyphInfo* Next();
+
+     private:
+      int32_t glyph_id_;
+    };
+
+    virtual ~Builder();
+    virtual int32_t NumGlyphs();
+    virtual int32_t GlyphStartOffset(int32_t glyph_id);
+    virtual int32_t GlyphLength(int32_t glyph_id);
+    CALLER_ATTACH virtual BitmapGlyphInfoIter* GetIterator();
+
+    virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
+    virtual void SubDataSet();
+    virtual int32_t SubDataSizeToSerialize();
+    virtual bool SubReadyToSerialize();
+    virtual int32_t SubSerialize(WritableFontData* new_data);
+
+    int32_t ImageSize();
+    void SetImageSize(int32_t image_size);
+    CALLER_ATTACH BigGlyphMetrics* BigMetrics();
+
+    static CALLER_ATTACH Builder* CreateBuilder(ReadableFontData* data,
+                                                int32_t index_sub_table_offset,
+                                                int32_t first_glyph_index,
+                                                int32_t last_glyph_index);
+    static CALLER_ATTACH Builder* CreateBuilder(WritableFontData* data,
+                                                int32_t index_sub_table_offset,
+                                                int32_t first_glyph_index,
+                                                int32_t last_glyph_index);
+   private:
+    Builder(WritableFontData* data,
+            int32_t first_glyph_index,
+            int32_t last_glyph_index);
+    Builder(ReadableFontData* data,
+            int32_t first_glyph_index,
+            int32_t last_glyph_index);
+
+    static int32_t DataLength(ReadableFontData* data,
+                              int32_t index_sub_table_offset,
+                              int32_t first_glyph_index,
+                              int32_t last_glyph_index);
+  };
+
   virtual ~IndexSubTableFormat2();
 
   virtual int32_t NumGlyphs();
-  virtual int32_t GlyphOffset(int32_t glyph_id);
+  virtual int32_t GlyphStartOffset(int32_t glyph_id);
   virtual int32_t GlyphLength(int32_t glyph_id);
 
  private:
-  int32_t Loca(int32_t loca_index);
+  IndexSubTableFormat2(ReadableFontData* data, int32_t first, int32_t last);
 
   int32_t image_size_;
+  friend class Builder;
 };
+typedef Ptr<IndexSubTableFormat2> IndexSubTableFormat2Ptr;
+typedef Ptr<IndexSubTableFormat2::Builder> IndexSubTableFormat2BuilderPtr;
 
 }  // namespace sfntly
 

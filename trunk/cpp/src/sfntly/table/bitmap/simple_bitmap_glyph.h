@@ -24,9 +24,20 @@ namespace sfntly {
 class SimpleBitmapGlyph : public BitmapGlyph,
                           public RefCounted<SimpleBitmapGlyph> {
  public:
+  class Builder : public BitmapGlyph::Builder,
+                  public RefCounted<Builder> {
+   public:
+    Builder(WritableFontData* data, int32_t format);
+    Builder(ReadableFontData* data, int32_t format);
+    virtual ~Builder();
+
+    virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
+  };
+
   SimpleBitmapGlyph(ReadableFontData* data, int32_t format);
   virtual ~SimpleBitmapGlyph();
 };
+typedef Ptr<SimpleBitmapGlyph> SimpleBitmapGlyphPtr;
 
 }  // namespace sfntly
 

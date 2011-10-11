@@ -53,6 +53,9 @@ CALLER_ATTACH WritableFontData* FontDataTable::Builder::Data() {
   WritableFontDataPtr new_data;
   if (model_changed_) {
     if (!SubReadyToSerialize()) {
+#if !defined (SFNTLY_NO_EXCEPTION)
+      throw IOException("Table not ready to build.");
+#endif
       return NULL;
     }
     int32_t size = SubDataSizeToSerialize();
@@ -80,6 +83,9 @@ CALLER_ATTACH FontDataTable* FontDataTable::Builder::Build() {
   if (model_changed_) {
     // Let subclass serialize from model.
     if (!SubReadyToSerialize()) {
+#if !defined (SFNTLY_NO_EXCEPTION)
+      throw IOException("Table not ready to build.");
+#endif
       return NULL;
     }
     int32_t size = SubDataSizeToSerialize();
@@ -113,9 +119,17 @@ WritableFontData* FontDataTable::Builder::InternalWriteData() {
     WritableFontDataPtr new_data;
     new_data.Attach(WritableFontData::CreateWritableFontData(
                         r_data_ == NULL ? 0 : r_data_->Length()));
-    if (r_data_) {
-      r_data_->CopyTo(new_data);
+#if !defined (SFNTLY_NO_EXCEPTION)
+    try {
+#endif
+      if (r_data_) {
+        r_data_->CopyTo(new_data);
+      }
+#if !defined (SFNTLY_NO_EXCEPTION)
+    } catch (IOException& e) {
+      // TODO(stuartg): fix when IOExceptions are cleaned up
     }
+#endif
     InternalSetData(new_data, false);
   }
   return w_data_.p_;

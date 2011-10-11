@@ -29,24 +29,43 @@ class SubTable : public FontDataTable {
  public:
   class Builder : public FontDataTable::Builder {
    public:
+    // Creates a new empty sub-table.
+    Builder();
     virtual ~Builder();
 
    protected:
-    Builder(WritableFontData* data);
-    Builder(ReadableFontData* data);
+    // @param data the data for the subtable being built
+    // @param master_data the data for the full table
+    Builder(WritableFontData* data, ReadableFontData* master_data);
+    Builder(ReadableFontData* data, ReadableFontData* master_data);
+    explicit Builder(WritableFontData* data);
+    explicit Builder(ReadableFontData* data);
+
+    ReadableFontData* master_read_data() { return master_data_; }
+
+   private:
+    ReadableFontDataPtr master_data_;
   };
 
   virtual ~SubTable();
 
   int32_t padding() { return padding_; }
+  // Sets the amount of padding that is part of the data being used by this
+  // subtable.
   void set_padding(int32_t padding) { padding_ = padding; }
 
  protected:
+  SubTable(ReadableFontData* data, ReadableFontData* master_data);
+
   // Note: constructor refactored in C++ to avoid heavy lifting.
   //       caller need to do data->Slice(offset, length) beforehand.
   explicit SubTable(ReadableFontData* data);
 
+  ReadableFontData* master_read_data() { return master_data_; }
+
  private:
+  // The data for the whole table in which this subtable is contained.
+  ReadableFontDataPtr master_data_;
   int32_t padding_;
 };
 

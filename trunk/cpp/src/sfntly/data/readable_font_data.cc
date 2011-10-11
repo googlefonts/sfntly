@@ -121,6 +121,13 @@ int32_t ReadableFontData::ReadULongAsInt(int32_t index) {
   return static_cast<int32_t>(ulong);
 }
 
+int64_t ReadableFontData::ReadULongLE(int32_t index) {
+  return 0xffffffffL & (ReadUByte(index) |
+                        ReadUByte(index + 1) << 8 |
+                        ReadUByte(index + 2) << 16 |
+                        ReadUByte(index + 3) << 24);
+}
+
 int32_t ReadableFontData::ReadLong(int32_t index) {
   return ReadByte(index) << 24 |
          ReadUByte(index + 1) << 16 |

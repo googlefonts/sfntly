@@ -86,4 +86,24 @@ CompositeBitmapGlyph::Component::Component(int32_t glyph_code,
     : glyph_code_(glyph_code), x_offset_(x_offset), y_offset_(y_offset) {
 }
 
+/******************************************************************************
+ * CompositeBitmapGlyph::Builder class
+ ******************************************************************************/
+CompositeBitmapGlyph::Builder::Builder(ReadableFontData* data, int32_t format)
+    : BitmapGlyph::Builder(data, format) {
+}
+
+CompositeBitmapGlyph::Builder::Builder(WritableFontData* data, int32_t format)
+    : BitmapGlyph::Builder(data, format) {
+}
+
+CompositeBitmapGlyph::Builder::~Builder() {
+}
+
+CALLER_ATTACH FontDataTable*
+CompositeBitmapGlyph::Builder::SubBuildTable(ReadableFontData* data) {
+  Ptr<CompositeBitmapGlyph> glyph = new CompositeBitmapGlyph(data, format());
+  return glyph.Detach();
+}
+
 }  // namespace sfntly

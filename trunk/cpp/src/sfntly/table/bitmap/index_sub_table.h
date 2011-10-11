@@ -19,18 +19,106 @@
 
 #include <vector>
 
+#include "sfntly/port/java_iterator.h"
 #include "sfntly/table/subtable.h"
+#include "sfntly/table/bitmap/bitmap_glyph_info.h"
 
 namespace sfntly {
 
 class IndexSubTable : public SubTable {
  public:
+  class Builder : public SubTable::Builder {
+   public:
+    virtual ~Builder();
+
+    void Revert();
+
+    int32_t index_format() { return index_format_; }
+    int32_t first_glyph_index() { return first_glyph_index_; }
+    void set_first_glyph_index(int32_t v) { first_glyph_index_ = v; }
+    int32_t last_glyph_index() { return last_glyph_index_; }
+    void set_last_glyph_index(int32_t v) { last_glyph_index_ = v; }
+    int32_t image_format() { return image_format_; }
+    void set_image_format(int32_t v) { image_format_ = v; }
+    int32_t image_data_offset() { return image_data_offset_; }
+    void set_image_data_offset(int32_t v) { image_data_offset_ = v; }
+
+    virtual int32_t NumGlyphs() = 0;
+
+    // Gets the full offset of the glyph within the EBDT table.
+    // @param glyphId the glyph id
+    // @return the glyph offset
+    virtual int32_t GlyphOffset(int32_t glyph_id);
+
+    // Gets the offset of the glyph relative to the block for this index
+    // subtable.
+    // @param glyphId the glyph id
+    // @return the glyph offset
+    virtual int32_t GlyphStartOffset(int32_t glyph_id) = 0;
+
+    // Gets the length of the glyph within the EBDT table.
+    // @param glyphId the glyph id
+    // @return the glyph offset
+    virtual int32_t GlyphLength(int32_t glyph_id) = 0;
+
+    // Note: renamed from java iterator()
+    CALLER_ATTACH virtual Iterator<BitmapGlyphInfo, IndexSubTable::Builder>*
+        GetIterator() = 0;
+
+    // Static instantiation function.
+    static CALLER_ATTACH Builder*
+        CreateBuilder(ReadableFontData* data,
+                      int32_t offset_to_index_sub_table_array,
+                      int32_t array_index);
+
+    // The following methods will never be called but they need to be here to
+    // allow the BitmapSizeTable to see these methods through an abstract
+    // reference.
+    virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
+    virtual void SubDataSet();
+    virtual int32_t SubDataSizeToSerialize();
+    virtual bool SubReadyToSerialize();
+    virtual int32_t SubSerialize(WritableFontData* new_data);
+
+   protected:
+    Builder(WritableFontData* data,
+            int32_t first_glyph_index,
+            int32_t last_glyph_index);
+    Builder(ReadableFontData* data,
+            int32_t first_glyph_index,
+            int32_t last_glyph_index);
+    Builder(int32_t index_format,
+            int32_t image_format,
+            int32_t image_data_offset);
+
+    // Checks that the glyph id is within the correct range. If it returns the
+    // offset of the glyph id from the start of the range.
+    // @param glyphId
+    // @return the offset of the glyphId from the start of the glyph range
+    // @throws IndexOutOfBoundsException if the glyph id is not within the
+    //         correct range
+    int32_t CheckGlyphRange(int32_t glyph_id);
+    int32_t SerializeIndexSubHeader(WritableFontData* data);
+
+   private:
+    void Initialize(ReadableFontData* data);
+
+    int32_t first_glyph_index_;
+    int32_t last_glyph_index_;
+    int32_t index_format_;
+    int32_t image_format_;
+    int32_t image_data_offset_;
+  };
+
+  int32_t index_format() { return index_format_; }
   int32_t first_glyph_index() { return first_glyph_index_; }
   int32_t last_glyph_index() { return last_glyph_index_; }
   int32_t image_format() { return image_format_; }
   int32_t image_data_offset() { return image_data_offset_; }
 
-  virtual int32_t GlyphOffset(int32_t glyph_id) = 0;
+  CALLER_ATTACH BitmapGlyphInfo* GlyphInfo(int32_t glyph_id);
+  virtual int32_t GlyphOffset(int32_t glyph_id);
+  virtual int32_t GlyphStartOffset(int32_t glyph_id) = 0;
   virtual int32_t GlyphLength(int32_t glyph_id) = 0;
   virtual int32_t NumGlyphs() = 0;
 
@@ -44,10 +132,14 @@ class IndexSubTable : public SubTable {
   //       Java to avoid heavy lifting in constructors.  Callers to call
   //       GetDataLength() static method of the derived class to get proper
   //       length and slice ahead.
-  IndexSubTable(ReadableFontData* data, int32_t first, int32_t last);
+  IndexSubTable(ReadableFontData* data,
+                int32_t first_glyph_index,
+                int32_t last_glyph_index);
 
-  // Note: change return type to bool in C++ since we may not throw.
-  bool CheckGlyphRange(int32_t glyph_id);
+  int32_t CheckGlyphRange(int32_t glyph_id);
+  static int32_t CheckGlyphRange(int32_t glyph_id,
+                                 int32_t first_glyph_id,
+                                 int32_t last_glyph_id);
 
  private:
   int32_t first_glyph_index_;
@@ -58,6 +150,10 @@ class IndexSubTable : public SubTable {
 };
 typedef Ptr<IndexSubTable> IndexSubTablePtr;
 typedef std::vector<IndexSubTablePtr> IndexSubTableList;
+typedef Ptr<IndexSubTable::Builder> IndexSubTableBuilderPtr;
+typedef std::vector<IndexSubTableBuilderPtr> IndexSubTableBuilderList;
+typedef Iterator<BitmapGlyphInfo, IndexSubTable::Builder> BitmapGlyphInfoIter;
+typedef Ptr<BitmapGlyphInfoIter> BitmapGlyphInfoIterPtr;
 
 }  // namespace sfntly
 

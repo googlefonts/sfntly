@@ -227,27 +227,31 @@ bool NameTable::NameEntryFilterInPlace::Accept(int32_t platform_id,
 /******************************************************************************
  * NameTable::NameEntryIterator class
  ******************************************************************************/
-NameTable::NameEntryIterator::NameEntryIterator(NameTable* table) {
-  Init(table, NULL);
+NameTable::NameEntryIterator::NameEntryIterator(NameTable* table)
+    : RefIterator<NameEntry, NameTable>(table),
+      name_index_(0),
+      filter_(NULL) {
 }
 
 NameTable::NameEntryIterator::NameEntryIterator(NameTable* table,
-                                                NameEntryFilter* filter) {
-  Init(table, filter);
+                                                NameEntryFilter* filter)
+    : RefIterator<NameEntry, NameTable>(table),
+      name_index_(0),
+      filter_(filter) {
 }
 
 bool NameTable::NameEntryIterator::HasNext() {
   if (!filter_) {
-    if (name_index_ < table_->NameCount()) {
+    if (name_index_ < container()->NameCount()) {
       return true;
     }
     return false;
   }
-  for (; name_index_ < table_->NameCount(); ++name_index_) {
-    if (filter_->Accept(table_->PlatformId(name_index_),
-                        table_->EncodingId(name_index_),
-                        table_->LanguageId(name_index_),
-                        table_->NameId(name_index_))) {
+  for (; name_index_ < container()->NameCount(); ++name_index_) {
+    if (filter_->Accept(container()->PlatformId(name_index_),
+                        container()->EncodingId(name_index_),
+                        container()->LanguageId(name_index_),
+                        container()->NameId(name_index_))) {
       return true;
     }
   }
@@ -257,21 +261,7 @@ bool NameTable::NameEntryIterator::HasNext() {
 CALLER_ATTACH NameTable::NameEntry* NameTable::NameEntryIterator::Next() {
   if (!HasNext())
     return NULL;
-  return table_->GetNameEntry(name_index_++);
-}
-
-void NameTable::NameEntryIterator::Remove() {
-#if !defined (SFNTLY_NO_EXCEPTION)
-  throw UnsupportedOperationException(
-            "Cannot remove a name table from an existing font.");
-#endif
-}
-
-void NameTable::NameEntryIterator::Init(NameTable* table,
-                                        NameEntryFilter* filter) {
-  table_ = table;
-  filter_ = filter;
-  name_index_ = 0;
+  return container()->GetNameEntry(name_index_++);
 }
 
 /******************************************************************************
@@ -423,10 +413,11 @@ int32_t NameTable::Builder::SubSerialize(WritableFontData* new_data) {
 void NameTable::Builder::Initialize(ReadableFontData* data) {
   if (data) {
     NameTablePtr table = new NameTable(header(), data);
-    NameEntryIterator name_iter(table, NULL);
-    while (name_iter.HasNext()) {
+    Ptr<NameEntryIterator> name_iter;
+    name_iter.Attach(table->Iterator());
+    while (name_iter->HasNext()) {
       NameEntryPtr name_entry;
-      name_entry.Attach(name_iter.Next());
+      name_entry.Attach(name_iter->Next());
       NameEntryBuilderPtr name_entry_builder = new NameEntryBuilder(name_entry);
       NameEntry* builder_entry = name_entry_builder->name_entry();
       NameEntryId probe = builder_entry->name_entry_id();
@@ -532,21 +523,25 @@ CALLER_ATTACH NameTable::NameEntry* NameTable::GetNameEntry(int32_t platform_id,
                                                             int32_t name_id) {
   NameTable::NameEntryFilterInPlace
       filter(platform_id, encoding_id, language_id, name_id);
-  NameTable::NameEntryIterator* name_entry_iter = Iterator(&filter);
+  Ptr<NameTable::NameEntryIterator> name_entry_iter;
+  name_entry_iter.Attach(Iterator(&filter));
   NameEntryPtr result;
   if (name_entry_iter->HasNext()) {
     result = name_entry_iter->Next();
   }
-  delete name_entry_iter;
   return result;
 }
 
-NameTable::NameEntryIterator* NameTable::Iterator() {
-  return new NameTable::NameEntryIterator(this);
+CALLER_ATTACH NameTable::NameEntryIterator* NameTable::Iterator() {
+  Ptr<NameEntryIterator> output = new NameTable::NameEntryIterator(this);
+  return output.Detach();
 }
 
+CALLER_ATTACH
 NameTable::NameEntryIterator* NameTable::Iterator(NameEntryFilter* filter) {
-  return new NameTable::NameEntryIterator(this, filter);
+  Ptr<NameEntryIterator> output =
+      new NameTable::NameEntryIterator(this, filter);
+  return output.Detach();
 }
 
 NameTable::NameTable(Header* header, ReadableFontData* data)

@@ -31,6 +31,17 @@ class FontMath {
     }
     return r - 1;
   }
+
+  // Calculates the amount of padding needed. The values provided need to be in
+  // the same units. So, if the size is given as the number of bytes then the
+  // alignment size must also be specified as byte size to align to.
+  // @param size the size of the data that may need padding
+  // @param alignmentSize the number of units to align to
+  // @return the number of units needing to be added for alignment
+  static int32_t PaddingRequired(int32_t size, int32_t alignment_size) {
+    int32_t padding = alignment_size - (size % alignment_size);
+    return padding == alignment_size ? 0 : padding;
+  }
 };
 
 }  // namespace sfntly

@@ -115,13 +115,7 @@ int32_t ByteArray::CopyTo(int32_t dst_offset, ByteArray* array,
   while ((bytes_read =
               Get(index + src_offset, &(b[0]), 0, buffer_length)) > 0) {
     int bytes_written = array->Put(index + dst_offset, &(b[0]), 0, bytes_read);
-    if (bytes_written != bytes_read) {
-#if defined (SFNTLY_NO_EXCEPTION)
-      return 0;
-#else
-      throw IOException("Error writing bytes.");
-#endif
-    }
+    UNREFERENCED_PARAMETER(bytes_written);
     index += bytes_read;
     remaining_length -= bytes_read;
     buffer_length = std::min<int32_t>(b.size(), remaining_length);

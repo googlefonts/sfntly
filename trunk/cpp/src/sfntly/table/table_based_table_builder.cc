@@ -18,7 +18,6 @@
 
 namespace sfntly {
 
-
 /******************************************************************************
  * TableBasedTableBuilder class
  ******************************************************************************/
@@ -65,29 +64,6 @@ Table* TableBasedTableBuilder::GetTable() {
     table_.Attach(down_cast<Table*>(SubBuildTable(InternalReadData())));
   }
   return table_;
-}
-
-/******************************************************************************
- * GenericTableBuilder class
- ******************************************************************************/
-GenericTableBuilder::GenericTableBuilder(Header* header,
-                                         WritableFontData* data)
-    : TableBasedTableBuilder(header, data) {
-}
-
-CALLER_ATTACH FontDataTable*
-    GenericTableBuilder::SubBuildTable(ReadableFontData* data) {
-  // Note: In C++ port, we use GenericTable, the ref-counted version of Table
-  UNREFERENCED_PARAMETER(data);
-  FontDataTablePtr table = new GenericTable(this->header(), InternalReadData());
-  return table.Detach();
-}
-
-CALLER_ATTACH GenericTableBuilder*
-    GenericTableBuilder::CreateBuilder(Header* header, WritableFontData* data) {
-  Ptr<GenericTableBuilder> builder =
-      new GenericTableBuilder(header, data);
-  return builder.Detach();
 }
 
 }  // namespace sfntly
