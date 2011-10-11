@@ -17,6 +17,9 @@
 #ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_BITMAP_BITMAP_GLYPH_H_
 #define SFNTLY_CPP_SRC_SFNTLY_TABLE_BITMAP_BITMAP_GLYPH_H_
 
+#include <vector>
+#include <map>
+
 #include "sfntly/table/subtable.h"
 
 namespace sfntly {
@@ -73,18 +76,29 @@ class BitmapGlyph : public SubTable {
    public:
     virtual ~Builder();
 
-   protected:
-    Builder(WritableFontData* data);
-    Builder(ReadableFontData* data);
-
     virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
     virtual void SubDataSet();
     virtual int32_t SubDataSizeToSerialize();
     virtual bool SubReadyToSerialize();
     virtual int32_t SubSerialize(WritableFontData* new_data);
+
+    int32_t format() { return format_; }
+
+    static CALLER_ATTACH Builder* CreateGlyphBuilder(ReadableFontData* data,
+                                                     int32_t format);
+
+   protected:
+    Builder(WritableFontData* data, int32_t format);
+    Builder(ReadableFontData* data, int32_t format);
+
+   private:
+    int32_t format_;
   };
 
   virtual ~BitmapGlyph();
+
+  static CALLER_ATTACH BitmapGlyph* CreateGlyph(ReadableFontData* data,
+                                                int32_t format);
   int32_t format() { return format_; }
 
   // UNIMPLEMENTED: toString()
@@ -96,6 +110,9 @@ class BitmapGlyph : public SubTable {
   int32_t format_;
 };
 typedef Ptr<BitmapGlyph> BitmapGlyphPtr;
+typedef Ptr<BitmapGlyph::Builder> BitmapGlyphBuilderPtr;
+typedef std::map<int32_t, BitmapGlyphBuilderPtr> BitmapGlyphBuilderMap;
+typedef std::vector<BitmapGlyphBuilderMap> BitmapGlyphBuilderList;
 
 }  // namespace sfntly
 

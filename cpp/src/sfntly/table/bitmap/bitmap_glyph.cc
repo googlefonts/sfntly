@@ -15,12 +15,25 @@
  */
 
 #include "sfntly/table/bitmap/bitmap_glyph.h"
+#include "sfntly/table/bitmap/simple_bitmap_glyph.h"
+#include "sfntly/table/bitmap/composite_bitmap_glyph.h"
 
 namespace sfntly {
 /******************************************************************************
  * BitmapGlyph class
  ******************************************************************************/
 BitmapGlyph::~BitmapGlyph() {
+}
+
+CALLER_ATTACH BitmapGlyph* BitmapGlyph::CreateGlyph(ReadableFontData* data,
+                                                    int32_t format) {
+  BitmapGlyphPtr glyph;
+  BitmapGlyphBuilderPtr builder;
+  builder.Attach(Builder::CreateGlyphBuilder(data, format));
+  if (builder) {
+    glyph.Attach(down_cast<BitmapGlyph*>(builder->Build()));
+  }
+  return glyph;
 }
 
 BitmapGlyph::BitmapGlyph(ReadableFontData* data, int32_t format)
@@ -33,12 +46,34 @@ BitmapGlyph::BitmapGlyph(ReadableFontData* data, int32_t format)
 BitmapGlyph::Builder::~Builder() {
 }
 
-BitmapGlyph::Builder::Builder(WritableFontData* data)
-    : SubTable::Builder(data) {
+CALLER_ATTACH BitmapGlyph::Builder*
+BitmapGlyph::Builder::CreateGlyphBuilder(ReadableFontData* data,
+                                         int32_t format) {
+  BitmapGlyphBuilderPtr builder;
+  switch (format) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+      builder = new SimpleBitmapGlyph::Builder(data, format);
+      break;
+    case 8:
+    case 9:
+      builder = new CompositeBitmapGlyph::Builder(data, format);
+      break;
+  }
+  return builder.Detach();
 }
 
-BitmapGlyph::Builder::Builder(ReadableFontData* data)
-    : SubTable::Builder(data) {
+BitmapGlyph::Builder::Builder(WritableFontData* data, int32_t format)
+    : SubTable::Builder(data), format_(format) {
+}
+
+BitmapGlyph::Builder::Builder(ReadableFontData* data, int32_t format)
+    : SubTable::Builder(data), format_(format) {
 }
 
 CALLER_ATTACH
@@ -48,19 +83,19 @@ FontDataTable* BitmapGlyph::Builder::SubBuildTable(ReadableFontData* data) {
 }
 
 void BitmapGlyph::Builder::SubDataSet() {
+  // NOP
 }
 
 int32_t BitmapGlyph::Builder::SubDataSizeToSerialize() {
-  return 0;
+  return InternalReadData()->Length();
 }
 
 bool BitmapGlyph::Builder::SubReadyToSerialize() {
-  return false;
+  return true;
 }
 
 int32_t BitmapGlyph::Builder::SubSerialize(WritableFontData* new_data) {
-  UNREFERENCED_PARAMETER(new_data);
-  return 0;
+  return InternalReadData()->CopyTo(new_data);
 }
 
 }  // namespace sfntly

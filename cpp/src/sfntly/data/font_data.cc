@@ -58,7 +58,9 @@ FontData::FontData(FontData* data, int32_t offset, int32_t length) {
 
 FontData::FontData(FontData* data, int32_t offset) {
   Init(data->array_);
-  Bound(data->bound_offset_ + offset);
+  Bound(data->bound_offset_ + offset,
+        (data->bound_length_ == GROWABLE_SIZE)
+            ? GROWABLE_SIZE : data->bound_length_ - offset);
 }
 
 FontData::~FontData() {}
@@ -66,7 +68,7 @@ FontData::~FontData() {}
 void FontData::Init(ByteArray* ba) {
   array_ = ba;
   bound_offset_ = 0;
-  bound_length_ = INT_MAX;
+  bound_length_ = GROWABLE_SIZE;
 }
 
 int32_t FontData::BoundOffset(int32_t offset) {

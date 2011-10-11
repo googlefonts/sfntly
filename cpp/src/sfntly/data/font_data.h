@@ -17,6 +17,8 @@
 #ifndef SFNTLY_CPP_SRC_SFNTLY_DATA_FONT_DATA_H_
 #define SFNTLY_CPP_SRC_SFNTLY_DATA_FONT_DATA_H_
 
+#include <limits.h>
+
 #include <vector>
 
 #include "sfntly/port/type.h"
@@ -110,11 +112,14 @@ class FontData : virtual public RefCount {
   // @return the bound compensated offset
   int32_t BoundOffset(int32_t offset);
 
-  // Gets the length in the underlying data taking into account any bounds on the data.
+  // Gets the length in the underlying data taking into account any bounds on
+  // the data.
   // @param offset the offset that the length is being used at
   // @param length the length to get the bound compensated length for
   // @return the bound compensated length
   int32_t BoundLength(int32_t offset, int32_t length);
+
+  static const int32_t GROWABLE_SIZE = INT_MAX;
 
   // TODO(arthurhsu): style guide violation: refactor this protected member
   ByteArrayPtr array_;

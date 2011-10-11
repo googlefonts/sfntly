@@ -32,9 +32,10 @@ class EblcTable : public SubTableContainerTable,
       // header
       kVersion = 0,
       kNumSizes = 4,
+      kHeaderLength = kNumSizes + DataSize::kULONG,
 
       // bitmapSizeTable
-      kBitmapSizeTableArrayStart = 8,
+      kBitmapSizeTableArrayStart = kHeaderLength,
       kBitmapSizeTableLength = 48,
       kBitmapSizeTable_indexSubTableArrayOffset = 0,
       kBitmapSizeTable_indexTableSize = 4,
@@ -95,6 +96,9 @@ class EblcTable : public SubTableContainerTable,
       kIndexSubTable4_numGlyphs = kIndexSubHeaderLength,
       kIndexSubTable4_glyphArray = kIndexSubTable4_numGlyphs +
                                    DataSize::kULONG,
+      kIndexSubTable4_codeOffsetPairLength = 2 * DataSize::kUSHORT,
+      kIndexSubTable4_codeOffsetPair_glyphCode = 0,
+      kIndexSubTable4_codeOffsetPair_offset = DataSize::kUSHORT,
 
       // kIndexSubTable5
       kIndexSubTable5_imageSize = kIndexSubHeaderLength,
@@ -127,8 +131,31 @@ class EblcTable : public SubTableContainerTable,
     virtual void SubDataSet();
     virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
 
+    BitmapSizeTableBuilderList* BitmapSizeBuilders();
+    void Revert();
+
+    // Generates the loca list for the EBDT table. The list is intended to be
+    // used by the EBDT to allow it to parse the glyph data and generate glyph
+    // objects. After returning from this method the list belongs to the caller.
+    // The list entries are in the same order as the size table builders are at
+    // the time of this call.
+    // @return the list of loca maps with one for each size table builder
+    void GenerateLocaList(BitmapLocaList* output);
+
+    // Create a new builder using the header information and data provided.
+    // @param header the header information
+    // @param data the data holding the table
     static CALLER_ATTACH Builder* CreateBuilder(Header* header,
                                                 WritableFontData* data);
+    static CALLER_ATTACH Builder* CreateBuilder(Header* header,
+                                                ReadableFontData* data);
+
+   private:
+    BitmapSizeTableBuilderList* GetSizeList();
+    void Initialize(ReadableFontData* data, BitmapSizeTableBuilderList* output);
+
+    static const int32_t kVersion = 0x00020000;
+    BitmapSizeTableBuilderList size_table_builders_;
   };
 
   int32_t Version();
@@ -137,11 +164,14 @@ class EblcTable : public SubTableContainerTable,
 
   BitmapSizeTable* GetBitmapSizeTable(int32_t index);
 
+  static const int32_t NOTDEF = -1;
+
  protected:
   EblcTable(Header* header, ReadableFontData* data);
 
  private:
   BitmapSizeTableList* GetBitmapSizeTableList();
+
   static void CreateBitmapSizeTable(ReadableFontData* data,
                                     int32_t num_sizes,
                                     BitmapSizeTableList* output);

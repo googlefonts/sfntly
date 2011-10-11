@@ -162,10 +162,6 @@ void GlyphTable::Builder::Initialize(ReadableFontData* data,
                                      const IntegerList& loca) {
   if (data != NULL) {
     if (loca_.empty()) {
-#if !defined (SFNTLY_NO_EXCEPTION)
-      throw IllegalStateException(
-          "Loca values not set - unable to parse glyph data.");
-#endif
       return;
     }
     int32_t loca_value;
@@ -186,6 +182,13 @@ void GlyphTable::Builder::Initialize(ReadableFontData* data,
 
 GlyphTable::GlyphBuilderList* GlyphTable::Builder::GetGlyphBuilders() {
   if (glyph_builders_.empty()) {
+    if (InternalReadData() && !loca_.empty()) {
+#if !defined (SFNTLY_NO_EXCEPTION)
+      throw IllegalStateException(
+          "Loca values not set - unable to parse glyph data.");
+#endif
+      return NULL;
+    }
     Initialize(InternalReadData(), loca_);
     set_model_changed();
   }

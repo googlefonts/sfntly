@@ -31,6 +31,7 @@
 #include "sfntly/table/core/maximum_profile_table.h"
 #include "sfntly/table/core/name_table.h"
 #include "sfntly/table/core/os2_table.h"
+#include "sfntly/table/generic_table_builder.h"
 #include "sfntly/table/table_based_table_builder.h"
 #include "sfntly/table/truetype/glyph_table.h"
 #include "sfntly/table/truetype/loca_table.h"

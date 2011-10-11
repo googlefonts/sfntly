@@ -22,7 +22,7 @@
 namespace sfntly {
 
 class Header : public RefCounted<Header> {
-  public:
+ public:
   // Make a partial header with only the basic info for an empty new table.
   explicit Header(int32_t tag);
 
@@ -36,7 +36,10 @@ class Header : public RefCounted<Header> {
   // Get the table tag.
   int32_t tag() { return tag_; }
 
-  // Get the table offset. The offset is from the start of the font file.
+  // Get the table offset. The offset is from the start of the font file.  This
+  // offset value is what was read from the font file during construction of the
+  // font. It may not be meaningful if the font was maninpulated through the
+  // builders.
   int32_t offset() { return offset_; }
 
   // Is the offset in the header valid. The offset will not be valid if the
@@ -44,12 +47,15 @@ class Header : public RefCounted<Header> {
   // font file.
   bool offset_valid() { return offset_valid_; }
 
-  // Get the length of the table as recorded in the table record header.
+  // Get the length of the table as recorded in the table record header.  During
+  // building the header length will reflect the length that was initially read
+  // from the font file. This may not be consistent with the current state of
+  // the data.
   int32_t length() { return length_; }
 
   // Is the length in the header valid. The length will not be valid if the
   // table was constructed during building and has no physical location in a
-  // font file.
+  // font file until the table is built from the builder.
   bool length_valid() { return length_valid_; }
 
   // Get the checksum for the table as recorded in the table record header.
@@ -65,7 +71,7 @@ class Header : public RefCounted<Header> {
   //                int hashCode()
   //                string toString()
 
-  private:
+ private:
   int32_t tag_;
   int32_t offset_;
   bool offset_valid_;

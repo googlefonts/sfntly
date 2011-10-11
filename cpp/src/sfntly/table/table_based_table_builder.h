@@ -34,24 +34,13 @@ class TableBasedTableBuilder : public Table::Builder {
  protected:
   TableBasedTableBuilder(Header* header, WritableFontData* data);
   TableBasedTableBuilder(Header* header, ReadableFontData* data);
-  TableBasedTableBuilder(Header* header);
+  explicit TableBasedTableBuilder(Header* header);
 
   // C++ port: renamed table() to GetTable()
   virtual Table* GetTable();
 
   // TODO(arthurhsu): style guide violation: protected member, need refactor
   TablePtr table_;
-};
-
-class GenericTableBuilder : public TableBasedTableBuilder,
-                            public RefCounted<GenericTableBuilder> {
- public:
-  GenericTableBuilder(Header* header, WritableFontData* data);
-  virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
-
-  static CALLER_ATTACH
-         GenericTableBuilder* CreateBuilder(Header* header,
-                                            WritableFontData* data);
 };
 
 }  // namespace sfntly

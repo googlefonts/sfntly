@@ -73,16 +73,15 @@ LocaTable::LocaTable(Header* header,
  * LocaTable::Iterator class
  ******************************************************************************/
 LocaTable::LocaIterator::LocaIterator(LocaTable* table)
-    : index_(-1) {
-  table_ = table;
+    : PODIterator<int32_t, LocaTable>(table), index_(-1) {
 }
 
 bool LocaTable::LocaIterator::HasNext() {
-  return index_ <= table_->num_glyphs_;
+  return index_ <= container()->num_glyphs_;
 }
 
 int32_t LocaTable::LocaIterator::Next() {
-  return table_->Loca(index_++);
+  return container()->Loca(index_++);
 }
 
 /******************************************************************************
@@ -118,29 +117,22 @@ void LocaTable::Builder::SetLocaList(IntegerList* list) {
   loca_.clear();
   if (list) {
     loca_ = *list;
-    num_glyphs_ = loca_.size();
     set_model_changed();
   }
 }
 
 int32_t LocaTable::Builder::GlyphOffset(int32_t glyph_id) {
-  if (glyph_id < 0 || glyph_id > (num_glyphs_ + 1)) {
-#if !defined (SFNTLY_NO_EXCEPTION)
-    throw IndexOutOfBoundException("Glyph ID is out of bounds.");
-#endif
+  if (CheckGlyphRange(glyph_id) == -1) {
     return 0;
   }
-  return Loca(glyph_id);
+  return GetLocaList()->at(glyph_id);
 }
 
 int32_t LocaTable::Builder::GlyphLength(int32_t glyph_id) {
-  if (glyph_id < 0 || glyph_id > (num_glyphs_ + 1)) {
-#if !defined (SFNTLY_NO_EXCEPTION)
-    throw IndexOutOfBoundException("Glyph ID is out of bounds.");
-#endif
+  if (CheckGlyphRange(glyph_id) == -1) {
     return 0;
   }
-  return Loca(glyph_id + 1) - Loca(glyph_id);
+  return GetLocaList()->at(glyph_id + 1) - GetLocaList()->at(glyph_id);
 }
 
 void LocaTable::Builder::SetNumGlyphs(int32_t num_glyphs) {
@@ -148,10 +140,7 @@ void LocaTable::Builder::SetNumGlyphs(int32_t num_glyphs) {
 }
 
 int32_t LocaTable::Builder::NumGlyphs() {
-  if (!loca_.empty()) {
-    return loca_.size() - 1;
-  }
-  return num_glyphs_;
+  return LastGlyphIndex() - 1;
 }
 
 void LocaTable::Builder::Revert() {
@@ -202,10 +191,12 @@ int32_t LocaTable::Builder::SubSerialize(WritableFontData* new_data) {
       size += new_data->WriteUShort(size, *l / 2);
     }
   }
-  return 0;
+  num_glyphs_ = loca_.size() - 1;
+  return size;
 }
 
 void LocaTable::Builder::Initialize(ReadableFontData* data) {
+  ClearLoca(false);
   if (data) {
     if (NumGlyphs() < 0) {
 #if !defined (SFNTLY_NO_EXCEPTION)
@@ -215,11 +206,26 @@ void LocaTable::Builder::Initialize(ReadableFontData* data) {
     }
     LocaTablePtr table =
         new LocaTable(header(), data, format_version_, num_glyphs_);
-    LocaTable::LocaIterator loca_iter(table);
-    while (loca_iter.HasNext()) {
-      loca_.push_back(loca_iter.Next());
+    Ptr<LocaTable::LocaIterator> loca_iter =
+        new LocaTable::LocaIterator(table);
+    while (loca_iter->HasNext()) {
+      loca_.push_back(loca_iter->Next());
     }
   }
+}
+
+int32_t LocaTable::Builder::CheckGlyphRange(int32_t glyph_id) {
+  if (glyph_id < 0 || glyph_id > LastGlyphIndex()) {
+#if !defined (SFNTLY_NO_EXCEPTION)
+    throw IndexOutOfBoundsException("Glyph ID is outside of the allowed range");
+#endif
+    return -1;
+  }
+  return glyph_id;
+}
+
+int32_t LocaTable::Builder::LastGlyphIndex() {
+  return !loca_.empty() ? loca_.size() - 2 : num_glyphs_ - 1;
 }
 
 IntegerList* LocaTable::Builder::GetLocaList() {
@@ -228,6 +234,13 @@ IntegerList* LocaTable::Builder::GetLocaList() {
     set_model_changed();
   }
   return &loca_;
+}
+
+void LocaTable::Builder::ClearLoca(bool nullify) {
+  // Note: in C++ port, nullify is not used at all.
+  UNREFERENCED_PARAMETER(nullify);
+  loca_.clear();
+  set_model_changed(false);
 }
 
 }  // namespace sfntly

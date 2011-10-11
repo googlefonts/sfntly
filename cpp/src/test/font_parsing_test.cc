@@ -22,6 +22,7 @@
 #include "sfntly/font_factory.h"
 #include "sfntly/table/core/font_header_table.h"
 #include "sfntly/table/table.h"
+#include "sfntly/table/generic_table_builder.h"
 #include "sfntly/table/table_based_table_builder.h"
 #include "sfntly/tag.h"
 #include "sfntly/port/file_input_stream.h"

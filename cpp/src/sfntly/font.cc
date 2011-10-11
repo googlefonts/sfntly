@@ -295,15 +295,9 @@ Table::Builder* Font::Builder::NewTableBuilder(int32_t tag,
   assert(src_data);
   WritableFontDataPtr data;
   data.Attach(WritableFontData::CreateWritableFontData(src_data->Length()));
-#if !defined (SFNTLY_NO_EXCEPTION)
-  try {
-#endif
-    src_data->CopyTo(data);
-#if !defined (SFNTLY_NO_EXCEPTION)
-  } catch (IOException& e) {
-    return NULL;
-  }
-#endif
+  // TODO(stuarg): take over original data instead?
+  src_data->CopyTo(data);
+
   HeaderPtr header = new Header(tag, data->Length());
   TableBuilderPtr builder;
   builder.Attach(Table::Builder::GetBuilder(header, data));
@@ -378,19 +372,7 @@ void Font::Builder::BuildTablesFromBuilders(Font* font,
                                  builder != builder_end; ++builder) {
     TablePtr table;
     if (builder->second && builder->second->ReadyToBuild()) {
-#if !defined (SFNTLY_NO_EXCEPTION)
-      try {
-#endif
-        table.Attach(down_cast<Table*>(builder->second->Build()));
-#if !defined (SFNTLY_NO_EXCEPTION)
-      } catch(IOException& e) {
-        std::string builder_string = "Unable to build table - ";
-        char* table_name = TagToString(builder->first);
-        builder_string += table_name;
-        delete[] table_name;
-        throw RuntimeException(builder_string.c_str());
-      }
-#endif
+      table.Attach(down_cast<Table*>(builder->second->Build()));
     }
     if (table == NULL) {
       table_map->clear();

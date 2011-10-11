@@ -53,8 +53,8 @@ class GlyphTable : public SubTableContainerTable,
       // Incoming table_builder is GlyphTable::Builder*.
       // Note: constructor refactored in C++ to avoid heavy lifting.
       //       caller need to do data->Slice(offset, length) beforehand.
-      Builder(WritableFontData* data);
-      Builder(ReadableFontData* data);
+      explicit Builder(WritableFontData* data);
+      explicit Builder(ReadableFontData* data);
 
       static CALLER_ATTACH Builder*
           GetBuilder(GlyphTable::Builder* table_builder,
@@ -128,7 +128,12 @@ class GlyphTable : public SubTableContainerTable,
     // invalid, then an empty glyph builder List will be returned.
     GlyphBuilderList* GlyphBuilders();
 
-    // Replace the internal glyph builders with the one provided.
+    // Replace the internal glyph builders with the one provided. The provided
+    // list and all contained objects belong to this builder.
+    // This call is only required if the entire set of glyphs in the glyph
+    // table builder are being replaced. If the glyph builder list provided from
+    // the GlyphTable.Builder::GlyphBuilders() is being used and modified
+    // then those changes will already be reflected in the glyph table builder.
     void SetGlyphBuilders(GlyphBuilderList* glyph_builders);
 
     // Glyph builder factories
@@ -173,8 +178,8 @@ class GlyphTable : public SubTableContainerTable,
      protected:
       // Note: constructor refactored in C++ to avoid heavy lifting.
       //       caller need to do data->Slice(offset, length) beforehand.
-      SimpleGlyphBuilder(WritableFontData* data);
-      SimpleGlyphBuilder(ReadableFontData* data);
+      explicit SimpleGlyphBuilder(WritableFontData* data);
+      explicit SimpleGlyphBuilder(ReadableFontData* data);
       virtual CALLER_ATTACH FontDataTable*
           SubBuildTable(ReadableFontData* data);
 
@@ -244,8 +249,8 @@ class GlyphTable : public SubTableContainerTable,
      protected:
       // Note: constructor refactored in C++ to avoid heavy lifting.
       //       caller need to do data->Slice(offset, length) beforehand.
-      CompositeGlyphBuilder(WritableFontData* data);
-      CompositeGlyphBuilder(ReadableFontData* data);
+      explicit CompositeGlyphBuilder(WritableFontData* data);
+      explicit CompositeGlyphBuilder(ReadableFontData* data);
 
       virtual CALLER_ATTACH FontDataTable*
           SubBuildTable(ReadableFontData* data);

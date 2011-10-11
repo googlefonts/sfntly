@@ -24,25 +24,112 @@ namespace sfntly {
 class IndexSubTableFormat4 : public IndexSubTable,
                              public RefCounted<IndexSubTableFormat4> {
  public:
-  static int32_t GetDataLength(ReadableFontData* data,
-                               int32_t offset,
-                               int32_t first,
-                               int32_t last);
+  class CodeOffsetPair {
+   public:
+    int32_t glyph_code() const { return glyph_code_; }
+    int32_t offset() const { return offset_; }
 
-  // Note: the constructor does not implement offset/length form provided in
-  //       Java to avoid heavy lifting in constructors.  Callers to call
-  //       GetDataLength() static method of the derived class to get proper
-  //       length and slice ahead.
-  IndexSubTableFormat4(ReadableFontData* data, int32_t first, int32_t last);
+   protected:
+    CodeOffsetPair(int32_t glyph_code, int32_t offset);
+
+    // TODO(arthurhsu): C++ style guide prohibits protected members.
+    int32_t glyph_code_;
+    int32_t offset_;
+  };
+
+  class Builder;
+  class CodeOffsetPairBuilder : public CodeOffsetPair {
+   public:
+    void set_glyph_code(int32_t v) { glyph_code_ = v; }
+    void set_offset(int32_t v) { offset_ = v; }
+
+   private:
+    CodeOffsetPairBuilder(int32_t glyph_code, int32_t offset);
+
+    friend class Builder;
+  };
+
+  class CodeOffsetPairGlyphCodeComparator {
+   public:
+    bool operator()(const CodeOffsetPair& lhs, const CodeOffsetPair& rhs);
+  };
+
+  class Builder : public IndexSubTable::Builder,
+                  public RefCounted<Builder> {
+   public:
+    class BitmapGlyphInfoIterator
+        : public RefIterator<BitmapGlyphInfo, Builder, IndexSubTable::Builder> {
+     public:
+      explicit BitmapGlyphInfoIterator(Builder* container);
+      virtual ~BitmapGlyphInfoIterator() {}
+
+      virtual bool HasNext();
+      CALLER_ATTACH virtual BitmapGlyphInfo* Next();
+
+     private:
+      int32_t code_offset_pair_index_;
+    };
+
+    virtual ~Builder();
+    virtual int32_t NumGlyphs();
+    virtual int32_t GlyphLength(int32_t glyph_id);
+    virtual int32_t GlyphStartOffset(int32_t glyph_id);
+    CALLER_ATTACH virtual BitmapGlyphInfoIter* GetIterator();
+
+    virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
+    virtual void SubDataSet();
+    virtual int32_t SubDataSizeToSerialize();
+    virtual bool SubReadyToSerialize();
+    virtual int32_t SubSerialize(WritableFontData* new_data);
+
+    void Revert();
+    void SetOffsetArray(const std::vector<CodeOffsetPairBuilder>& pair_array);
+
+    static CALLER_ATTACH Builder* CreateBuilder(ReadableFontData* data,
+                                                int32_t index_sub_table_offset,
+                                                int32_t first_glyph_index,
+                                                int32_t last_glyph_index);
+    static CALLER_ATTACH Builder* CreateBuilder(WritableFontData* data,
+                                                int32_t index_sub_table_offset,
+                                                int32_t first_glyph_index,
+                                                int32_t last_glyph_index);
+   private:
+    Builder(WritableFontData* data,
+            int32_t first_glyph_index,
+            int32_t last_glyph_index);
+    Builder(ReadableFontData* data,
+            int32_t first_glyph_index,
+            int32_t last_glyph_index);
+    std::vector<CodeOffsetPairBuilder>* GetOffsetArray();
+    void Initialize(ReadableFontData* data);
+    int32_t FindCodeOffsetPair(int32_t glyph_id);
+
+    static int32_t DataLength(ReadableFontData* data,
+                              int32_t index_sub_table_offset,
+                              int32_t first_glyph_index,
+                              int32_t last_glyph_index);
+
+    std::vector<CodeOffsetPairBuilder> offset_pair_array_;
+  };
+
   virtual ~IndexSubTableFormat4();
 
   virtual int32_t NumGlyphs();
-  virtual int32_t GlyphOffset(int32_t glyph_id);
+  virtual int32_t GlyphStartOffset(int32_t glyph_id);
   virtual int32_t GlyphLength(int32_t glyph_id);
 
  private:
+  IndexSubTableFormat4(ReadableFontData* data,
+                       int32_t first_glyph_index,
+                       int32_t last_glyph_index);
+
   int32_t FindCodeOffsetPair(int32_t glyph_id);
+  static int32_t NumGlyphs(ReadableFontData* data, int32_t table_offset);
+
+  friend class Builder;
 };
+typedef Ptr<IndexSubTableFormat4> IndexSubTableFormat4Ptr;
+typedef Ptr<IndexSubTableFormat4::Builder> IndexSubTableFormat4BuilderPtr;
 
 }  // namespace sfntly
 

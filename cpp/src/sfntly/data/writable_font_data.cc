@@ -82,10 +82,20 @@ int32_t WritableFontData::WriteBytesPad(int32_t index,
                   offset,
                   BoundLength(index,
                               std::min<int32_t>(length, b->size() - offset)));
-  for (; written < length; written++) {
-    array_->Put(written + index, pad);
-  }
+  written += WritePadding(written + index, length - written, pad);
   return written;
+}
+
+int32_t WritableFontData::WritePadding(int32_t index, int32_t count) {
+  return WritePadding(index, count, (byte_t)0);
+}
+
+int32_t WritableFontData::WritePadding(int32_t index, int32_t count,
+                                       byte_t pad) {
+  for (int32_t i = 0; i < count; ++i) {
+    array_->Put(index + i, pad);
+  }
+  return count;
 }
 
 int32_t WritableFontData::WriteChar(int32_t index, byte_t c) {

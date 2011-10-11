@@ -128,6 +128,12 @@ class ReadableFontData : public FontData,
   // @throws IndexOutOfBoundsException if index is outside the FontData's range
   virtual int32_t ReadULongAsInt(int32_t index);
 
+  // Read the ULONG at the given index, little-endian variant
+  // @param index index into the font data
+  // @return the ULONG
+  // @throws IndexOutOfBoundsException if index is outside the FontData's range
+  virtual int64_t ReadULongLE(int32_t index);
+
   // Read the LONG at the given index.
   // @param index index into the font data
   // @return the LONG

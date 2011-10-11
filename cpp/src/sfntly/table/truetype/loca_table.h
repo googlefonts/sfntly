@@ -17,6 +17,7 @@
 #ifndef SFNTLY_CPP_SRC_SFNTLY_TABLE_TRUETYPE_LOCA_TABLE_H_
 #define SFNTLY_CPP_SRC_SFNTLY_TABLE_TRUETYPE_LOCA_TABLE_H_
 
+#include "sfntly/port/java_iterator.h"
 #include "sfntly/table/table.h"
 #include "sfntly/table/core/font_header_table.h"
 
@@ -25,17 +26,16 @@ namespace sfntly {
 // A Loca table - 'loca'.
 class LocaTable : public Table, public RefCounted<LocaTable> {
  public:
-  // Note: different implementation than Java, caller to instantiate this class
-  //       object directly from stack instead of calling LocaTable::iterator().
-  class LocaIterator {
+  class LocaIterator : public PODIterator<int32_t, LocaTable> {
    public:
     explicit LocaIterator(LocaTable* table);
-    bool HasNext();
-    int32_t Next();
+    virtual ~LocaIterator() {}
+
+    virtual bool HasNext();
+    virtual int32_t Next();
 
    private:
     int32_t index_;
-    LocaTable* table_;  // use dumb pointer since it's a composition object
   };
 
   class Builder : public Table::Builder, public RefCounted<Builder> {
@@ -83,7 +83,8 @@ class LocaTable : public Table, public RefCounted<LocaTable> {
     // This method sets the number of glyphs that the builder will attempt to
     // parse location data for from the raw binary data. This method only needs
     // to be called (and <b>must</b> be) when the raw data for this builder has
-    // been changed.
+    // been changed. It does not by itself reset the data or clear any set loca
+    // list.
     void SetNumGlyphs(int32_t num_glyphs);
 
     // Get the number of glyphs that this builder has support for.
@@ -119,10 +120,18 @@ class LocaTable : public Table, public RefCounted<LocaTable> {
     // @param data the data to initialize from
     void Initialize(ReadableFontData* data);
 
+    // Checks that the glyph id is within the correct range.
+    // @return glyph_id if correct, -1 otherwise.
+    int32_t CheckGlyphRange(int32_t glyph_id);
+
+    int32_t LastGlyphIndex();
+
     // Internal method to get the loca list if already generated and if not to
     // initialize the state of the builder.
     // @return the loca list
     IntegerList* GetLocaList();
+
+    void ClearLoca(bool nullify);
 
     int32_t format_version_;  // Note: IndexToLocFormat
     int32_t num_glyphs_;

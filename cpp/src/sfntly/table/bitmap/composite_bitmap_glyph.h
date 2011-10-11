@@ -47,6 +47,16 @@ class CompositeBitmapGlyph : public BitmapGlyph,
     friend class CompositeBitmapGlyph;
   };
 
+  class Builder : public BitmapGlyph::Builder,
+                  public RefCounted<Builder> {
+   public:
+    Builder(WritableFontData* data, int32_t format);
+    Builder(ReadableFontData* data, int32_t format);
+    virtual ~Builder();
+
+    virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
+  };
+
   CompositeBitmapGlyph(ReadableFontData* data, int32_t format);
   virtual ~CompositeBitmapGlyph();
   int32_t NumComponents();

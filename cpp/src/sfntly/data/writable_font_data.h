@@ -85,6 +85,19 @@ class WritableFontData : public ReadableFontData {
                                 int32_t length,
                                 byte_t pad);
 
+  // Writes padding to the FontData. The padding byte written is 0x00.
+  // @param index index into the font data
+  // @param count the number of pad bytes to write
+  // @return the number of pad bytes written
+  virtual int32_t WritePadding(int32_t index, int32_t count);
+
+  // Writes padding to the FontData.
+  // @param index index into the font data
+  // @param count the number of pad bytes to write
+  // @param pad the byte value to use as padding
+  // @return the number of pad bytes written
+  virtual int32_t WritePadding(int32_t index, int32_t count, byte_t pad);
+
   // Write the CHAR at the given index.
   // @param index index into the font data
   // @param c the CHAR

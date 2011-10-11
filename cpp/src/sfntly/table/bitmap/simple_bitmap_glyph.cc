@@ -25,4 +25,21 @@ SimpleBitmapGlyph::SimpleBitmapGlyph(ReadableFontData* data, int32_t format)
 SimpleBitmapGlyph::~SimpleBitmapGlyph() {
 }
 
+SimpleBitmapGlyph::Builder::Builder(ReadableFontData* data, int32_t format)
+    : BitmapGlyph::Builder(data, format) {
+}
+
+SimpleBitmapGlyph::Builder::Builder(WritableFontData* data, int32_t format)
+    : BitmapGlyph::Builder(data, format) {
+}
+
+SimpleBitmapGlyph::Builder::~Builder() {
+}
+
+CALLER_ATTACH FontDataTable*
+SimpleBitmapGlyph::Builder::SubBuildTable(ReadableFontData* data) {
+  Ptr<SimpleBitmapGlyph> glyph = new SimpleBitmapGlyph(data, format());
+  return glyph.Detach();
+}
+
 }  // namespace sfntly

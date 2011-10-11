@@ -26,6 +26,7 @@
 #include <map>
 #include <utility>
 
+#include "sfntly/port/java_iterator.h"
 #include "sfntly/table/subtable_container_table.h"
 
 #if defined U_USING_ICU_NAMESPACE
@@ -555,23 +556,17 @@ class NameTable : public SubTableContainerTable, public RefCounted<NameTable> {
     int32_t name_id_;
   };
 
-  // Mimic Java's iterator to iterate through the entries within the name table.
-  class NameEntryIterator {
+  class NameEntryIterator : public RefIterator<NameEntry, NameTable> {
    public:
     // If filter is NULL, filter through all tables.
     explicit NameEntryIterator(NameTable* table);
     NameEntryIterator(NameTable* table, NameEntryFilter* filter);
-    // Make gcc -Wnon-virtual-dtor happy.
     virtual ~NameEntryIterator() {}
 
     virtual bool HasNext();
     virtual CALLER_ATTACH NameEntry* Next();
-    virtual void Remove();
 
    private:
-    void Init(NameTable* table, NameEntryFilter* filter);
-
-    NameTable* table_;  // Use dumb pointer since it's a composition object.
     int32_t name_index_;
     NameEntryFilter* filter_;
   };
@@ -686,9 +681,8 @@ class NameTable : public SubTableContainerTable, public RefCounted<NameTable> {
   // virtual void names(std::set<NameEntryPtr>*);
 
   // Get the iterator to iterate through all name entries.
-  // Note: Caller delete the returned object.
-  virtual NameEntryIterator* Iterator();
-  virtual NameEntryIterator* Iterator(NameEntryFilter* filter);
+  virtual CALLER_ATTACH NameEntryIterator* Iterator();
+  virtual CALLER_ATTACH NameEntryIterator* Iterator(NameEntryFilter* filter);
 
  private:
   struct Offset {
