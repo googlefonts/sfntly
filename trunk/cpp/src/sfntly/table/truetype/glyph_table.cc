@@ -78,7 +78,6 @@ void GlyphTable::Builder::SetLoca(const IntegerList& loca) {
 void GlyphTable::Builder::GenerateLocaList(IntegerList* locas) {
   assert(locas);
   GlyphBuilderList* glyph_builders = GetGlyphBuilders();
-  locas->resize(glyph_builders->size());
   locas->push_back(0);
   if (glyph_builders->size() == 0) {
     locas->push_back(0);
@@ -224,6 +223,11 @@ CALLER_ATTACH GlyphTable::Glyph*
   return glyph.Detach();
 }
 
+int32_t GlyphTable::Glyph::Padding() {
+  Initialize();
+  return SubTable::Padding();
+}
+
 int32_t GlyphTable::Glyph::GlyphType() {
   return glyph_type_;
 }
@@ -332,7 +336,7 @@ int32_t GlyphTable::Glyph::Builder::SubSerialize(WritableFontData* new_data) {
  * GlyphTable::SimpleGlyph
  ******************************************************************************/
 GlyphTable::SimpleGlyph::SimpleGlyph(ReadableFontData* data)
-    : GlyphTable::Glyph(data, GlyphType::kSimple) {
+    : GlyphTable::Glyph(data, GlyphType::kSimple), initialized_(false) {
 }
 
 GlyphTable::SimpleGlyph::~SimpleGlyph() {
@@ -373,6 +377,7 @@ bool GlyphTable::SimpleGlyph::OnCurve(int32_t contour, int32_t point) {
 }
 
 void GlyphTable::SimpleGlyph::Initialize() {
+  AutoLock lock(initialization_lock_);
   if (initialized_) {
     return;
   }
@@ -530,8 +535,9 @@ CALLER_ATTACH FontDataTable*
 GlyphTable::CompositeGlyph::CompositeGlyph(ReadableFontData* data)
     : GlyphTable::Glyph(data, GlyphType::kComposite),
       instruction_size_(0),
-      instructions_offset_(0) {
-  ParseData();
+      instructions_offset_(0),
+      initialized_(false) {
+  Initialize();
 }
 
 GlyphTable::CompositeGlyph::~CompositeGlyph() {
@@ -607,7 +613,12 @@ CALLER_ATTACH ReadableFontData* GlyphTable::CompositeGlyph::Instructions() {
              data_->Slice(instructions_offset_, InstructionSize()));
 }
 
-void GlyphTable::CompositeGlyph::ParseData() {
+void GlyphTable::CompositeGlyph::Initialize() {
+  AutoLock lock(initialization_lock_);
+  if (initialized_) {
+    return;
+  }
+
   int32_t index = 5 * DataSize::kUSHORT;
   int32_t flags = kFLAG_MORE_COMPONENTS;
 
@@ -638,6 +649,8 @@ void GlyphTable::CompositeGlyph::ParseData() {
     }
     set_padding(DataLength() - non_padded_data_length);
   }
+
+  initialized_ = true;
 }
 
 /******************************************************************************

@@ -92,6 +92,10 @@ IndexSubTableFormat4::CodeOffsetPair::CodeOffsetPair(int32_t glyph_code,
     : glyph_code_(glyph_code), offset_(offset) {
 }
 
+IndexSubTableFormat4::CodeOffsetPairBuilder::CodeOffsetPairBuilder()
+    : CodeOffsetPair(0, 0) {
+}
+
 IndexSubTableFormat4::CodeOffsetPairBuilder::CodeOffsetPairBuilder(
     int32_t glyph_code, int32_t offset)
     : CodeOffsetPair(glyph_code, offset) {
@@ -137,8 +141,8 @@ int32_t IndexSubTableFormat4::Builder::GlyphStartOffset(int32_t glyph_id) {
   return GetOffsetArray()->at(pair_index).offset();
 }
 
-CALLER_ATTACH
-BitmapGlyphInfoIter* IndexSubTableFormat4::Builder::GetIterator() {
+CALLER_ATTACH IndexSubTableFormat4::Builder::BitmapGlyphInfoIterator*
+    IndexSubTableFormat4::Builder::GetIterator() {
   Ptr<IndexSubTableFormat4::Builder::BitmapGlyphInfoIterator> it =
       new IndexSubTableFormat4::Builder::BitmapGlyphInfoIterator(this);
   return it.Detach();

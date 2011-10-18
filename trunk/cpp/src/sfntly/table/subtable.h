@@ -48,8 +48,8 @@ class SubTable : public FontDataTable {
   };
 
   virtual ~SubTable();
+  virtual int32_t Padding() { return padding_; }
 
-  int32_t padding() { return padding_; }
   // Sets the amount of padding that is part of the data being used by this
   // subtable.
   void set_padding(int32_t padding) { padding_ = padding; }

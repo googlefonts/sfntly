@@ -40,12 +40,12 @@ class IndexSubTableFormat4 : public IndexSubTable,
   class Builder;
   class CodeOffsetPairBuilder : public CodeOffsetPair {
    public:
+    CodeOffsetPairBuilder();
+    CodeOffsetPairBuilder(int32_t glyph_code, int32_t offset);
     void set_glyph_code(int32_t v) { glyph_code_ = v; }
     void set_offset(int32_t v) { offset_ = v; }
 
    private:
-    CodeOffsetPairBuilder(int32_t glyph_code, int32_t offset);
-
     friend class Builder;
   };
 
@@ -74,7 +74,7 @@ class IndexSubTableFormat4 : public IndexSubTable,
     virtual int32_t NumGlyphs();
     virtual int32_t GlyphLength(int32_t glyph_id);
     virtual int32_t GlyphStartOffset(int32_t glyph_id);
-    CALLER_ATTACH virtual BitmapGlyphInfoIter* GetIterator();
+    CALLER_ATTACH virtual BitmapGlyphInfoIterator* GetIterator();
 
     virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
     virtual void SubDataSet();
@@ -130,7 +130,8 @@ class IndexSubTableFormat4 : public IndexSubTable,
 };
 typedef Ptr<IndexSubTableFormat4> IndexSubTableFormat4Ptr;
 typedef Ptr<IndexSubTableFormat4::Builder> IndexSubTableFormat4BuilderPtr;
-
+typedef std::vector<IndexSubTableFormat4::CodeOffsetPairBuilder>
+            CodeOffsetPairBuilderList;
 }  // namespace sfntly
 
 #endif  // SFNTLY_CPP_SRC_SFNTLY_TABLE_BITMAP_INDEX_SUBTABLE_FORMAT4_H_

@@ -118,6 +118,7 @@ int32_t EbdtTable::Builder::SubSerialize(WritableFontData* new_data) {
 void EbdtTable::Builder::SetLoca(BitmapLocaList* loca_list) {
   assert(loca_list);
   Revert();
+  glyph_loca_.resize(loca_list->size());
   std::copy(loca_list->begin(), loca_list->end(), glyph_loca_.begin());
 }
 
@@ -131,7 +132,6 @@ void EbdtTable::Builder::GenerateLocaList(BitmapLocaList* output) {
     }
   }
 
-  output->resize(glyph_builders_.size());
   int start_offset = Offset::kHeaderLength;
   for (BitmapGlyphBuilderList::iterator builder_map = glyph_builders_.begin(),
                                         builder_end = glyph_builders_.end();
@@ -211,7 +211,6 @@ void EbdtTable::Builder::Initialize(ReadableFontData* data,
   assert(output);
 
   output->clear();
-  output->resize(loca_list->size());
   if (data) {
     for (BitmapLocaList::iterator loca_map = loca_list->begin(),
                                   loca_end = loca_list->end();

@@ -50,7 +50,7 @@ struct Tag {
   static const int32_t CFF;
   static const int32_t VORG;
 
-  // bitmap glyph outlines
+  // opentype bitmap glyph outlines
   static const int32_t EBDT;
   static const int32_t EBLC;
   static const int32_t EBSC;
@@ -88,7 +88,7 @@ struct Tag {
   static const int32_t Sile;
   static const int32_t Silf;
 
-  // Bitmap font tables
+  // truetype bitmap font tables
   static const int32_t bhed;
   static const int32_t bdat;
   static const int32_t bloc;

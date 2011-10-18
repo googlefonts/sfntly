@@ -21,6 +21,7 @@
 
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
+#include "sfntly/tag.h"
 
 namespace sfntly {
 
@@ -46,6 +47,13 @@ namespace sfntly {
 // }  // ref count = 1, obj2 out of scope
 // obj.release();  // ref count = 0, object destroyed
 
+namespace {
+
+// The bitmap tables must be greater than 256KB to trigger bitmap subsetter.
+static const int BITMAP_SIZE_THRESHOLD = 262144;
+
+}
+
 class SubsetterImpl {
  public:
   SubsetterImpl();
@@ -59,11 +67,6 @@ class SubsetterImpl {
                  unsigned char** output_buffer);
 
  private:
-  Font* FindFont(const char* font_name, const FontArray& font_array);
-  bool HasName(const char* font_name, Font* font);
-  bool ResolveCompositeGlyphs(const unsigned int* glyph_ids,
-                              size_t glyph_count,
-                              IntegerSet* glyph_id_processed);
   CALLER_ATTACH Font* Subset(const IntegerSet& glyph_ids);
 
   FontFactoryPtr factory_;

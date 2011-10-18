@@ -108,3 +108,14 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 if(CMAKE_COMPILER_IS_GNUCXX)
   target_link_libraries(subtly_debug pthread)
 endif(CMAKE_COMPILER_IS_GNUCXX)
+   add_executable(chrome_subsetter
+     src/test/subsetter_impl.h
+     src/test/subsetter_impl.cc
+     src/test/font_subsetter.cc
+     src/test/font_subsetter.h
+     src/sample/chromium/chrome_subsetter.cc
+   )
+   target_link_libraries(chrome_subsetter sfntly icuuc)
+ if(CMAKE_COMPILER_IS_GNUCXX)
+   target_link_libraries(chrome_subsetter pthread)
+ endif(CMAKE_COMPILER_IS_GNUCXX)
