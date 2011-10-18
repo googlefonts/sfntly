@@ -45,7 +45,7 @@ class IndexSubTableFormat1 : public IndexSubTable,
     virtual int32_t NumGlyphs();
     virtual int32_t GlyphLength(int32_t glyph_id);
     virtual int32_t GlyphStartOffset(int32_t glyph_id);
-    CALLER_ATTACH virtual BitmapGlyphInfoIter* GetIterator();
+    CALLER_ATTACH virtual BitmapGlyphInfoIterator* GetIterator();
 
     virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
     virtual void SubDataSet();
@@ -53,6 +53,7 @@ class IndexSubTableFormat1 : public IndexSubTable,
     virtual bool SubReadyToSerialize();
     virtual int32_t SubSerialize(WritableFontData* new_data);
 
+    IntegerList* OffsetArray();
     void SetOffsetArray(const IntegerList& offset_array);
     CALLER_ATTACH BitmapGlyphInfoIter* Iterator();
 

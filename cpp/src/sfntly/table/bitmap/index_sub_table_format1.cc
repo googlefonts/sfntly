@@ -94,8 +94,8 @@ int32_t IndexSubTableFormat1::Builder::GlyphStartOffset(int32_t glyph_id) {
   return GetOffsetArray()->at(loca);
 }
 
-CALLER_ATTACH
-BitmapGlyphInfoIter* IndexSubTableFormat1::Builder::GetIterator() {
+CALLER_ATTACH IndexSubTableFormat1::Builder::BitmapGlyphInfoIterator*
+    IndexSubTableFormat1::Builder::GetIterator() {
   Ptr<IndexSubTableFormat1::Builder::BitmapGlyphInfoIterator> it =
       new IndexSubTableFormat1::Builder::BitmapGlyphInfoIterator(this);
   return it.Detach();
@@ -186,6 +186,10 @@ int32_t IndexSubTableFormat1::Builder::SubSerialize(
     size += new_data->WriteLong(size, *b);
   }
   return size;
+}
+
+IntegerList* IndexSubTableFormat1::Builder::OffsetArray() {
+  return GetOffsetArray();
 }
 
 void IndexSubTableFormat1::Builder::SetOffsetArray(

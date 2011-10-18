@@ -18,6 +18,7 @@
 #include "sfntly/font.h"
 #include "sfntly/table/bitmap/ebdt_table.h"
 #include "sfntly/table/bitmap/eblc_table.h"
+#include "sfntly/table/bitmap/index_sub_table_format3.h"
 #include "test/test_data.h"
 #include "test/test_font_utils.h"
 
@@ -35,12 +36,14 @@ const int32_t STRIKE1_PPEM_Y = 10;
 const int32_t STRIKE1_BIT_DEPTH = 1;
 const int32_t STRIKE1_FLAGS = 0x01;
 
+const int32_t STRIKE4_SUB1_INDEX_FORMAT = 3;
 const int32_t STRIKE4_SUB1_IMAGE_FORMAT = 1;
 const int32_t STRIKE4_SUB1_IMAGE_DATA_OFFSET = 0x00005893;
 const int32_t STRIKE4_SUB1_GLYPH_OFFSET[] = {
     0x00005893, 0x00005898, 0x0000589d, 0x000058a2, 0x000058a7,
     0x000058b2, 0x000058c2, 0x000058d0, 0x000058de, 0x000058e6 };
-const int32_t NUM_STRIKE4_SUB1_GLYPH_OFFSET = 10;  // must be 1 less
+const int32_t NUM_STRIKE4_SUB1_GLYPH_OFFSET = 10;
+const int32_t STRIKE4_SUB1_GLYPH2_LENGTH = 0x58a2 - 0x589d;
 
 bool TestReadingBitmapTable() {
   FontFactoryPtr factory;
@@ -79,14 +82,28 @@ bool TestReadingBitmapTable() {
   EXPECT_EQ(strike4->EndGlyphIndex(), STRIKE1_END_GLYPH_INDEX);
   IndexSubTablePtr sub1 = strike4->GetIndexSubTable(0);
   EXPECT_FALSE(sub1 == NULL);
+  EXPECT_EQ(sub1->index_format(), STRIKE4_SUB1_INDEX_FORMAT);
+  EXPECT_EQ(sub1->image_format(), STRIKE4_SUB1_IMAGE_FORMAT);
   EXPECT_EQ(sub1->first_glyph_index(), STRIKE1_START_GLYPH_INDEX);
   EXPECT_EQ(sub1->last_glyph_index(), STRIKE1_END_GLYPH_INDEX);
-  EXPECT_EQ(sub1->image_format(), STRIKE4_SUB1_IMAGE_FORMAT);
   EXPECT_EQ(sub1->image_data_offset(), STRIKE4_SUB1_IMAGE_DATA_OFFSET);
 
   for (int32_t i = 0; i < NUM_STRIKE4_SUB1_GLYPH_OFFSET; ++i) {
       EXPECT_EQ(sub1->GlyphOffset(i), STRIKE4_SUB1_GLYPH_OFFSET[i]);
   }
+
+  // Strike 4 Index Sub Table 1 is a Format 3
+  IndexSubTableFormat3Ptr sub3 =
+      down_cast<IndexSubTableFormat3*>(strike4->GetIndexSubTable(0));
+  EXPECT_FALSE(sub3 == NULL);
+  BitmapGlyphInfoPtr info;
+  info.Attach(sub3->GlyphInfo(2));
+  EXPECT_EQ(info->glyph_id(), 2);
+  EXPECT_EQ(info->block_offset(), STRIKE4_SUB1_IMAGE_DATA_OFFSET);
+  EXPECT_EQ(info->start_offset(),
+            STRIKE4_SUB1_GLYPH_OFFSET[2] - STRIKE4_SUB1_GLYPH_OFFSET[0]);
+  EXPECT_EQ(info->format(), STRIKE4_SUB1_IMAGE_FORMAT);
+  EXPECT_EQ(info->length(), STRIKE4_SUB1_GLYPH2_LENGTH);
 
   return true;
 }

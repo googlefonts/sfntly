@@ -61,9 +61,8 @@ class EbscTable : public Table,
     explicit BitmapScaleTable(ReadableFontData* data);
   };
 
-  // TODO(stuartg): currently the builder is minimally functional
-  // -just builds from initial data
-  // - need to make fully working
+  // TODO(stuartg): currently the builder just builds from initial data
+  // - need to make fully working but few if any examples to test with
   class Builder : public Table::Builder,
                   public RefCounted<Builder> {
    public:

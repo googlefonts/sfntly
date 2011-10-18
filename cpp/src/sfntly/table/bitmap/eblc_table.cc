@@ -238,7 +238,6 @@ void EblcTable::Builder::GenerateLocaList(BitmapLocaList* output) {
   assert(output);
   BitmapSizeTableBuilderList* size_builder_list = GetSizeList();
   output->clear();
-  output->resize(size_builder_list->size());
 #if defined (SFNTLY_DEBUG_BITMAP)
   int32_t size_index = 0;
 #endif

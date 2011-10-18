@@ -180,6 +180,7 @@ class EblcTable : public SubTableContainerTable,
   BitmapSizeTableList bitmap_size_table_;
 };
 typedef Ptr<EblcTable> EblcTablePtr;
+typedef Ptr<EblcTable::Builder> EblcTableBuilderPtr;
 }
 
 #endif  // SFNTLY_CPP_SRC_SFNTLY_TABLE_BITMAP_EBLC_TABLE_H_

@@ -95,8 +95,8 @@ int32_t IndexSubTableFormat3::Builder::GlyphLength(int32_t glyph_id) {
   return offset_array->at(loca + 1) - offset_array->at(loca);
 }
 
-CALLER_ATTACH
-BitmapGlyphInfoIter* IndexSubTableFormat3::Builder::GetIterator() {
+CALLER_ATTACH IndexSubTableFormat3::Builder::BitmapGlyphInfoIterator*
+    IndexSubTableFormat3::Builder::GetIterator() {
   Ptr<IndexSubTableFormat3::Builder::BitmapGlyphInfoIterator> it =
       new IndexSubTableFormat3::Builder::BitmapGlyphInfoIterator(this);
   return it.Detach();
@@ -225,9 +225,9 @@ void IndexSubTableFormat3::Builder::Initialize(ReadableFontData* data) {
   if (data) {
     int32_t num_offsets = (last_glyph_index() - first_glyph_index() + 1) + 1;
     for (int32_t i = 0; i < num_offsets; ++i) {
-      offset_array_.push_back(data->ReadULongAsInt(
+      offset_array_.push_back(data->ReadUShort(
          EblcTable::Offset::kIndexSubTable3_offsetArray +
-         i * DataSize::kULONG));
+         i * DataSize::kUSHORT));
     }
   }
 }

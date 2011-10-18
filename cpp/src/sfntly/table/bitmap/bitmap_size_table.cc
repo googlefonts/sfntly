@@ -418,9 +418,9 @@ void BitmapSizeTable::Builder::Initialize(ReadableFontData* data) {
   if (data) {
     int32_t number_of_index_subtables =
         BitmapSizeTable::NumberOfIndexSubTables(data, 0);
+    index_sub_tables_.resize(number_of_index_subtables);
     for (int32_t i = 0; i < number_of_index_subtables; ++i) {
-      index_sub_tables_[index_sub_tables_.size()].Attach(
-          CreateIndexSubTableBuilder(i));
+      index_sub_tables_[i].Attach(CreateIndexSubTableBuilder(i));
     }
   }
 }

@@ -78,8 +78,8 @@ int32_t IndexSubTableFormat2::Builder::GlyphLength(int32_t glyph_id) {
   return ImageSize();
 }
 
-CALLER_ATTACH
-BitmapGlyphInfoIter* IndexSubTableFormat2::Builder::GetIterator() {
+CALLER_ATTACH IndexSubTableFormat2::Builder::BitmapGlyphInfoIterator*
+    IndexSubTableFormat2::Builder::GetIterator() {
   Ptr<IndexSubTableFormat2::Builder::BitmapGlyphInfoIterator> it =
       new IndexSubTableFormat2::Builder::BitmapGlyphInfoIterator(this);
   return it.Detach();

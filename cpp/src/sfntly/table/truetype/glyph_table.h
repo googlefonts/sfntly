@@ -79,6 +79,8 @@ class GlyphTable : public SubTableContainerTable,
                                          ReadableFontData* data,
                                          int32_t offset,
                                          int32_t length);
+
+    virtual int32_t Padding();
     virtual int32_t GlyphType();
     virtual int32_t NumberOfContours();
     virtual int32_t XMin();
@@ -93,6 +95,8 @@ class GlyphTable : public SubTableContainerTable,
     // Note: constructor refactored in C++ to avoid heavy lifting.
     //       caller need to do data->Slice(offset, length) beforehand.
     Glyph(ReadableFontData* data, int32_t glyph_type);
+    virtual void Initialize() = 0;
+    // Note: Derived class to define initialization_lock_.
 
    private:
     static int32_t GlyphType(ReadableFontData* data,
@@ -194,18 +198,20 @@ class GlyphTable : public SubTableContainerTable,
 
     virtual int32_t InstructionSize();
     virtual CALLER_ATTACH ReadableFontData* Instructions();
+    virtual void Initialize();
+
     int32_t NumberOfPoints(int32_t contour);
     int32_t XCoordinate(int32_t contour, int32_t point);
     int32_t YCoordinate(int32_t contour, int32_t point);
     bool OnCurve(int32_t contour, int32_t point);
 
    private:
-    void Initialize();
     void ParseData(bool fill_arrays);
     int32_t FlagAsInt(int32_t index);
     int32_t ContourEndPoint(int32_t contour);
 
     bool initialized_;
+    Lock initialization_lock_;
     int32_t instruction_size_;
     int32_t number_of_points_;
 
@@ -274,12 +280,15 @@ class GlyphTable : public SubTableContainerTable,
     virtual int32_t InstructionSize();
     virtual CALLER_ATTACH ReadableFontData* Instructions();
 
-   private:
-    void ParseData();
+   protected:
+    virtual void Initialize();
 
+   private:
     IntegerList contour_index_;
     int32_t instruction_size_;
     int32_t instructions_offset_;
+    bool initialized_;
+    Lock initialization_lock_;
   };
 
   virtual ~GlyphTable();

@@ -79,8 +79,7 @@ IndexSubTableFormat5::IndexSubTableFormat5(ReadableFontData* data,
 // static
 int32_t IndexSubTableFormat5::NumGlyphs(ReadableFontData* data,
                                         int32_t table_offset) {
-  UNREFERENCED_PARAMETER(table_offset);
-  int32_t num_glyphs = data->ReadULongAsInt(
+  int32_t num_glyphs = data->ReadULongAsInt(table_offset +
       EblcTable::Offset::kIndexSubTable5_numGlyphs);
   return num_glyphs;
 }
@@ -115,8 +114,8 @@ int32_t IndexSubTableFormat5::Builder::GlyphStartOffset(int32_t glyph_id) {
   return (it - glyph_array->begin()) * ImageSize();
 }
 
-CALLER_ATTACH
-BitmapGlyphInfoIter* IndexSubTableFormat5::Builder::GetIterator() {
+CALLER_ATTACH IndexSubTableFormat5::Builder::BitmapGlyphInfoIterator*
+    IndexSubTableFormat5::Builder::GetIterator() {
   Ptr<IndexSubTableFormat5::Builder::BitmapGlyphInfoIterator> it =
       new IndexSubTableFormat5::Builder::BitmapGlyphInfoIterator(this);
   return it.Detach();
@@ -282,7 +281,7 @@ void IndexSubTableFormat5::Builder::Initialize(ReadableFontData* data) {
   if (data) {
     int32_t num_glyphs = IndexSubTableFormat5::NumGlyphs(data, 0);
     for (int32_t i = 0; i < num_glyphs; ++i) {
-      glyph_array_.push_back(data->ReadULongAsInt(
+      glyph_array_.push_back(data->ReadUShort(
           EblcTable::Offset::kIndexSubTable5_glyphArray +
           i * DataSize::kUSHORT));
     }

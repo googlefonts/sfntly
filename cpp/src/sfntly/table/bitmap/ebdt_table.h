@@ -102,6 +102,7 @@ class EbdtTable : public SubTableContainerTable,
   EbdtTable(Header* header, ReadableFontData* data);
 };
 typedef Ptr<EbdtTable> EbdtTablePtr;
+typedef Ptr<EbdtTable::Builder> EbdtTableBuilderPtr;
 
 }  // namespace sfntly
 
