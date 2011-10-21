@@ -45,6 +45,11 @@ class IndexSubTable : public SubTable {
 
     virtual int32_t NumGlyphs() = 0;
 
+    // Gets the glyph info for the specified glyph id.
+    // @param glyphId the glyph id to look up
+    // @return the glyph info
+    CALLER_ATTACH virtual BitmapGlyphInfo* GlyphInfo(int32_t glyph_id);
+
     // Gets the full offset of the glyph within the EBDT table.
     // @param glyphId the glyph id
     // @return the glyph offset

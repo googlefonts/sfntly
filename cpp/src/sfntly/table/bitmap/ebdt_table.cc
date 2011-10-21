@@ -222,7 +222,7 @@ void EbdtTable::Builder::Initialize(ReadableFontData* data,
         BitmapGlyphInfoPtr info = entry->second;
         ReadableFontDataPtr slice;
         slice.Attach(down_cast<ReadableFontData*>(data->Slice(
-            info->start_offset(), info->length())));
+            info->offset(), info->length())));
         BitmapGlyphBuilderPtr glyph_builder;
         glyph_builder.Attach(BitmapGlyph::Builder::CreateGlyphBuilder(
             slice, info->format()));

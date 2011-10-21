@@ -166,21 +166,25 @@ void WritableFontData::CopyFrom(InputStream* is) {
 CALLER_ATTACH FontData* WritableFontData::Slice(int32_t offset,
                                                 int32_t length) {
   if (offset < 0 || offset + length > Size()) {
+#if !defined (SFNTLY_NO_EXCEPTION)
+    throw IndexOutOfBoundsException(
+        "Attempt to bind data outside of its limits");
+#endif
     return NULL;
   }
   FontDataPtr slice = new WritableFontData(this, offset, length);
-  // Note: exception not ported because the condition is always false in C++.
-  // if (slice == null) { throw new IndexOutOfBoundsException( ...
   return slice.Detach();
 }
 
 CALLER_ATTACH FontData* WritableFontData::Slice(int32_t offset) {
   if (offset > Size()) {
+#if !defined (SFNTLY_NO_EXCEPTION)
+    throw IndexOutOfBoundsException(
+        "Attempt to bind data outside of its limits");
+#endif
     return NULL;
   }
   FontDataPtr slice = new WritableFontData(this, offset);
-  // Note: exception not ported because the condition is always false in C++.
-  // if (slice == null) { throw new IndexOutOfBoundsException( ...
   return slice.Detach();
 }
 
