@@ -315,15 +315,9 @@ bool ShallSubset(EbdtTable::Builder* ebdt, EblcTable::Builder* eblc,
       for (IntegerSet::const_iterator gid = glyph_ids.begin(),
                                       gid_end = glyph_ids.end();
                                       gid != gid_end; gid++) {
-        if ((*index_builders)[j]->first_glyph_index() <= *gid &&
-            (*index_builders)[j]->last_glyph_index() >= *gid &&
-            (*index_builders)[j]->GlyphStartOffset(*gid) != -1) {
-          BitmapGlyphInfoPtr info =
-              new BitmapGlyphInfo(*gid,
-                                  (*index_builders)[j]->image_data_offset() +
-                                  (*index_builders)[j]->GlyphStartOffset(*gid),
-                                  (*index_builders)[j]->GlyphLength(*gid),
-                                  (*index_builders)[j]->image_format());
+        BitmapGlyphInfoPtr info;
+        info.Attach((*index_builders)[j]->GlyphInfo(*gid));
+        if (info) {
           info_map[*gid] = info;
         }
       }
@@ -356,6 +350,12 @@ bool ShallSubset(EbdtTable::Builder* ebdt, EblcTable::Builder* eblc,
   return true;
 }
 
+/******************************************************************************
+ * EXPERIMENTAL CODE STARTS
+ *
+ * The following code is used for experiment.  Will obsolete once we have
+ * support to create format 4 and 5 index sub tables from scratch.
+ *****************************************************************************/
 void GenerateOffsetArray(int32_t first_gid, int32_t last_gid,
                          const BitmapGlyphInfoMap& loca,
                          IntegerList* new_offsets) {
@@ -378,12 +378,6 @@ void GenerateOffsetArray(int32_t first_gid, int32_t last_gid,
   }
 }
 
-/******************************************************************************
- * EXPERIMENTAL CODE STARTS
- *
- * The following code is used for experiment.  Will obsolete once we have
- * support to create format 4 and 5 index sub tables from scratch.
- *****************************************************************************/
 void SubsetIndexSubTableFormat1(IndexSubTable::Builder* b,
                                 const BitmapGlyphInfoMap& loca) {
   IndexSubTableFormat1BuilderPtr builder =

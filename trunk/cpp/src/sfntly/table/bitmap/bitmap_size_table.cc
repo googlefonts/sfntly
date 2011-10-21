@@ -316,6 +316,15 @@ IndexSubTable::Builder* BitmapSizeTable::Builder::GetIndexSubTable(
   return sub_table_list->at(index);
 }
 
+CALLER_ATTACH BitmapGlyphInfo* BitmapSizeTable::Builder::GlyphInfo(
+    int32_t glyph_id) {
+  IndexSubTable::Builder* sub_table = SearchIndexSubTables(glyph_id);
+  if (sub_table == NULL) {
+    return NULL;
+  }
+  return sub_table->GlyphInfo(glyph_id);
+}
+
 int32_t BitmapSizeTable::Builder::GlyphOffset(int32_t glyph_id) {
   IndexSubTable::Builder* subtable = SearchIndexSubTables(glyph_id);
   if (subtable == NULL) {
@@ -383,6 +392,31 @@ void BitmapSizeTable::Builder::SetNumberOfIndexSubTables(int32_t count) {
 }
 
 IndexSubTable::Builder* BitmapSizeTable::Builder::SearchIndexSubTables(
+    int32_t glyph_id) {
+  // would be faster to binary search but too many size tables don't have
+  // sorted subtables
+#if (SFNTLY_BITMAPSIZE_USE_BINARY_SEARCH)
+  return BinarySearchIndexSubTables(glyph_id);
+#else
+  return LinearSearchIndexSubTables(glyph_id);
+#endif
+}
+
+IndexSubTable::Builder* BitmapSizeTable::Builder::LinearSearchIndexSubTables(
+    int32_t glyph_id) {
+  IndexSubTableBuilderList* subtable_list = GetIndexSubTableBuilders();
+  for (IndexSubTableBuilderList::iterator b = subtable_list->begin(),
+                                          e = subtable_list->end();
+                                          b != e; b++) {
+    if ((*b)->first_glyph_index() <= glyph_id &&
+        (*b)->last_glyph_index() >= glyph_id) {
+      return *b;
+    }
+  }
+  return NULL;
+}
+
+IndexSubTable::Builder* BitmapSizeTable::Builder::BinarySearchIndexSubTables(
     int32_t glyph_id) {
   IndexSubTableBuilderList* subtable_list = GetIndexSubTableBuilders();
   int32_t index = 0;

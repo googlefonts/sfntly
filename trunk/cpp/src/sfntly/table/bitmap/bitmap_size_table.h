@@ -98,6 +98,7 @@ class BitmapSizeTable : public SubTable,
 
     // Note: renamed from indexSubTable()
     IndexSubTable::Builder* GetIndexSubTable(int32_t index);
+    CALLER_ATTACH BitmapGlyphInfo* GlyphInfo(int32_t glyph_id);
     int32_t GlyphOffset(int32_t glyph_id);
     int32_t GlyphLength(int32_t glyph_id);
     int32_t GlyphFormat(int32_t glyph_id);
@@ -115,6 +116,8 @@ class BitmapSizeTable : public SubTable,
 
     void SetNumberOfIndexSubTables(int32_t count);
     IndexSubTable::Builder* SearchIndexSubTables(int32_t glyph_id);
+    IndexSubTable::Builder* LinearSearchIndexSubTables(int32_t glyph_id);
+    IndexSubTable::Builder* BinarySearchIndexSubTables(int32_t glyph_id);
     IndexSubTableBuilderList* GetIndexSubTableBuilders();
     void Initialize(ReadableFontData* data);
     CALLER_ATTACH IndexSubTable::Builder* CreateIndexSubTableBuilder(

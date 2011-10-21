@@ -104,6 +104,17 @@ void IndexSubTable::Builder::Revert() {
   Initialize(InternalReadData());
 }
 
+CALLER_ATTACH BitmapGlyphInfo* IndexSubTable::Builder::GlyphInfo(
+    int32_t glyph_id) {
+  BitmapGlyphInfoPtr glyph_info =
+      new BitmapGlyphInfo(glyph_id,
+                          image_data_offset(),
+                          GlyphStartOffset(glyph_id),
+                          GlyphLength(glyph_id),
+                          image_format());
+  return glyph_info.Detach();
+}
+
 int32_t IndexSubTable::Builder::GlyphOffset(int32_t glyph_id) {
   return image_data_offset() + GlyphStartOffset(glyph_id);
 }
