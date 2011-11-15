@@ -31,6 +31,7 @@
 #include "sfntly/math/font_math.h"
 #include "sfntly/port/exception_type.h"
 #include "sfntly/table/core/font_header_table.h"
+#include "sfntly/table/core/horizontal_device_metrics_table.h"
 #include "sfntly/table/core/horizontal_header_table.h"
 #include "sfntly/table/core/horizontal_metrics_table.h"
 #include "sfntly/table/core/maximum_profile_table.h"
@@ -435,6 +436,15 @@ void Font::Builder::InterRelateBuilders(TableBuilderMap* builder_map) {
           down_cast<HorizontalMetricsTable::Builder*>(raw_hmtx_builder);
   }
 
+#if defined (SFNTLY_EXPERIMENTAL)
+  Table::Builder* raw_hdmx_builder = GetBuilder(builder_map, Tag::hdmx);
+  HorizontalDeviceMetricsTableBuilderPtr hdmx_table_builder;
+  if (raw_hdmx_builder != NULL) {
+      hdmx_table_builder =
+          down_cast<HorizontalDeviceMetricsTable::Builder*>(raw_hdmx_builder);
+  }
+#endif
+
   // set the inter table data required to build certain tables
   if (horizontal_metrics_builder != NULL) {
     if (max_profile_builder != NULL) {
@@ -456,6 +466,13 @@ void Font::Builder::InterRelateBuilders(TableBuilderMap* builder_map) {
           header_table_builder->IndexToLocFormat());
     }
   }
+
+#if defined (SFNTLY_EXPERIMENTAL)
+  // Note: In C++, hdmx_table_builder can be NULL in a subsetter.
+  if (max_profile_builder != NULL && hdmx_table_builder != NULL) {
+    hdmx_table_builder->SetNumGlyphs(max_profile_builder->NumGlyphs());
+  }
+#endif
 }
 
 void Font::Builder::ReadHeader(FontInputStream* is,
