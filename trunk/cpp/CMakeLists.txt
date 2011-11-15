@@ -29,7 +29,7 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
   add_definitions(-DTIXML_USE_STL)
 
 # Enable CMap and Bitmap handling
-  add_definitions(-DSFNTLY_ENABLE_CMAP_HANDLING -DSFNTLY_ENABLE_BITMAP_HANDLING)
+  add_definitions(-DSFNTLY_EXPERIMENTAL)
 
 # VC specific flags
 if(MSVC10 OR MSVC90)

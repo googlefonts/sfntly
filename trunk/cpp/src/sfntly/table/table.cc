@@ -24,8 +24,10 @@
 #include "sfntly/tag.h"
 #include "sfntly/table/bitmap/ebdt_table.h"
 #include "sfntly/table/bitmap/eblc_table.h"
+#include "sfntly/table/bitmap/ebsc_table.h"
 #include "sfntly/table/core/cmap_table.h"
 #include "sfntly/table/core/font_header_table.h"
+#include "sfntly/table/core/horizontal_device_metrics_table.h"
 #include "sfntly/table/core/horizontal_header_table.h"
 #include "sfntly/table/core/horizontal_metrics_table.h"
 #include "sfntly/table/core/maximum_profile_table.h"
@@ -82,11 +84,11 @@ Table::Builder* Table::Builder::GetBuilder(Header* header,
   if (tag == Tag::head) {
     builder_raw = static_cast<Table::Builder*>(
         FontHeaderTable::Builder::CreateBuilder(header, table_data));
-#if defined (SFNTLY_ENABLE_CMAP_HANDLING)
+#if defined (SFNTLY_EXPERIMENTAL)
   } else if (tag == Tag::cmap) {
     builder_raw = static_cast<Table::Builder*>(
         CMapTable::Builder::CreateBuilder(header, table_data));
-#endif  // SFNTLY_ENABLE_CMAP_HANDLING
+#endif  // SFNTLY_EXPERIMENTAL
   } else if (tag == Tag::hhea) {
     builder_raw = static_cast<Table::Builder*>(
         HorizontalHeaderTable::Builder::CreateBuilder(header, table_data));
@@ -114,24 +116,29 @@ Table::Builder* Table::Builder::GetBuilder(Header* header,
   } else if (tag == Tag::loca) {
     builder_raw = static_cast<Table::Builder*>(
         LocaTable::Builder::CreateBuilder(header, table_data));
-#if defined (SFNTLY_ENABLE_BITMAP_HANDLING)
+#if defined (SFNTLY_EXPERIMENTAL)
   } else if (tag == Tag::EBDT || tag == Tag::bdat) {
     builder_raw = static_cast<Table::Builder*>(
         EbdtTable::Builder::CreateBuilder(header, table_data));
   } else if (tag == Tag::EBLC || tag == Tag::bloc) {
     builder_raw = static_cast<Table::Builder*>(
         EblcTable::Builder::CreateBuilder(header, table_data));
-#endif  // SFNTLY_ENABLE_BITMAP_HANDLING
-  } /* else if (tag == Tag::EBSC) {
+  } else if (tag == Tag::EBSC) {
     builder_raw = static_cast<Table::Builder*>(
         EbscTable::Builder::CreateBuilder(header, table_data));
-  }*/
-    /* else if (tag == Tag::prep) {
+#endif  // SFNTLY_EXPERIMENTAL
+  } /* else if (tag == Tag::prep) {
     builder_raw = static_cast<Table::Builder*>(
         ControlProgramTable::Builder::CreateBuilder(header, table_data));
   }*/ else if (tag == Tag::bhed) {
     builder_raw = static_cast<Table::Builder*>(
         FontHeaderTable::Builder::CreateBuilder(header, table_data));
+#if defined (SFNTLY_EXPERIMENTAL)
+  } else if (tag == Tag::hdmx) {
+    builder_raw = static_cast<Table::Builder*>(
+        HorizontalDeviceMetricsTable::Builder::CreateBuilder(header,
+                                                             table_data));
+#endif  // SFNTLY_EXPERIMENTAL
   } else {
     builder_raw = static_cast<Table::Builder*>(
         GenericTableBuilder::CreateBuilder(header, table_data));
