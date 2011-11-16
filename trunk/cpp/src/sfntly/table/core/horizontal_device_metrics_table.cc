@@ -102,8 +102,8 @@ void HorizontalDeviceMetricsTable::Builder::SetNumGlyphs(int32_t num_glyphs) {
   if (num_glyphs < 0) {
 #if !defined (SFNTLY_NO_EXCEPTION)
     throw IllegalArgumentException("Number of glyphs can't be negative.");
-    return;
 #endif
+    return;
   }
   num_glyphs_ = num_glyphs;
   HorizontalDeviceMetricsTable* table =
