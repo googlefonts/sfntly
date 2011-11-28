@@ -66,9 +66,6 @@ class BigGlyphMetrics : public GlyphMetrics,
     int32_t VertAdvance();
     void SetVertAdvance(byte_t advance);
 
-    // Note: C++ port only
-    void CopyFrom(Builder* source);
-
     virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
     virtual void SubDataSet();
     virtual int32_t SubDataSizeToSerialize();
