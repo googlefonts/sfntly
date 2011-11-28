@@ -39,6 +39,14 @@
 #include "sfntly/port/memory_input_stream.h"
 #include "sfntly/port/memory_output_stream.h"
 
+
+namespace {
+
+// The bitmap tables must be greater than 16KB to trigger bitmap subsetter.
+static const int BITMAP_SIZE_THRESHOLD = 16384;
+
+}
+
 namespace sfntly {
 
 void ConstructName(UChar* name_part, UnicodeString* name, int32_t name_id) {
@@ -278,10 +286,16 @@ bool SetupGlyfBuilders(Font::Builder* builder,
   return true;
 }
 
-bool HasOverlap(int32_t range1_begin, int32_t range1_end,
-                int32_t range2_begin, int32_t range2_end) {
-  return (range2_begin < range1_end && range2_begin > range1_begin) ||
-         (range1_begin < range2_end && range1_begin > range2_begin);
+bool HasOverlap(int32_t range_begin, int32_t range_end,
+                const IntegerSet& glyph_ids) {
+  if (range_begin == range_end) {
+    return glyph_ids.find(range_begin) != glyph_ids.end();
+  } else if (range_end > range_begin) {
+    IntegerSet::const_iterator left = glyph_ids.lower_bound(range_begin);
+    IntegerSet::const_iterator right = glyph_ids.lower_bound(range_end);
+    return right != left;
+  }
+  return false;
 }
 
 // Initialize builder, returns false if glyph_id subset is not covered.
@@ -296,13 +310,12 @@ bool ShallSubset(EbdtTable::Builder* ebdt, EblcTable::Builder* eblc,
   // Note: Do not call eblc_builder->GenerateLocaList(&loca_list) and then
   //       ebdt_builder->SetLoca(loca_list).  For fonts like SimSun, there are
   //       >28K glyphs inside, where a typical usage will be <1K glyphs.  Doing
-  //       the calls inproperly will result in creation of >100K objects that
-  //       will be destroyed immediately and result in significant slowness.
+  //       the calls improperly will result in creation of >100K objects that
+  //       will be destroyed immediately, inducing significant slowness.
   IntegerList removed_strikes;
   for (size_t i = 0; i < strikes->size(); i++) {
     if (!HasOverlap((*strikes)[i]->StartGlyphIndex(),
-                    (*strikes)[i]->EndGlyphIndex(),
-                    *(glyph_ids.begin()), *(glyph_ids.rbegin()))) {
+                    (*strikes)[i]->EndGlyphIndex(), glyph_ids)) {
       removed_strikes.push_back(i);
       continue;
     }
@@ -310,22 +323,27 @@ bool ShallSubset(EbdtTable::Builder* ebdt, EblcTable::Builder* eblc,
     IndexSubTableBuilderList* index_builders =
         (*strikes)[i]->IndexSubTableBuilders();
     IntegerList removed_indexes;
+    BitmapGlyphInfoMap info_map;
     for (size_t j = 0; j < index_builders->size(); ++j) {
-      BitmapGlyphInfoMap info_map;
+      if (!HasOverlap((*index_builders)[j]->first_glyph_index(),
+                      (*index_builders)[j]->last_glyph_index(), glyph_ids)) {
+        removed_indexes.push_back(j);
+        continue;
+      }
       for (IntegerSet::const_iterator gid = glyph_ids.begin(),
                                       gid_end = glyph_ids.end();
                                       gid != gid_end; gid++) {
         BitmapGlyphInfoPtr info;
         info.Attach((*index_builders)[j]->GlyphInfo(*gid));
-        if (info) {
+        if (info && info->length()) {  // Do not include gid without bitmap
           info_map[*gid] = info;
         }
       }
-      if (!info_map.empty()) {
-        loca_list.push_back(info_map);
-      } else {
-        removed_indexes.push_back(j);
-      }
+    }
+    if (!info_map.empty()) {
+      loca_list.push_back(info_map);
+    } else {
+      removed_strikes.push_back(i);  // Detected null entries.
     }
 
     // Remove unused index sub tables
@@ -342,7 +360,11 @@ bool ShallSubset(EbdtTable::Builder* ebdt, EblcTable::Builder* eblc,
   // Remove unused strikes
   for (IntegerList::reverse_iterator j = removed_strikes.rbegin(),
                                      e = removed_strikes.rend(); j != e; j++) {
-      strikes->erase(strikes->begin() + *j);
+    strikes->erase(strikes->begin() + *j);
+  }
+
+  if (strikes->empty()) {  // no glyph covered, can safely drop the builders.
+    return false;
   }
 
   ebdt_builder->SetLoca(&loca_list);
@@ -350,134 +372,134 @@ bool ShallSubset(EbdtTable::Builder* ebdt, EblcTable::Builder* eblc,
   return true;
 }
 
-/******************************************************************************
- * EXPERIMENTAL CODE STARTS
- *
- * The following code is used for experiment.  Will obsolete once we have
- * support to create format 4 and 5 index sub tables from scratch.
- *****************************************************************************/
-void GenerateOffsetArray(int32_t first_gid, int32_t last_gid,
-                         const BitmapGlyphInfoMap& loca,
-                         IntegerList* new_offsets) {
-  int32_t offset = 0;
-  int32_t length = 0;
-  for (int32_t i = first_gid; i <= last_gid; ++i) {
-    BitmapGlyphInfoMap::const_iterator it = loca.find(i);
-    if (it != loca.end()) {
-      offset = it->second->offset();
-      length = it->second->length();
-      new_offsets->push_back(offset);
-      if (i == last_gid) {
-        new_offsets->push_back(offset + length);
-      }
-    } else {  // Glyph id is not in subset.
-      offset += length;
-      new_offsets->push_back(offset);
-      length = 0;
+CALLER_ATTACH IndexSubTable::Builder*
+ConstructIndexFormat4(IndexSubTable::Builder* b, const BitmapGlyphInfoMap& loca,
+                      int32_t* image_data_offset) {
+  IndexSubTableFormat4BuilderPtr builder4;
+  builder4.Attach(IndexSubTableFormat4::Builder::CreateBuilder());
+  CodeOffsetPairBuilderList offset_pairs;
+
+  size_t offset = 0;
+  int32_t lower_bound = b->first_glyph_index();
+  int32_t upper_bound = b->last_glyph_index();
+  bool lower_bound_reached = false;
+  bool upper_bound_reached = false;
+  int32_t last_gid = -1;
+  BitmapGlyphInfoMap::const_iterator last_element = loca.end();
+  --last_element;
+  for (BitmapGlyphInfoMap::const_iterator i = loca.begin(), e = loca.end();
+                                              i != e; i++) {
+    int32_t gid = i->first;
+    if (gid < lower_bound) {
+      continue;
+    }
+    if (!lower_bound_reached) {
+      builder4->set_first_glyph_index(gid);
+      builder4->set_image_format(b->image_format());
+      builder4->set_image_data_offset(*image_data_offset);
+      last_gid = gid;
+      lower_bound_reached = true;
+    }
+    if (gid > upper_bound || i == last_element) {
+      upper_bound_reached = true;
+    }
+    if (!upper_bound_reached || i == last_element) {
+      offset_pairs.push_back(
+          IndexSubTableFormat4::CodeOffsetPairBuilder(gid, offset));
+      offset += i->second->length();
+      last_gid = gid;
+    }
+    if (upper_bound_reached) {
+      offset_pairs.push_back(
+          IndexSubTableFormat4::CodeOffsetPairBuilder(-1, offset));
+      builder4->set_last_glyph_index(last_gid);
+      *image_data_offset += offset;
+      break;
     }
   }
+  builder4->SetOffsetArray(offset_pairs);
+
+  return builder4.Detach();
 }
 
-void SubsetIndexSubTableFormat1(IndexSubTable::Builder* b,
-                                const BitmapGlyphInfoMap& loca) {
-  IndexSubTableFormat1BuilderPtr builder =
-      down_cast<IndexSubTableFormat1::Builder*>(b);
-  if (builder->first_glyph_index() < loca.begin()->first) {
-    builder->set_first_glyph_index(loca.begin()->first);
+CALLER_ATTACH IndexSubTable::Builder*
+ConstructIndexFormat5(IndexSubTable::Builder* b, const BitmapGlyphInfoMap& loca,
+                      int32_t* image_data_offset) {
+  IndexSubTableFormat5BuilderPtr new_builder;
+  new_builder.Attach(IndexSubTableFormat5::Builder::CreateBuilder());
+
+  // Copy BigMetrics
+  int32_t image_size = 0;
+  if (b->index_format() == IndexSubTable::Format::FORMAT_2) {
+    IndexSubTableFormat2BuilderPtr builder2 =
+      down_cast<IndexSubTableFormat2::Builder*>(b);
+    new_builder->BigMetrics()->CopyFrom(builder2->BigMetrics());
+    image_size = builder2->ImageSize();
+  } else {
+    IndexSubTableFormat5BuilderPtr builder5 =
+      down_cast<IndexSubTableFormat5::Builder*>(b);
+    BigGlyphMetricsBuilderPtr metrics_builder;
+    new_builder->BigMetrics()->CopyFrom(builder5->BigMetrics());
+    image_size = builder5->ImageSize();
   }
-  if (builder->last_glyph_index() > loca.rbegin()->first) {
-    builder->set_last_glyph_index(loca.rbegin()->first);
-  }
-  builder->set_image_data_offset(loca.begin()->second->block_offset());
 
-  IntegerList new_offsets;
-  GenerateOffsetArray(builder->first_glyph_index(), builder->last_glyph_index(),
-                      loca, &new_offsets);
-  builder->SetOffsetArray(new_offsets);
-}
-
-void SubsetIndexSubTableFormat2(IndexSubTable::Builder* b,
-                                const BitmapGlyphInfoMap& loca) {
-  UNREFERENCED_PARAMETER(b);
-  UNREFERENCED_PARAMETER(loca);
-}
-
-void SubsetIndexSubTableFormat3(IndexSubTable::Builder* b,
-                                const BitmapGlyphInfoMap& loca) {
-  IndexSubTableFormat3BuilderPtr builder =
-      down_cast<IndexSubTableFormat3::Builder*>(b);
-  if (builder->first_glyph_index() < loca.begin()->first) {
-    builder->set_first_glyph_index(loca.begin()->first);
-  }
-  if (builder->last_glyph_index() > loca.rbegin()->first) {
-    builder->set_last_glyph_index(loca.rbegin()->first);
-  }
-  builder->set_image_data_offset(loca.begin()->second->block_offset());
-
-  IntegerList new_offsets;
-  GenerateOffsetArray(builder->first_glyph_index(), builder->last_glyph_index(),
-                      loca, &new_offsets);
-  builder->SetOffsetArray(new_offsets);
-}
-
-void SubsetIndexSubTableFormat4(IndexSubTable::Builder* b,
-                                const BitmapGlyphInfoMap& loca) {
-  IndexSubTableFormat4BuilderPtr builder =
-      down_cast<IndexSubTableFormat4::Builder*>(b);
-  CodeOffsetPairBuilderList pairs;
-  pairs.resize(loca.size());
-  size_t index = 0;
+  IntegerList* glyph_array = new_builder->GlyphArray();
+  size_t offset = 0;
+  int32_t lower_bound = b->first_glyph_index();
+  int32_t upper_bound = b->last_glyph_index();
+  bool lower_bound_reached = false;
+  bool upper_bound_reached = false;
+  int32_t last_gid = -1;
+  BitmapGlyphInfoMap::const_iterator last_element = loca.end();
+  --last_element;
   for (BitmapGlyphInfoMap::const_iterator i = loca.begin(), e = loca.end();
                                           i != e; i++) {
-    pairs[index].set_glyph_code(i->first);
-    pairs[index].set_offset(i->second->offset());
-    index++;
-  }
-  builder->SetOffsetArray(pairs);
-}
-
-void SubsetIndexSubTableFormat5(IndexSubTable::Builder* b,
-                                const BitmapGlyphInfoMap& loca) {
-  IndexSubTableFormat5BuilderPtr builder =
-      down_cast<IndexSubTableFormat5::Builder*>(b);
-  IntegerList* glyph_array = builder->GlyphArray();
-  for (IntegerList::iterator i = glyph_array->begin(); i != glyph_array->end();
-                             i++) {
-    if (loca.find(*i) == loca.end()) {
-      glyph_array->erase(i);
+    int32_t gid = i->first;
+    if (gid < lower_bound) {
+      continue;
+    }
+    if (!lower_bound_reached) {
+      new_builder->set_first_glyph_index(gid);
+      new_builder->set_image_format(b->image_format());
+      new_builder->set_image_data_offset(*image_data_offset);
+      new_builder->SetImageSize(image_size);
+      last_gid = gid;
+      lower_bound_reached = true;
+    }
+    if (gid > upper_bound || i == last_element) {
+      upper_bound_reached = true;
+    }
+    if (!upper_bound_reached || i == last_element) {
+      glyph_array->push_back(gid);
+      offset += i->second->length();
+      last_gid = gid;
+    }
+    if (upper_bound_reached) {
+      new_builder->set_last_glyph_index(last_gid);
+      *image_data_offset += offset;
+      break;
     }
   }
-  if (!glyph_array->empty()) {
-    builder->set_first_glyph_index(*(glyph_array->begin()));
-    builder->set_last_glyph_index(*(glyph_array->rbegin()));
-  } else {
-    builder->set_first_glyph_index(0);
-    builder->set_last_glyph_index(0);
-  }
+  return new_builder.Detach();
 }
 
-void SubsetIndexSubTable(IndexSubTable::Builder* builder,
-                         const BitmapGlyphInfoMap& loca) {
+CALLER_ATTACH IndexSubTable::Builder*
+SubsetIndexSubTable(IndexSubTable::Builder* builder,
+                    const BitmapGlyphInfoMap& loca,
+                    int32_t* image_data_offset) {
   switch (builder->index_format()) {
-    case 1:
-      SubsetIndexSubTableFormat1(builder, loca);
-      break;
-    case 2:
-      SubsetIndexSubTableFormat2(builder, loca);
-      break;
-    case 3:
-      SubsetIndexSubTableFormat3(builder, loca);
-      break;
-    case 4:
-      SubsetIndexSubTableFormat4(builder, loca);
-      break;
-    case 5:
-      SubsetIndexSubTableFormat5(builder, loca);
-      break;
+    case IndexSubTable::Format::FORMAT_1:
+    case IndexSubTable::Format::FORMAT_3:
+    case IndexSubTable::Format::FORMAT_4:
+      return ConstructIndexFormat4(builder, loca, image_data_offset);
+    case IndexSubTable::Format::FORMAT_2:
+    case IndexSubTable::Format::FORMAT_5:
+      return ConstructIndexFormat5(builder, loca, image_data_offset);
     default:
       assert(false);  // Shall not be here.
       break;
   }
+  return NULL;
 }
 
 void SubsetEBLC(EblcTable::Builder* eblc, const BitmapLocaList& new_loca) {
@@ -487,25 +509,20 @@ void SubsetEBLC(EblcTable::Builder* eblc, const BitmapLocaList& new_loca) {
     return;  // No valid EBLC.
   }
 
+  int32_t image_data_offset = EbdtTable::Offset::kHeaderLength;
   for (size_t strike = 0; strike < size_builders->size(); ++strike) {
     IndexSubTableBuilderList* index_builders =
         (*size_builders)[strike]->IndexSubTableBuilders();
-    bool format4_processed = false;
     for (size_t index = 0; index < index_builders->size(); ++index) {
-      // Only one format 4 table per strike.
-      if ((*index_builders)[index]->index_format() == 4 && format4_processed) {
-        continue;
-      }
-      SubsetIndexSubTable((*index_builders)[index], new_loca[strike]);
-      if ((*index_builders)[index]->index_format() == 4) {
-        format4_processed = true;
+      IndexSubTable::Builder* new_builder_raw =
+          SubsetIndexSubTable((*index_builders)[index], new_loca[strike],
+                              &image_data_offset);
+      if (NULL != new_builder_raw) {
+        (*index_builders)[index].Attach(new_builder_raw);
       }
     }
   }
 }
-/******************************************************************************
- * EXPERIMENTAL CODE ENDS
- *****************************************************************************/
 
 /******************************************************************************
   Long background comments
@@ -542,34 +559,21 @@ Subsetting EBLC table:
   reconstructed to either format 4 or 5.
 *******************************************************************************/
 bool SetupBitmapBuilders(Font* font, Font::Builder* builder,
-                         const IntegerSet& glyph_ids) {
+                         const IntegerSet& glyph_ids, bool use_ebdt) {
   if (!font || !builder) {
     return false;
   }
 
-  // Check if bitmap table exists.
-  bool use_ebdt = true;
-  EbdtTablePtr ebdt_table = down_cast<EbdtTable*>(font->GetTable(Tag::EBDT));
-  EblcTablePtr eblc_table = down_cast<EblcTable*>(font->GetTable(Tag::EBLC));
-  if (ebdt_table == NULL && eblc_table == NULL) {
-    use_ebdt = false;
-    // Check BDAT variants.
-    ebdt_table = down_cast<EbdtTable*>(font->GetTable(Tag::bdat));
-    eblc_table = down_cast<EblcTable*>(font->GetTable(Tag::bloc));
-  }
-  if (ebdt_table == NULL || eblc_table == NULL) {
-    // There's no bitmap tables.
-    return true;
-  }
+  EbdtTablePtr ebdt_table =
+      down_cast<EbdtTable*>(font->GetTable(use_ebdt ? Tag::EBDT : Tag::bdat));
+  EblcTablePtr eblc_table =
+      down_cast<EblcTable*>(font->GetTable(use_ebdt ? Tag::EBLC : Tag::bloc));
 
   // If the bitmap table's size is too small, skip subsetting.
-  // TODO(arthurhsu): temporarily comment out to use smaller font for testing.
-  /*
   if (ebdt_table->DataLength() + eblc_table->DataLength() <
       BITMAP_SIZE_THRESHOLD) {
     return true;
   }
-  */
 
   // Get the builders.
   FontBuilderPtr font_builder = builder;
@@ -586,11 +590,9 @@ bool SetupBitmapBuilders(Font* font, Font::Builder* builder,
 
   if (!ShallSubset(ebdt_table_builder, eblc_table_builder, glyph_ids)) {
     // Bitmap tables do not cover the glyphs in our subset.
-    ebdt_table_builder.Release();
-    eblc_table_builder.Release();
-    font_builder->RemoveTableBuilder(use_ebdt ? Tag::EBDT : Tag::bdat);
     font_builder->RemoveTableBuilder(use_ebdt ? Tag::EBLC : Tag::bloc);
-    return true;
+    font_builder->RemoveTableBuilder(use_ebdt ? Tag::EBDT : Tag::bdat);
+    return false;
   }
 
   BitmapLocaList new_loca;
@@ -598,6 +600,30 @@ bool SetupBitmapBuilders(Font* font, Font::Builder* builder,
   SubsetEBLC(eblc_table_builder, new_loca);
 
   return true;
+}
+
+enum BitmapDetection {
+  kNotFound,
+  kEBDTFound,
+  kOnlyBDATFound
+};
+
+// Some fonts have both EBDT/EBLC and bdat/bloc, we need only one set of them.
+int DetectBitmapBuilders(Font* font) {
+  // Check if bitmap table exists.
+  EbdtTablePtr ebdt_table = down_cast<EbdtTable*>(font->GetTable(Tag::EBDT));
+  EblcTablePtr eblc_table = down_cast<EblcTable*>(font->GetTable(Tag::EBLC));
+  if (ebdt_table == NULL && eblc_table == NULL) {
+    // Check BDAT variants.
+    ebdt_table = down_cast<EbdtTable*>(font->GetTable(Tag::bdat));
+    eblc_table = down_cast<EblcTable*>(font->GetTable(Tag::bloc));
+    if (ebdt_table == NULL || eblc_table == NULL) {
+      // There's no bitmap tables.
+      return kNotFound;
+    }
+    return kOnlyBDATFound;
+  }
+  return kEBDTFound;
 }
 
 SubsetterImpl::SubsetterImpl() {
@@ -735,13 +761,23 @@ CALLER_ATTACH Font* SubsetterImpl::Subset(const IntegerSet& glyph_ids) {
     remove_tags.insert(Tag::glyf);
     remove_tags.insert(Tag::loca);
   }
-  if (SetupBitmapBuilders(font_, font_builder, glyph_ids)) {
-    remove_tags.insert(Tag::bdat);
-    remove_tags.insert(Tag::bloc);
-    remove_tags.insert(Tag::bhed);
-    remove_tags.insert(Tag::EBDT);
-    remove_tags.insert(Tag::EBLC);
-    remove_tags.insert(Tag::EBSC);
+
+  int flag = DetectBitmapBuilders(font_);
+  if (flag != kNotFound) {
+    bool use_ebdt = (flag == kEBDTFound);
+    bool subset_success =
+        SetupBitmapBuilders(font_, font_builder, glyph_ids, use_ebdt);
+
+    if (use_ebdt || !subset_success) {
+      remove_tags.insert(Tag::bdat);
+      remove_tags.insert(Tag::bloc);
+      remove_tags.insert(Tag::bhed);
+    }
+    if (use_ebdt && !subset_success) {
+      remove_tags.insert(Tag::EBDT);
+      remove_tags.insert(Tag::EBLC);
+      remove_tags.insert(Tag::EBSC);
+    }
   }
 
   IntegerSet allowed_tags;

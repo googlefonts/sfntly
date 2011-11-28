@@ -29,13 +29,12 @@ class SubTable : public FontDataTable {
  public:
   class Builder : public FontDataTable::Builder {
    public:
-    // Creates a new empty sub-table.
-    Builder();
     virtual ~Builder();
 
    protected:
     // @param data the data for the subtable being built
     // @param master_data the data for the full table
+    Builder(int32_t data_size);
     Builder(WritableFontData* data, ReadableFontData* master_data);
     Builder(ReadableFontData* data, ReadableFontData* master_data);
     explicit Builder(WritableFontData* data);

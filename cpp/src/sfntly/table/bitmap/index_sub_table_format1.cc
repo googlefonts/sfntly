@@ -103,6 +103,13 @@ CALLER_ATTACH IndexSubTableFormat1::Builder::BitmapGlyphInfoIterator*
 
 // static
 CALLER_ATTACH IndexSubTableFormat1::Builder*
+IndexSubTableFormat1::Builder::CreateBuilder() {
+  IndexSubTableFormat1BuilderPtr output = new IndexSubTableFormat1::Builder();
+  return output.Detach();
+}
+
+// static
+CALLER_ATTACH IndexSubTableFormat1::Builder*
 IndexSubTableFormat1::Builder::CreateBuilder(ReadableFontData* data,
                                              int32_t index_sub_table_offset,
                                              int32_t first_glyph_index,
@@ -155,7 +162,7 @@ void IndexSubTableFormat1::Builder::SubDataSet() {
 
 int32_t IndexSubTableFormat1::Builder::SubDataSizeToSerialize() {
   if (offset_array_.empty()) {
-    return 0;
+    return InternalReadData()->Length();
   }
   return EblcTable::Offset::kIndexSubHeaderLength +
          offset_array_.size() * DataSize::kULONG;
@@ -172,6 +179,9 @@ int32_t IndexSubTableFormat1::Builder::SubSerialize(
     WritableFontData* new_data) {
   int32_t size = SerializeIndexSubHeader(new_data);
   if (!model_changed()) {
+    if (InternalReadData() == NULL) {
+      return size;
+    }
     ReadableFontDataPtr source;
     WritableFontDataPtr target;
     source.Attach(down_cast<ReadableFontData*>(InternalReadData()->Slice(
@@ -179,11 +189,11 @@ int32_t IndexSubTableFormat1::Builder::SubSerialize(
     target.Attach(down_cast<WritableFontData*>(new_data->Slice(
         EblcTable::Offset::kIndexSubTable1_offsetArray)));
     size += source->CopyTo(target);
-    return size;
-  }
-  for (IntegerList::iterator b = GetOffsetArray()->begin(),
-                             e = GetOffsetArray()->end(); b != e; b++) {
-    size += new_data->WriteLong(size, *b);
+  } else {
+    for (IntegerList::iterator b = GetOffsetArray()->begin(),
+                               e = GetOffsetArray()->end(); b != e; b++) {
+      size += new_data->WriteLong(size, *b);
+    }
   }
   return size;
 }
@@ -202,6 +212,11 @@ void IndexSubTableFormat1::Builder::SetOffsetArray(
 void IndexSubTableFormat1::Builder::Revert() {
   offset_array_.clear();
   IndexSubTable::Builder::Revert();
+}
+
+IndexSubTableFormat1::Builder::Builder()
+    : IndexSubTable::Builder(EblcTable::Offset::kIndexSubTable1_builderDataSize,
+                             IndexSubTable::Format::FORMAT_1) {
 }
 
 IndexSubTableFormat1::Builder::Builder(WritableFontData* data,

@@ -25,6 +25,19 @@ namespace sfntly {
 IndexSubTableFormat2::~IndexSubTableFormat2() {
 }
 
+int32_t IndexSubTableFormat2::ImageSize() {
+  return data_->ReadULongAsInt(EblcTable::Offset::kIndexSubTable2_imageSize);
+}
+
+CALLER_ATTACH BigGlyphMetrics* IndexSubTableFormat2::BigMetrics() {
+  ReadableFontDataPtr slice;
+  slice.Attach(down_cast<ReadableFontData*>(
+      data_->Slice(EblcTable::Offset::kIndexSubTable2_bigGlyphMetrics,
+                   BigGlyphMetrics::Offset::kMetricsLength)));
+  BigGlyphMetricsPtr output = new BigGlyphMetrics(slice);
+  return output.Detach();
+}
+
 int32_t IndexSubTableFormat2::NumGlyphs() {
   return last_glyph_index() - first_glyph_index() + 1;
 }
@@ -95,12 +108,21 @@ void IndexSubTableFormat2::Builder::SetImageSize(int32_t image_size) {
                                   image_size);
 }
 
-CALLER_ATTACH BigGlyphMetrics* IndexSubTableFormat2::Builder::BigMetrics() {
-  WritableFontDataPtr data;
-  data.Attach(down_cast<WritableFontData*>(InternalWriteData()->Slice(
-      EblcTable::Offset::kIndexSubTable2_bigGlyphMetrics,
-      BigGlyphMetrics::Offset::kMetricsLength)));
-  BigGlyphMetricsPtr output = new BigGlyphMetrics(data);
+BigGlyphMetrics::Builder* IndexSubTableFormat2::Builder::BigMetrics() {
+  if (metrics_ == NULL) {
+    WritableFontDataPtr data;
+    data.Attach(down_cast<WritableFontData*>(InternalWriteData()->Slice(
+        EblcTable::Offset::kIndexSubTable2_bigGlyphMetrics,
+        BigGlyphMetrics::Offset::kMetricsLength)));
+    metrics_ = new BigGlyphMetrics::Builder(data);
+  }
+  return metrics_;
+}
+
+// static
+CALLER_ATTACH IndexSubTableFormat2::Builder*
+IndexSubTableFormat2::Builder::CreateBuilder() {
+  IndexSubTableFormat2BuilderPtr output = new IndexSubTableFormat2::Builder();
   return output.Detach();
 }
 
@@ -152,6 +174,7 @@ CALLER_ATTACH FontDataTable* IndexSubTableFormat2::Builder::SubBuildTable(
 }
 
 void IndexSubTableFormat2::Builder::SubDataSet() {
+  Revert();
 }
 
 int32_t IndexSubTableFormat2::Builder::SubDataSizeToSerialize() {
@@ -165,12 +188,27 @@ bool IndexSubTableFormat2::Builder::SubReadyToSerialize() {
 int32_t IndexSubTableFormat2::Builder::SubSerialize(
     WritableFontData* new_data) {
   int32_t size = SerializeIndexSubHeader(new_data);
-  ReadableFontDataPtr source;
-  WritableFontDataPtr target;
-  source.Attach(down_cast<ReadableFontData*>(InternalReadData()->Slice(size)));
-  target.Attach(down_cast<WritableFontData*>(new_data->Slice(size)));
-  size += source->CopyTo(target);
+  if (metrics_ == NULL) {
+    ReadableFontDataPtr source;
+    WritableFontDataPtr target;
+    source.Attach(down_cast<ReadableFontData*>(
+        InternalReadData()->Slice(size)));
+    target.Attach(down_cast<WritableFontData*>(new_data->Slice(size)));
+    size += source->CopyTo(target);
+  } else {
+    WritableFontDataPtr slice;
+    size += new_data->WriteLong(EblcTable::Offset::kIndexSubTable2_imageSize,
+                                ImageSize());
+    slice.Attach(down_cast<WritableFontData*>(new_data->Slice(size)));
+    size += metrics_->SubSerialize(slice);
+  }
   return size;
+}
+
+IndexSubTableFormat2::Builder::Builder()
+    : IndexSubTable::Builder(EblcTable::Offset::kIndexSubTable3_builderDataSize,
+                             IndexSubTable::Format::FORMAT_2) {
+  metrics_.Attach(BigGlyphMetrics::Builder::CreateBuilder());
 }
 
 IndexSubTableFormat2::Builder::Builder(WritableFontData* data,

@@ -54,6 +54,7 @@ class IndexSubTableFormat3 : public IndexSubTable,
 
     void SetOffsetArray(const IntegerList& offset_array);
 
+    static CALLER_ATTACH Builder* CreateBuilder();
     static CALLER_ATTACH Builder* CreateBuilder(ReadableFontData* data,
                                                 int32_t index_sub_table_offset,
                                                 int32_t first_glyph_index,
@@ -67,6 +68,7 @@ class IndexSubTableFormat3 : public IndexSubTable,
     void Revert();
 
    private:
+    Builder();
     Builder(WritableFontData* data,
             int32_t first_glyph_index,
             int32_t last_glyph_index);

@@ -16,8 +16,10 @@
 
 #include "sfntly/table/bitmap/bitmap_size_table.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
+#include "sfntly/math/font_math.h"
 #include "sfntly/table/bitmap/eblc_table.h"
 #include "sfntly/table/bitmap/index_sub_table_format1.h"
 #include "sfntly/table/bitmap/index_sub_table_format2.h"
@@ -216,10 +218,18 @@ int32_t BitmapSizeTable::Builder::SubDataSizeToSerialize() {
                                           e = builders->end(); b != e; b++) {
     size += EblcTable::Offset::kIndexSubTableEntryLength;
     int32_t sub_table_size = (*b)->SubDataSizeToSerialize();
+    int32_t padding = FontMath::PaddingRequired(abs(sub_table_size),
+                                                DataSize::kULONG);
+#if defined (SFNTLY_DEBUG_BITMAP)
+    fprintf(stderr, "subtable size=%d\n", sub_table_size);
+#endif
     variable = (sub_table_size > 0) ? variable : true;
-    size += abs(sub_table_size);
+    size += abs(sub_table_size) + padding;
   }
-  return size;
+#if defined (SFNTLY_DEBUG_BITMAP)
+  fprintf(stderr, "bitmap table size=%d\n", variable ? -size : size);
+#endif
+  return variable ? -size : size;
 }
 
 bool BitmapSizeTable::Builder::SubReadyToSerialize() {
@@ -310,7 +320,7 @@ int32_t BitmapSizeTable::Builder::FlagsAsInt() {
       EblcTable::Offset::kBitmapSizeTable_flags);
 }
 
-IndexSubTable::Builder* BitmapSizeTable::Builder::GetIndexSubTable(
+IndexSubTable::Builder* BitmapSizeTable::Builder::IndexSubTableBuilder(
     int32_t index) {
   IndexSubTableBuilderList* sub_table_list = GetIndexSubTableBuilders();
   return sub_table_list->at(index);

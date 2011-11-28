@@ -18,6 +18,7 @@
 #define SFNTLY_CPP_SRC_SFNTLY_TABLE_BITMAP_EBLC_TABLE_H_
 
 #include "sfntly/port/lock.h"
+#include "sfntly/table/bitmap/big_glyph_metrics.h"
 #include "sfntly/table/bitmap/bitmap_glyph.h"
 #include "sfntly/table/bitmap/bitmap_size_table.h"
 #include "sfntly/table/subtable_container_table.h"
@@ -81,16 +82,21 @@ class EblcTable : public SubTableContainerTable,
 
       // indexSubTable1
       kIndexSubTable1_offsetArray = kIndexSubHeaderLength,
+      kIndexSubTable1_builderDataSize = kIndexSubHeaderLength,
 
       // kIndexSubTable2
       kIndexSubTable2Length = kIndexSubHeaderLength +
                               DataSize::kULONG +
                               BitmapGlyph::Offset::kBigGlyphMetricsLength,
       kIndexSubTable2_imageSize = kIndexSubHeaderLength,
-      kIndexSubTable2_bigGlyphMetrics = kIndexSubTable2_imageSize + 4,
+      kIndexSubTable2_bigGlyphMetrics = kIndexSubTable2_imageSize +
+                                        DataSize::kULONG,
+      kIndexSubTable2_builderDataSize = kIndexSubTable2_bigGlyphMetrics +
+                                        BigGlyphMetrics::Offset::kMetricsLength,
 
       // kIndexSubTable3
       kIndexSubTable3_offsetArray = kIndexSubHeaderLength,
+      kIndexSubTable3_builderDataSize = kIndexSubTable3_offsetArray,
 
       // kIndexSubTable4
       kIndexSubTable4_numGlyphs = kIndexSubHeaderLength,
@@ -99,15 +105,17 @@ class EblcTable : public SubTableContainerTable,
       kIndexSubTable4_codeOffsetPairLength = 2 * DataSize::kUSHORT,
       kIndexSubTable4_codeOffsetPair_glyphCode = 0,
       kIndexSubTable4_codeOffsetPair_offset = DataSize::kUSHORT,
+      kIndexSubTable4_builderDataSize = kIndexSubTable4_glyphArray,
 
       // kIndexSubTable5
       kIndexSubTable5_imageSize = kIndexSubHeaderLength,
-      kIndexSubTable5_bigMetrics = kIndexSubTable5_imageSize +
-                                   DataSize::kULONG,
-      kIndexSubTable5_numGlyphs = kIndexSubTable5_bigMetrics +
+      kIndexSubTable5_bigGlyphMetrics = kIndexSubTable5_imageSize +
+                                        DataSize::kULONG,
+      kIndexSubTable5_numGlyphs = kIndexSubTable5_bigGlyphMetrics +
                                   BitmapGlyph::Offset::kBigGlyphMetricsLength,
       kIndexSubTable5_glyphArray = kIndexSubTable5_numGlyphs +
                                    DataSize::kULONG,
+      kIndexSubTable5_builderDataSize = kIndexSubTable5_glyphArray,
 
       // codeOffsetPair
       kCodeOffsetPairLength = 2 * DataSize::kUSHORT,

@@ -34,10 +34,11 @@ SubTable::SubTable(ReadableFontData* data)
 /******************************************************************************
  * SubTable::Builder class
  ******************************************************************************/
-SubTable::Builder::Builder() {
+SubTable::Builder::~Builder() {
 }
 
-SubTable::Builder::~Builder() {
+SubTable::Builder::Builder(int32_t data_size)
+    : FontDataTable::Builder(data_size) {
 }
 
 SubTable::Builder::Builder(WritableFontData* data,

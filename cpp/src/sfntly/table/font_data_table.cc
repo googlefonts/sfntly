@@ -141,6 +141,13 @@ FontDataTable::Builder::Builder()
       data_changed_(false) {
 }
 
+FontDataTable::Builder::Builder(int32_t data_size)
+    : model_changed_(false),
+      contained_model_changed_(false),
+      data_changed_(false) {
+  w_data_.Attach(WritableFontData::CreateWritableFontData(data_size));
+}
+
 FontDataTable::Builder::Builder(WritableFontData* data)
     : model_changed_(false),
       contained_model_changed_(false),

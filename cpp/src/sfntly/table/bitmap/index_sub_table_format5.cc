@@ -62,7 +62,7 @@ int32_t IndexSubTableFormat5::ImageSize() {
 CALLER_ATTACH BigGlyphMetrics* IndexSubTableFormat5::BigMetrics() {
   ReadableFontDataPtr data;
   data.Attach(down_cast<ReadableFontData*>(data_->Slice(
-      EblcTable::Offset::kIndexSubTable5_bigMetrics,
+      EblcTable::Offset::kIndexSubTable5_bigGlyphMetrics,
       BigGlyphMetrics::Offset::kMetricsLength)));
   BigGlyphMetricsPtr output = new BigGlyphMetrics(data);
   return output.Detach();
@@ -123,6 +123,13 @@ CALLER_ATTACH IndexSubTableFormat5::Builder::BitmapGlyphInfoIterator*
 
 // static
 CALLER_ATTACH IndexSubTableFormat5::Builder*
+IndexSubTableFormat5::Builder::CreateBuilder() {
+  IndexSubTableFormat5BuilderPtr output = new IndexSubTableFormat5::Builder();
+  return output.Detach();
+}
+
+// static
+CALLER_ATTACH IndexSubTableFormat5::Builder*
 IndexSubTableFormat5::Builder::CreateBuilder(ReadableFontData* data,
                                              int32_t index_sub_table_offset,
                                              int32_t first_glyph_index,
@@ -169,16 +176,14 @@ CALLER_ATTACH FontDataTable* IndexSubTableFormat5::Builder::SubBuildTable(
 }
 
 void IndexSubTableFormat5::Builder::SubDataSet() {
-  if (model_changed()) {
-    Initialize(InternalReadData());
-  }
+  Revert();
 }
 
 int32_t IndexSubTableFormat5::Builder::SubDataSizeToSerialize() {
   if (glyph_array_.empty()) {
-    return 0;
+    return InternalReadData()->Length();
   }
-  return EblcTable::Offset::kIndexSubHeaderLength +
+  return EblcTable::Offset::kIndexSubTable5_builderDataSize +
          glyph_array_.size() * DataSize::kUSHORT;
 }
 
@@ -200,23 +205,17 @@ int32_t IndexSubTableFormat5::Builder::SubSerialize(
     target.Attach(down_cast<WritableFontData*>(new_data->Slice(
         EblcTable::Offset::kIndexSubTable5_imageSize)));
     size += source->CopyTo(target);
-    return size;
   } else {
-    ReadableFontDataPtr source;
-    WritableFontDataPtr target;
-    source.Attach(down_cast<ReadableFontData*>(InternalReadData()->Slice(
-        EblcTable::Offset::kIndexSubTable5_imageSize,
-        EblcTable::Offset::kIndexSubTable5_numGlyphs)));
-    target.Attach(down_cast<WritableFontData*>(new_data->Slice(
-        EblcTable::Offset::kIndexSubTable5_imageSize,
-        EblcTable::Offset::kIndexSubTable5_numGlyphs)));
-    size += source->CopyTo(target);
-  }
-
-  size += new_data->WriteLong(size, glyph_array_.size());
-  for (IntegerList::iterator b = glyph_array_.begin(), e = glyph_array_.end();
-                             b != e; b++) {
-    size += new_data->WriteUShort(size, *b);
+    size += new_data->WriteULong(EblcTable::Offset::kIndexSubTable5_imageSize,
+                                 ImageSize());
+    WritableFontDataPtr slice;
+    slice.Attach(down_cast<WritableFontData*>(new_data->Slice(size)));
+    size += BigMetrics()->SubSerialize(slice);
+    size += new_data->WriteULong(size, glyph_array_.size());
+    for (IntegerList::iterator b = glyph_array_.begin(), e = glyph_array_.end();
+                               b != e; b++) {
+      size += new_data->WriteUShort(size, *b);
+    }
   }
   return size;
 }
@@ -231,14 +230,16 @@ void IndexSubTableFormat5::Builder::SetImageSize(int32_t image_size) {
       EblcTable::Offset::kIndexSubTable5_imageSize, image_size);
 }
 
-CALLER_ATTACH
 BigGlyphMetrics::Builder* IndexSubTableFormat5::Builder::BigMetrics() {
-  WritableFontDataPtr data;
-  data.Attach(down_cast<WritableFontData*>(InternalWriteData()->Slice(
-      EblcTable::Offset::kIndexSubTable5_bigMetrics,
-      BigGlyphMetrics::Offset::kMetricsLength)));
-  BigGlyphMetricsBuilderPtr output = new BigGlyphMetrics::Builder(data);
-  return output.Detach();
+  if (metrics_ == NULL) {
+    WritableFontDataPtr data;
+    data.Attach(down_cast<WritableFontData*>(InternalWriteData()->Slice(
+        EblcTable::Offset::kIndexSubTable5_bigGlyphMetrics,
+        BigGlyphMetrics::Offset::kMetricsLength)));
+    metrics_ = new BigGlyphMetrics::Builder(data);
+    set_model_changed();
+  }
+  return metrics_;
 }
 
 IntegerList* IndexSubTableFormat5::Builder::GlyphArray() {
@@ -254,6 +255,11 @@ void IndexSubTableFormat5::Builder::SetGlyphArray(const IntegerList& v) {
 void IndexSubTableFormat5::Builder::Revert() {
   glyph_array_.clear();
   IndexSubTable::Builder::Revert();
+}
+
+IndexSubTableFormat5::Builder::Builder()
+    : IndexSubTable::Builder(EblcTable::Offset::kIndexSubTable5_builderDataSize,
+                             IndexSubTable::Format::FORMAT_5) {
 }
 
 IndexSubTableFormat5::Builder::Builder(WritableFontData* data,
