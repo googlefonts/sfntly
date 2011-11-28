@@ -96,8 +96,7 @@ class BitmapSizeTable : public SubTable,
     int32_t BitDepth();
     int32_t FlagsAsInt();
 
-    // Note: renamed from indexSubTable()
-    IndexSubTable::Builder* GetIndexSubTable(int32_t index);
+    IndexSubTable::Builder* IndexSubTableBuilder(int32_t index);
     CALLER_ATTACH BitmapGlyphInfo* GlyphInfo(int32_t glyph_id);
     int32_t GlyphOffset(int32_t glyph_id);
     int32_t GlyphLength(int32_t glyph_id);

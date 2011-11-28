@@ -46,6 +46,7 @@ class BigGlyphMetrics : public GlyphMetrics,
     // class to instantiate derived class with protected constructors.
     explicit Builder(WritableFontData* data);
     explicit Builder(ReadableFontData* data);
+
     virtual ~Builder();
 
     int32_t Height();
@@ -65,11 +66,17 @@ class BigGlyphMetrics : public GlyphMetrics,
     int32_t VertAdvance();
     void SetVertAdvance(byte_t advance);
 
+    // Note: C++ port only
+    void CopyFrom(Builder* source);
+
     virtual CALLER_ATTACH FontDataTable* SubBuildTable(ReadableFontData* data);
     virtual void SubDataSet();
     virtual int32_t SubDataSizeToSerialize();
     virtual bool SubReadyToSerialize();
     virtual int32_t SubSerialize(WritableFontData* new_data);
+
+    // Static instantiation function.
+    static CALLER_ATTACH Builder* CreateBuilder();
   };
 
   explicit BigGlyphMetrics(ReadableFontData* data);

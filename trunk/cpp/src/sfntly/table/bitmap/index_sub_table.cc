@@ -121,6 +121,28 @@ int32_t IndexSubTable::Builder::GlyphOffset(int32_t glyph_id) {
 
 // static
 CALLER_ATTACH IndexSubTable::Builder*
+IndexSubTable::Builder::CreateBuilder(int32_t index_format) {
+  switch (index_format) {
+    case Format::FORMAT_1:
+      return IndexSubTableFormat1::Builder::CreateBuilder();
+    case Format::FORMAT_2:
+      return IndexSubTableFormat2::Builder::CreateBuilder();
+    case Format::FORMAT_3:
+      return IndexSubTableFormat3::Builder::CreateBuilder();
+    case Format::FORMAT_4:
+      return IndexSubTableFormat4::Builder::CreateBuilder();
+    case Format::FORMAT_5:
+      return IndexSubTableFormat5::Builder::CreateBuilder();
+    default:
+#if !defined (SFNTLY_NO_EXCEPTION)
+      throw IllegalArgumentException("Invalid index subtable format");
+#endif
+      return NULL;
+  }
+}
+
+// static
+CALLER_ATTACH IndexSubTable::Builder*
 IndexSubTable::Builder::CreateBuilder(ReadableFontData* data,
     int32_t offset_to_index_sub_table_array, int32_t array_index) {
   int32_t index_sub_table_entry_offset =
@@ -171,6 +193,7 @@ FontDataTable* IndexSubTable::Builder::SubBuildTable(ReadableFontData* data) {
 }
 
 void IndexSubTable::Builder::SubDataSet() {
+  // NOP
 }
 
 int32_t IndexSubTable::Builder::SubDataSizeToSerialize() {
@@ -184,6 +207,20 @@ bool IndexSubTable::Builder::SubReadyToSerialize() {
 int32_t IndexSubTable::Builder::SubSerialize(WritableFontData* new_data) {
   UNREFERENCED_PARAMETER(new_data);
   return 0;
+}
+
+IndexSubTable::Builder::Builder(int32_t data_size, int32_t index_format)
+    : SubTable::Builder(data_size), index_format_(index_format) {
+}
+
+IndexSubTable::Builder::Builder(int32_t index_format,
+                                int32_t image_format,
+                                int32_t image_data_offset,
+                                int32_t data_size)
+    : SubTable::Builder(data_size),
+      index_format_(index_format),
+      image_format_(image_format),
+      image_data_offset_(image_data_offset) {
 }
 
 IndexSubTable::Builder::Builder(WritableFontData* data,
@@ -202,14 +239,6 @@ IndexSubTable::Builder::Builder(ReadableFontData* data,
       first_glyph_index_(first_glyph_index),
       last_glyph_index_(last_glyph_index) {
   Initialize(data);
-}
-
-IndexSubTable::Builder::Builder(int32_t index_format,
-                                int32_t image_format,
-                                int32_t image_data_offset)
-    : index_format_(index_format),
-      image_format_(image_format),
-      image_data_offset_(image_data_offset) {
 }
 
 int32_t IndexSubTable::Builder::CheckGlyphRange(int32_t glyph_id) {

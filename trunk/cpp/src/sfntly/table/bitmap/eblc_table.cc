@@ -16,6 +16,7 @@
 
 #include "sfntly/table/bitmap/eblc_table.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "sfntly/math/font_math.h"
@@ -131,7 +132,8 @@ int32_t EblcTable::Builder::SubSerialize(WritableFontData* new_data) {
 
 #if defined (SFNTLY_DEBUG_BITMAP)
     fprintf(stderr, "size %d: sizeTable=%x, current subTable Block=%x, ",
-            size_index, size_table_offset);
+            size_index, size_table_offset,
+            current_sub_table_block_start_offset);
     fprintf(stderr, "index subTableStart=%x\n", index_sub_table_offset);
     size_index++;
     int32_t sub_table_index = 0;
@@ -209,16 +211,24 @@ int32_t EblcTable::Builder::SubDataSizeToSerialize() {
   }
   int32_t size = Offset::kHeaderLength;
   bool variable = false;
+#if defined (SFNTLY_DEBUG_BITMAP)
+  size_t size_index = 0;
+#endif
   for (BitmapSizeTableBuilderList::iterator b = size_table_builders_.begin(),
                                             e = size_table_builders_.end();
                                             b != e; b++) {
     int32_t size_builder_size = (*b)->SubDataSizeToSerialize();
+#if defined (SFNTLY_DEBUG_BITMAP)
+    fprintf(stderr, "sizeIndex = %d, sizeBuilderSize=0x%x (%d)\n",
+            size_index++, size_builder_size, size_builder_size);
+#endif
     variable = size_builder_size > 0 ? variable : true;
     size += abs(size_builder_size);
   }
-  return -size;
-  // TODO(stuartg): need to fix to get size calculated accurately
-  // return variable ? -size : size;
+#if defined (SFNTLY_DEBUG_BITMAP)
+  fprintf(stderr, "eblc size=%d\n", size);
+#endif
+  return variable ? -size : size;
 }
 
 void EblcTable::Builder::SubDataSet() {

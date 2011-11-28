@@ -150,6 +150,13 @@ CALLER_ATTACH IndexSubTableFormat4::Builder::BitmapGlyphInfoIterator*
 
 // static
 CALLER_ATTACH IndexSubTableFormat4::Builder*
+IndexSubTableFormat4::Builder::CreateBuilder() {
+  IndexSubTableFormat4BuilderPtr output = new IndexSubTableFormat4::Builder();
+  return output.Detach();
+}
+
+// static
+CALLER_ATTACH IndexSubTableFormat4::Builder*
 IndexSubTableFormat4::Builder::CreateBuilder(ReadableFontData* data,
                                              int32_t index_sub_table_offset,
                                              int32_t first_glyph_index,
@@ -201,11 +208,11 @@ void IndexSubTableFormat4::Builder::SubDataSet() {
 
 int32_t IndexSubTableFormat4::Builder::SubDataSizeToSerialize() {
   if (offset_pair_array_.empty()) {
-    return 0;
+    return InternalReadData()->Length();
   }
   return EblcTable::Offset::kIndexSubHeaderLength + DataSize::kULONG +
          GetOffsetArray()->size() *
-         EblcTable::Offset::kIndexSubTable4_codeOffsetPair_offset;
+         EblcTable::Offset::kIndexSubTable4_codeOffsetPairLength;
 }
 
 bool IndexSubTableFormat4::Builder::SubReadyToSerialize() {
@@ -219,6 +226,9 @@ int32_t IndexSubTableFormat4::Builder::SubSerialize(
     WritableFontData* new_data) {
   int32_t size = SerializeIndexSubHeader(new_data);
   if (!model_changed()) {
+    if (InternalReadData() == NULL) {
+      return size;
+    }
     ReadableFontDataPtr source;
     WritableFontDataPtr target;
     source.Attach(down_cast<ReadableFontData*>(InternalReadData()->Slice(
@@ -226,15 +236,14 @@ int32_t IndexSubTableFormat4::Builder::SubSerialize(
     target.Attach(down_cast<WritableFontData*>(new_data->Slice(
         EblcTable::Offset::kIndexSubTable4_glyphArray)));
     size += source->CopyTo(target);
-    return size;
-  }
-
-  size += new_data->WriteLong(size, offset_pair_array_.size() - 1);
-  for (std::vector<CodeOffsetPairBuilder>::iterator
-           b = GetOffsetArray()->begin(), e = GetOffsetArray()->end();
-       b != e; b++) {
-    size += new_data->WriteUShort(size, b->glyph_code());
-    size += new_data->WriteUShort(size, b->offset());
+  } else {
+    size += new_data->WriteLong(size, offset_pair_array_.size() - 1);
+    for (std::vector<CodeOffsetPairBuilder>::iterator
+             b = GetOffsetArray()->begin(), e = GetOffsetArray()->end();
+             b != e; b++) {
+      size += new_data->WriteUShort(size, b->glyph_code());
+      size += new_data->WriteUShort(size, b->offset());
+    }
   }
   return size;
 }
@@ -249,6 +258,11 @@ void IndexSubTableFormat4::Builder::SetOffsetArray(
   offset_pair_array_.clear();
   offset_pair_array_ = pair_array;
   set_model_changed();
+}
+
+IndexSubTableFormat4::Builder::Builder()
+  : IndexSubTable::Builder(EblcTable::Offset::kIndexSubTable4_builderDataSize,
+                           Format::FORMAT_4) {
 }
 
 IndexSubTableFormat4::Builder::Builder(WritableFontData* data,
@@ -282,6 +296,7 @@ void IndexSubTableFormat4::Builder::Initialize(ReadableFontData* data) {
           EblcTable::Offset::kIndexSubTable4_codeOffsetPair_glyphCode);
       int32_t glyph_offset = data->ReadUShort(offset +
           EblcTable::Offset::kIndexSubTable4_codeOffsetPair_offset);
+      offset += EblcTable::Offset::kIndexSubTable4_codeOffsetPairLength;
       CodeOffsetPairBuilder pair_builder(glyph_code, glyph_offset);
       offset_pair_array_.push_back(pair_builder);
     }

@@ -137,6 +137,18 @@ void BigGlyphMetrics::Builder::SetVertAdvance(byte_t advance) {
   InternalWriteData()->WriteByte(Offset::kVertAdvance, advance);
 }
 
+// Note: C++ port only
+void BigGlyphMetrics::Builder::CopyFrom(BigGlyphMetrics::Builder* source) {
+  SetHeight(static_cast<byte_t>(source->Height()));
+  SetWidth(static_cast<byte_t>(source->Width()));
+  SetHoriBearingX(static_cast<byte_t>(source->HoriBearingX()));
+  SetHoriBearingY(static_cast<byte_t>(source->HoriBearingY()));
+  SetHoriAdvance(static_cast<byte_t>(source->HoriAdvance()));
+  SetVertBearingX(static_cast<byte_t>(source->VertBearingX()));
+  SetVertBearingY(static_cast<byte_t>(source->VertBearingY()));
+  SetVertAdvance(static_cast<byte_t>(source->VertAdvance()));
+}
+
 CALLER_ATTACH FontDataTable*
     BigGlyphMetrics::Builder::SubBuildTable(ReadableFontData* data) {
   BigGlyphMetricsPtr output = new BigGlyphMetrics(data);
@@ -157,6 +169,15 @@ bool BigGlyphMetrics::Builder::SubReadyToSerialize() {
 
 int32_t BigGlyphMetrics::Builder::SubSerialize(WritableFontData* new_data) {
   return Data()->CopyTo(new_data);
+}
+
+// static
+CALLER_ATTACH
+BigGlyphMetrics::Builder* BigGlyphMetrics::Builder::CreateBuilder() {
+  WritableFontDataPtr data;
+  data.Attach(WritableFontData::CreateWritableFontData(Offset::kMetricsLength));
+  BigGlyphMetricsBuilderPtr output = new BigGlyphMetrics::Builder(data);
+  return output.Detach();
 }
 
 }  // namespace sfntly

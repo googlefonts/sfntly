@@ -91,8 +91,61 @@ bool TestSerialization() {
   return true;
 }
 
+bool TestSerializationBitmap() {
+  FontFactoryPtr factory1, factory2, factory3;
+  factory1.Attach(FontFactory::GetInstance());
+  FontArray font_array;
+  LoadFont(SAMPLE_BITMAP_FONT, factory1, &font_array);
+  FontPtr original = font_array[0];
+
+  factory2.Attach(FontFactory::GetInstance());
+  FontBuilderArray font_builder_array;
+  BuilderForFontFile(SAMPLE_BITMAP_FONT, factory2, &font_builder_array);
+  FontBuilderPtr font_builder = font_builder_array[0];
+
+  FontPtr intermediate;
+  intermediate.Attach(font_builder->Build());
+  MemoryOutputStream os;
+  factory2->SerializeFont(intermediate, &os);
+
+  factory3.Attach(FontFactory::GetInstance());
+  FontArray new_font_array;
+  MemoryInputStream is;
+  is.Attach(os.Get(), os.Size());
+  factory3->LoadFonts(&is, &new_font_array);
+  FontPtr serialized = new_font_array[0];
+
+  // Check number of tables
+  EXPECT_EQ(original->num_tables(), serialized->num_tables());
+
+  // Check if same set of tables
+  const TableMap* original_tables = original->GetTableMap();
+  const TableMap* serialized_tables = serialized->GetTableMap();
+  EXPECT_EQ(original_tables->size(), serialized_tables->size());
+  TableMap::const_iterator not_found = serialized_tables->end();
+  for (TableMap::const_iterator b = original_tables->begin(),
+                                e = original_tables->end(); b != e; ++b) {
+    EXPECT_TRUE((serialized_tables->find(b->first) != not_found));
+  }
+
+  // Check checksum equivalence
+  for (size_t i = 0; i < SAMPLE_BITMAP_KNOWN_TAGS; ++i) {
+      TablePtr original_table = original->GetTable(BITMAP_KNOWN_TAGS[i]);
+      TablePtr serialized_table = serialized->GetTable(BITMAP_KNOWN_TAGS[i]);
+    EXPECT_EQ(original_table->CalculatedChecksum(),
+              serialized_table->CalculatedChecksum());
+    EXPECT_EQ(original_table->DataLength(), serialized_table->DataLength());
+  }
+
+  return true;
+}
+
 }  // namespace sfntly
 
-TEST(Serialization, All) {
+TEST(Serialization, Simple) {
   ASSERT_TRUE(sfntly::TestSerialization());
+}
+
+TEST(Serialization, Bitmap) {
+  ASSERT_TRUE(sfntly::TestSerializationBitmap());
 }

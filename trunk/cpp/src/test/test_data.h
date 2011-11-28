@@ -27,11 +27,13 @@ extern const char* SAMPLE_BITMAP_FONT;
 extern const size_t SAMPLE_TTF_SIZE;
 extern const size_t SAMPLE_TTF_TABLES;
 extern const size_t SAMPLE_TTF_KNOWN_TAGS;
+extern const size_t SAMPLE_BITMAP_KNOWN_TAGS;
 extern const size_t SAMPLE_TTF_FEAT;
 extern const size_t SAMPLE_TTF_HEAD;
 extern const size_t SAMPLE_TTF_POST;
 
 extern const int32_t TTF_KNOWN_TAGS[];
+extern const int32_t BITMAP_KNOWN_TAGS[];
 extern const int64_t TTF_CHECKSUM[];
 extern const int64_t TTF_OFFSET[];
 extern const int32_t TTF_LENGTH[];

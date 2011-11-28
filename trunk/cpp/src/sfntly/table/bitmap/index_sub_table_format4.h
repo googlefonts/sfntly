@@ -37,16 +37,12 @@ class IndexSubTableFormat4 : public IndexSubTable,
     int32_t offset_;
   };
 
-  class Builder;
   class CodeOffsetPairBuilder : public CodeOffsetPair {
    public:
     CodeOffsetPairBuilder();
     CodeOffsetPairBuilder(int32_t glyph_code, int32_t offset);
     void set_glyph_code(int32_t v) { glyph_code_ = v; }
     void set_offset(int32_t v) { offset_ = v; }
-
-   private:
-    friend class Builder;
   };
 
   class CodeOffsetPairGlyphCodeComparator {
@@ -85,6 +81,7 @@ class IndexSubTableFormat4 : public IndexSubTable,
     void Revert();
     void SetOffsetArray(const std::vector<CodeOffsetPairBuilder>& pair_array);
 
+    static CALLER_ATTACH Builder* CreateBuilder();
     static CALLER_ATTACH Builder* CreateBuilder(ReadableFontData* data,
                                                 int32_t index_sub_table_offset,
                                                 int32_t first_glyph_index,
@@ -94,6 +91,7 @@ class IndexSubTableFormat4 : public IndexSubTable,
                                                 int32_t first_glyph_index,
                                                 int32_t last_glyph_index);
    private:
+    Builder();
     Builder(WritableFontData* data,
             int32_t first_glyph_index,
             int32_t last_glyph_index);

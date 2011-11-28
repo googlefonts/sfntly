@@ -27,6 +27,16 @@ namespace sfntly {
 
 class IndexSubTable : public SubTable {
  public:
+  struct Format {
+    enum {
+      FORMAT_1 = 1,
+      FORMAT_2 = 2,
+      FORMAT_3 = 3,
+      FORMAT_4 = 4,
+      FORMAT_5 = 5,
+    };
+  };
+
   class Builder : public SubTable::Builder {
    public:
     virtual ~Builder();
@@ -71,6 +81,7 @@ class IndexSubTable : public SubTable {
         GetIterator() = 0;
 
     // Static instantiation function.
+    static CALLER_ATTACH Builder* CreateBuilder(int32_t index_format);
     static CALLER_ATTACH Builder*
         CreateBuilder(ReadableFontData* data,
                       int32_t offset_to_index_sub_table_array,
@@ -86,15 +97,17 @@ class IndexSubTable : public SubTable {
     virtual int32_t SubSerialize(WritableFontData* new_data);
 
    protected:
+    Builder(int32_t data_size, int32_t index_format);
+    Builder(int32_t index_format,
+            int32_t image_format,
+            int32_t image_data_offset,
+            int32_t data_size);
     Builder(WritableFontData* data,
             int32_t first_glyph_index,
             int32_t last_glyph_index);
     Builder(ReadableFontData* data,
             int32_t first_glyph_index,
             int32_t last_glyph_index);
-    Builder(int32_t index_format,
-            int32_t image_format,
-            int32_t image_data_offset);
 
     // Checks that the glyph id is within the correct range. If it returns the
     // offset of the glyph id from the start of the range.

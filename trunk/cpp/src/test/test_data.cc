@@ -31,6 +31,7 @@ const char* SAMPLE_BITMAP_FONT = "AnonymousPro-Regular.ttf";
 const size_t SAMPLE_TTF_SIZE = 183936;
 const size_t SAMPLE_TTF_TABLES = 17;
 const size_t SAMPLE_TTF_KNOWN_TAGS = 16;
+const size_t SAMPLE_BITMAP_KNOWN_TAGS = 20;
 const size_t SAMPLE_TTF_FEAT = 3;
 const size_t SAMPLE_TTF_HEAD = 6;
 const size_t SAMPLE_TTF_POST = 14;
@@ -40,6 +41,12 @@ const int32_t TTF_KNOWN_TAGS[] = {
     Tag::glyf, Tag::head, Tag::hhea, Tag::hmtx, Tag::kern,
     Tag::loca, Tag::maxp, Tag::morx, Tag::name, Tag::post,
     Tag::prop };
+
+const int32_t BITMAP_KNOWN_TAGS[] = {
+    Tag::EBDT, Tag::EBLC, Tag::EBSC, Tag::LTSH, Tag::OS_2,
+    Tag::VDMX, Tag::cmap, Tag::cvt,  Tag::fpgm, Tag::gasp,
+    Tag::glyf, Tag::hdmx, Tag::head, Tag::hhea, Tag::hmtx,
+    Tag::loca, Tag::maxp, Tag::name, Tag::post, Tag::prep };
 
 const int64_t TTF_CHECKSUM[] = {
     0xD463FC48, 0x252028D1, 0x0065078A, 0xC01407B5, 0xFFFF0003,

@@ -26,6 +26,13 @@ namespace sfntly {
 class EbdtTable : public SubTableContainerTable,
                   public RefCounted<EbdtTable> {
  public:
+  struct Offset {
+    enum {
+      kVersion = 0,
+      kHeaderLength = DataSize::kFixed,
+    };
+  };
+
   class Builder : public SubTableContainerTable::Builder,
                   public RefCounted<Builder> {
    public:
@@ -90,15 +97,7 @@ class EbdtTable : public SubTableContainerTable,
   CALLER_ATTACH BitmapGlyph* Glyph(int32_t offset,
                                    int32_t length,
                                    int32_t format);
-
  protected:
-  struct Offset {
-    enum {
-      kVersion = 0,
-      kHeaderLength = DataSize::kFixed,
-    };
-  };
-
   EbdtTable(Header* header, ReadableFontData* data);
 };
 typedef Ptr<EbdtTable> EbdtTablePtr;

@@ -47,13 +47,6 @@ namespace sfntly {
 // }  // ref count = 1, obj2 out of scope
 // obj.release();  // ref count = 0, object destroyed
 
-namespace {
-
-// The bitmap tables must be greater than 256KB to trigger bitmap subsetter.
-static const int BITMAP_SIZE_THRESHOLD = 262144;
-
-}
-
 class SubsetterImpl {
  public:
   SubsetterImpl();

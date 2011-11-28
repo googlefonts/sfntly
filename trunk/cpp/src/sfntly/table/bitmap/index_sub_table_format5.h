@@ -54,10 +54,11 @@ class IndexSubTableFormat5 : public IndexSubTable,
 
     int32_t ImageSize();
     void SetImageSize(int32_t image_size);
-    CALLER_ATTACH BigGlyphMetrics::Builder* BigMetrics();
+    BigGlyphMetrics::Builder* BigMetrics();
     IntegerList* GlyphArray();
     void SetGlyphArray(const IntegerList& v);
 
+    static CALLER_ATTACH Builder* CreateBuilder();
     static CALLER_ATTACH Builder* CreateBuilder(ReadableFontData* data,
                                                 int32_t index_sub_table_offset,
                                                 int32_t first_glyph_index,
@@ -70,6 +71,7 @@ class IndexSubTableFormat5 : public IndexSubTable,
     void Revert();
 
    private:
+    Builder();
     Builder(WritableFontData* data,
             int32_t first_glyph_index,
             int32_t last_glyph_index);
@@ -86,6 +88,7 @@ class IndexSubTableFormat5 : public IndexSubTable,
                               int32_t last_glyph_index);
 
     IntegerList glyph_array_;
+    BigGlyphMetricsBuilderPtr metrics_;
   };
   virtual ~IndexSubTableFormat5();
 

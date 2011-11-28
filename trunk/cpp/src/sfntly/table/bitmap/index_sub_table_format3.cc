@@ -116,6 +116,13 @@ void IndexSubTableFormat3::Builder::SetOffsetArray(
 
 // static
 CALLER_ATTACH IndexSubTableFormat3::Builder*
+IndexSubTableFormat3::Builder::CreateBuilder() {
+  IndexSubTableFormat3BuilderPtr output = new IndexSubTableFormat3::Builder();
+  return output.Detach();
+}
+
+// static
+CALLER_ATTACH IndexSubTableFormat3::Builder*
 IndexSubTableFormat3::Builder::CreateBuilder(ReadableFontData* data,
                                              int32_t index_sub_table_offset,
                                              int32_t first_glyph_index,
@@ -167,7 +174,7 @@ void IndexSubTableFormat3::Builder::SubDataSet() {
 
 int32_t IndexSubTableFormat3::Builder::SubDataSizeToSerialize() {
   if (offset_array_.empty()) {
-    return 0;
+    return InternalReadData()->Length();
   }
   return EblcTable::Offset::kIndexSubHeaderLength +
          offset_array_.size() * DataSize::kULONG;
@@ -184,6 +191,9 @@ int32_t IndexSubTableFormat3::Builder::SubSerialize(
     WritableFontData* new_data) {
   int32_t size = SerializeIndexSubHeader(new_data);
   if (!model_changed()) {
+    if (InternalReadData() == NULL) {
+      return size;
+    }
     ReadableFontDataPtr source;
     WritableFontDataPtr target;
     source.Attach(down_cast<ReadableFontData*>(InternalReadData()->Slice(
@@ -191,13 +201,18 @@ int32_t IndexSubTableFormat3::Builder::SubSerialize(
     target.Attach(down_cast<WritableFontData*>(new_data->Slice(
         EblcTable::Offset::kIndexSubTable3_offsetArray)));
     size += source->CopyTo(target);
-    return size;
-  }
-  for (IntegerList::iterator b = GetOffsetArray()->begin(),
-                             e = GetOffsetArray()->end(); b != e; b++) {
-    size += new_data->WriteUShort(size, *b);
+  } else {
+    for (IntegerList::iterator b = GetOffsetArray()->begin(),
+                               e = GetOffsetArray()->end(); b != e; b++) {
+      size += new_data->WriteUShort(size, *b);
+    }
   }
   return size;
+}
+
+IndexSubTableFormat3::Builder::Builder()
+    : IndexSubTable::Builder(EblcTable::Offset::kIndexSubTable3_builderDataSize,
+                             IndexSubTable::Format::FORMAT_3) {
 }
 
 IndexSubTableFormat3::Builder::Builder(WritableFontData* data,
