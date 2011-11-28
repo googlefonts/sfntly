@@ -372,6 +372,18 @@ bool ShallSubset(EbdtTable::Builder* ebdt, EblcTable::Builder* eblc,
   return true;
 }
 
+void CopyBigGlyphMetrics(BigGlyphMetrics::Builder* source,
+                         BigGlyphMetrics::Builder* target) {
+  target->SetHeight(static_cast<byte_t>(source->Height()));
+  target->SetWidth(static_cast<byte_t>(source->Width()));
+  target->SetHoriBearingX(static_cast<byte_t>(source->HoriBearingX()));
+  target->SetHoriBearingY(static_cast<byte_t>(source->HoriBearingY()));
+  target->SetHoriAdvance(static_cast<byte_t>(source->HoriAdvance()));
+  target->SetVertBearingX(static_cast<byte_t>(source->VertBearingX()));
+  target->SetVertBearingY(static_cast<byte_t>(source->VertBearingY()));
+  target->SetVertAdvance(static_cast<byte_t>(source->VertAdvance()));
+}
+
 CALLER_ATTACH IndexSubTable::Builder*
 ConstructIndexFormat4(IndexSubTable::Builder* b, const BitmapGlyphInfoMap& loca,
                       int32_t* image_data_offset) {
@@ -433,13 +445,13 @@ ConstructIndexFormat5(IndexSubTable::Builder* b, const BitmapGlyphInfoMap& loca,
   if (b->index_format() == IndexSubTable::Format::FORMAT_2) {
     IndexSubTableFormat2BuilderPtr builder2 =
       down_cast<IndexSubTableFormat2::Builder*>(b);
-    new_builder->BigMetrics()->CopyFrom(builder2->BigMetrics());
+    CopyBigGlyphMetrics(builder2->BigMetrics(), new_builder->BigMetrics());
     image_size = builder2->ImageSize();
   } else {
     IndexSubTableFormat5BuilderPtr builder5 =
       down_cast<IndexSubTableFormat5::Builder*>(b);
     BigGlyphMetricsBuilderPtr metrics_builder;
-    new_builder->BigMetrics()->CopyFrom(builder5->BigMetrics());
+    CopyBigGlyphMetrics(builder5->BigMetrics(), new_builder->BigMetrics());
     image_size = builder5->ImageSize();
   }
 
