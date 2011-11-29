@@ -116,7 +116,6 @@ Table::Builder* Table::Builder::GetBuilder(Header* header,
   } else if (tag == Tag::loca) {
     builder_raw = static_cast<Table::Builder*>(
         LocaTable::Builder::CreateBuilder(header, table_data));
-#if defined (SFNTLY_EXPERIMENTAL)
   } else if (tag == Tag::EBDT || tag == Tag::bdat) {
     builder_raw = static_cast<Table::Builder*>(
         EbdtTable::Builder::CreateBuilder(header, table_data));
@@ -126,7 +125,6 @@ Table::Builder* Table::Builder::GetBuilder(Header* header,
   } else if (tag == Tag::EBSC) {
     builder_raw = static_cast<Table::Builder*>(
         EbscTable::Builder::CreateBuilder(header, table_data));
-#endif  // SFNTLY_EXPERIMENTAL
   } /* else if (tag == Tag::prep) {
     builder_raw = static_cast<Table::Builder*>(
         ControlProgramTable::Builder::CreateBuilder(header, table_data));
