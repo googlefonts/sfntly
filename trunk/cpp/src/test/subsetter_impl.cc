@@ -325,14 +325,21 @@ bool ShallSubset(EbdtTable::Builder* ebdt, EblcTable::Builder* eblc,
     IntegerList removed_indexes;
     BitmapGlyphInfoMap info_map;
     for (size_t j = 0; j < index_builders->size(); ++j) {
-      if (!HasOverlap((*index_builders)[j]->first_glyph_index(),
-                      (*index_builders)[j]->last_glyph_index(), glyph_ids)) {
+      int32_t first_glyph_id = (*index_builders)[j]->first_glyph_index();
+      int32_t last_glyph_id = (*index_builders)[j]->last_glyph_index();
+      if (!HasOverlap(first_glyph_id, last_glyph_id, glyph_ids)) {
         removed_indexes.push_back(j);
         continue;
       }
       for (IntegerSet::const_iterator gid = glyph_ids.begin(),
                                       gid_end = glyph_ids.end();
                                       gid != gid_end; gid++) {
+        if (*gid < first_glyph_id) {
+          continue;
+        }
+        if (*gid > last_glyph_id) {
+          break;
+        }
         BitmapGlyphInfoPtr info;
         info.Attach((*index_builders)[j]->GlyphInfo(*gid));
         if (info && info->length()) {  // Do not include gid without bitmap
@@ -400,7 +407,7 @@ ConstructIndexFormat4(IndexSubTable::Builder* b, const BitmapGlyphInfoMap& loca,
   BitmapGlyphInfoMap::const_iterator last_element = loca.end();
   --last_element;
   for (BitmapGlyphInfoMap::const_iterator i = loca.begin(), e = loca.end();
-                                              i != e; i++) {
+                                          i != e; i++) {
     int32_t gid = i->first;
     if (gid < lower_bound) {
       continue;
@@ -412,14 +419,17 @@ ConstructIndexFormat4(IndexSubTable::Builder* b, const BitmapGlyphInfoMap& loca,
       last_gid = gid;
       lower_bound_reached = true;
     }
-    if (gid > upper_bound || i == last_element) {
+    if (gid > upper_bound) {
       upper_bound_reached = true;
     }
-    if (!upper_bound_reached || i == last_element) {
+    if (!upper_bound_reached) {
       offset_pairs.push_back(
           IndexSubTableFormat4::CodeOffsetPairBuilder(gid, offset));
       offset += i->second->length();
       last_gid = gid;
+      if (i == last_element) {
+        upper_bound_reached = true;
+      }
     }
     if (upper_bound_reached) {
       offset_pairs.push_back(
