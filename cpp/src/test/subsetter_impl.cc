@@ -39,6 +39,9 @@
 #include "sfntly/port/memory_input_stream.h"
 #include "sfntly/port/memory_output_stream.h"
 
+#if defined U_USING_ICU_NAMESPACE
+  U_NAMESPACE_USE
+#endif
 
 namespace {
 
