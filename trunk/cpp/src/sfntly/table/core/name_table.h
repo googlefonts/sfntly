@@ -29,10 +29,6 @@
 #include "sfntly/port/java_iterator.h"
 #include "sfntly/table/subtable_container_table.h"
 
-#if defined U_USING_ICU_NAMESPACE
-  U_NAMESPACE_USE
-#endif
-
 namespace sfntly {
 
 // The following code implements the name table defined in TTF/OTF spec, which
