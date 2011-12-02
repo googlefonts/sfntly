@@ -203,9 +203,15 @@ public abstract class IndexSubTable extends SubTable {
       }
     }
 
-    protected Builder(int indexFormat) {
-      super();
+    protected Builder(int dataSize, int indexFormat) {
+      super(dataSize);
       this.indexFormat = indexFormat;
+    }
+
+    protected Builder(int indexFormat, int imageFormat, int imageDataOffset, int dataSize) {
+      this(dataSize, indexFormat);
+      this.imageFormat = imageFormat;
+      this.imageDataOffset = imageDataOffset;
     }
 
     protected Builder(WritableFontData data, int firstGlyphIndex, int lastGlyphIndex) {
@@ -220,13 +226,6 @@ public abstract class IndexSubTable extends SubTable {
       this.firstGlyphIndex = firstGlyphIndex;
       this.lastGlyphIndex = lastGlyphIndex;
       this.initialize(data);
-    }
-
-    protected Builder(int indexFormat, int imageFormat, int imageDataOffset) {
-      super();
-      this.indexFormat = indexFormat;
-      this.imageFormat = imageFormat;
-      this.imageDataOffset = imageDataOffset;
     }
 
     /**

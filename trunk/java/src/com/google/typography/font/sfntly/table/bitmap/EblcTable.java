@@ -90,15 +90,19 @@ public class EblcTable extends SubTableContainerTable {
 
     // indexSubTable1
     indexSubTable1_offsetArray(indexSubHeaderLength.offset),
+    indexSubTable1_builderDataSize(indexSubHeaderLength.offset),
 
     // indexSubTable2
     indexSubTable2Length(indexSubHeaderLength.offset + FontData.DataSize.ULONG.size()
         + BitmapGlyph.Offset.bigGlyphMetricsLength.offset),
     indexSubTable2_imageSize(indexSubHeaderLength.offset),
-    indexSubTable2_bigGlyphMetrics(indexSubTable2_imageSize.offset + 4),
+    indexSubTable2_bigGlyphMetrics(indexSubTable2_imageSize.offset + FontData.DataSize.ULONG.size()),
+    indexSubTable2_builderDataSize(indexSubTable2_bigGlyphMetrics.offset
+        + BigGlyphMetrics.Offset.metricsLength.offset),
 
     // indexSubTable3
     indexSubTable3_offsetArray(indexSubHeaderLength.offset),
+    indexSubTable3_builderDataSize(indexSubTable3_offsetArray.offset),
 
     // indexSubTable4
     indexSubTable4_numGlyphs(indexSubHeaderLength.offset),
@@ -106,13 +110,15 @@ public class EblcTable extends SubTableContainerTable {
     indexSubTable4_codeOffsetPairLength(2 * FontData.DataSize.USHORT.size()),
     indexSubTable4_codeOffsetPair_glyphCode(0),
     indexSubTable4_codeOffsetPair_offset(FontData.DataSize.USHORT.size()),
+    indexSubTable4_builderDataSize(indexSubTable4_glyphArray.offset),
 
     // indexSubTable5
     indexSubTable5_imageSize(indexSubHeaderLength.offset),
-    indexSubTable5_bigMetrics(indexSubTable5_imageSize.offset + FontData.DataSize.ULONG.size()),
-    indexSubTable5_numGlyphs(indexSubTable5_bigMetrics.offset
+    indexSubTable5_bigGlyphMetrics(indexSubTable5_imageSize.offset + FontData.DataSize.ULONG.size()),
+    indexSubTable5_numGlyphs(indexSubTable5_bigGlyphMetrics.offset
         + BitmapGlyph.Offset.bigGlyphMetricsLength.offset),
     indexSubTable5_glyphArray(indexSubTable5_numGlyphs.offset + FontData.DataSize.ULONG.size()),
+    indexSubTable5_builderDataSize(indexSubTable5_glyphArray.offset),
 
     // codeOffsetPair
     codeOffsetPairLength(2 * FontData.DataSize.USHORT.size()),
@@ -307,17 +313,17 @@ public class EblcTable extends SubTableContainerTable {
       }
       int size = Offset.headerLength.offset;
       boolean variable = false;
+      int sizeIndex = 0;
       for (BitmapSizeTable.Builder sizeBuilder : this.sizeTableBuilders) {
         int sizeBuilderSize = sizeBuilder.subDataSizeToSerialize();
         if (DEBUG) {
-          System.out.printf("sizeBuilderSize = %x%n", sizeBuilderSize);
+          System.out.printf("sizeIndex = 0x%x, sizeBuilderSize = 0x%x%n", sizeIndex++,
+              sizeBuilderSize);
         }
         variable = sizeBuilderSize > 0 ? variable : true;
         size += Math.abs(sizeBuilderSize);
       }
-      return -size;
-      // TODO(user): need to fix to get size calculated accurately
-      // return variable ? -size : size;
+      return variable ? -size : size;
     }
 
     @Override

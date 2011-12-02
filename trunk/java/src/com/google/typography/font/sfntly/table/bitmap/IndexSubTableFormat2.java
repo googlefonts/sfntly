@@ -37,6 +37,15 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
     this.imageSize = this.data.readULongAsInt(Offset.indexSubTable2_imageSize.offset);
   }
 
+  public int imageSize() {
+    return this.data.readULongAsInt(Offset.indexSubTable2_imageSize.offset);
+  }
+
+  public BigGlyphMetrics bigMetrics() {
+    return new BigGlyphMetrics(this.data.slice(Offset.indexSubTable2_bigGlyphMetrics.offset,
+        BigGlyphMetrics.Offset.metricsLength.offset));
+  }
+
   @Override
   public int numGlyphs() {
     return this.lastGlyphIndex() - this.firstGlyphIndex() + 1;
@@ -55,6 +64,9 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
   }
   
   public static final class Builder extends IndexSubTable.Builder<IndexSubTableFormat2> {
+
+    private BigGlyphMetrics.Builder metrics;
+
     public static Builder createBuilder() {
       return new Builder();
     }
@@ -77,7 +89,8 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
     }
     
     private Builder() {
-      super(Format.FORMAT_2);
+      super(Offset.indexSubTable2_builderDataSize.offset, Format.FORMAT_2);
+      this.metrics = BigGlyphMetrics.Builder.createBuilder();
     }
 
     private Builder(WritableFontData data, int firstGlyphIndex, int lastGlyphIndex) {
@@ -113,11 +126,14 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
       this.internalWriteData().writeULong(Offset.indexSubTable2_imageSize.offset, imageSize);
     }
     
-    public BigGlyphMetrics bigMetrics() {
-      WritableFontData data =
-          this.internalWriteData().slice(Offset.indexSubTable2_bigGlyphMetrics.offset,
-              BigGlyphMetrics.Offset.metricsLength.offset);
-      return new BigGlyphMetrics(data);
+    public BigGlyphMetrics.Builder bigMetrics() {
+      if (this.metrics == null) {
+        WritableFontData data =
+            this.internalWriteData().slice(Offset.indexSubTable2_bigGlyphMetrics.offset,
+                BigGlyphMetrics.Offset.metricsLength.offset);
+        this.metrics = new BigGlyphMetrics.Builder(data);
+      }
+      return this.metrics;
     }
 
     private class BitmapGlyphInfoIterator implements Iterator<BitmapGlyphInfo> {
@@ -183,12 +199,12 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
     @Override
     protected int subSerialize(WritableFontData newData) {
       int size = super.serializeIndexSubHeader(newData);
-
-      if (this.internalReadData() == null) {
-        return size;
+      if (this.metrics == null) {
+        size += this.internalReadData().slice(size).copyTo(newData.slice(size));
+      } else {
+        size += newData.writeLong(Offset.indexSubTable2_imageSize.offset, this.imageSize());
+        size += this.metrics.subSerialize(newData.slice(size));
       }
-
-      size += this.internalReadData().slice(size).copyTo(newData.slice(size));
       return size;
     }
   }

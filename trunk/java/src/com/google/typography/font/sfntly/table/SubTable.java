@@ -122,11 +122,14 @@ public abstract class SubTable extends FontDataTable {
 
     /**
      * Constructor.
-     *
+     * 
      * Creates a new empty sub-table.
+     * 
+     * @param dataSize the initial size for the data; if it is positive then the
+     *        size is fixed; if it is negative then it is variable sized
      */
-    public Builder() {
-      super();
+    protected Builder(int dataSize) {
+      super(dataSize);
     }
     
     protected ReadableFontData masterReadData() {
