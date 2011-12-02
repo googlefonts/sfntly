@@ -150,7 +150,7 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
     }
 
     private Builder() {
-      super(Format.FORMAT_4);
+      super(Offset.indexSubTable4_builderDataSize.offset, Format.FORMAT_4);
     }
 
     private Builder(WritableFontData data, int firstGlyphIndex, int lastGlyphIndex) {
@@ -309,7 +309,7 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
     @Override
     protected int subDataSizeToSerialize() {
       if (this.offsetPairArray == null) {
-        return 0;
+        return this.internalReadData().length();
       }
       return Offset.indexSubHeaderLength.offset + FontData.DataSize.ULONG.size()
           + this.offsetPairArray.size() * Offset.indexSubTable4_codeOffsetPairLength.offset;
@@ -327,18 +327,15 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
     protected int subSerialize(WritableFontData newData) {
       int size = super.serializeIndexSubHeader(newData);
       if (!this.modelChanged()) {
-        if (this.internalReadData() == null) {
-          return size;
-        }
-        size += this.internalReadData().slice(Offset.indexSubTable4_glyphArray.offset).copyTo(
-            newData.slice(Offset.indexSubTable4_glyphArray.offset));
-        return size;
-      }
+        size += this.internalReadData().slice(Offset.indexSubTable4_numGlyphs.offset).copyTo(
+            newData.slice(Offset.indexSubTable4_numGlyphs.offset));
+      } else {
 
-      size += newData.writeLong(size, this.offsetPairArray.size() - 1);
-      for (CodeOffsetPair pair : this.offsetPairArray) {
-        size += newData.writeUShort(size, pair.glyphCode());
-        size += newData.writeUShort(size, pair.offset());
+        size += newData.writeLong(size, this.offsetPairArray.size() - 1);
+        for (CodeOffsetPair pair : this.offsetPairArray) {
+          size += newData.writeUShort(size, pair.glyphCode());
+          size += newData.writeUShort(size, pair.offset());
+        }
       }
       return size;
     }

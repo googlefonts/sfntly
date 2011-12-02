@@ -88,7 +88,7 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
     }
       
     private Builder() {
-      super(Format.FORMAT_3);
+      super(Offset.indexSubTable3_builderDataSize.offset, Format.FORMAT_3);
     }
 
     private Builder(WritableFontData data, int firstGlyphIndex, int lastGlyphIndex) {
@@ -211,7 +211,7 @@ Offset.indexSubTable3_offsetArray.offset + i
     @Override
     protected int subDataSizeToSerialize() {
       if (this.offsetArray == null) {
-        return 0;
+        return this.internalReadData().length();
       }
       return Offset.indexSubHeaderLength.offset + this.offsetArray.size()
           * FontData.DataSize.ULONG.size();
@@ -229,17 +229,13 @@ Offset.indexSubTable3_offsetArray.offset + i
     protected int subSerialize(WritableFontData newData) {
       int size = super.serializeIndexSubHeader(newData);
       if (!this.modelChanged()) {
-        if (this.internalReadData() == null) {
-          return size;
-        }
-
         size += this.internalReadData().slice(Offset.indexSubTable3_offsetArray.offset).copyTo(
             newData.slice(Offset.indexSubTable3_offsetArray.offset));
-        return size;
-      }
+      } else {
 
-      for (Integer loca : this.offsetArray) {
-        size += newData.writeUShort(size, loca);
+        for (Integer loca : this.offsetArray) {
+          size += newData.writeUShort(size, loca);
+        }
       }
       return size;
     }

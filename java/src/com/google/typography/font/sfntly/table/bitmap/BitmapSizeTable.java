@@ -16,8 +16,10 @@
 
 package com.google.typography.font.sfntly.table.bitmap;
 
+import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
+import com.google.typography.font.sfntly.math.FontMath;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.bitmap.EblcTable.Offset;
 
@@ -518,10 +520,12 @@ public final class BitmapSizeTable extends SubTable {
       for (IndexSubTable.Builder<? extends IndexSubTable> subTableBuilder : this.indexSubTables) {
         size += Offset.indexSubTableEntryLength.offset;
         int subTableSize = subTableBuilder.subDataSizeToSerialize();
+        int padding =
+            FontMath.paddingRequired(Math.abs(subTableSize), FontData.DataSize.ULONG.size());
         variable = subTableSize > 0 ? variable : true;
-        size += Math.abs(subTableSize);
+        size += Math.abs(subTableSize) + padding;
       }
-      return size;
+      return variable ? -size : size;
     }
 
     @Override

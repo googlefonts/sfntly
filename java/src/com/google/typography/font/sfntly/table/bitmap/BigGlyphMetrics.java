@@ -84,6 +84,11 @@ public class BigGlyphMetrics extends GlyphMetrics {
 
   public static class Builder extends GlyphMetrics.Builder<BigGlyphMetrics> {
 
+    public static Builder createBuilder() {
+      WritableFontData data = WritableFontData.createWritableFontData(Offset.metricsLength.offset);
+      return new Builder(data);
+    }
+
     /**
      * Constructor.
      *

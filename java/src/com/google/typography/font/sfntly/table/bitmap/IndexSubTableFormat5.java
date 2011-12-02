@@ -52,7 +52,7 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
 
   public BigGlyphMetrics bigMetrics() {
     return new BigGlyphMetrics(this.data.slice(
-        Offset.indexSubTable5_bigMetrics.offset, BigGlyphMetrics.Offset.metricsLength.offset));
+        Offset.indexSubTable5_bigGlyphMetrics.offset, BigGlyphMetrics.Offset.metricsLength.offset));
   }
 
   @Override
@@ -80,6 +80,7 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
 
   public static final class Builder extends IndexSubTable.Builder<IndexSubTableFormat5> {
     private List<Integer> glyphArray;
+    private BigGlyphMetrics.Builder metrics;
 
     public static Builder createBuilder() {
       return new Builder();
@@ -104,7 +105,8 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
     }
 
     private Builder() {
-      super(Format.FORMAT_5);
+      super(Offset.indexSubTable5_builderDataSize.offset, Format.FORMAT_5);
+      this.metrics = BigGlyphMetrics.Builder.createBuilder();
     }
 
     private Builder(WritableFontData data, int firstGlyphIndex, int lastGlyphIndex) {
@@ -124,9 +126,14 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
     }
 
     public BigGlyphMetrics.Builder bigMetrics() {
-      WritableFontData data = this.internalWriteData().slice(
-          Offset.indexSubTable5_bigMetrics.offset, BigGlyphMetrics.Offset.metricsLength.offset);
-      return new BigGlyphMetrics.Builder(data);
+      if (this.metrics == null) {
+        WritableFontData data =
+            this.internalWriteData().slice(Offset.indexSubTable5_bigGlyphMetrics.offset,
+                BigGlyphMetrics.Offset.metricsLength.offset);
+        this.metrics = new BigGlyphMetrics.Builder(data);
+        this.setModelChanged();
+      }
+      return this.metrics;
     }
     
     @Override
@@ -242,9 +249,9 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
     @Override
     protected int subDataSizeToSerialize() {
       if (this.glyphArray == null) {
-        return 0;
+        return this.internalReadData().length();
       }
-      return Offset.indexSubHeaderLength.offset + this.glyphArray.size()
+      return Offset.indexSubTable5_builderDataSize.offset + this.glyphArray.size()
           * FontData.DataSize.USHORT.size();
     }
 
@@ -260,27 +267,16 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
     protected int subSerialize(WritableFontData newData) {
       int size = super.serializeIndexSubHeader(newData);
       if (!this.modelChanged()) {
-        if (this.internalReadData() == null) {
-          return size;
-        }
-
         size +=
             this.internalReadData().slice(Offset.indexSubTable5_imageSize.offset)
                 .copyTo(newData.slice(Offset.indexSubTable5_imageSize.offset));
-        return size;
       } else {
-        size +=
-            this.internalReadData()
-                .slice(Offset.indexSubTable5_imageSize.offset,
-                    Offset.indexSubTable5_numGlyphs.offset)
-                .copyTo(
-                    newData.slice(Offset.indexSubTable5_imageSize.offset,
-                        Offset.indexSubTable5_numGlyphs.offset));
-      }
-
-      size += newData.writeULong(size, this.glyphArray.size());
-      for (Integer glyphId : this.glyphArray) {
-        size += newData.writeUShort(size, glyphId);
+        size += newData.writeULong(Offset.indexSubTable5_imageSize.offset, this.imageSize());
+        size += this.bigMetrics().subSerialize(newData.slice(size));
+        size += newData.writeULong(size, this.glyphArray.size());
+        for (Integer glyphId : this.glyphArray) {
+          size += newData.writeUShort(size, glyphId);
+        }
       }
       return size;
     }

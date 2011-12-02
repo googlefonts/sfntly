@@ -23,7 +23,7 @@ import com.google.typography.font.sfntly.table.SubTable;
 /**
  * @author Stuart Gill
  */
-public abstract class GlyphMetrics extends SubTable {
+abstract class GlyphMetrics extends SubTable {
 
   /**
    * Constructor.
@@ -34,7 +34,7 @@ public abstract class GlyphMetrics extends SubTable {
     super(data);
   }
   
-  protected static abstract class Builder<T extends GlyphMetrics> extends SubTable.Builder<T> {
+  static abstract class Builder<T extends GlyphMetrics> extends SubTable.Builder<T> {
     /**
      * Constructor.
      *
