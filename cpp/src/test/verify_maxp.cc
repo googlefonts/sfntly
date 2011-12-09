@@ -16,6 +16,7 @@
 
 #include "gtest/gtest.h"
 #include "sfntly/font.h"
+#include "sfntly/math/fixed1616.h"
 #include "sfntly/table/core/maximum_profile_table.h"
 #include "test/serialization_test.h"
 
@@ -42,7 +43,7 @@ static bool VerifyMAXP(Table* table) {
     return false;
   }
 
-  EXPECT_EQ(maxp->TableVersion(), SFNTVERSION_1);
+  EXPECT_EQ(maxp->TableVersion(), Fixed1616::Fixed(1, 0));
   EXPECT_EQ(maxp->NumGlyphs(), MAXP_NUM_GLYPHS);
   EXPECT_EQ(maxp->MaxPoints(), MAXP_MAX_POINTS);
   EXPECT_EQ(maxp->MaxContours(), MAXP_MAX_CONTOURS);
