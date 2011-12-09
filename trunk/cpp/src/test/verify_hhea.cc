@@ -16,6 +16,7 @@
 
 #include "gtest/gtest.h"
 #include "sfntly/font.h"
+#include "sfntly/math/fixed1616.h"
 #include "sfntly/table/core/horizontal_header_table.h"
 #include "test/serialization_test.h"
 
@@ -37,7 +38,7 @@ static bool VerifyHHEA(Table* table) {
     return false;
   }
 
-  EXPECT_EQ(hhea->TableVersion(), SFNTVERSION_1);
+  EXPECT_EQ(hhea->TableVersion(), Fixed1616::Fixed(1, 0));
   EXPECT_EQ(hhea->Ascender(), HHEA_ASCENDER);
   EXPECT_EQ(hhea->Descender(), HHEA_DESCENDER);
   EXPECT_EQ(hhea->AdvanceWidthMax(), HHEA_ADVANCE_WIDTH_MAX);
