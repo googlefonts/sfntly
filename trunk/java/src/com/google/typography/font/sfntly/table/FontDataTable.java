@@ -78,7 +78,6 @@ public abstract class FontDataTable {
     private ReadableFontData rData;
     private boolean modelChanged;
     private boolean containedModelChanged; // may expand to list of submodel states
-    @SuppressWarnings("unused")
     private boolean dataChanged;
 
     /**

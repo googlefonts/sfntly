@@ -138,9 +138,8 @@ public final class BitmapSizeTable extends SubTable {
     // sorted subtables
     if (USE_BINARY_SEARCH) {
       return binarySearchIndexSubTables(glyphId);
-    } else {
-      return linearSearchIndexSubTables(glyphId);
     }
+    return linearSearchIndexSubTables(glyphId);
   }
 
   private IndexSubTable linearSearchIndexSubTables(int glyphId) {
@@ -166,10 +165,9 @@ public final class BitmapSizeTable extends SubTable {
       } else {
         if (glyphId <= subTable.lastGlyphIndex()) {
           return subTable;
-        } else {
-          // location is above the current location
-          bottom = index + 1;
         }
+        // location is above the current location
+        bottom = index + 1;
       }
     }
     return null;
@@ -433,9 +431,8 @@ public final class BitmapSizeTable extends SubTable {
       // sorted subtables
       if (USE_BINARY_SEARCH) {
         return binarySearchIndexSubTables(glyphId);
-      } else {
-        return linearSearchIndexSubTables(glyphId);
       }
+      return linearSearchIndexSubTables(glyphId);
     }
 
     private IndexSubTable.Builder<? extends IndexSubTable> linearSearchIndexSubTables(int glyphId) {
@@ -464,10 +461,9 @@ public final class BitmapSizeTable extends SubTable {
         } else {
           if (glyphId <= subTable.lastGlyphIndex()) {
             return subTable;
-          } else {
-            // location is above the current location
-            bottom = index + 1;
           }
+          // location is above the current location
+          bottom = index + 1;
         }
       }
       return null;

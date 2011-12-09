@@ -100,7 +100,9 @@ public final class Tag {
   public static final int bdat = Tag.intValue(new byte[]{'b', 'd', 'a', 't'});
   public static final int bloc = Tag.intValue(new byte[]{'b', 'l', 'o', 'c'});
 
-  private Tag() {}
+  private Tag() {
+    // Prevent construction.
+  }
 
   public static int intValue(byte[] tag) {
     return tag[0] << 24 | tag[1] << 16 | tag[2] << 8 | tag[3];

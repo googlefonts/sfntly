@@ -395,9 +395,8 @@ public final class PostScriptTable extends Table {
     }
     if (glyphNameIndex < NUM_STANDARD_NAMES) {
       return STANDARD_NAMES[glyphNameIndex];
-    } else {
-      return getNames().get(glyphNameIndex - NUM_STANDARD_NAMES);
     }
+    return getNames().get(glyphNameIndex - NUM_STANDARD_NAMES);
   }
   // TODO: add getters for 2.5 and possibly other tables?
 

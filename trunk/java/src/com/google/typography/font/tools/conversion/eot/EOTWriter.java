@@ -34,6 +34,7 @@ import java.io.IOException;
  */
 public class EOTWriter {
 
+  @SuppressWarnings("unused")
   private final boolean compressed;
 
   private final FontFactory factory = FontFactory.getInstance();
@@ -43,6 +44,7 @@ public class EOTWriter {
   private final static long VERSION = 0x00020002;
   private final static short MAGIC_NUMBER = 0x504c;
   private final static long DEFAULT_FLAGS = 0;
+  @SuppressWarnings("unused")
   private final static long FLAGS_TT_COMPRESSED = 0x4;
   private final static byte DEFAULT_CHARSET = 1;
   private final static long CS_XORKEY = 0x50475342;
@@ -175,6 +177,7 @@ public class EOTWriter {
     return index - start;
   }
 
+  @SuppressWarnings("unused")  
   private byte[] writableFontDataToBytes(WritableFontData writableFontData) {
     byte[] eotBytes = new byte[writableFontData.length()];
     writableFontData.readBytes(0, eotBytes, 0, writableFontData.length());
@@ -193,7 +196,8 @@ public class EOTWriter {
     return bytesString;
   }
 
-  private Font parse(byte[] bytes) throws IOException {
+    @SuppressWarnings("unused")
+    private Font parse(byte[] bytes) throws IOException {
     factory.fingerprintFont(false);
     ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
     Font[] fonts = factory.loadFonts(inputStream);

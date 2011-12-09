@@ -4,6 +4,7 @@
 
   <target name="clean">
     <delete dir="${build.dir}" />
+    <delete dir="${build-test.dir}" />
     <delete dir="${dist.dir}" />
   </target>
 
@@ -14,12 +15,17 @@
 
   <target name="compile">
     <mkdir dir="${classes.dir}" />
-    <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" includeantruntime="false" />
+    <javac srcdir="${src.dir}" 
+      destdir="${classes.dir}" 
+      classpathref="classpath" 
+      includeantruntime="false" />
   </target>
 
   <target name="sfntly-jar" depends="compile">
     <mkdir dir="${dist_lib.dir}" />
-    <jar destfile="${dist_lib.dir}/sfntly.jar" basedir="${classes.dir}" excludes="com/google/typography/font/tools/**,com/google/typography/font/sfntly/sample/**" />
+    <jar destfile="${dist_lib.dir}/sfntly.jar" 
+      basedir="${classes.dir}" 
+      excludes="com/google/typography/font/tools/**,com/google/typography/font/sfntly/sample/**" />
   </target>
 
 </project>

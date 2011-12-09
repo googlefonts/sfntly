@@ -385,7 +385,6 @@ public final class GlyphTable extends SubTableContainerTable {
     // TODO(user): interface? need methods from Composite?
     public abstract static class Contour {
       protected Contour() {
-
       }
     }
 
@@ -409,7 +408,6 @@ public final class GlyphTable extends SubTableContainerTable {
         this(data.slice(offset, length));
       }
 
-      @SuppressWarnings("unchecked")
       private static Glyph.Builder<? extends Glyph> getBuilder(
           GlyphTable.Builder tableBuilder, ReadableFontData data) {
         return Glyph.Builder.getBuilder(tableBuilder, data, 0, data.length());
@@ -465,7 +463,6 @@ public final class GlyphTable extends SubTableContainerTable {
 
     private int flagByteCount;
     private int xByteCount;
-    @SuppressWarnings("unused")
     private int yByteCount;
 
     private int[] xCoordinates;

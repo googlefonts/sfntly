@@ -74,7 +74,7 @@ public final class FontFactory {
    * Constructor.
    */
   private FontFactory() {
-
+    // Prevent construction.
   }
 
   /**

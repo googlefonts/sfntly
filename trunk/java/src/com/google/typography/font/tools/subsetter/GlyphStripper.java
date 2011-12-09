@@ -20,8 +20,6 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 
-import java.io.IOException;
-
 /**
  * Strip the hints from one glyph.
  * 
@@ -34,8 +32,7 @@ public class GlyphStripper {
     this.glyphTableBuilder = glyphTableBuilder;
   }
 
-  public GlyphTable.Glyph.Builder<? extends GlyphTable.Glyph> stripGlyph(GlyphTable.Glyph glyph)
-      throws IOException {
+  public GlyphTable.Glyph.Builder<? extends GlyphTable.Glyph> stripGlyph(GlyphTable.Glyph glyph) {
     WritableFontData newGlyphData = null;
     if (glyph != null && glyph.readFontData().length() > 0) {
       switch (glyph.glyphType()) {
@@ -55,9 +52,10 @@ public class GlyphStripper {
     return glyphTableBuilder.glyphBuilder(newGlyphData);
   }
 
-  private WritableFontData stripSimpleGlyph(GlyphTable.Glyph glyph) throws IOException {
+  private WritableFontData stripSimpleGlyph(GlyphTable.Glyph glyph) {
     int size = computeSimpleStrippedGlyphSize(glyph);
     int paddedSize = (size + 1) & -2;
+    // TODO(stuartg): look into this issue
     // Note: padding up the size of the data blocks is quite an unpleasant hack.
     // The sfntly builder
     // objects should be able to take glyph subtables of arbitrary size and
@@ -80,8 +78,7 @@ public class GlyphStripper {
   }
 
   private int writeHeaderAndContoursSize(WritableFontData newGlyf, int newGlyfOffset,
-      ReadableFontData originalGlyfData, int glyphOffset, GlyphTable.SimpleGlyph simpleGlyph)
-      throws IOException {
+      ReadableFontData originalGlyfData, int glyphOffset, GlyphTable.SimpleGlyph simpleGlyph) {
     int headerAndNumberOfContoursSize =
         (ReadableFontData.DataSize.SHORT.size() * 5)
             + (simpleGlyph.numberOfContours() * ReadableFontData.DataSize.USHORT.size());
@@ -97,7 +94,7 @@ public class GlyphStripper {
   }
 
   private int writeEndSimpleGlyph(WritableFontData newGlyf, int newGlyfOffset,
-      ReadableFontData originalGlyfData, int glyphOffset, int length) throws IOException {
+      ReadableFontData originalGlyfData, int glyphOffset, int length) {
     ReadableFontData originalGlyfSlice = originalGlyfData.slice(glyphOffset, length);
     WritableFontData newGlyfSlice = newGlyf.slice(newGlyfOffset, length);
 
@@ -105,7 +102,7 @@ public class GlyphStripper {
     return length;
   }
 
-  private WritableFontData stripCompositeGlyph(GlyphTable.Glyph glyph) throws IOException {
+  private WritableFontData stripCompositeGlyph(GlyphTable.Glyph glyph) {
     int dataLength = computeCompositeStrippedGlyphSize(glyph);
     WritableFontData newGlyf = WritableFontData.createWritableFontData(dataLength);
     GlyphTable.CompositeGlyph compositeGlyph = (GlyphTable.CompositeGlyph) glyph;

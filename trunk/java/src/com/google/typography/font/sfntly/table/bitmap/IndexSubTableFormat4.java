@@ -113,6 +113,7 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
   private static final class CodeOffsetPairGlyphCodeComparator implements Comparator<
       CodeOffsetPair> {
     private CodeOffsetPairGlyphCodeComparator() {
+      // Prevent construction.
     }
 
     @Override

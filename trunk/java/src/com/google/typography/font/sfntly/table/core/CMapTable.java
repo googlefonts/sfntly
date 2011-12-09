@@ -359,7 +359,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
     /**
      * Test on whether the cmap is acceptable or not.
      *
-     * @paramcmapId the id of the cmap
+     * @param cmapId the id of the cmap
      * @return true if the cmap is acceptable; false otherwise
      */
     boolean accept(CMapId cmapId);
@@ -1759,6 +1759,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
       private int character = firstCode;
 
       private CharacterIterator() {
+        // Prevent construction.
       }
 
       @Override
@@ -1959,6 +1960,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
       private int character = startCharCode;
 
       private CharacterIterator() {
+        // Prevent construction.
       }
 
       @Override
