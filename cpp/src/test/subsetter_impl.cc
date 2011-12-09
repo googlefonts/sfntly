@@ -526,6 +526,9 @@ void SubsetEBLC(EblcTable::Builder* eblc, const BitmapLocaList& new_loca) {
 //    one per indexSubTableArray entry
 //    tells how to get the glyphs
 //    may hold the glyph metrics if they are uniform for all the glyphs in range
+// Please note that the structure can also be
+//  {indexSubTableArray[], indexSubTables[]}[]
+//  This way is also legal and in fact how Microsoft fonts are laid out.
 //
 // There is nothing that says that the indexSubTableArray entries and/or the
 // indexSubTable items need to be unique. They may be shared between strikes.
@@ -546,7 +549,8 @@ void SubsetEBLC(EblcTable::Builder* eblc, const BitmapLocaList& new_loca) {
 enum BuildersToRemove {
   kRemoveNone,
   kRemoveBDAT,
-  kRemoveBDATAndEBDT
+  kRemoveBDATAndEBDT,
+  kRemoveEBDT
 };
 
 int SetupBitmapBuilders(Font* font, Font::Builder* font_builder,
@@ -590,7 +594,7 @@ int SetupBitmapBuilders(Font* font, Font::Builder* font_builder,
     // Bitmap tables do not cover the glyphs in our subset.
     font_builder->RemoveTableBuilder(use_ebdt ? Tag::EBLC : Tag::bloc);
     font_builder->RemoveTableBuilder(use_ebdt ? Tag::EBDT : Tag::bdat);
-    return kRemoveBDATAndEBDT;
+    return use_ebdt ? kRemoveBDATAndEBDT : kRemoveEBDT;
   }
 
   BitmapLocaList new_loca;
@@ -734,18 +738,19 @@ Font* SubsetterImpl::Subset(const IntegerSet& glyph_ids, GlyphTable* glyf,
     remove_tags.insert(Tag::loca);
   }
 
-  switch (SetupBitmapBuilders(font_, font_builder, glyph_ids)) {
-    case kRemoveBDATAndEBDT:
-      remove_tags.insert(Tag::EBDT);
-      remove_tags.insert(Tag::EBLC);
-      remove_tags.insert(Tag::EBSC);
-    case kRemoveBDAT:
-      remove_tags.insert(Tag::bdat);
-      remove_tags.insert(Tag::bloc);
-      remove_tags.insert(Tag::bhed);
-      break;
-    default:  // kRemoveNone
-      break;
+  // For old Apple bitmap fonts, they have only bdats and bhed is identical
+  // to head.  As a result, we can't remove bdat tables for those fonts.
+  int setup_result = SetupBitmapBuilders(font_, font_builder, glyph_ids);
+  if (setup_result == kRemoveBDATAndEBDT || setup_result == kRemoveEBDT) {
+    remove_tags.insert(Tag::EBDT);
+    remove_tags.insert(Tag::EBLC);
+    remove_tags.insert(Tag::EBSC);
+  }
+
+  if (setup_result == kRemoveBDAT || setup_result == kRemoveBDATAndEBDT) {
+    remove_tags.insert(Tag::bdat);
+    remove_tags.insert(Tag::bloc);
+    remove_tags.insert(Tag::bhed);
   }
 
   IntegerSet allowed_tags;
