@@ -21,6 +21,8 @@
 
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
+#include "sfntly/table/truetype/glyph_table.h"
+#include "sfntly/table/truetype/loca_table.h"
 #include "sfntly/tag.h"
 
 namespace sfntly {
@@ -60,7 +62,8 @@ class SubsetterImpl {
                  unsigned char** output_buffer);
 
  private:
-  CALLER_ATTACH Font* Subset(const IntegerSet& glyph_ids);
+  CALLER_ATTACH Font* Subset(const IntegerSet& glyph_ids,
+                             GlyphTable* glyf, LocaTable* loca);
 
   FontFactoryPtr factory_;
   FontPtr font_;
