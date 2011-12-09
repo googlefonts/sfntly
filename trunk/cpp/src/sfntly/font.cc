@@ -40,7 +40,8 @@
 
 namespace sfntly {
 
-const int32_t SFNTVERSION_1 = Fixed1616::Fixed(1, 0);
+const int32_t SFNTVERSION_MAJOR = 1;
+const int32_t SFNTVERSION_MINOR = 0;
 
 /******************************************************************************
  * Font class
@@ -314,7 +315,8 @@ void Font::Builder::RemoveTableBuilder(int32_t tag) {
 }
 
 Font::Builder::Builder(FontFactory* factory)
-    : factory_(factory), sfnt_version_(SFNTVERSION_1) {
+    : factory_(factory),
+      sfnt_version_(Fixed1616::Fixed(SFNTVERSION_MAJOR, SFNTVERSION_MINOR)) {
 }
 
 void Font::Builder::LoadFont(InputStream* is) {
