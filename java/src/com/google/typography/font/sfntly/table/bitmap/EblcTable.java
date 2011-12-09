@@ -190,7 +190,7 @@ public class EblcTable extends SubTableContainerTable {
   }
 
   private static List<BitmapSizeTable> createBitmapSizeTable(ReadableFontData data, int numSizes) {
-    List<BitmapSizeTable> bitmapSizeTable = new ArrayList<BitmapSizeTable>() {};
+    List<BitmapSizeTable> bitmapSizeTable = new ArrayList<BitmapSizeTable>();
     for (int i = 0; i < numSizes; i++) {
       BitmapSizeTable.Builder sizeBuilder =
           BitmapSizeTable.Builder.createBuilder(data.slice(

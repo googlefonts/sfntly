@@ -54,6 +54,7 @@ public class SfntDump {
   private boolean cmapMapping;
   private boolean dumpPost;
   private boolean dumpEblc;
+  @SuppressWarnings("unused")
   private boolean dumpAllGlyphs;
   private List<String> tablesToBinaryDump = new ArrayList<String>();
   private BitSet glyphSet;

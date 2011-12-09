@@ -565,10 +565,9 @@ public class ReadableFontData extends FontData {
         int locationEnd = this.readUShort(endIndex + location * endOffset);
         if (key <= locationEnd) {
           return location;
-        } else {
-          // location is above the current location
-          bottom = location + 1;
         }
+        // location is above the current location
+        bottom = location + 1;
       }
     }
     return -1;
@@ -611,10 +610,9 @@ public class ReadableFontData extends FontData {
         int locationEnd = this.readULongAsInt(endIndex + location * endOffset);
         if (key <= locationEnd) {
           return location;
-        } else {
-          // location is above the current location
-          bottom = location + 1;
         }
+        // location is above the current location
+        bottom = location + 1;
       }
     }
     return -1;

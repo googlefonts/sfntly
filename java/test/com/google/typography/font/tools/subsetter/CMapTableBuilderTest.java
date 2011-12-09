@@ -23,7 +23,6 @@ import com.google.typography.font.sfntly.table.core.CMapTable;
 
 import junit.framework.TestCase;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +31,7 @@ import java.util.Map;
  */
 public class CMapTableBuilderTest extends TestCase {
 
-  private static void verifyCmap(Map<Integer, Integer> mapping) throws IOException {
+  private static void verifyCmap(Map<Integer, Integer> mapping) {
     FontFactory fontFactory = FontFactory.getInstance();
     Font.Builder fontBuilder = fontFactory.newFontBuilder();
     new CMapTableBuilder(fontBuilder, mapping).build();
@@ -49,7 +48,7 @@ public class CMapTableBuilderTest extends TestCase {
     assertEquals(CMapTable.NOTDEF, cmap.glyphId(0xfffe));
   }
   
-  public void testCmapBuilding() throws IOException {
+  public void testCmapBuilding() {
     Map<Integer, Integer> mapping = new HashMap<Integer, Integer>();
     mapping.put(32, 0);
     mapping.put(33, 1);

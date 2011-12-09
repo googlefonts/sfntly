@@ -189,7 +189,7 @@ public final class WritableFontData extends ReadableFontData {
    *
    * @param index index into the font data
    * @param count the number of pad bytes to write
-   * @pad the byte value to use as padding
+   * @param pad the byte value to use as padding
    * @return the number of pad bytes written
    */
   public int writePadding(int index, int count, byte pad) {
