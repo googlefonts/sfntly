@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// File is originally from Chromium third_party/sfntly/src/subsetter.
-// Use as test case in sfntly so that problems can be caught in upstream early.
 
-#include "test/subsetter_impl.h"
+#include "subsetter_impl.h"
 
 #include <string.h>
 

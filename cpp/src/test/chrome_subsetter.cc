@@ -15,7 +15,7 @@
  */
 
 #include "gtest/gtest.h"
-#include "test/font_subsetter.h"
+#include "sample/chromium/font_subsetter.h"
 #include "test/test_data.h"
 #include "test/test_font_utils.h"
 

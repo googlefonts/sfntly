@@ -117,8 +117,6 @@ struct MacintoshEncodingId {
   };
 };
 
-extern const int32_t SFNTVERSION_1;
-
 class FontFactory;
 
 // An sfnt container font object. This object is immutable and thread safe. To
