@@ -21,7 +21,7 @@
 #include <sstream>
 
 #include "sfntly/port/type.h"
-#include "test/font_subsetter.h"
+#include "font_subsetter.h"
 
 template <typename T>
 class HexTo {

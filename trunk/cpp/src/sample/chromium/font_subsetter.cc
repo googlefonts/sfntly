@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// File is originally from Chromium third_party/sfntly/src/subsetter.
-// Use as test case in sfntly so that problems can be caught in upstream early.
 
-#include "test/font_subsetter.h"
+#include "font_subsetter.h"
 
-#include "test/subsetter_impl.h"
+#include "subsetter_impl.h"
 
 int SfntlyWrapper::SubsetFont(const char* font_name,
                               const unsigned char* original_font,
