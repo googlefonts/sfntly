@@ -210,7 +210,12 @@ int32_t IndexSubTable::Builder::SubSerialize(WritableFontData* new_data) {
 }
 
 IndexSubTable::Builder::Builder(int32_t data_size, int32_t index_format)
-    : SubTable::Builder(data_size), index_format_(index_format) {
+    : SubTable::Builder(data_size),
+      first_glyph_index_(0),
+      last_glyph_index_(0),
+      index_format_(index_format),
+      image_format_(0),
+      image_data_offset_(0) {
 }
 
 IndexSubTable::Builder::Builder(int32_t index_format,
@@ -218,6 +223,8 @@ IndexSubTable::Builder::Builder(int32_t index_format,
                                 int32_t image_data_offset,
                                 int32_t data_size)
     : SubTable::Builder(data_size),
+      first_glyph_index_(0),
+      last_glyph_index_(0),
       index_format_(index_format),
       image_format_(image_format),
       image_data_offset_(image_data_offset) {
