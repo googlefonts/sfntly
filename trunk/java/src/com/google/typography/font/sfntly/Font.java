@@ -707,7 +707,7 @@ public class Font {
       // for (Table table : tables.values()) {
       // checksum += table.checkSum();
       // }
-      // TODO(user): if tables edited need to update head table
+      // TODO(stuartg): if tables edited need to update head table
       // checkSumAdjustment
       //Font font = new Font(this.factory, this.sfntVersion, this.digest, tables);
       this.tableBuilders = null;
@@ -787,7 +787,7 @@ public class Font {
     public Table.Builder<? extends Table> newTableBuilder(int tag, ReadableFontData srcData) {
       WritableFontData data;
       data = WritableFontData.createWritableFontData(srcData.length());
-      // TODO(user): take over original data instead?
+      // TODO(stuartg): take over original data instead?
       srcData.copyTo(data);
 
       Header header = new Header(tag, data.length());
@@ -947,7 +947,7 @@ public class Font {
         logger.finest("\t\tStream Position = " + Integer.toHexString((int) is.position()));
         // don't close this or the whole stream is gone
         FontInputStream tableIS = new FontInputStream(is, tableHeader.length());
-        // TODO(user): start tracking bad tables and other errors
+        // TODO(stuartg): start tracking bad tables and other errors
         WritableFontData data = WritableFontData.createWritableFontData(tableHeader.length());
         data.copyFrom(tableIS, tableHeader.length());
         tableData.put(tableHeader, data);

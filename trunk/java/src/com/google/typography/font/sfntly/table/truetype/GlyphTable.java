@@ -249,7 +249,7 @@ public final class GlyphTable extends SubTableContainerTable {
       if (this.glyphBuilders == null) {
         return false;
       }
-      // TODO(user): check glyphs for ready to build?
+      // TODO(stuartg): check glyphs for ready to build?
       return true;
     }
 
@@ -382,7 +382,7 @@ public final class GlyphTable extends SubTableContainerTable {
       return sb.toString();
     }
 
-    // TODO(user): interface? need methods from Composite?
+    // TODO(stuartg): interface? need methods from Composite?
     public abstract static class Contour {
       protected Contour() {
       }
@@ -539,7 +539,7 @@ public final class GlyphTable extends SubTableContainerTable {
       }
     }
 
-    // TODO(user): think about replacing double parsing with ArrayList
+    // TODO(stuartg): think about replacing double parsing with ArrayList
     private void parseData(boolean fillArrays) {
       int flag = 0;
       int flagRepeat = 0;

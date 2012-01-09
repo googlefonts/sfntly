@@ -34,7 +34,7 @@ public final class BitmapSizeTable extends SubTable {
   // binary search would be faster but many fonts have index subtables that
   // aren't sorted
   private static final boolean USE_BINARY_SEARCH = false;
-  
+
   private final Object indexSubTablesLock = new Object();
   private volatile List<IndexSubTable> indexSubTables = null;
 
@@ -62,12 +62,12 @@ public final class BitmapSizeTable extends SubTable {
     return this.data.readULongAsInt(Offset.bitmapSizeTable_colorRef.offset);
   }
 
-  // TODO(user): implement later
+  // TODO(stuartg): implement later
   public void /* SBitLineMetrics */hori() {
     // NOP
   }
 
-  // TODO(user): implement later
+  // TODO(stuartg): implement later
   public void /* SBitLineMetrics */vert() {
     // NOP
   }
@@ -95,12 +95,12 @@ public final class BitmapSizeTable extends SubTable {
   public int flagsAsInt() {
     return this.data.readChar(Offset.bitmapSizeTable_flags.offset);
   }
-  
+
   public IndexSubTable indexSubTable(int index) {
     List<IndexSubTable> subTableList = getIndexSubTableList();
     return subTableList.get(index);
   }
-  
+
   public BitmapGlyphInfo glyphInfo(int glyphId) {
     IndexSubTable subTable = searchIndexSubTables(glyphId);
     if (subTable == null) {
@@ -124,7 +124,7 @@ public final class BitmapSizeTable extends SubTable {
     }
     return subTable.glyphLength(glyphId);
   }
-  
+
   public int glyphFormat(int glyphId) {
     IndexSubTable subTable = searchIndexSubTables(glyphId);
     if (subTable == null) {
@@ -150,7 +150,7 @@ public final class BitmapSizeTable extends SubTable {
     }
     return null;
   }
-  
+
   private IndexSubTable binarySearchIndexSubTables(int glyphId) {
     List<IndexSubTable> subTableList = getIndexSubTableList();
     int index = 0;
@@ -177,7 +177,7 @@ public final class BitmapSizeTable extends SubTable {
     return IndexSubTable.createIndexSubTable(
         this.masterReadData(), this.indexSubTableArrayOffset(), index);
   }
-  
+
   private List<IndexSubTable> getIndexSubTableList() {
     if (this.indexSubTables == null) {
       synchronized (this.indexSubTablesLock) {
@@ -217,10 +217,10 @@ public final class BitmapSizeTable extends SubTable {
     sb.append("\n");
     return sb.toString();
   }
-  
+
   public static final class Builder extends SubTable.Builder<BitmapSizeTable> {
     List<IndexSubTable.Builder<? extends IndexSubTable>> indexSubTables;
-    
+
     static Builder createBuilder(WritableFontData data, ReadableFontData masterData) {
       return new Builder(data, masterData);
     }
@@ -259,7 +259,7 @@ public final class BitmapSizeTable extends SubTable {
       this.internalWriteData().writeULong(
           Offset.bitmapSizeTable_indexSubTableArrayOffset.offset, offset);
     }
-    
+
     /**
      * Gets the subtable array size as set in the original table as read from
      * the font file. This value cannot be explicitly set and will be generated
@@ -280,7 +280,7 @@ public final class BitmapSizeTable extends SubTable {
     void setIndexTableSize(int size) {
       this.internalWriteData().writeULong(Offset.bitmapSizeTable_indexTableSize.offset, size);
     }
-    
+
     public int numberOfIndexSubTables() {
       return this.getIndexSubTableBuilders().size();
     }
@@ -294,12 +294,12 @@ public final class BitmapSizeTable extends SubTable {
       return this.internalReadData().readULongAsInt(Offset.bitmapSizeTable_colorRef.offset);
     }
 
-    // TODO(user): implement later
+    // TODO(stuartg): implement later
     public void /* SBitLineMetrics */hori() {
       // NOP
     }
 
-    // TODO(user): implement later
+    // TODO(stuartg): implement later
     public void /* SBitLineMetrics */vert() {
       // NOP
     }
@@ -369,15 +369,15 @@ public final class BitmapSizeTable extends SubTable {
     public List<IndexSubTable.Builder<? extends IndexSubTable>> indexSubTableBuilders() {
       return this.getIndexSubTableBuilders();
     }
-    
+
     private class BitmapGlyphInfoIterator implements Iterator<BitmapGlyphInfo> {
       Iterator<IndexSubTable.Builder<? extends IndexSubTable>> subTableIter;
       Iterator<BitmapGlyphInfo> subTableGlyphInfoIter;
-      
+
       public BitmapGlyphInfoIterator() {
         this.subTableIter = BitmapSizeTable.Builder.this.getIndexSubTableBuilders().iterator();
       }
-      
+
       @Override
       public boolean hasNext() {
         if (this.subTableGlyphInfoIter != null && this.subTableGlyphInfoIter.hasNext()) {
@@ -410,7 +410,7 @@ public final class BitmapSizeTable extends SubTable {
     Iterator<BitmapGlyphInfo> iterator() {
       return new BitmapGlyphInfoIterator();
     }
-    
+
     protected void revert() {
       this.indexSubTables = null;
       this.setModelChanged(false);
@@ -425,7 +425,7 @@ public final class BitmapSizeTable extends SubTable {
       }
       return locaMap;
     }
-    
+
     private IndexSubTable.Builder<? extends IndexSubTable> searchIndexSubTables(int glyphId) {
       // would be faster to binary search but too many size tables don't have
       // sorted subtables

@@ -80,7 +80,7 @@ public final class Tag {
   public static final int vmtx = Tag.intValue(new byte[]{'v', 'm', 't', 'x'});
 
   // AAT Tables
-  // TODO(user): some tables may be missing from this list
+  // TODO(stuartg): some tables may be missing from this list
   public static final int bsln = Tag.intValue(new byte[]{'b', 's', 'l', 'n'});
   public static final int feat = Tag.intValue(new byte[]{'f', 'e', 'a', 't'});
   public static final int lcar = Tag.intValue(new byte[]{'l', 'c', 'a', 'r'});

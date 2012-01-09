@@ -104,7 +104,7 @@ public final class HorizontalHeaderTable extends Table {
     return this.data.readShort(Offset.caretOffset.offset);
   }
 
-  // TODO(user): an enum?
+  // TODO(stuartg): an enum?
   public int metricDataFormat() {
     return this.data.readShort(Offset.metricDataFormat.offset);
   }
@@ -232,7 +232,7 @@ public final class HorizontalHeaderTable extends Table {
       this.internalWriteData().writeUShort(Offset.caretOffset.offset, version);
     }
 
-    // TODO(user): an enum?
+    // TODO(stuartg): an enum?
     public int metricDataFormat() {
       return this.internalReadData().readUShort(Offset.metricDataFormat.offset);
     }

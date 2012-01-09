@@ -39,7 +39,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeMap;
 
-// TODO(user): support format 1 name tables
+// TODO(stuartg): support format 1 name tables
 /**
  * A Name table.
  *
@@ -1104,7 +1104,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
     return new NameEntryIterator(filter);
   }
 
-  // TODO(user): do this in the encoding enums
+  // TODO(stuartg): do this in the encoding enums
   private static String getEncodingName(int platformId, int encodingId) {
     String encodingName = null;
     switch (PlatformId.valueOf(platformId)) {
@@ -1251,7 +1251,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
     return charset;
   }
 
-  // TODO(user):
+  // TODO(stuartg):
   // do the conversion by hand to detect conversion failures (i.e. no character in the encoding)
   private static byte[] convertToNameBytes(String name, int platformId, int encodingId) {
     Charset cs = NameTable.getCharset(platformId, encodingId);

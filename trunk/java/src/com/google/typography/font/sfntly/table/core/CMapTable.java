@@ -500,7 +500,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
    */
   public static class Builder extends SubTableContainerTable.Builder<CMapTable> {
 
-    private int version = 0; // TODO(user): make a CMapTable constant
+    private int version = 0; // TODO(stuartg): make a CMapTable constant
     private Map<CMapId, CMap.Builder<? extends CMap>> cmapBuilders;
 
     /**
@@ -782,7 +782,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
       return this.cmapId().encodingId();
     }
 
-    // TODO(user): simple implementation until all subclasses define their
+    // TODO(stuartg): simple implementation until all subclasses define their
     // own more efficient version
     protected class CharacterIterator implements Iterator<Integer> {
       private int character = 0;
@@ -2264,7 +2264,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
   /**
    * A cmap format 14 sub table.
    */
-  // TODO(user): completely unsupported yet
+  // TODO(stuartg): completely unsupported yet
   public static final class CMapFormat14 extends CMap {
 
     protected CMapFormat14(ReadableFontData data, CMapId cmapId) {
