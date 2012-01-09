@@ -213,7 +213,7 @@ public final class FontFactory {
    * @throws IOException
    */
   public Font[] loadFonts(byte[] b) throws IOException {
-    // TODO(user): make a ReadableFontData when block loading moved to
+    // TODO(stuartg): make a ReadableFontData when block loading moved to
     // FontFactory
     WritableFontData rfd = WritableFontData.createWritableFontData(b);
     if (isCollection(rfd)) {
@@ -259,7 +259,7 @@ public final class FontFactory {
       throws IOException {
     MessageDigest digest = null;
     if (this.fingerprintFont()) {
-      // TODO(user): digest of ByteArray
+      // TODO(stuartg): digest of ByteArray
     }
     Font.Builder builder = Font.Builder.getOTFBuilder(this, wfd, offsetToOffsetTable);
     return builder;
@@ -296,7 +296,7 @@ public final class FontFactory {
    * @throws IOException
    */
   public void serializeFont(Font font, OutputStream os) throws IOException {
-    // TODO(user) should have serialization options somewhere
+    // TODO(stuartg) should have serialization options somewhere
     font.serialize(os, tableOrdering);
   }
 

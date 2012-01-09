@@ -44,6 +44,7 @@ public class SfntTool {
   private String subsetString = null;
   private boolean woff = false;
   private boolean eot = false;
+  private boolean mtx = false;
 
   public static void main(String[] args) throws IOException {
     SfntTool tool = new SfntTool();
@@ -73,6 +74,8 @@ public class SfntTool {
           tool.woff = true;
         } else if (option.equals("e") || option.equals("eot")) {
           tool.eot = true;
+        } else if (option.equals("x") || option.equals("mtx")) {
+          tool.mtx = true;
         } else {
           printUsage();
           System.exit(1);
@@ -108,6 +111,7 @@ public class SfntTool {
     System.out.println("\t-h,-hints\t Strip hints");
     System.out.println("\t-w,-woff\t Output WOFF format");
     System.out.println("\t-e,-eot\t Output EOT format");
+    System.out.println("\t-x,-mtx\t Enable Microtype Express compression for EOT format");
   }
 
   public void subsetFontFile(File fontFile, File outputFile, int nIters)
@@ -167,8 +171,7 @@ public class SfntTool {
           WritableFontData woffData = new WoffWriter().convert(newFont);
           woffData.copyTo(fos);
         } else if (eot) {
-          WritableFontData eotData = new EOTWriter()
-              .convert(newFont);
+          WritableFontData eotData = new EOTWriter(mtx).convert(newFont);
           eotData.copyTo(fos);
         } else {
           fontFactory.serializeFont(newFont, fos);

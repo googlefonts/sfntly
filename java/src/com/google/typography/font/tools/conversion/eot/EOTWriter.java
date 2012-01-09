@@ -34,9 +34,8 @@ import java.io.IOException;
  */
 public class EOTWriter {
 
-  @SuppressWarnings("unused")
   private final boolean compressed;
-
+  
   private final FontFactory factory = FontFactory.getInstance();
 
   private final static long RESERVED = 0;
@@ -44,7 +43,6 @@ public class EOTWriter {
   private final static long VERSION = 0x00020002;
   private final static short MAGIC_NUMBER = 0x504c;
   private final static long DEFAULT_FLAGS = 0;
-  @SuppressWarnings("unused")
   private final static long FLAGS_TT_COMPRESSED = 0x4;
   private final static byte DEFAULT_CHARSET = 1;
   private final static long CS_XORKEY = 0x50475342;
@@ -52,7 +50,10 @@ public class EOTWriter {
   public EOTWriter() {
     compressed = false;
   }
-
+  
+  public EOTWriter(boolean compressed) {
+    this.compressed = compressed;
+  }
 
   public WritableFontData convert(Font font) throws IOException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -64,8 +65,13 @@ public class EOTWriter {
     byte[] versionName = convertUTF16StringToLittleEndian(name.nameAsBytes(3, 1, 0x409, 5));
     byte[] fullName = convertUTF16StringToLittleEndian(name.nameAsBytes(3, 1, 0x409, 4));
     long flags = DEFAULT_FLAGS;
-
-
+    
+    if (compressed) {
+      flags |= FLAGS_TT_COMPRESSED;
+      MtxWriter mtxWriter = new MtxWriter();
+      fontData = mtxWriter.compress(font);
+    }
+    
     long eotSize = computeEotSize(
       familyName.length, styleName.length, versionName.length, fullName.length, fontData.length);
 
@@ -94,7 +100,7 @@ public class EOTWriter {
     index += writePadding(index, writableFontData);
 
     // FamilyNameSize, FamilyName[FamilyNameSize]
-    index += writeUTF16String(index, familyName, writableFontData);
+    index += writeUTF16String(index, familyName, writableFontData); 
     index += writePadding(index, writableFontData);
 
     // StyleNameSize, StyleName[StyleNameSize]
@@ -177,7 +183,6 @@ public class EOTWriter {
     return index - start;
   }
 
-  @SuppressWarnings("unused")  
   private byte[] writableFontDataToBytes(WritableFontData writableFontData) {
     byte[] eotBytes = new byte[writableFontData.length()];
     writableFontData.readBytes(0, eotBytes, 0, writableFontData.length());
@@ -196,8 +201,7 @@ public class EOTWriter {
     return bytesString;
   }
 
-    @SuppressWarnings("unused")
-    private Font parse(byte[] bytes) throws IOException {
+  private Font parse(byte[] bytes) throws IOException {
     factory.fingerprintFont(false);
     ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
     Font[] fonts = factory.loadFonts(inputStream);

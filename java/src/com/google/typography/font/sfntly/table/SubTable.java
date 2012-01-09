@@ -33,7 +33,7 @@ public abstract class SubTable extends FontDataTable {
    * The data for the whole table in which this subtable is contained.
    */
   private final ReadableFontData masterData;
-  
+
   private int padding = 0;
 
   /**
@@ -56,7 +56,7 @@ public abstract class SubTable extends FontDataTable {
   protected SubTable(ReadableFontData data) {
     this(data, null);
   }
-  
+
   /**
    * Constructor.
    *
@@ -67,11 +67,11 @@ public abstract class SubTable extends FontDataTable {
   protected SubTable(ReadableFontData data, int offset, int length) {
     this(data.slice(offset, length));
   }
-  
+
   protected ReadableFontData masterReadData() {
     return this.masterData;
   }
-  
+
   /**
    * An abstract base class for subtable builders.
    *
@@ -122,19 +122,19 @@ public abstract class SubTable extends FontDataTable {
 
     /**
      * Constructor.
-     * 
+     *
      * Creates a new empty sub-table.
-     * 
+     *
      * @param dataSize the initial size for the data; if it is positive then the
      *        size is fixed; if it is negative then it is variable sized
      */
     protected Builder(int dataSize) {
       super(dataSize);
     }
-    
+
     protected ReadableFontData masterReadData() {
       return this.masterData;
-    }    
+    }
   }
 
   /**
@@ -153,7 +153,7 @@ public abstract class SubTable extends FontDataTable {
    *
    * @param padding
    */
-  // TODO(user): move to constructor
+  // TODO(stuartg): move to constructor
   protected void setPadding(int padding) {
     this.padding = padding;
   }

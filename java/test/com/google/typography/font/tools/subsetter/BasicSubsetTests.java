@@ -94,7 +94,7 @@ public class BasicSubsetTests extends TestCase {
     Font dstFont = dstFontBuilder.build();
     LocaTable dstLocaTable = dstFont.getTable(Tag.loca);
 
-    // TODO(user): subsetter needs to modify other tables with the new glyph
+    // TODO(stuartg): subsetter needs to modify other tables with the new glyph
     List<Integer> dstLoca = new ArrayList<Integer>(glyphCount + 1);
     for (int i = 0; i <= glyphCount + 1; i++) {
       dstLoca.add(dstLocaTable.loca(i));
