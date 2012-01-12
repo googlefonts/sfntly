@@ -20,6 +20,7 @@ import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.Table;
+import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 
 import java.io.IOException;
@@ -95,7 +96,7 @@ public class Subsetter {
       throw new InvalidParameterException("Font has no cmap table.");
     }
     for (CMapTable.CMapId cmapId : cmapIds) {
-      CMapTable.CMap cmap = cmapTable.cmap(cmapId);
+      CMap cmap = cmapTable.cmap(cmapId);
       if (cmap != null) {
         this.cmapIds.add(cmap.cmapId());
         number--;

@@ -18,7 +18,9 @@ package com.google.typography.font.sfntly;
 
 import com.google.typography.font.sfntly.Font.PlatformId;
 import com.google.typography.font.sfntly.Font.WindowsEncodingId;
+import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
+import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.sfntly.testutils.TestFont;
@@ -109,7 +111,7 @@ public class GlyphTests extends TestCase {
     LocaTable locaTable = font.getTable(Tag.loca);
     GlyphTable glyphTable = font.getTable(Tag.glyf);
 
-    CMapTable.CMap cmap = cmapTable.cmap(test.platformId, test.encodingId);
+    CMap cmap = cmapTable.cmap(test.platformId, test.encodingId);
     assertNotNull(cmap);
     CharsetEncoder encoder = TestUtils.getEncoder(test.charSetName);
     for (int uchar = test.lowChar; uchar < test.highChar; uchar++) {
@@ -137,7 +139,7 @@ public class GlyphTests extends TestCase {
    * @param length length of glyph data
    */
   private void checkGlyph(GlyphTable table, int offset, int length) {
-    GlyphTable.Glyph glyph = table.glyph(offset, length);
+    Glyph glyph = table.glyph(offset, length);
     if (length != 0) {
       assertNotNull(glyph);
     }

@@ -19,8 +19,11 @@ package com.google.typography.font.tools.conversion.eot;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.ReadableFontData;
+import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
+import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
+import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -60,26 +63,26 @@ public class GlyfEncoder {
     for (int glyphId = 0; glyphId < nGlyphs; glyphId++) {
       int sourceOffset = loca.glyphOffset(glyphId);
       int length = loca.glyphLength(glyphId);
-      GlyphTable.Glyph glyph = glyf.glyph(sourceOffset, length);
+      Glyph glyph = glyf.glyph(sourceOffset, length);
       writeGlyph(glyph);
     }
   }
 
-  private void writeGlyph(GlyphTable.Glyph glyph) {
+  private void writeGlyph(Glyph glyph) {
     try {
       if (glyph == null || glyph.dataLength() == 0) {
         writeUShort(0);
-      } else if (glyph instanceof GlyphTable.SimpleGlyph) {
-        writeSimpleGlyph((GlyphTable.SimpleGlyph)glyph);
-      } else if (glyph instanceof GlyphTable.CompositeGlyph) {
-        writeCompositeGlyph((GlyphTable.CompositeGlyph)glyph);
+      } else if (glyph instanceof SimpleGlyph) {
+        writeSimpleGlyph((SimpleGlyph)glyph);
+      } else if (glyph instanceof CompositeGlyph) {
+        writeCompositeGlyph((CompositeGlyph)glyph);
       }
     } catch (IOException e) {
       throw new RuntimeException("unexpected IOException writing glyph data", e);
     }
   }
   
-  private void writeInstructions(GlyphTable.Glyph glyph) throws IOException{
+  private void writeInstructions(Glyph glyph) throws IOException{
     if (doPush) {
       splitPush(glyph);
     } else {
@@ -93,7 +96,7 @@ public class GlyfEncoder {
     }
   }
 
-  private void writeSimpleGlyph(GlyphTable.SimpleGlyph glyph) throws IOException {
+  private void writeSimpleGlyph(SimpleGlyph glyph) throws IOException {
     int numContours = glyph.numberOfContours();
       writeUShort(numContours);
       for (int i = 0; i < numContours; i++) {
@@ -120,7 +123,7 @@ public class GlyfEncoder {
       }
   }
   
-  private void writeCompositeGlyph(GlyphTable.CompositeGlyph glyph) throws IOException {
+  private void writeCompositeGlyph(CompositeGlyph glyph) throws IOException {
     boolean haveInstructions = false;
     writeUShort(-1);
     writeUShort(glyph.xMin());
@@ -130,9 +133,9 @@ public class GlyfEncoder {
     for (int i = 0; i < glyph.numGlyphs(); i++) {
       int flags = glyph.flags(i);
       writeUShort(flags);
-      haveInstructions = (flags & GlyphTable.CompositeGlyph.FLAG_WE_HAVE_INSTRUCTIONS) != 0;
+      haveInstructions = (flags & CompositeGlyph.FLAG_WE_HAVE_INSTRUCTIONS) != 0;
       writeUShort(glyph.glyphIndex(i));
-      if ((flags & GlyphTable.CompositeGlyph.FLAG_ARG_1_AND_2_ARE_WORDS) == 0) {
+      if ((flags & CompositeGlyph.FLAG_ARG_1_AND_2_ARE_WORDS) == 0) {
         glyfStream.write(glyph.argument1(i));
         glyfStream.write(glyph.argument2(i));
       } else {
@@ -248,7 +251,7 @@ public class GlyfEncoder {
    * 
    * @param glyph the glyph to split
    */
-  private void splitPush(GlyphTable.Glyph glyph) throws IOException {
+  private void splitPush(Glyph glyph) throws IOException {
     int instrSize = glyph.instructionSize();
     ReadableFontData data = glyph.instructions();
     int i = 0;

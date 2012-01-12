@@ -25,8 +25,10 @@ import com.google.typography.font.sfntly.table.core.NameTable;
 import com.google.typography.font.sfntly.table.core.NameTable.NameEntry;
 import com.google.typography.font.sfntly.table.core.NameTable.NameId;
 import com.google.typography.font.sfntly.table.core.OS2Table;
+import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
+import com.google.typography.font.sfntly.table.truetype.Glyph;
+import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
-import com.google.typography.font.sfntly.table.truetype.GlyphTable.GlyphType;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 
 import java.io.File;
@@ -125,7 +127,7 @@ public class SFLint {
     for (int glyphId = 0; glyphId < nGlyphs; glyphId++) {
       int offset = loca.glyphOffset(glyphId);
       int length = loca.glyphLength(glyphId);
-      GlyphTable.Glyph glyph = glyphTable.glyph(offset, length);
+      Glyph glyph = glyphTable.glyph(offset, length);
       if (glyph != null && glyph.numberOfContours() != 0) {
         int xMin = glyph.xMin();
         int yMin = glyph.yMin();
@@ -170,13 +172,13 @@ public class SFLint {
     }
   }
 
-  private void lintCompositeGlyph(Font font, GlyphTable.CompositeGlyph glyph, int glyphId) {
-    final int VAR_FLAGS = GlyphTable.CompositeGlyph.FLAG_WE_HAVE_A_SCALE |
-        GlyphTable.CompositeGlyph.FLAG_WE_HAVE_AN_X_AND_Y_SCALE |
-        GlyphTable.CompositeGlyph.FLAG_WE_HAVE_A_TWO_BY_TWO;
-    final int MASK = ~(GlyphTable.CompositeGlyph.FLAG_MORE_COMPONENTS |
-        GlyphTable.CompositeGlyph.FLAG_WE_HAVE_INSTRUCTIONS |
-        GlyphTable.CompositeGlyph.FLAG_USE_MY_METRICS);
+  private void lintCompositeGlyph(Font font, CompositeGlyph glyph, int glyphId) {
+    final int VAR_FLAGS = CompositeGlyph.FLAG_WE_HAVE_A_SCALE |
+        CompositeGlyph.FLAG_WE_HAVE_AN_X_AND_Y_SCALE |
+        CompositeGlyph.FLAG_WE_HAVE_A_TWO_BY_TWO;
+    final int MASK = ~(CompositeGlyph.FLAG_MORE_COMPONENTS |
+        CompositeGlyph.FLAG_WE_HAVE_INSTRUCTIONS |
+        CompositeGlyph.FLAG_USE_MY_METRICS);
     for (int i = 0; i < glyph.numGlyphs(); i++) {
       if ((glyph.flags(i) & VAR_FLAGS) == 0) {
         // check for duplicate occurrences of same reference
@@ -199,10 +201,10 @@ public class SFLint {
     for (int glyphId = 0; glyphId < nGlyphs; glyphId++) {
       int offset = loca.glyphOffset(glyphId);
       int length = loca.glyphLength(glyphId);
-      GlyphTable.Glyph glyph = glyphTable.glyph(offset, length);
+      Glyph glyph = glyphTable.glyph(offset, length);
       if (glyph != null) {
         if (glyph.glyphType() == GlyphType.Composite) {
-          lintCompositeGlyph(font, (GlyphTable.CompositeGlyph)glyph, glyphId);
+          lintCompositeGlyph(font, (CompositeGlyph)glyph, glyphId);
         }
       }      
     }

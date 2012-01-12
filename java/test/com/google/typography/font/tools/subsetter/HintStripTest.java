@@ -19,11 +19,16 @@ package com.google.typography.font.tools.subsetter;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.core.HorizontalMetricsTable;
 import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
+import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
+import com.google.typography.font.sfntly.table.truetype.Glyph;
+import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
+import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
 import com.google.typography.font.sfntly.testutils.TestFont.TestFontNames;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
 
@@ -72,7 +77,7 @@ public class HintStripTest extends TestCase {
   public void testCmap() throws IOException {
     CMapTable cmapTable = dstFont.getTable(Tag.cmap);
     assertEquals(1, cmapTable.numCMaps(), 1);
-    CMapTable.CMap cmap = cmapTable.cmap(0);
+    CMap cmap = cmapTable.cmap(0);
     assertEquals(CMapTable.CMapId.WINDOWS_BMP, cmap.cmapId());
     assertEquals(67, cmap.glyphId(0x60));
     assertEquals(68, cmap.glyphId(0x61));
@@ -93,9 +98,9 @@ public class HintStripTest extends TestCase {
   
   public void testSimpleGlyph1() {
     // grave
-    GlyphTable.Glyph glyph = getGlyph(dstFont, 67);
-    assertEquals(GlyphTable.GlyphType.Simple, glyph.glyphType());
-    GlyphTable.SimpleGlyph simple = (GlyphTable.SimpleGlyph) glyph;
+    Glyph glyph = getGlyph(dstFont, 67);
+    assertEquals(GlyphType.Simple, glyph.glyphType());
+    SimpleGlyph simple = (SimpleGlyph) glyph;
     assertEquals(1, simple.numberOfContours());
     assertEquals(10, simple.numberOfPoints(0));
     assertEquals(0, simple.instructionSize());  // hints are stripped
@@ -114,9 +119,9 @@ public class HintStripTest extends TestCase {
 
   public void testSimpleGlyph2() {
     // lowercase a
-    GlyphTable.Glyph glyph = getGlyph(dstFont, 68);
-    assertEquals(GlyphTable.GlyphType.Simple, glyph.glyphType());
-    GlyphTable.SimpleGlyph simple = (GlyphTable.SimpleGlyph) glyph;
+    Glyph glyph = getGlyph(dstFont, 68);
+    assertEquals(GlyphType.Simple, glyph.glyphType());
+    SimpleGlyph simple = (SimpleGlyph) glyph;
     assertEquals(2, simple.numberOfContours());
     assertEquals(26, simple.numberOfPoints(0));
     assertEquals(11, simple.numberOfPoints(1));
@@ -127,9 +132,9 @@ public class HintStripTest extends TestCase {
 
   public void testCompositeGlyph() {
     // agrave
-    GlyphTable.Glyph glyph = getGlyph(dstFont, 162);
-    assertEquals(GlyphTable.GlyphType.Composite, glyph.glyphType());
-    GlyphTable.CompositeGlyph composite = (GlyphTable.CompositeGlyph) glyph;
+    Glyph glyph = getGlyph(dstFont, 162);
+    assertEquals(GlyphType.Composite, glyph.glyphType());
+    CompositeGlyph composite = (CompositeGlyph) glyph;
     assertEquals(2, composite.numGlyphs());
     assertEquals(68, composite.glyphIndex(0));  // a
     assertEquals(0, composite.argument1(0));
@@ -148,7 +153,7 @@ public class HintStripTest extends TestCase {
   }
   
   // TODO: this really needs to be a utility method somewhere
-  private static GlyphTable.Glyph getGlyph(Font font, int glyphId) {
+  private static Glyph getGlyph(Font font, int glyphId) {
     LocaTable locaTable = font.getTable(Tag.loca);
     GlyphTable glyfTable = font.getTable(Tag.glyf);
     int offset = locaTable.glyphOffset(glyphId);

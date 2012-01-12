@@ -24,15 +24,16 @@ import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.bitmap.EblcTable;
+import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
-import com.google.typography.font.sfntly.table.core.CMapTable.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
 import com.google.typography.font.sfntly.table.core.NameTable;
 import com.google.typography.font.sfntly.table.core.NameTable.NameEntry;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
+import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
-import com.google.typography.font.sfntly.table.truetype.GlyphTable.SimpleGlyph;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
+import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -447,7 +448,7 @@ public class SfntDump {
           glyphId >= 0; glyphId = this.glyphSet.nextSetBit(glyphId+1)) {
             int offset = locaTable.glyphOffset(glyphId);
             int length = locaTable.glyphLength(glyphId);
-            GlyphTable.Glyph glyph = glyphTable.glyph(offset, length);
+            Glyph glyph = glyphTable.glyph(offset, length);
             System.out.println("glyph id = " + glyphId);
             if (glyph != null) {
               System.out.println(glyph);
@@ -502,7 +503,7 @@ public class SfntDump {
     int glyphId = cmap.glyphId(charId);
     int offset = locaTable.glyphOffset(glyphId);
     int length = locaTable.glyphLength(glyphId);
-    GlyphTable.Glyph glyph = glyphTable.glyph(offset, length);
+    Glyph glyph = glyphTable.glyph(offset, length);
     System.out.println("char = 0x" + Integer.toHexString(charId) + ", glyph id = 0x"
         + Integer.toHexString(glyphId));
     if (glyph != null) {
@@ -520,9 +521,9 @@ public class SfntDump {
     for (int glyphId = 0; glyphId < locaTable.numGlyphs(); glyphId++) {
       int offset = locaTable.glyphOffset(glyphId);
       int length = locaTable.glyphLength(glyphId);
-      GlyphTable.Glyph glyph = glyphTable.glyph(offset, length);
-      if (glyph instanceof GlyphTable.SimpleGlyph) {
-        GlyphTable.SimpleGlyph simple = (SimpleGlyph) glyph;
+      Glyph glyph = glyphTable.glyph(offset, length);
+      if (glyph instanceof SimpleGlyph) {
+        SimpleGlyph simple = (SimpleGlyph) glyph;
         if (simple.numberOfContours() != 2) {
           continue;
         }
@@ -537,7 +538,7 @@ public class SfntDump {
     System.out.println("\tspecial glyphs = " + count);    
   }
   
-  private void dumpCMapMapping(CMapTable.CMap cmap) {
+  private void dumpCMapMapping(CMap cmap) {
     Iterator<Integer> iter = cmap.iterator();
     while (iter.hasNext()) {
       int c = iter.next();

@@ -18,6 +18,7 @@ package com.google.typography.font.tools.subsetter;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
+import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 
 import java.util.Map;
@@ -83,10 +84,10 @@ public class GlyphRenumberer {
     WritableFontData result = WritableFontData.createWritableFontData(glyph.length());
     glyph.copyTo(result);
     
-    int flags = GlyphTable.CompositeGlyph.FLAG_MORE_COMPONENTS;
+    int flags = CompositeGlyph.FLAG_MORE_COMPONENTS;
     int index = Offset.headerEnd.offset;
 
-    while ((flags & GlyphTable.CompositeGlyph.FLAG_MORE_COMPONENTS) != 0) {
+    while ((flags & CompositeGlyph.FLAG_MORE_COMPONENTS) != 0) {
       flags = glyph.readUShort(index + Offset.compositeFlags.offset);
       int oldGlyphIndex = glyph.readUShort(index + Offset.compositeGlyphIndex.offset);
       int newGlyphIndex = mapping.get(oldGlyphIndex);
@@ -101,14 +102,14 @@ public class GlyphRenumberer {
    */
   private static int compositeReferenceSize(int flags) {
     int result = 6;
-    if ((flags & GlyphTable.CompositeGlyph.FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
+    if ((flags & CompositeGlyph.FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
       result += 2;
     }
-    if ((flags & GlyphTable.CompositeGlyph.FLAG_WE_HAVE_A_SCALE) != 0) {
+    if ((flags & CompositeGlyph.FLAG_WE_HAVE_A_SCALE) != 0) {
       result += 2;
-    } else if ((flags & GlyphTable.CompositeGlyph.FLAG_WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
+    } else if ((flags & CompositeGlyph.FLAG_WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
       result += 4;
-    } else if ((flags & GlyphTable.CompositeGlyph.FLAG_WE_HAVE_A_TWO_BY_TWO) != 0) {
+    } else if ((flags & CompositeGlyph.FLAG_WE_HAVE_A_TWO_BY_TWO) != 0) {
       result += 8;
     }
     return result;

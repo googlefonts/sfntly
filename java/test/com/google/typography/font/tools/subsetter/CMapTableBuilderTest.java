@@ -19,6 +19,7 @@ package com.google.typography.font.tools.subsetter;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 
 import junit.framework.TestCase;
@@ -38,7 +39,7 @@ public class CMapTableBuilderTest extends TestCase {
     
     Font font = fontBuilder.build();
     CMapTable cmapTable = font.getTable(Tag.cmap);
-    CMapTable.CMap cmap = cmapTable.cmap(3, 1);
+    CMap cmap = cmapTable.cmap(3, 1);
     for (Map.Entry<Integer,Integer> entry : mapping.entrySet()) {
       int unicode = entry.getKey();
       int glyphId = entry.getValue();

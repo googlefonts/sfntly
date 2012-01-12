@@ -19,6 +19,7 @@ package com.google.typography.font.tools.subsetter;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class CMapTableSubsetter extends TableSubsetterImpl {
             .newTableBuilder(Tag.cmap);
 
     for (CMapTable.CMapId cmapId : subsetter.cmapId()) {
-      CMapTable.CMap cmap = cmapTable.cmap(cmapId);
+      CMap cmap = cmapTable.cmap(cmapId);
       if (cmap != null) {
         cmapTableBuilder.newCMapBuilder(cmapId, cmap.readFontData());
       }
