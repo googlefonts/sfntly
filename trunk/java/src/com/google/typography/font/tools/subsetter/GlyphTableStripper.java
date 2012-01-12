@@ -19,8 +19,8 @@ package com.google.typography.font.tools.subsetter;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.ReadableFontData;
+import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
-import com.google.typography.font.sfntly.table.truetype.GlyphTable.Glyph;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 
 import java.io.IOException;

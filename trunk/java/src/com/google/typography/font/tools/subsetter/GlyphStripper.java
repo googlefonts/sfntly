@@ -18,7 +18,10 @@ package com.google.typography.font.tools.subsetter;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
+import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
+import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
+import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
 
 /**
  * Strip the hints from one glyph.
@@ -32,7 +35,7 @@ public class GlyphStripper {
     this.glyphTableBuilder = glyphTableBuilder;
   }
 
-  public GlyphTable.Glyph.Builder<? extends GlyphTable.Glyph> stripGlyph(GlyphTable.Glyph glyph) {
+  public Glyph.Builder<? extends Glyph> stripGlyph(Glyph glyph) {
     WritableFontData newGlyphData = null;
     if (glyph != null && glyph.readFontData().length() > 0) {
       switch (glyph.glyphType()) {
@@ -52,7 +55,7 @@ public class GlyphStripper {
     return glyphTableBuilder.glyphBuilder(newGlyphData);
   }
 
-  private WritableFontData stripSimpleGlyph(GlyphTable.Glyph glyph) {
+  private WritableFontData stripSimpleGlyph(Glyph glyph) {
     int size = computeSimpleStrippedGlyphSize(glyph);
     int paddedSize = (size + 1) & -2;
     // TODO(stuartg): look into this issue
@@ -64,7 +67,7 @@ public class GlyphStripper {
     // However, it just blithely
     // fails to add padding. We sidestep the issue by adding padding,
     WritableFontData newGlyf = WritableFontData.createWritableFontData(paddedSize);
-    GlyphTable.SimpleGlyph simpleGlyph = (GlyphTable.SimpleGlyph) glyph;
+    SimpleGlyph simpleGlyph = (SimpleGlyph) glyph;
     ReadableFontData originalGlyfData = glyph.readFontData();
 
     int dataWritten =
@@ -78,7 +81,7 @@ public class GlyphStripper {
   }
 
   private int writeHeaderAndContoursSize(WritableFontData newGlyf, int newGlyfOffset,
-      ReadableFontData originalGlyfData, int glyphOffset, GlyphTable.SimpleGlyph simpleGlyph) {
+      ReadableFontData originalGlyfData, int glyphOffset, SimpleGlyph simpleGlyph) {
     int headerAndNumberOfContoursSize =
         (ReadableFontData.DataSize.SHORT.size() * 5)
             + (simpleGlyph.numberOfContours() * ReadableFontData.DataSize.USHORT.size());
@@ -102,10 +105,10 @@ public class GlyphStripper {
     return length;
   }
 
-  private WritableFontData stripCompositeGlyph(GlyphTable.Glyph glyph) {
+  private WritableFontData stripCompositeGlyph(Glyph glyph) {
     int dataLength = computeCompositeStrippedGlyphSize(glyph);
     WritableFontData newGlyf = WritableFontData.createWritableFontData(dataLength);
-    GlyphTable.CompositeGlyph compositeGlyph = (GlyphTable.CompositeGlyph) glyph;
+    CompositeGlyph compositeGlyph = (CompositeGlyph) glyph;
     ReadableFontData originalGlyphSlice = glyph.readFontData().slice(0, dataLength);
 
     originalGlyphSlice.copyTo(newGlyf);
@@ -117,29 +120,29 @@ public class GlyphStripper {
 
   private void overrideCompositeGlyfFlags(WritableFontData slice, int dataLength) {
     int index = 5 * ReadableFontData.DataSize.USHORT.size();
-    int flags = GlyphTable.CompositeGlyph.FLAG_MORE_COMPONENTS;
-    while ((flags & GlyphTable.CompositeGlyph.FLAG_MORE_COMPONENTS) != 0) {
+    int flags = CompositeGlyph.FLAG_MORE_COMPONENTS;
+    while ((flags & CompositeGlyph.FLAG_MORE_COMPONENTS) != 0) {
       flags = slice.readUShort(index);
-      flags &= ~GlyphTable.CompositeGlyph.FLAG_WE_HAVE_INSTRUCTIONS;
+      flags &= ~CompositeGlyph.FLAG_WE_HAVE_INSTRUCTIONS;
       slice.writeUShort(index, flags);
       index += 2 * ReadableFontData.DataSize.USHORT.size();
-      if ((flags & GlyphTable.CompositeGlyph.FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
+      if ((flags & CompositeGlyph.FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
         index += 2 * ReadableFontData.DataSize.SHORT.size();
       } else {
         index += 2 * ReadableFontData.DataSize.BYTE.size();
       }
-      if ((flags & GlyphTable.CompositeGlyph.FLAG_WE_HAVE_A_SCALE) != 0) {
+      if ((flags & CompositeGlyph.FLAG_WE_HAVE_A_SCALE) != 0) {
         index += ReadableFontData.DataSize.F2DOT14.size();
-      } else if ((flags & GlyphTable.CompositeGlyph.FLAG_WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
+      } else if ((flags & CompositeGlyph.FLAG_WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
         index += 2 * ReadableFontData.DataSize.F2DOT14.size();
-      } else if ((flags & GlyphTable.CompositeGlyph.FLAG_WE_HAVE_A_TWO_BY_TWO) != 0) {
+      } else if ((flags & CompositeGlyph.FLAG_WE_HAVE_A_TWO_BY_TWO) != 0) {
         index += 4 * ReadableFontData.DataSize.F2DOT14.size();
       }
     }
   }
 
-  private int computeSimpleStrippedGlyphSize(GlyphTable.Glyph glyph) {
-    GlyphTable.SimpleGlyph simpleGlyph = (GlyphTable.SimpleGlyph) glyph;
+  private int computeSimpleStrippedGlyphSize(Glyph glyph) {
+    SimpleGlyph simpleGlyph = (SimpleGlyph) glyph;
 
     // Compute instruction size before querying padding, to work around a bug in
     // sfntly.
@@ -152,12 +155,12 @@ public class GlyphStripper {
     return nonPaddedSimpleGlyphLength;
   }
 
-  private int computeInstructionsSize(GlyphTable.SimpleGlyph simpleGlyph) {
+  private int computeInstructionsSize(SimpleGlyph simpleGlyph) {
     return simpleGlyph.instructionSize() * ReadableFontData.DataSize.BYTE.size();
   }
 
-  private int computeCompositeStrippedGlyphSize(GlyphTable.Glyph glyph) {
-    GlyphTable.CompositeGlyph compositeGlyph = (GlyphTable.CompositeGlyph) glyph;
+  private int computeCompositeStrippedGlyphSize(Glyph glyph) {
+    CompositeGlyph compositeGlyph = (CompositeGlyph) glyph;
     int instructionSize = compositeGlyph.instructionSize();
     int nonPaddedCompositeGlyphLength = compositeGlyph.dataLength() - compositeGlyph.padding();
 

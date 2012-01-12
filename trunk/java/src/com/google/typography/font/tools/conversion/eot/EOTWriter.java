@@ -183,12 +183,6 @@ public class EOTWriter {
     return index - start;
   }
 
-  private byte[] writableFontDataToBytes(WritableFontData writableFontData) {
-    byte[] eotBytes = new byte[writableFontData.length()];
-    writableFontData.readBytes(0, eotBytes, 0, writableFontData.length());
-    return eotBytes;
-  }
-
   private byte[] convertUTF16StringToLittleEndian(byte[] bytesString) {
     if (bytesString == null) {
       return new byte[0];
@@ -199,13 +193,6 @@ public class EOTWriter {
       bytesString[i + 1] = tmp;
     }
     return bytesString;
-  }
-
-  private Font parse(byte[] bytes) throws IOException {
-    factory.fingerprintFont(false);
-    ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
-    Font[] fonts = factory.loadFonts(inputStream);
-    return fonts[0];
   }
 
   private WritableFontData createWritableFontData(int length) {

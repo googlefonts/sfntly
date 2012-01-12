@@ -19,16 +19,16 @@ import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Font.PlatformId;
 import com.google.typography.font.sfntly.Font.WindowsEncodingId;
 import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
-import com.google.typography.font.sfntly.table.core.CMapTable.CMap;
 import com.google.typography.font.sfntly.table.core.NameTable;
 import com.google.typography.font.sfntly.table.core.NameTable.NameId;
 import com.google.typography.font.sfntly.table.core.NameTable.WindowsLanguageId;
+import com.google.typography.font.sfntly.table.truetype.Glyph;
+import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
-import com.google.typography.font.sfntly.table.truetype.GlyphTable.Glyph;
-import com.google.typography.font.sfntly.table.truetype.GlyphTable.GlyphType;
-import com.google.typography.font.sfntly.table.truetype.GlyphTable.SimpleGlyph;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
+import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
 
 import java.text.NumberFormat;
 

@@ -19,13 +19,18 @@ package com.google.typography.font.tools.subsetter;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.core.HorizontalHeaderTable;
 import com.google.typography.font.sfntly.table.core.HorizontalMetricsTable;
 import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
+import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
+import com.google.typography.font.sfntly.table.truetype.Glyph;
+import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
+import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
 import com.google.typography.font.sfntly.testutils.TestFont.TestFontNames;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
 
@@ -82,7 +87,7 @@ public class RenumberingSubsetTest extends TestCase {
   public void testCmap() throws IOException {
     CMapTable cmapTable = dstFont.getTable(Tag.cmap);
     assertEquals(1, cmapTable.numCMaps(), 1);
-    CMapTable.CMap cmap = cmapTable.cmap(0);
+    CMap cmap = cmapTable.cmap(0);
     assertEquals(CMapTable.CMapId.WINDOWS_BMP, cmap.cmapId());
     assertEquals(1, cmap.glyphId(0x60));
     assertEquals(2, cmap.glyphId(0x61));
@@ -118,9 +123,9 @@ public class RenumberingSubsetTest extends TestCase {
   
   public void testSimpleGlyph1() {
     // grave
-    GlyphTable.Glyph glyph = getGlyph(dstFont, 1);
-    assertEquals(GlyphTable.GlyphType.Simple, glyph.glyphType());
-    GlyphTable.SimpleGlyph simple = (GlyphTable.SimpleGlyph) glyph;
+    Glyph glyph = getGlyph(dstFont, 1);
+    assertEquals(GlyphType.Simple, glyph.glyphType());
+    SimpleGlyph simple = (SimpleGlyph) glyph;
     assertEquals(1, simple.numberOfContours());
     assertEquals(10, simple.numberOfPoints(0));
     assertEquals(19, simple.instructionSize());
@@ -139,9 +144,9 @@ public class RenumberingSubsetTest extends TestCase {
 
   public void testSimpleGlyph2() {
     // lowercase a
-    GlyphTable.Glyph glyph = getGlyph(dstFont, 2);
-    assertEquals(GlyphTable.GlyphType.Simple, glyph.glyphType());
-    GlyphTable.SimpleGlyph simple = (GlyphTable.SimpleGlyph) glyph;
+    Glyph glyph = getGlyph(dstFont, 2);
+    assertEquals(GlyphType.Simple, glyph.glyphType());
+    SimpleGlyph simple = (SimpleGlyph) glyph;
     assertEquals(2, simple.numberOfContours());
     assertEquals(26, simple.numberOfPoints(0));
     assertEquals(11, simple.numberOfPoints(1));
@@ -152,9 +157,9 @@ public class RenumberingSubsetTest extends TestCase {
 
   public void testCompositeGlyph() {
     // agrave
-    GlyphTable.Glyph glyph = getGlyph(dstFont, 3);
-    assertEquals(GlyphTable.GlyphType.Composite, glyph.glyphType());
-    GlyphTable.CompositeGlyph composite = (GlyphTable.CompositeGlyph) glyph;
+    Glyph glyph = getGlyph(dstFont, 3);
+    assertEquals(GlyphType.Composite, glyph.glyphType());
+    CompositeGlyph composite = (CompositeGlyph) glyph;
     assertEquals(2, composite.numGlyphs());
     assertEquals(2, composite.glyphIndex(0));  // a
     assertEquals(0, composite.argument1(0));
@@ -173,7 +178,7 @@ public class RenumberingSubsetTest extends TestCase {
   }
   
   // TODO: this really needs to be a utility method somewhere
-  private static GlyphTable.Glyph getGlyph(Font font, int glyphId) {
+  private static Glyph getGlyph(Font font, int glyphId) {
     LocaTable locaTable = font.getTable(Tag.loca);
     GlyphTable glyfTable = font.getTable(Tag.glyf);
     int offset = locaTable.glyphOffset(glyphId);

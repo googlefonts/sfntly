@@ -59,7 +59,7 @@ public final class EbdtTable extends SubTableContainerTable {
   }
 
   public static class Builder extends SubTableContainerTable.Builder<EbdtTable> {
-    private final int version = 0x00020000; // TODO(user) constant/enum
+    private final int version = 0x00020000; // TODO(stuartg) need a constant/enum
     private List<Map<Integer, BitmapGlyphInfo>> glyphLoca;
     private List<Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>>> glyphBuilders;
 

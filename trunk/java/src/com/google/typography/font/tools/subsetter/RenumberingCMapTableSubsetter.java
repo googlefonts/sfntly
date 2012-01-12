@@ -19,6 +19,9 @@ package com.google.typography.font.tools.subsetter;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.table.core.CMap;
+import com.google.typography.font.sfntly.table.core.CMap.CMapFormat;
+import com.google.typography.font.sfntly.table.core.CMapFormat4;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 
 import java.io.IOException;
@@ -34,18 +37,18 @@ public class RenumberingCMapTableSubsetter extends TableSubsetterImpl {
     super(Tag.cmap);
   }
  
-  private static CMapTable.CMapFormat4 getCMapFormat4(Font font) {
+  private static CMapFormat4 getCMapFormat4(Font font) {
     CMapTable cmapTable = font.getTable(Tag.cmap);
-    for (CMapTable.CMap cmap : cmapTable) {
-      if (cmap.format() == CMapTable.CMapFormat.Format4.value()) {
-        return (CMapTable.CMapFormat4) cmap;
+    for (CMap cmap : cmapTable) {
+      if (cmap.format() == CMapFormat.Format4.value()) {
+        return (CMapFormat4) cmap;
       }
     }
     return null;
   }
   
   static Map<Integer, Integer> computeMapping(Subsetter subsetter, Font font) {
-    CMapTable.CMapFormat4 cmap4 = getCMapFormat4(font);
+    CMapFormat4 cmap4 = getCMapFormat4(font);
     if (cmap4 == null) {
       throw new RuntimeException("CMap format 4 table in source font not found");
     }
