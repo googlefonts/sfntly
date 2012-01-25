@@ -25,7 +25,6 @@ import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 import com.google.typography.font.sfntly.table.core.NameTable;
 import com.google.typography.font.sfntly.table.core.OS2Table;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 

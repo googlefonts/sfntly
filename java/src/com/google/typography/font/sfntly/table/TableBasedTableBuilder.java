@@ -73,7 +73,7 @@ public abstract class TableBasedTableBuilder<T extends Table> extends Table.Buil
 
   @Override
   protected boolean subReadyToSerialize() {
-    return false;
+    return true;
   }
 
   @Override
@@ -83,6 +83,11 @@ public abstract class TableBasedTableBuilder<T extends Table> extends Table.Buil
 
   @Override
   public T build() {
-    return this.table();
+    if (!this.subReadyToSerialize()) {
+      return null;
+    }
+    T table = this.table();
+    this.notifyPostTableBuild(table);
+    return table;
   }
 }

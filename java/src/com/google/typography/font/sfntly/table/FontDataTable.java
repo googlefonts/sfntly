@@ -41,7 +41,7 @@ public abstract class FontDataTable {
   }
 
   /**
-   * Get the readable font data for this table.
+   * Gets the readable font data for this table.
    *
    * @return the read only data
    */
@@ -55,7 +55,7 @@ public abstract class FontDataTable {
   }
 
   /**
-   * Get the length of the data for this table in bytes. This is the full
+   * Gets the length of the data for this table in bytes. This is the full
    * allocated length of the data underlying the table and may or may not
    * include any padding.
    *
@@ -104,7 +104,7 @@ public abstract class FontDataTable {
     }
 
     /**
-     * Get a snapshot copy of the internal data of the builder.
+     * Gets a snapshot copy of the internal data of the builder.
      *
      *  This causes any internal data structures to be serialized to a new data
      * object. This data object belongs to the caller and must be properly
@@ -209,6 +209,16 @@ public abstract class FontDataTable {
         this.internalSetData(newData, false);
       }
       return this.wData;
+    }
+    
+    /**
+     * Determines whether the state of this builder has changed - either the data or the internal 
+     * model representing the data.
+     * 
+     * @return true if the builder has changed
+     */
+    public boolean changed() {
+      return this.dataChanged() || this.modelChanged();
     }
 
     protected boolean dataChanged() {

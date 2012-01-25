@@ -138,4 +138,16 @@ public final class Tag {
     }
     return intValue(b);
   }
+
+  /**
+   * Determines whether the tag is that for the header table.
+   * @param tag table tag
+   * @return true if the tag represents the font header table
+   */
+  public static boolean isHeaderTable(int tag) {
+    if (tag == Tag.head || tag == Tag.bhed) {
+      return true;
+    }
+    return false;
+  }
 }
