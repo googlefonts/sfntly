@@ -64,6 +64,28 @@ public final class WritableFontData extends ReadableFontData {
   }
   
   /**
+   * Constructs a writable font data object. The new font data object will wrap
+   * a copy of the the data used by the original writable font data object passed in.
+   *
+   * @param original the source font data
+   * @return a new writable font data
+   */
+  public static final WritableFontData createWritableFontData(ReadableFontData original) {
+    ByteArray<?> ba = null;
+    // TODO(stuartg): push this down into the BAs - maybe remove the difference between growable and fixed
+    if (original.array.growable()) {
+      ba = new GrowableMemoryByteArray();
+    } else {
+      ba = new MemoryByteArray(original.array.length());
+    }
+    original.array.copyTo(ba);
+    
+    WritableFontData wfd = new WritableFontData(ba);
+    wfd.setCheckSumRanges(original.checkSumRange());
+    return wfd;
+  }
+  
+  /**
    * Constructor.
    *
    * @param array byte array to wrap
@@ -127,7 +149,7 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Write a byte at the given index.
+   * Writes a byte at the given index.
    *
    * @param index index into the font data
    * @param b the byte to write
@@ -139,7 +161,7 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Write the bytes from the array.
+   * Writes the bytes from the array.
    *
    * @param index index into the font data
    * @param b the source for the bytes to be written
@@ -153,9 +175,9 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Write the bytes from the array and pad if necessary.
+   * Writes the bytes from the array and pad if necessary.
    *
-   *  Write to the length given using the byte array provided and if there are
+   *  Writes to the length given using the byte array provided and if there are
    * not enough bytes in the array then pad to the requested length using the
    * pad byte specified.
    *
@@ -200,7 +222,7 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Write the bytes from the array.
+   * Writes the bytes from the array.
    *
    * @param index index into the font data
    * @param b the source for the bytes to be written
@@ -212,7 +234,7 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Write the CHAR at the given index.
+   * Writes the CHAR at the given index.
    *
    * @param index index into the font data
    * @param c the CHAR
@@ -224,7 +246,7 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Write the USHORT at the given index.
+   * Writes the USHORT at the given index.
    *
    * @param index index into the font data
    * @param us the USHORT
@@ -238,7 +260,7 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Write the USHORT at the given index in little endian format.
+   * Writes the USHORT at the given index in little endian format.
    *
    * @param index index into the font data
    * @param us the USHORT
@@ -252,7 +274,7 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Write the SHORT at the given index.
+   * Writes the SHORT at the given index.
    *
    * @param index index into the font data
    * @param s the SHORT
@@ -264,7 +286,7 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Write the UINT24 at the given index.
+   * Writes the UINT24 at the given index.
    *
    * @param index index into the font data
    * @param ui the UINT24
@@ -279,7 +301,7 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Write the ULONG at the given index.
+   * Writes the ULONG at the given index.
    *
    * @param index index into the font data
    * @param ul the ULONG
@@ -295,7 +317,7 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Write the ULONG at the given index in little endian format.
+   * Writes the ULONG at the given index in little endian format.
    *
    * @param index index into the font data
    * @param ul the ULONG
@@ -311,7 +333,7 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Write the LONG at the given index.
+   * Writes the LONG at the given index.
    *
    * @param index index into the font data
    * @param l the LONG
@@ -323,7 +345,7 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Write the Fixed at the given index.
+   * Writes the Fixed at the given index.
    *
    * @param index index into the font data
    * @param f the Fixed
@@ -335,7 +357,7 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Write the LONGDATETIME at the given index.
+   * Writes the LONGDATETIME at the given index.
    *
    * @param index index into the font data
    * @param date the LONGDATETIME

@@ -209,7 +209,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Compute the checksum for the font data using any ranges set for the
+   * Computes the checksum for the font data using any ranges set for the
    * calculation. Updates the internal state of this object in a threadsafe way.
    */
   private void computeChecksum() {
@@ -287,7 +287,24 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the UBYTE at the given index.
+   * Gets the ranges that are used for computing the checksum. These ranges are in
+   * begin and end pairs. If an odd number is given then the final range is
+   * assumed to extend to the end of the data. The lengths of each range must be
+   * a multiple of 4.
+   *
+   * @return the range bounds used for the checksum
+   */
+  public int[] checkSumRange() {
+    synchronized (this.checksumLock) {
+      if (this.checksumRange != null && checksumRange.length > 0) {
+        return Arrays.copyOf(this.checksumRange, this.checksumRange.length);
+      }
+      return new int[0];
+    }
+  }
+  
+  /**
+   * Reads the UBYTE at the given index.
    *
    * @param index index into the font data
    * @return the UBYTE; -1 if outside the bounds of the font data
@@ -304,7 +321,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the BYTE at the given index.
+   * Reads the BYTE at the given index.
    *
    * @param index index into the font data
    * @return the BYTE
@@ -321,7 +338,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the bytes at the given index into the array.
+   * Reads the bytes at the given index into the array.
    *
    * @param index index into the font data
    * @param b the destination for the bytes read
@@ -335,7 +352,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the CHAR at the given index.
+   * Reads the CHAR at the given index.
    *
    * @param index index into the font data
    * @return the CHAR
@@ -346,7 +363,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the USHORT at the given index.
+   * Reads the USHORT at the given index.
    *
    * @param index index into the font data
    * @return the USHORT
@@ -357,7 +374,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the SHORT at the given index.
+   * Reads the SHORT at the given index.
    *
    * @param index index into the font data
    * @return the SHORT
@@ -368,7 +385,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the UINT24 at the given index.
+   * Reads the UINT24 at the given index.
    *
    * @param index index into the font data
    * @return the UINT24
@@ -380,7 +397,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the ULONG at the given index.
+   * Reads the ULONG at the given index.
    *
    * @param index index into the font data
    * @return the ULONG
@@ -392,7 +409,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the ULONG at the given index as an int.
+   * Reads the ULONG at the given index as an int.
    *
    * @param index index into the font data
    * @return the ULONG
@@ -408,7 +425,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the ULONG at the given index, little-endian variant.
+   * Reads the ULONG at the given index, little-endian variant.
    *
    * @param index index into the font data
    * @return the ULONG
@@ -420,7 +437,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the LONG at the given index.
+   * Reads the LONG at the given index.
    *
    * @param index index into the font data
    * @return the LONG
@@ -432,7 +449,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the Fixed at the given index.
+   * Reads the Fixed at the given index.
    *
    * @param index index into the font data
    * @return the Fixed
@@ -443,7 +460,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the F2DOT14 at the given index.
+   * Reads the F2DOT14 at the given index.
    *
    * @param index index into the font data
    * @return the F2DOT14
@@ -454,7 +471,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the LONGDATETIME at the given index.
+   * Reads the LONGDATETIME at the given index.
    *
    * @param index index into the font data
    * @return the LONGDATETIME
@@ -465,7 +482,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the LONGDATETIME at the given index.
+   * Reads the LONGDATETIME at the given index.
    *
    * @param index index into the font data
    * @return the F2DOT14
@@ -476,7 +493,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the FUNIT at the given index.
+   * Reads the FUNIT at the given index.
    *
    * @param index index into the font data
    * @return the FUNIT
@@ -487,7 +504,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the FWORD at the given index.
+   * Reads the FWORD at the given index.
    *
    * @param index index into the font data
    * @return the FWORD
@@ -498,7 +515,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Read the UFWORD at the given index.
+   * Reads the UFWORD at the given index.
    *
    * @param index index into the font data
    * @return the UFWORD
@@ -520,7 +537,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Copy the FontData to a WritableFontData.
+   * Copies the FontData to a WritableFontData.
    *
    * @param wfd the destination
    * @return number of bytes copied

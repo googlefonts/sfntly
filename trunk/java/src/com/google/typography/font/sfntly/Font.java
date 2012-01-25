@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -558,7 +557,7 @@ public class Font {
       defaultTableOrdering = defaultTableOrdering();
     }
 
-    Set<Integer> tablesInFont = new HashSet<Integer>(this.tables.keySet());
+    Set<Integer> tablesInFont = new TreeSet<Integer>(this.tables.keySet());
 
     // add all the default ordering
     for (Integer tag : defaultTableOrdering) {
@@ -703,13 +702,6 @@ public class Font {
         tables = buildTablesFromBuilders(font, this.tableBuilders);
       }
       font.tables = tables;
-      // long checksum = 0;
-      // for (Table table : tables.values()) {
-      // checksum += table.checkSum();
-      // }
-      // TODO(stuartg): if tables edited need to update head table
-      // checkSumAdjustment
-      //Font font = new Font(this.factory, this.sfntVersion, this.digest, tables);
       this.tableBuilders = null;
       this.dataBlocks = null;
       return font;
@@ -835,42 +827,69 @@ public class Font {
 
     private Map<Integer, Table.Builder<? extends Table>> buildAllTableBuilders(
         Map<Header, WritableFontData> tableData) {
-      Map<Integer, Table.Builder<? extends Table>> builderMap =
+      Map<Integer, Table.Builder<? extends Table>> builderMap = 
         new HashMap<Integer, Table.Builder<? extends Table>>();
       Set<Header> records = tableData.keySet();
       for (Header record : records) {
-        Table.Builder<? extends Table> builder =
-          getTableBuilder(record, tableData.get(record));
+        Table.Builder<? extends Table> builder = getTableBuilder(record, tableData.get(record));
         builderMap.put(record.tag(), builder);
       }
       interRelateBuilders(builderMap);
-
       return builderMap;
     }
 
-    private Table.Builder<? extends Table> getTableBuilder(
-        Header header, WritableFontData data) {
+    private Table.Builder<? extends Table> getTableBuilder(Header header, WritableFontData data) {
       Table.Builder<? extends Table> builder = Table.Builder.getBuilder(header, data);
       return builder;
     }
 
-    private Map<Integer, Table> buildTablesFromBuilders(Font font,
+    private static Map<Integer, Table> buildTablesFromBuilders(Font font,
         Map<Integer, Table.Builder<? extends Table>> builderMap) {
       Map<Integer, Table> tableMap = new TreeMap<Integer, Table>();
 
       interRelateBuilders(builderMap);
 
+      long fontChecksum = 0;
+      boolean tablesChanged = false;
+      FontHeaderTable.Builder headerTableBuilder = null;
+      
       // now build all the tables
       for (Table.Builder<? extends Table> builder : builderMap.values()) {
         Table table = null;
+        if (Tag.isHeaderTable(builder.header().tag())) {
+          headerTableBuilder = (FontHeaderTable.Builder) builder;
+          continue;
+        }
         if (builder.readyToBuild()) {
+          tablesChanged |= builder.changed();
           table = builder.build();
         }
         if (table == null) {
           throw new RuntimeException("Unable to build table - " + builder);
         }
+        long tableChecksum = table.calculatedChecksum();
+        fontChecksum += tableChecksum;
         tableMap.put(table.header().tag(), table);
       }
+      
+      // now fix up the header table
+      Table headerTable = null;
+      if (headerTableBuilder != null) {
+        if (tablesChanged) {
+          headerTableBuilder.setFontChecksum(fontChecksum);
+        }
+        if (headerTableBuilder.readyToBuild()) {
+          tablesChanged |= headerTableBuilder.changed();
+          headerTable = headerTableBuilder.build();
+        }
+        if (headerTable == null) {
+          throw new RuntimeException("Unable to build table - " + headerTableBuilder);
+        }
+        fontChecksum += headerTable.calculatedChecksum();
+        tableMap.put(headerTable.header().tag(), headerTable);
+      }
+      
+      font.checksum = fontChecksum & 0xffffffffL;
       return tableMap;
     }
 
@@ -913,7 +932,7 @@ public class Font {
         if (maxProfileBuilder != null) {
           hdmxTableBuilder.setNumGlyphs(maxProfileBuilder.numGlyphs());
         }
-      }
+      }      
     }
 
     private SortedSet<Header> readHeader(FontInputStream is) throws IOException {

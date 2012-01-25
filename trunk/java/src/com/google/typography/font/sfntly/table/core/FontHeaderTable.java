@@ -31,7 +31,24 @@ import java.util.EnumSet;
  * @author Stuart Gill
  */
 public final class FontHeaderTable extends Table {
+  
+  /**
+   * Checksum adjustment base value. To compute the checksum adjustment: 
+   * 1) set it to 0; 2) sum the entire font as ULONG, 3) then store 0xB1B0AFBA - sum.
+   */
+  public static final long CHECKSUM_ADJUSTMENT_BASE = 0xB1B0AFBAL;
+  
+  /**
+   * Magic number value stored in the magic number field.
+   */
+  public static final long MAGIC_NUMBER = 0x5F0F3CF5L;
 
+  /**
+   * The ranges to use for checksum calculation.
+   */
+  private static final int[] CHECKSUM_RANGES = 
+    new int[] {0, Offset.checkSumAdjustment.offset, Offset.magicNumber.offset};
+  
   /**
    * Offsets to specific elements in the underlying data. These offsets are relative to the
    * start of the table or the start of sub-blocks within the table.
@@ -412,7 +429,9 @@ public final class FontHeaderTable extends Table {
   }
 
   public static class Builder extends TableBasedTableBuilder<FontHeaderTable> {
-
+    private boolean fontChecksumSet = false;
+    private long fontChecksum = 0;
+    
     /**
      * Create a new builder using the header information and data provided.
      *
@@ -426,15 +445,68 @@ public final class FontHeaderTable extends Table {
     
     protected Builder(Header header, WritableFontData data) {
       super(header, data);
+      data.setCheckSumRanges(0, Offset.checkSumAdjustment.offset, Offset.magicNumber.offset);
     }
 
     protected Builder(Header header, ReadableFontData data) {
       super(header, data);
+      data.setCheckSumRanges(FontHeaderTable.CHECKSUM_RANGES);
+    }
+
+    @Override
+    protected boolean subReadyToSerialize() {
+      if (this.dataChanged()) {
+        ReadableFontData data = this.internalReadData();
+        data.setCheckSumRanges(FontHeaderTable.CHECKSUM_RANGES);
+      }
+      if (this.fontChecksumSet) {
+        ReadableFontData data = this.internalReadData();
+        data.setCheckSumRanges(FontHeaderTable.CHECKSUM_RANGES);
+        long checksumAdjustment = 
+          FontHeaderTable.CHECKSUM_ADJUSTMENT_BASE - (this.fontChecksum + data.checksum());
+        this.setCheckSumAdjustment(checksumAdjustment);
+      }
+      return super.subReadyToSerialize();
     }
 
     @Override
     protected FontHeaderTable subBuildTable(ReadableFontData data) {
-      return new FontHeaderTable(this.header(), data);      
+      return new FontHeaderTable(this.header(), data);
+    }
+
+    /**
+     * Sets the font checksum to be used when calculating the the checksum
+     * adjustment for the header table during build time.
+     * 
+     * The font checksum is the sum value of all tables but the font header
+     * table. If the font checksum has been set then further setting will be
+     * ignored until the font check sum has been cleared with
+     * {@link #clearFontChecksum()}. Most users will never need to set this. It
+     * is used when the font is being built. If set by a client it can interfere
+     * with that process.
+     * 
+     * @param checksum
+     *          the font checksum
+     */
+    public void setFontChecksum(long checksum) {
+      if (this.fontChecksumSet) {
+        return;
+      }
+      this.fontChecksumSet = true;
+      this.fontChecksum = checksum;
+    }
+    
+    /**
+     * Clears the font checksum to be used when calculating the the checksum
+     * adjustment for the header table during build time.
+     * 
+     * The font checksum is the sum value of all tables but the font header
+     * table. If the font checksum has been set then further setting will be
+     * ignored until the font check sum has been cleared.
+     * 
+     */
+    public void clearFontChecksum() {
+      this.fontChecksumSet = false;
     }
 
     public int tableVersion() {

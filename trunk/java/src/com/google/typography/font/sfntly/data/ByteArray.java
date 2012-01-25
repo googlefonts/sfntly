@@ -38,6 +38,8 @@ abstract class ByteArray<T extends ByteArray<T>> {
   private boolean growable;
 
   /**
+   * Constructor.
+   * 
    * @param filledLength the length that is "filled" and readable counting from the offset
    * @param storageLength the maximum storage size of the underlying data
    * @param growable is the storage growable - storageLength is the maximum growable size
@@ -49,6 +51,8 @@ abstract class ByteArray<T extends ByteArray<T>> {
   }
 
   /**
+   * Constructor.
+   * 
    * @param filledLength the length that is "filled" and readable counting from the offset
    * @param storageLength the maximum storage size of the underlying data
    */
@@ -193,9 +197,8 @@ abstract class ByteArray<T extends ByteArray<T>> {
    *
    * @param array the destination
    * @return the number of bytes copied
-   * @throws IOException
    */
-  public int copyTo(ByteArray<? extends ByteArray<?>> array) throws IOException {
+  public int copyTo(ByteArray<? extends ByteArray<?>> array) {
     return copyTo(array, 0, this.length());
   }
 
@@ -206,10 +209,9 @@ abstract class ByteArray<T extends ByteArray<T>> {
    * @param offset the offset in this ByteArray to start copying from
    * @param length the maximum length in bytes to copy
    * @return the number of bytes copied
-   * @throws IOException
    */
   public int 
-  copyTo(ByteArray<? extends ByteArray<?>> array, int offset, int length) throws IOException {
+  copyTo(ByteArray<? extends ByteArray<?>> array, int offset, int length) {
     return this.copyTo(0, array, offset, length);
   }
 
