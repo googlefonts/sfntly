@@ -18,6 +18,8 @@
     <mkdir dir="${dist_sfntdump.dir}" />
     <jar destfile="${dist_sfntdump.dir}/sfntdump.jar" basedir="${classes.dir}" includes="com/google/typography/font/sfntly/sample/sfntdump/**">
       <zipfileset src="${dist_lib.dir}/sfntly.jar" />
+      <zipfileset src="${lib.dir}/icu4j-charset-4_8_1_1.jar" />
+      <zipfileset src="${lib.dir}/icu4j-4_8_1_1.jar" />
       <manifest>
         <attribute name="Main-Class" value="com.google.typography.font.sfntly.sample.sfntdump.SfntDump"/>
       </manifest>
