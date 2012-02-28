@@ -313,6 +313,11 @@ bool InitializeBitmapBuilder(EbdtTable::Builder* ebdt, EblcTable::Builder* eblc,
     IntegerList removed_indexes;
     BitmapGlyphInfoMap info_map;
     for (size_t j = 0; j < index_builders->size(); ++j) {
+      if ((*index_builders)[j] == NULL) {
+        // Subtable is malformed, let's just skip it.
+        removed_indexes.push_back(j);
+        continue;
+      }
       int32_t first_glyph_id = (*index_builders)[j]->first_glyph_index();
       int32_t last_glyph_id = (*index_builders)[j]->last_glyph_index();
       if (!HasOverlap(first_glyph_id, last_glyph_id, glyph_ids)) {
