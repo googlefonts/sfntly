@@ -168,6 +168,9 @@ IndexSubTableFormat4::Builder::CreateBuilder(ReadableFontData* data,
   ReadableFontDataPtr new_data;
   new_data.Attach(down_cast<ReadableFontData*>(
       data->Slice(index_sub_table_offset, length)));
+  if (new_data == NULL) {
+    return NULL;
+  }
   IndexSubTableFormat4BuilderPtr output =
       new IndexSubTableFormat4::Builder(new_data,
                                         first_glyph_index,
