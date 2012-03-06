@@ -1,0 +1,29 @@
+#summary Using Rietveld for sfntly code reviews.
+#labels Phase-Implementation,rietveld,review,issues
+
+=sfntly Code Review=
+1.upload your changes to Rietveld
+  * from the root directory of your SVN copy run upload.py
+  * authenticate as necessary
+  * enter a subject line using the format "ticket:### description of submission"
+<br>2. go to Rietveld
+  * http://codereview.appspot.com/mine
+  * click on the ticket the change you just submitted
+    * "Edit Issue"
+    * add reviewers
+      * at least one reviewer should be a sfntly project committer
+    * add any message
+    * click "Publish All My Drafts"
+<br>3. Wait for feedback
+  * exchange comments with the reviewer
+<br>4. Correct any issues
+  * make changes in your local SVN copy
+  * after doing so update the code review
+  * run upload.py -i ISSUE#
+    * the ISSUE# is the number you see on the Rietveld code review site
+  * repeat as necessary
+<br>5. Reviewer should set the overall issue comment to "LGTM" when all is ok
+  * submitter should not submit code until review is complete
+<br>6. Once the review has been completed submit the changes to sfntly using the regular svn commands
+
+<br>7. Mark as fixed any open issue related to this and note the change list
