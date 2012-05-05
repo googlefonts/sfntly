@@ -174,7 +174,7 @@ public abstract class FontDataTable {
         }
         int size = subDataSizeToSerialize();
         WritableFontData newData = WritableFontData.createWritableFontData(size);
-        this.subSerialize(newData);
+        int serializedSize = this.subSerialize(newData);
         data = newData;
       }
       

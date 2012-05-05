@@ -44,8 +44,14 @@ public abstract class FontData {
     LONGDATETIME(8),
     Tag(4),
     GlyphID(2),
-    Offset(2);
+    Offset(2),
 
+    // CFF data types
+    Card8(1),
+    Card16(2),
+    OffSize(1),
+    SID(2);
+    
     private final int size;
     
     private DataSize(int size) {
@@ -113,8 +119,9 @@ public abstract class FontData {
    * @return true if the bounding range was successful; false otherwise
    */
   public boolean bound(int offset, int length) {
-    if ((offset + length > this.size()) || offset < 0 || length < 0) {
-      return false;
+    if ((offset + (length == FontData.GROWABLE_SIZE ? 0 : length) > this.size()) || offset < 0 || length < 0) {
+      throw new RuntimeException("Unable to bind FontData.");
+      //return false;
     }
     this.boundOffset += offset;
     this.boundLength = length;
@@ -132,7 +139,8 @@ public abstract class FontData {
    */
   public boolean bound(int offset) {
     if (offset > this.size() || offset < 0) {
-      return false;
+      throw new RuntimeException("Unable to bind FontData.");
+      //return false;
     }
     this.boundOffset += offset;
     return true;

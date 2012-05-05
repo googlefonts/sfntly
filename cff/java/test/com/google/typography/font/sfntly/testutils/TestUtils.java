@@ -106,6 +106,15 @@ public class TestUtils {
     return s;
   }
 
+  public static void dumpByteArray(byte[] byteArray) {
+    for (int i = 0; i < byteArray.length; i++) {
+      System.out.printf("%02x ", byteArray[i]);
+      if ((i > 0) && ((i+1) % 16 == 0)) {
+        System.out.println();
+      }
+    }
+  }
+  
   /**
    * Calculate an OpenType checksum from the array.
    * @param b the array to calculate checksum on

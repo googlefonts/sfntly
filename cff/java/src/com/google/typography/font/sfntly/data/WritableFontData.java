@@ -370,6 +370,38 @@ public final class WritableFontData extends ReadableFontData {
     return 8;
   }
 
+  //*** CFF Data Types
+  
+  public int writeCard8(int index, byte card) {
+    return this.writeByte(index, card);
+  }
+  
+  public int writeCard16(int index, int card) {
+    return this.writeShort(index, card);
+  }
+  
+  public int writeOffSize(int index, int offSize) {
+    return this.writeByte(index, (byte) offSize);
+  }
+  
+  public int writeOffset(int index, int offSize, int offset) {
+    switch (offSize) {
+      case 1:
+        return this.writeByte(index, (byte) offset);
+      case 2:
+        return this.writeShort(index, offset);
+      case 3:
+        return this.writeUInt24(index, offset);
+      case 4:
+        return this.writeULong(index, offset);
+    }
+    throw new IllegalArgumentException("Offset size was an illegal value - " + offSize);
+  }
+  
+  public int writeSID(int index, int sid) {
+    return this.writeUShort(index, sid);
+  }
+  
   /**
    * Copy from the InputStream into this FontData.
    *

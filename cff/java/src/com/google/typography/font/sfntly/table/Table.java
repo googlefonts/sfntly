@@ -22,6 +22,7 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.bitmap.EbdtTable;
 import com.google.typography.font.sfntly.table.bitmap.EblcTable;
 import com.google.typography.font.sfntly.table.bitmap.EbscTable;
+import com.google.typography.font.sfntly.table.cff.CffTable;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 import com.google.typography.font.sfntly.table.core.HorizontalDeviceMetricsTable;
@@ -210,8 +211,8 @@ public class Table extends FontDataTable {
         return LocaTable.Builder.createBuilder(header, tableData);
       } else if (tag == Tag.prep) {
         return ControlProgramTable.Builder.createBuilder(header, tableData);
-        // } else if (tag == CFF) {
-        // break;
+      } else if (tag == Tag.CFF) {
+        return CffTable.Builder.createBuilder(header, tableData);
         // } else if (tag == VORG) {
         // break;
       } else if (tag == Tag.EBDT) {
