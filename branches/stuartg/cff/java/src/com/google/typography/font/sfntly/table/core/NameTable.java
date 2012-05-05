@@ -52,7 +52,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
    * Offsets to specific elements in the underlying data. These offsets are relative to the
    * start of the table or the start of sub-blocks within the table.
    */
-  public enum Offset {
+  enum Offset {
     format(0),
     count(2),
     stringOffset(4),

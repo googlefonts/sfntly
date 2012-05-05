@@ -408,6 +408,9 @@ public class SfntDump {
         if (this.dumpEblc) {
           System.out.println("\n------ EBLC Table");
           EblcTable eblcTable = font.getTable(Tag.EBLC);
+          if (eblcTable == null) {
+            eblcTable = font.getTable(Tag.bloc);
+          }
           System.out.println(eblcTable.toString());
         }
 
@@ -435,14 +438,13 @@ public class SfntDump {
         GlyphTable glyphTable = font.getTable(Tag.glyf);
         if (locaTable == null) {
           canDumpGlyphs = false;
-          System.out.println("PROBLEM: font has no 'loca' table.");
         }
         if (glyphTable == null) {
           canDumpGlyphs = false;
-          System.out.println("PROBLEM: font has no 'glyf' table.");
         }
 
         if (canDumpGlyphs && this.glyphSet != null) {
+          System.out.println("PROBLEM: font has no 'glyf' and/or 'loca' table.");
           System.out.println("\n------ Glyphs");
           for (int glyphId = this.glyphSet.nextSetBit(0); 
           glyphId >= 0; glyphId = this.glyphSet.nextSetBit(glyphId+1)) {

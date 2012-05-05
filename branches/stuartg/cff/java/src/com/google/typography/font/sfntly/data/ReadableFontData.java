@@ -525,6 +525,38 @@ public class ReadableFontData extends FontData {
     return this.readUShort(index);
   }
 
+  //*** CFF Data Types
+  
+  public int readCard8(int index) {
+    return this.readUByte(index);
+  }
+  
+  public int readCard16(int index) {
+    return this.readUShort(index);
+  }
+  
+  public int readOffSize(int index) {
+    return this.readUByte(index);
+  }
+  
+  public int readOffset(int index, int offSize) {
+    switch (offSize) {
+      case 1:
+        return this.readUByte(index);
+      case 2:
+        return this.readUShort(index);
+      case 3:
+        return this.readUInt24(index);
+      case 4:
+        return this.readULongAsInt(index);
+    }
+    throw new IllegalArgumentException("Offset size was an illegal value - " + offSize);
+  }
+  
+  public int readSID(int index) {
+    return this.readUShort(index);
+  }
+  
   /**
    * Copy the FontData to an OutputStream.
    *
@@ -543,6 +575,9 @@ public class ReadableFontData extends FontData {
    * @return number of bytes copied
    */
   public int copyTo(WritableFontData wfd) {
+    int a = wfd.boundOffset(0);
+    int b = this.boundOffset(0);
+    int c = this.length();
     return this.array.copyTo(wfd.boundOffset(0), wfd.array, this.boundOffset(0), this.length());
   }
 

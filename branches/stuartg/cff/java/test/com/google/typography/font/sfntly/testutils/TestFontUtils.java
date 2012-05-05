@@ -20,6 +20,7 @@ import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.FontDataTable;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
@@ -35,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -244,5 +246,21 @@ public class TestFontUtils {
     otfFactory.fingerprintFont(fingerprint);
     Builder[] builder = otfFactory.loadFontsForBuilding(is);
     return builder[0];
+  }
+  
+  public static void dumpFontData(ReadableFontData data, PrintStream ps) {
+    dumpFontData(data, ps, -1, false);
+  }
+  
+  public static void dumpFontData(ReadableFontData data, PrintStream ps, int limit, boolean rowHeader) {
+    for (int i = 0; i < data.length() && ((limit != -1) ? (i < limit) : true); i++) {
+      if (rowHeader && i % 16 == 0) {
+        System.out.printf("0x%06x - ", i);
+      }
+      System.out.printf("%02x ", data.readUByte(i));
+      if ((i > 0) && ((i+1) % 16 == 0)) {
+        ps.println();
+      }
+    }    
   }
 }

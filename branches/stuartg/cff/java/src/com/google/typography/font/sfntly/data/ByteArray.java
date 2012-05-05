@@ -232,6 +232,10 @@ abstract class ByteArray<T extends ByteArray<T>> {
     int bufferLength = Math.min(b.length, length);
     while ((bytesRead = this.get(index + srcOffset, b, 0, bufferLength)) > 0) {
       int bytesWritten = array.put(index + dstOffset, b, 0, bytesRead);
+      if (bytesWritten != bytesRead) {
+        throw new RuntimeException("bytesWritten != bytesRead");
+      }
+      assert(bytesWritten == bytesRead);
       index += bytesRead;
       length -= bytesRead;
       bufferLength = Math.min(b.length, length);
