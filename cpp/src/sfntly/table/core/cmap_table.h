@@ -488,9 +488,7 @@ public:
 
     int32_t seg_count_;
     int32_t start_code_offset_;
-    int32_t end_code_offset_;
     int32_t id_delta_offset_;
-    int32_t id_range_offset_offset_;
     int32_t glyph_id_array_offset_;
   };
 
