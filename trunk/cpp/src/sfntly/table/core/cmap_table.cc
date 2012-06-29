@@ -596,7 +596,6 @@ CMapTable::CMapFormat4::CMapFormat4(ReadableFontData* data,
     : CMap(data, CMapFormat::kFormat4, cmap_id),
       seg_count_(SegCount(data)),
       start_code_offset_(StartCodeOffset(seg_count_)),
-      end_code_offset_(Offset::kFormat4EndCount),
       id_delta_offset_(IdDeltaOffset(seg_count_)),
       glyph_id_array_offset_(GlyphIdArrayOffset(seg_count_)) {
 }

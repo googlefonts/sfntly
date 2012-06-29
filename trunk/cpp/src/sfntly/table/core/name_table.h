@@ -480,7 +480,6 @@ class NameTable : public SubTableContainerTable, public RefCounted<NameTable> {
               int32_t name_id, const ByteVector* name_bytes);
 
     NameEntryId name_entry_id_;
-    int32_t length_;
     ByteVector name_bytes_;
 
     friend class NameEntryBuilder;

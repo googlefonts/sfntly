@@ -70,7 +70,6 @@ class GlyphTable : public SubTableContainerTable,
       virtual int32_t SubSerialize(WritableFontData* new_data);
 
      private:
-      int32_t format_;
       friend class GlyphTable::Builder;
     };
 
