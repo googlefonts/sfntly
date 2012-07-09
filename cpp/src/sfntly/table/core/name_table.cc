@@ -472,7 +472,9 @@ void NameTable::NameAsBytes(int32_t index, ByteVector* b) {
   int32_t length = NameLength(index);
   b->clear();
   b->resize(length);
-  data_->ReadBytes(NameOffset(index), &((*b)[0]), 0, length);
+  if (length > 0) {
+    data_->ReadBytes(NameOffset(index), &((*b)[0]), 0, length);
+  }
 }
 
 void NameTable::NameAsBytes(int32_t platform_id,
@@ -674,7 +676,7 @@ void NameTable::ConvertToNameBytes(const UChar* name,
 UChar* NameTable::ConvertFromNameBytes(ByteVector* name_bytes,
                                        int32_t platform_id,
                                        int32_t encoding_id) {
-  if (name_bytes == NULL) {
+  if (name_bytes == NULL || name_bytes->size() == 0) {
     return NULL;
   }
   UConverter* cs = GetCharset(platform_id, encoding_id);

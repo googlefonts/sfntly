@@ -112,11 +112,14 @@ bool HasName(const char* font_name, Font* font) {
       case NameId::kPreferredSubfamily:
       case NameId::kWWSFamilyName:
       case NameId::kWWSSubfamilyName: {
+        UChar* name_part = name_table->Name(i);
+        if (name_part == NULL) {
+          continue;
+        }
         int32_t hash_code = HashCode(name_table->PlatformId(i),
                                      name_table->EncodingId(i),
                                      name_table->LanguageId(i),
                                      name_table->NameId(i));
-        UChar* name_part = name_table->Name(i);
         ConstructName(name_part, &(names[hash_code]), name_table->NameId(i));
         delete[] name_part;
         break;
