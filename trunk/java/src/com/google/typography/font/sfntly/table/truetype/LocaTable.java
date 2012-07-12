@@ -75,8 +75,8 @@ public final class LocaTable extends Table {
 
   /**
    * Get the length of the data in the glyph table for the specified glyph id.
-   * @param glyphId the glyph id to get the offset for;
-   *  must be less than or equal to the number of glyphs
+   * @param glyphId the glyph id to get the offset for; must be greater than or
+   *        equal to 0 and less than the number of glyphs in the font
    * @return the length of the data in the glyph table for the specified glyph id
    */
   public int glyphLength(int glyphId) {
