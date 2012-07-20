@@ -249,6 +249,25 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
   }
 
   /**
+   * Returns the index of the cmap with the given CMapId in the table or -1 if a cmap with the
+   * CMapId does not exist in the table.
+   *
+   * @param id the id of the cmap to get the index for; this value cannot be null
+   * @return the index of the cmap in the table or -1 if the cmap with the CMapId does not exist in
+   *         the table
+   */
+  // TODO Modify the iterator to be index-based and used here
+  public int getCmapIndex(CMapId id) {
+    for (int index = 0; index < numCMaps(); index++) {
+      if (id.equals(cmapId(index))) {
+        return index;
+      }
+    }
+
+    return -1;
+  }
+
+  /**
    * Gets the offset in the table data for the encoding record for the cmap with
    * the given index. The offset is from the beginning of the table.
    *
