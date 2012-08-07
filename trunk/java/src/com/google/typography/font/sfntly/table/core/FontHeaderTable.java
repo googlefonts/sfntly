@@ -234,7 +234,7 @@ public final class FontHeaderTable extends Table {
    * @return the x min
    */
   public int xMin() {
-    return this.data.readUShort(Offset.xMin.offset);
+    return this.data.readShort(Offset.xMin.offset);
   }
 
   /**
@@ -243,7 +243,7 @@ public final class FontHeaderTable extends Table {
    * @return the y min
    */
   public int yMin() {
-    return this.data.readUShort(Offset.yMin.offset);
+    return this.data.readShort(Offset.yMin.offset);
   }
 
   /**
@@ -252,7 +252,7 @@ public final class FontHeaderTable extends Table {
    * @return the xmax
    */
   public int xMax() {
-    return this.data.readUShort(Offset.xMax.offset);
+    return this.data.readShort(Offset.xMax.offset);
   }
 
   /**
@@ -261,7 +261,7 @@ public final class FontHeaderTable extends Table {
    * @return the ymax
    */
   public int yMax() {
-    return this.data.readUShort(Offset.yMax.offset);
+    return this.data.readShort(Offset.yMax.offset);
   }
 
   /**
