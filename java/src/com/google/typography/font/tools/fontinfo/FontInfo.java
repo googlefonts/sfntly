@@ -3,12 +3,22 @@
 package com.google.typography.font.tools.fontinfo;
 
 import com.google.typography.font.sfntly.Font;
+import com.google.typography.font.sfntly.Font.MacintoshEncodingId;
+import com.google.typography.font.sfntly.Font.UnicodeEncodingId;
+import com.google.typography.font.sfntly.Font.WindowsEncodingId;
 import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.Font.PlatformId;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 import com.google.typography.font.sfntly.table.core.HorizontalHeaderTable;
+import com.google.typography.font.sfntly.table.core.NameTable;
+import com.google.typography.font.sfntly.table.core.NameTable.MacintoshLanguageId;
+import com.google.typography.font.sfntly.table.core.NameTable.NameEntry;
+import com.google.typography.font.sfntly.table.core.NameTable.NameId;
+import com.google.typography.font.sfntly.table.core.NameTable.UnicodeLanguageId;
+import com.google.typography.font.sfntly.table.core.NameTable.WindowsLanguageId;
 import com.google.typography.font.sfntly.table.core.OS2Table;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
@@ -137,6 +147,55 @@ public class FontInfo {
   }
 
   /**
+   * Gets a list of entries in the name table of a font. These entries contain
+   * information related to the font, such as the font name, style name, and
+   * copyright notices.
+   *
+   * @param font
+   *          the source font
+   * @return a list of entries in the name table of the font
+   */
+  public static DataDisplayTable listNameEntries(Font font) {
+    String[] header = { "Platform", "Encoding", "Language", "Name", "Value" };
+    Align[] displayAlignment = { Align.Left, Align.Left, Align.Left, Align.Left, Align.Left };
+    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
+    table.setAlignment(Arrays.asList(displayAlignment));
+
+    NameTable nameTable = (NameTable) getTable(font, Tag.name);
+    for (NameEntry entry : nameTable) {
+
+      String eidEntry = ""; // Platform-specific encoding
+      String lidEntry = ""; // Language
+
+      switch (PlatformId.valueOf(entry.platformId())) {
+      case Unicode:
+        eidEntry = UnicodeEncodingId.valueOf(entry.encodingId()).toString();
+        lidEntry = UnicodeLanguageId.valueOf(entry.languageId()).toString();
+        break;
+      case Macintosh:
+        eidEntry = MacintoshEncodingId.valueOf(entry.encodingId()).toString();
+        lidEntry = MacintoshLanguageId.valueOf(entry.languageId()).toString();
+        break;
+      case Windows:
+        eidEntry = WindowsEncodingId.valueOf(entry.encodingId()).toString();
+        lidEntry = WindowsLanguageId.valueOf(entry.languageId()).toString();
+        break;
+      default:
+        break;
+      }
+
+      String[] data = { String.format(
+          "%s (id=%d)", PlatformId.valueOf(entry.platformId()).toString(), entry.platformId()),
+          String.format("%s (id=%d)", eidEntry, entry.encodingId()),
+          String.format("%s (id=%d)", lidEntry, entry.languageId()),
+          NameId.valueOf(entry.nameId()).toString(), entry.name() };
+      table.add(Arrays.asList(data));
+    }
+
+    return table;
+  }
+
+  /**
    * Gets a list containing the platform ID, encoding ID, and format of all the
    * cmaps in a font
    *
@@ -196,7 +255,7 @@ public class FontInfo {
    * @throws UnsupportedOperationException
    *           if font does not contain a UCS-4 or UCS-2 cmap
    */
-  public static DataDisplayTable charList(Font font) {
+  public static DataDisplayTable listChars(Font font) {
     String[] header = { "Code point", "Name in font", "Unicode-designated name for code point" };
     Align[] displayAlignment = { Align.Right, Align.Left, Align.Left };
     DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
@@ -225,7 +284,56 @@ public class FontInfo {
 
   // Gets the code point and name of all the characters in the provided string
   // for the font
-  // TODO public static DataDisplayTable charList(Font font, String charString)
+  // TODO public static DataDisplayTable listChars(Font font, String charString)
+  
+  /**
+   * Gets a list of minimum and maximum x and y dimensions for the glyphs in the
+   * font. This is based on the reported min and max values for each glyph and
+   * not on the actual outline sizes.
+   *
+   * @param font
+   *          the source font
+   * @return a list of glyph dimensions for the font
+   */
+  public static DataDisplayTable listGlyphDimensionBounds(Font font) {
+    String[] header = { "Dimension", "Value" };
+    Align[] displayAlignment = { Align.Left, Align.Right };
+    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
+    table.setAlignment(Arrays.asList(displayAlignment));
+
+    LocaTable locaTable = getLocaTable(font);
+    GlyphTable glyfTable = getGlyphTable(font);
+
+    // Initialise boundaries
+    int xMin = Integer.MAX_VALUE;
+    int yMin = Integer.MAX_VALUE;
+    int xMax = Integer.MIN_VALUE;
+    int yMax = Integer.MIN_VALUE;
+
+    // Find boundaries
+    for (int i = 0; i < locaTable.numGlyphs(); i++) {
+      Glyph glyph = glyfTable.glyph(locaTable.glyphOffset(i), locaTable.glyphLength(i));
+      if (glyph.xMin() < xMin) {
+        xMin = glyph.xMin();
+      }
+      if (glyph.yMin() < yMin) {
+        yMin = glyph.yMin();
+      }
+      if (glyph.xMax() > xMax) {
+        xMax = glyph.xMax();
+      }
+      if (glyph.yMax() > yMax) {
+        yMax = glyph.yMax();
+      }
+    }
+
+    table.add(Arrays.asList(new String[] { "xMin", String.format("%d", xMin) }));
+    table.add(Arrays.asList(new String[] { "yMin", String.format("%d", yMin) }));
+    table.add(Arrays.asList(new String[] { "xMax", String.format("%d", xMax) }));
+    table.add(Arrays.asList(new String[] { "yMax", String.format("%d", yMax) }));
+
+    return table;
+  }
 
   /**
    * Gets the size of hinting instructions in the glyph table, both in bytes and
