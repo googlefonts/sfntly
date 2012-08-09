@@ -7,6 +7,10 @@ import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
+import com.google.typography.font.sfntly.table.core.FontHeaderTable;
+import com.google.typography.font.sfntly.table.core.HorizontalHeaderTable;
+import com.google.typography.font.sfntly.table.core.OS2Table;
+import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
@@ -39,7 +43,54 @@ public class FontInfo {
   private static final DecimalFormat twoDecimalPlaces = new DecimalFormat("#.##");
 
   /**
-   * Returns a list of tables in the font as well as their sizes.
+   * Gets a list of information regarding various dimensions about the given
+   * font from the head, hhea, and OS/2 font tables
+   *
+   * @param font
+   *          the source font
+   * @return a list of dimensional information about the font
+   */
+  public static DataDisplayTable listFontMetrics(Font font) {
+    String[] header = { "Name", "Value" };
+    Align[] displayAlignment = { Align.Left, Align.Left };
+    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
+    table.setAlignment(Arrays.asList(displayAlignment));
+
+    // Retrieve necessary tables
+    FontHeaderTable headTable = (FontHeaderTable) getTable(font, Tag.head);
+    HorizontalHeaderTable hheaTable = (HorizontalHeaderTable) getTable(font, Tag.hhea);
+    OS2Table os2Table = (OS2Table) getTable(font, Tag.OS_2);
+
+    table.add(Arrays.asList(
+        new String[] { "Units per em", String.format("%d", headTable.unitsPerEm()) }));
+    table.add(Arrays.asList(new String[] {
+        "(xMin, yMin)", String.format("(%d, %d)", headTable.xMin(), headTable.yMin()) }));
+    table.add(Arrays.asList(new String[] {
+        "(xMax, yMax)", String.format("(%d, %d)", headTable.xMax(), headTable.yMax()) }));
+    table.add(Arrays.asList(new String[] {
+        "Smallest readable size (px per em)", String.format("%d", headTable.lowestRecPPEM()) }));
+    table.add(
+        Arrays.asList(new String[] { "hhea ascender", String.format("%d", hheaTable.ascender()) }));
+    table.add(Arrays.asList(
+        new String[] { "hhea descender", String.format("%d", hheaTable.descender()) }));
+    table.add(Arrays.asList(
+        new String[] { "hhea typographic line gap", String.format("%d", hheaTable.lineGap()) }));
+    table.add(Arrays.asList(
+        new String[] { "OS/2 Windows ascender", String.format("%d", os2Table.usWinAscent()) }));
+    table.add(Arrays.asList(
+        new String[] { "OS/2 Windows descender", String.format("%d", os2Table.usWinDescent()) }));
+    table.add(Arrays.asList(new String[] {
+        "OS/2 typographic ascender", String.format("%d", os2Table.sTypoAscender()) }));
+    table.add(Arrays.asList(new String[] {
+        "OS/2 typographic ascender", String.format("%d", os2Table.sTypoDescender()) }));
+    table.add(Arrays.asList(new String[] {
+        "OS/2 typographic line gap", String.format("%d", os2Table.sTypoLineGap()) }));
+
+    return table;
+  }
+
+  /**
+   * Gets a list of tables in the font as well as their sizes.
    *
    *  This function returns a list of tables in the given font as well as their
    * sizes, both in bytes and as fractions of the overall font size. The
@@ -70,15 +121,15 @@ public class FontInfo {
     while (fontTableIter.hasNext()) {
       Table fontTable = fontTableIter.next();
       String name = Tag.stringValue(fontTable.headerTag());
-      String checksum = "0x"
-          + String.format("%0" + CHECKSUM_LENGTH + "x", fontTable.headerChecksum());
+      String checksum = String.format("0x%0" + CHECKSUM_LENGTH + "x", fontTable.headerChecksum());
       int length = fontTable.headerLength();
       double lengthPercent = length * 100.0 / fontSize;
       int offset = fontTable.headerOffset();
 
       // Add table data
       String[] data = { name, checksum,
-          length + " (" + twoDecimalPlaces.format(lengthPercent) + "%)", "" + offset };
+          String.format("%s (%s%%)", length, twoDecimalPlaces.format(lengthPercent)),
+          String.format("%d", offset) };
       table.add(Arrays.asList(data));
     }
 
@@ -86,7 +137,32 @@ public class FontInfo {
   }
 
   /**
-   * Returns the number of valid characters in the given font
+   * Gets a list containing the platform ID, encoding ID, and format of all the
+   * cmaps in a font
+   *
+   * @param font
+   *          the source font
+   * @return a list of information about the cmaps in the font
+   */
+  public static DataDisplayTable listCmaps(Font font) {
+    String[] header = { "Platform ID", "Encoding ID", "Format" };
+    Align[] displayAlignment = { Align.Right, Align.Right, Align.Right };
+    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
+    table.setAlignment(Arrays.asList(displayAlignment));
+
+    // Add information about each individual cmap in the table
+    CMapTable cmapTable = getCMapTable(font);
+    for (CMap cmap : cmapTable) {
+      String[] data = { String.format("%d", cmap.platformId()),
+          String.format("%d", cmap.encodingId()), String.format("%d", cmap.format()) };
+      table.add(Arrays.asList(data));
+    }
+
+    return table;
+  }
+
+  /**
+   * Gets the number of valid characters in the given font
    *
    * @param font
    *          the source font
@@ -110,8 +186,8 @@ public class FontInfo {
   }
 
   /**
-   * Returns a list of code points of valid characters and their names in the
-   * given font.
+   * Gets a list of code points of valid characters and their names in the given
+   * font.
    *
    * @param font
    *          the source font
@@ -121,16 +197,25 @@ public class FontInfo {
    *           if font does not contain a UCS-4 or UCS-2 cmap
    */
   public static DataDisplayTable charList(Font font) {
-    String[] header = { "Code point", "Name" };
-    Align[] displayAlignment = { Align.Right, Align.Left };
+    String[] header = { "Code point", "Name in font", "Unicode-designated name for code point" };
+    Align[] displayAlignment = { Align.Right, Align.Left, Align.Left };
     DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
     table.setAlignment(Arrays.asList(displayAlignment));
 
     // Iterate through all code points
     CMap cmap = getUCSCMap(font);
+    PostScriptTable postTable = (PostScriptTable) getTable(font, Tag.post);
     for (int charId : cmap) {
-      if (cmap.glyphId(charId) != CMapTable.NOTDEF) {
-        String[] data = { "0x" + Integer.toHexString(charId), UCharacter.getExtendedName(charId) };
+      int glyphId = cmap.glyphId(charId);
+      if (glyphId != CMapTable.NOTDEF) {
+        String name = "";
+        try {
+          name = postTable.glyphName(glyphId);
+        } catch (Exception e) {
+          // Set name to empty string for unsupported post table formats
+        }
+        String[] data = { String.format("0x%s", Integer.toHexString(charId)), name,
+            UCharacter.getExtendedName(charId) };
         table.add(Arrays.asList(data));
       }
     }
@@ -138,9 +223,13 @@ public class FontInfo {
     return table;
   }
 
+  // Gets the code point and name of all the characters in the provided string
+  // for the font
+  // TODO public static DataDisplayTable charList(Font font, String charString)
+
   /**
-   * Returns the size of hinting instructions in the glyph table, both in bytes
-   * and as a fraction of the glyph table size.
+   * Gets the size of hinting instructions in the glyph table, both in bytes and
+   * as a fraction of the glyph table size.
    *
    * @param font
    *          the source font
@@ -159,12 +248,12 @@ public class FontInfo {
     }
 
     double percentage = instrSize * 100.0 / glyfTable.headerLength();
-    return "" + instrSize + " (" + twoDecimalPlaces.format(percentage) + "% of GLYF table)";
+    return String.format("%d (%s%% of glyf table)", instrSize, twoDecimalPlaces.format(percentage));
   }
 
   /**
-   * Returns a list of glyphs in the font that are used as subglyphs and the
-   * number of times each subglyph is used as a subglyph
+   * Gets a list of glyphs in the font that are used as subglyphs and the number
+   * of times each subglyph is used as a subglyph
    *
    * @param font
    *          the source font
@@ -230,7 +319,40 @@ public class FontInfo {
   // TODO Max nesting depth
 
   /**
-   * Obtains either a UCS4 or UCS2 cmap, if available
+   * Gets the table with the specified tag for the given font
+   *
+   * @param font
+   *          the source font
+   * @param tag
+   *          the tag for the table to return
+   * @return the specified table for the given font
+   * @throws UnsupportedOperationException
+   *           if the font does not contain the table with the specified tag
+   * @see Tag
+   */
+  private static Table getTable(Font font, int tag) {
+    Table table = font.getTable(tag);
+    if (table == null) {
+      throw new RuntimeException("Font has no " + Tag.stringValue(tag) + " table");
+    }
+    return table;
+  }
+
+  /**
+   * Gets the cmap table for the given font
+   *
+   * @param font
+   *          the source font
+   * @return the cmap table for the given font
+   * @throws UnsupportedOperationException
+   *           if the font does not contain a valid cmap table
+   */
+  private static CMapTable getCMapTable(Font font) {
+    return (CMapTable) getTable(font, Tag.cmap);
+  }
+
+  /**
+   * Gets either a UCS4 or UCS2 cmap, if available
    *
    * @param font
    *          the source font
@@ -239,11 +361,7 @@ public class FontInfo {
    *           if font does not contain a UCS-4 or UCS-2 cmap
    */
   private static CMap getUCSCMap(Font font) {
-    // Obtain CMAP table
-    CMapTable cmapTable = font.getTable(Tag.cmap);
-    if (cmapTable == null) {
-      throw new RuntimeException("Font has no cmap table");
-    }
+    CMapTable cmapTable = getCMapTable(font);
 
     // Obtain the UCS-4 cmap. If it doesn't exist, then obtain the UCS-2 cmap
     CMap cmap = null;
@@ -261,7 +379,7 @@ public class FontInfo {
   }
 
   /**
-   * Returns the loca table for the given font
+   * Gets the loca table for the given font
    *
    * @param font
    *          the source font
@@ -270,15 +388,11 @@ public class FontInfo {
    *           if the font does not contain a valid loca table
    */
   private static LocaTable getLocaTable(Font font) {
-    LocaTable locaTable = font.getTable(Tag.loca);
-    if (locaTable == null) {
-      throw new UnsupportedOperationException("Font has no loca table");
-    }
-    return locaTable;
+    return (LocaTable) getTable(font, Tag.loca);
   }
 
   /**
-   * Returns the glyph table for the given font
+   * Gets the glyph table for the given font
    *
    * @param font
    *          the source font
@@ -287,10 +401,6 @@ public class FontInfo {
    *           if the font does not contain a valid glyph table
    */
   private static GlyphTable getGlyphTable(Font font) {
-    GlyphTable glyphTable = font.getTable(Tag.glyf);
-    if (glyphTable == null) {
-      throw new UnsupportedOperationException("Font has no glyf table");
-    }
-    return glyphTable;
+    return (GlyphTable) getTable(font, Tag.glyf);
   }
 }
