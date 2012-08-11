@@ -74,9 +74,9 @@ public class FontInfo {
     table.add(Arrays.asList(
         new String[] { "Units per em", String.format("%d", headTable.unitsPerEm()) }));
     table.add(Arrays.asList(new String[] {
-        "(xMin, yMin)", String.format("(%d, %d)", headTable.xMin(), headTable.yMin()) }));
+        "[xMin, xMax]", String.format("[%d, %d]", headTable.xMin(), headTable.xMax()) }));
     table.add(Arrays.asList(new String[] {
-        "(xMax, yMax)", String.format("(%d, %d)", headTable.xMax(), headTable.yMax()) }));
+        "[yMin, yMax]", String.format("[%d, %d]", headTable.yMin(), headTable.yMax()) }));
     table.add(Arrays.asList(new String[] {
         "Smallest readable size (px per em)", String.format("%d", headTable.lowestRecPPEM()) }));
     table.add(
@@ -285,7 +285,7 @@ public class FontInfo {
   // Gets the code point and name of all the characters in the provided string
   // for the font
   // TODO public static DataDisplayTable listChars(Font font, String charString)
-  
+
   /**
    * Gets a list of minimum and maximum x and y dimensions for the glyphs in the
    * font. This is based on the reported min and max values for each glyph and
@@ -328,8 +328,8 @@ public class FontInfo {
     }
 
     table.add(Arrays.asList(new String[] { "xMin", String.format("%d", xMin) }));
-    table.add(Arrays.asList(new String[] { "yMin", String.format("%d", yMin) }));
     table.add(Arrays.asList(new String[] { "xMax", String.format("%d", xMax) }));
+    table.add(Arrays.asList(new String[] { "yMin", String.format("%d", yMin) }));
     table.add(Arrays.asList(new String[] { "yMax", String.format("%d", yMax) }));
 
     return table;
@@ -368,6 +368,8 @@ public class FontInfo {
    * @return the number of glyphs in the font that are used as subglyphs of
    *         other glyphs more than once
    */
+  // TODO Add whether each subglyph is associated with a code point or not
+  // Build glyphId to code point mapping for comparison purposes
   public static DataDisplayTable subglyphFrequencyList(Font font) {
     Map<Integer, Integer> subglyphFreq = new HashMap<Integer, Integer>();
     String[] header = { "Glyph ID", "Frequency" };
@@ -414,17 +416,17 @@ public class FontInfo {
   // public static int glyphNestingDepth(Font font) {}
 
   // TODO Find the maximum glyph nexting depth in a font using the maxp table
+  // public static int glyphNestingDepthMaxp(Font font) {}
 
   // TODO Find number of code points that use simple glyphs and number of code
   // points that use composite glyphs (and provide a list of code points for
   // each one)
-
-  // TODO Find number of times a glyph is used as a subglyph (and if it
-  // corresponds to a code point)
+  // public static int numSimpleGlyphs(Font font) {}
+  // public static int listSimpleGlyphs(Font font) {}
+  // public static int numCompositeglyphs(Font font) {}
+  // public static int listCompositeGlyphs(Font font) {}
 
   // TODO Find list of glyphs which are subglyphs only (check ALL cmaps)
-
-  // TODO Max nesting depth
 
   /**
    * Gets the table with the specified tag for the given font

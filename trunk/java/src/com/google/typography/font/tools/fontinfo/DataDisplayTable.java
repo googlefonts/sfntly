@@ -164,16 +164,15 @@ public class DataDisplayTable {
     // Add header to output
     output.append(padString(header.get(0), displayAlignment.get(0), maxColLengths.get(0)));
     for (int i = 1; i < numCols; i++) {
-      output.append("  ");
-      output.append(padString(header.get(i), displayAlignment.get(i), maxColLengths.get(i)));
+      output.append("  ")
+          .append(padString(header.get(i), displayAlignment.get(i), maxColLengths.get(i)));
     }
     output.append("\n");
 
     // Add separator to output
     output.append(repeatCharacter('-', maxColLengths.get(0)));
     for (int i = 1; i < numCols; i++) {
-      output.append("  ");
-      output.append(repeatCharacter('-', maxColLengths.get(i)));
+      output.append("  ").append(repeatCharacter('-', maxColLengths.get(i)));
     }
     output.append("\n");
 
@@ -181,8 +180,8 @@ public class DataDisplayTable {
     for (List<String> row : data) {
       output.append(padString(row.get(0), displayAlignment.get(0), maxColLengths.get(0)));
       for (int i = 1; i < numCols; i++) {
-        output.append("  ");
-        output.append(padString(row.get(i), displayAlignment.get(i), maxColLengths.get(i)));
+        output.append("  ")
+            .append(padString(row.get(i), displayAlignment.get(i), maxColLengths.get(i)));
       }
       output.append("\n");
     }
@@ -223,6 +222,67 @@ public class DataDisplayTable {
       }
       System.out.println();
     }
+  }
+
+  /**
+   * Gets the table as a string of comma-separated values
+   *
+   * @return a CSV string that represents the table
+   */
+  public String csvString() {
+    String[] csvArr = csvStringArray();
+    StringBuilder output = new StringBuilder();
+    for (String row : csvArr) {
+      output.append(row).append('\n');
+    }
+    return output.toString();
+  }
+
+  /**
+   * Gets the table as an array of strings, where each string is a row in the
+   * table as comma-separated values. This allows for the appending of
+   * additional values to each row before serialising to a CSV file
+   *
+   * @return an array of CSV strings
+   */
+  public String[] csvStringArray() {
+    String[] output = new String[this.numRows + 1];
+
+    // Add header to output
+    StringBuilder rowString = new StringBuilder(csvFormat(header.get(0)));
+    for (int i = 1; i < numCols; i++) {
+      rowString.append(",").append(csvFormat(header.get(i)));
+    }
+    output[0] = rowString.toString();
+
+    // Add data to output
+    for (int i = 0; i < numRows; i++) {
+      List<String> row = data.get(i);
+      rowString = new StringBuilder(csvFormat(row.get(0)));
+      for (int j = 1; j < numCols; j++) {
+        rowString.append(",").append(csvFormat(row.get(j)));
+      }
+      output[i + 1] = rowString.toString();
+    }
+
+    return output;
+  }
+
+  /**
+   * Formats a string and returns it so that it can be inserted into a CSV file
+   * without disrupting the formatting of the file and the string. Specifically,
+   * quotation marks are added around the string if it contains new-line
+   * characters, commas, or quotation marks. Each quotation mark inside the
+   * string is also replaced with two quotation marks.
+   *
+   * @param s
+   * @return the formatted string
+   */
+  private static String csvFormat(String s) {
+    if (s.contains("\"") || s.contains("\n") || s.contains(",")) {
+      return "\"" + s.replace("\"", "\"\"") + "\"";
+    }
+    return s;
   }
 
   @Override
