@@ -20,7 +20,6 @@ import com.google.typography.font.sfntly.table.core.NameTable.NameId;
 import com.google.typography.font.sfntly.table.core.NameTable.UnicodeLanguageId;
 import com.google.typography.font.sfntly.table.core.NameTable.WindowsLanguageId;
 import com.google.typography.font.sfntly.table.core.OS2Table;
-import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
@@ -131,7 +130,7 @@ public class FontInfo {
     while (fontTableIter.hasNext()) {
       Table fontTable = fontTableIter.next();
       String name = Tag.stringValue(fontTable.headerTag());
-      String checksum = String.format("0x%0" + CHECKSUM_LENGTH + "x", fontTable.headerChecksum());
+      String checksum = String.format("0x%0" + CHECKSUM_LENGTH + "X", fontTable.headerChecksum());
       int length = fontTable.headerLength();
       double lengthPercent = length * 100.0 / fontSize;
       int offset = fontTable.headerOffset();
@@ -256,24 +255,17 @@ public class FontInfo {
    *           if font does not contain a UCS-4 or UCS-2 cmap
    */
   public static DataDisplayTable listChars(Font font) {
-    String[] header = { "Code point", "Name in font", "Unicode-designated name for code point" };
-    Align[] displayAlignment = { Align.Right, Align.Left, Align.Left };
+    String[] header = { "Code point", "Glyph ID", "Unicode-designated name for code point" };
+    Align[] displayAlignment = { Align.Right, Align.Right, Align.Left };
     DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
     table.setAlignment(Arrays.asList(displayAlignment));
 
     // Iterate through all code points
     CMap cmap = getUCSCMap(font);
-    PostScriptTable postTable = (PostScriptTable) getTable(font, Tag.post);
     for (int charId : cmap) {
       int glyphId = cmap.glyphId(charId);
       if (glyphId != CMapTable.NOTDEF) {
-        String name = "";
-        try {
-          name = postTable.glyphName(glyphId);
-        } catch (Exception e) {
-          // Set name to empty string for unsupported post table formats
-        }
-        String[] data = { String.format("0x%s", Integer.toHexString(charId)), name,
+        String[] data = { getFormattedCodePointString(charId), String.format("%d", glyphId),
             UCharacter.getExtendedName(charId) };
         table.add(Arrays.asList(data));
       }
@@ -512,5 +504,22 @@ public class FontInfo {
    */
   private static GlyphTable getGlyphTable(Font font) {
     return (GlyphTable) getTable(font, Tag.glyf);
+  }
+
+  /**
+   * Gets a string version of the code point formatted as "U+hhhh" or "U+hhhhhh"
+   *
+   * @param codePoint
+   *          the code point to format
+   * @return a formatted version of the code point as a string
+   */
+  private static String getFormattedCodePointString(int codePoint) {
+    if (UCharacter.isValidCodePoint(codePoint)) {
+      if (UCharacter.isBMP(codePoint)) {
+        return String.format("U+%04X", codePoint);
+      }
+      return String.format("U+%06X", codePoint);
+    }
+    throw new IllegalArgumentException("Invalid code point " + codePoint);
   }
 }
