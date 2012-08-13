@@ -162,10 +162,16 @@ public class DataDisplayTable {
     StringBuilder output = new StringBuilder();
 
     // Add header to output
-    output.append(padString(header.get(0), displayAlignment.get(0), maxColLengths.get(0)));
-    for (int i = 1; i < numCols; i++) {
-      output.append("  ")
-          .append(padString(header.get(i), displayAlignment.get(i), maxColLengths.get(i)));
+    for (int i = 0; i < numCols - 1; i++) {
+      output.append(padString(header.get(i), displayAlignment.get(i), maxColLengths.get(i)))
+          .append("  ");
+    }
+    if (displayAlignment.get(numCols - 1) == Align.Left) {
+      // Do not pad last column if left-aligned
+      output.append(header.get(numCols - 1));
+    } else {
+      output.append(padString(header.get(numCols - 1), displayAlignment.get(numCols - 1),
+          maxColLengths.get(numCols - 1)));
     }
     output.append("\n");
 
@@ -178,10 +184,16 @@ public class DataDisplayTable {
 
     // Add data to output
     for (List<String> row : data) {
-      output.append(padString(row.get(0), displayAlignment.get(0), maxColLengths.get(0)));
-      for (int i = 1; i < numCols; i++) {
-        output.append("  ")
-            .append(padString(row.get(i), displayAlignment.get(i), maxColLengths.get(i)));
+      for (int i = 0; i < numCols - 1; i++) {
+        output.append(padString(row.get(i), displayAlignment.get(i), maxColLengths.get(i)))
+            .append("  ");
+      }
+      if (displayAlignment.get(numCols - 1) == Align.Left) {
+        // Do not pad last column if left-aligned
+        output.append(row.get(numCols - 1));
+      } else {
+        output.append(padString(row.get(numCols - 1), displayAlignment.get(numCols - 1),
+            maxColLengths.get(numCols - 1)));
       }
       output.append("\n");
     }
@@ -198,30 +210,7 @@ public class DataDisplayTable {
    * method.
    */
   public void prettyPrint() {
-    // Print header
-    System.out.print(padString(header.get(0), displayAlignment.get(0), maxColLengths.get(0)));
-    for (int i = 1; i < numCols; i++) {
-      System.out.print(
-          "  " + padString(header.get(i), displayAlignment.get(i), maxColLengths.get(i)));
-    }
-    System.out.println("");
-
-    // Print separator
-    System.out.print(repeatCharacter('-', maxColLengths.get(0)));
-    for (int i = 1; i < numCols; i++) {
-      System.out.print("  " + repeatCharacter('-', maxColLengths.get(i)));
-    }
-    System.out.println("");
-
-    // Print data
-    for (List<String> row : data) {
-      System.out.print(padString(row.get(0), displayAlignment.get(0), maxColLengths.get(0)));
-      for (int i = 1; i < numCols; i++) {
-        System.out.print(
-            "  " + padString(row.get(i), displayAlignment.get(i), maxColLengths.get(i)));
-      }
-      System.out.println();
-    }
+    System.out.println(prettyString());
   }
 
   /**
