@@ -27,7 +27,10 @@ import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.tools.fontinfo.DataDisplayTable.Align;
 
+import com.ibm.icu.impl.IllegalIcuArgumentException;
 import com.ibm.icu.lang.UCharacter;
+import com.ibm.icu.lang.UScript;
+import com.ibm.icu.text.UnicodeSet;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -277,6 +280,165 @@ public class FontInfo {
   // Gets the code point and name of all the characters in the provided string
   // for the font
   // TODO public static DataDisplayTable listChars(Font font, String charString)
+
+  /**
+   * Gets a list of Unicode blocks covered by the font and the amount each block
+   * is covered.
+   *
+   * @param font
+   *          the source font
+   * @return a list of Unicode blocks covered by the font
+   */
+  // FIXME Find more elegant method of retrieving block data
+  public static DataDisplayTable listCharBlockCoverage(Font font) {
+    String[] header = { "Block", "Coverage" };
+    Align[] displayAlignment = { Align.Left, Align.Right };
+    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
+    table.setAlignment(Arrays.asList(displayAlignment));
+
+    // Iterate through each block to check for coverage
+    CMap cmap = getUCSCMap(font);
+    int totalCount = 0;
+    for (int i = 0; i < UnicodeBlockData.numBlocks(); i++) {
+      String block = UnicodeBlockData.getBlockName(i);
+      UnicodeSet set = null;
+      try {
+        set = new UnicodeSet("[[:Block=" + block + ":]-[:gc=Unassigned:]-[:gc=Control:]]");
+      } catch (IllegalIcuArgumentException e) {
+        continue;
+      }
+      int count = 0;
+      for (String charStr : set) {
+        if (cmap.glyphId(UCharacter.codePointAt(charStr, 0)) > 0) {
+          count++;
+        }
+      }
+      if (count > 0) {
+        table.add(Arrays.asList(new String[] { String.format(
+            "%s [%s, %s]", block, UnicodeBlockData.getBlockStartCode(i),
+            UnicodeBlockData.getBlockEndCode(i)), String.format("%d / %d", count, set.size()) }));
+      }
+      totalCount += count;
+    }
+
+    // Add control code points with valid glyphs to find the total number of
+    // unicode characters with valid glyphs
+    UnicodeSet controlSet = new UnicodeSet("[[:gc=Control:]]");
+    for (String charStr : controlSet) {
+      if (cmap.glyphId(UCharacter.codePointAt(charStr, 0)) > 0) {
+        totalCount++;
+      }
+    }
+    int nonUnicodeCount = countChars(font) - totalCount;
+    if (nonUnicodeCount > 0) {
+      table.add(Arrays.asList(new String[] { "Unknown", String.format("%d", nonUnicodeCount) }));
+    }
+
+    return table;
+  }
+  
+  /**
+   * Gets a list of scripts covered by the font and the amount each block is covered.
+   *
+   * @param font the source font
+   * @return a list of scripts covered by the font
+   */
+  public static DataDisplayTable listScriptCoverage(Font font) {
+    String[] header = {"Script", "Coverage"};
+    Align[] displayAlignment = {Align.Left, Align.Right};
+    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
+    table.setAlignment(Arrays.asList(displayAlignment));
+    HashMap<Integer, Integer> coveredScripts = new HashMap<Integer, Integer>();
+
+    // Add to script count for the script each code point belongs to
+    CMap cmap = getUCSCMap(font);
+    for (int charId : cmap) {
+      if (cmap.glyphId(charId) != CMapTable.NOTDEF) {
+        int scriptCode = UScript.getScript(charId);
+        int scriptCount = 1;
+        if (coveredScripts.containsKey(scriptCode)) {
+          scriptCount += coveredScripts.get(scriptCode);
+        }
+        coveredScripts.put(scriptCode, scriptCount);
+      }
+    }
+
+    // For each covered script, find the total size of the script and add coverage to table
+    Set<Integer> sortedScripts = new TreeSet<Integer>(coveredScripts.keySet());
+    int unknown = 0;
+    for (Integer scriptCode : sortedScripts) {
+      UnicodeSet scriptSet = null;
+      String scriptName = UScript.getName(scriptCode);
+      try {
+        scriptSet = new UnicodeSet("[[:" + scriptName + ":]]");
+      } catch (IllegalIcuArgumentException e) {
+        unknown += coveredScripts.get(scriptCode);
+        continue;
+      }
+
+      table.add(Arrays.asList(new String[] {
+          scriptName, String.format("%d / %d", coveredScripts.get(scriptCode), scriptSet.size())}));
+    }
+    if (unknown > 0) {
+      table.add(Arrays.asList(new String[] {"Unsupported script", String.format("%d", unknown)}));
+    }
+
+    return table;
+  }
+
+  /**
+   * Gets a list of characters needed to fully cover scripts partially covered by the font
+   *
+   * @param font the source font
+   * @return a list of characters needed to fully cover partially-covered scripts
+   */
+  public static DataDisplayTable listCharsNeededToCoverScript(Font font) {
+    String[] header = {"Script", "Code Point", "Name"};
+    Align[] displayAlignment = {Align.Left, Align.Right, Align.Left};
+    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
+    table.setAlignment(Arrays.asList(displayAlignment));
+    HashMap<Integer, UnicodeSet> coveredScripts = new HashMap<Integer, UnicodeSet>();
+
+    // Iterate through each set
+    CMap cmap = getUCSCMap(font);
+    for (int charId : cmap) {
+      if (cmap.glyphId(charId) != CMapTable.NOTDEF) {
+        int scriptCode = UScript.getScript(charId);
+        if (scriptCode == UScript.UNKNOWN) {
+          continue;
+        }
+
+        UnicodeSet scriptSet = null;
+        if (!coveredScripts.containsKey(scriptCode)) {
+          // New covered script found, create set
+          try {
+            scriptSet = new UnicodeSet(
+                "[[:" + UScript.getName(scriptCode) + ":]-[:gc=Unassigned:]-[:gc=Control:]]");
+          } catch (IllegalIcuArgumentException e) {
+            continue;
+          }
+          coveredScripts.put(scriptCode, scriptSet);
+        } else {
+          // Set for script already exists, retrieve for character removal
+          scriptSet = coveredScripts.get(scriptCode);
+        }
+        scriptSet.remove(UCharacter.toString(charId));
+      }
+    }
+
+    // Insert into table in order
+    Set<Integer> sortedScripts = new TreeSet<Integer>(coveredScripts.keySet());
+    for (Integer scriptCode : sortedScripts) {
+      UnicodeSet uSet = coveredScripts.get(scriptCode);
+      for (String charStr : uSet) {
+        int codePoint = UCharacter.codePointAt(charStr, 0);
+        table.add(Arrays.asList(new String[] {String.format("%s", UScript.getName(scriptCode)),
+            getFormattedCodePointString(codePoint), UCharacter.getExtendedName(codePoint)}));
+      }
+    }
+
+    return table;
+  }
 
   /**
    * Gets a list of minimum and maximum x and y dimensions for the glyphs in the
