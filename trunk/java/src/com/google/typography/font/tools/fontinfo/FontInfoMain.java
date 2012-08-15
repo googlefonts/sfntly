@@ -19,7 +19,7 @@ import java.io.InputStream;
  *
  */
 public class FontInfoMain {
-  private static final String PROGRAM_NAME = "java -jar fontTools.jar";
+  private static final String PROGRAM_NAME = "java -jar fontinfo.jar";
 
   public static void main(String[] args) {
     CommandOptions options = new CommandOptions();

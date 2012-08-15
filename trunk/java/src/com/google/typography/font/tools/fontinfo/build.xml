@@ -8,8 +8,9 @@
       <zipfileset src="${dist_lib.dir}/sfntly.jar" />
       <zipfileset src="${lib.dir}/icu4j-charset-4_8_1_1.jar" />
       <zipfileset src="${lib.dir}/icu4j-4_8_1_1.jar" />
+    	<zipfileset src="${lib.dir}/jcommander-1.27.jar" />
       <manifest>
-        <attribute name="Main-Class" value="com.google.typography.font.tools.fontinfo.ReportFontSummary"/>
+        <attribute name="Main-Class" value="com.google.typography.font.tools.fontinfo.FontInfoMain"/>
       </manifest>
     </jar>
   </target>

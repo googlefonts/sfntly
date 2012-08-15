@@ -7,7 +7,7 @@
   <target name="javadoc">
     <javadoc access="public" 
         author="true" 
-        classpath="lib/icu4j-charset-4_8_1_1.jar:lib/icu4j-4_8_1_1.jar:lib/junit-4.10.jar" 
+        classpath="lib/icu4j-charset-4_8_1_1.jar:lib/icu4j-4_8_1_1.jar:lib/jcommander-1.27.jar:lib/junit-4.10.jar" 
         destdir="${javadoc.dir}" 
         nodeprecated="false" 
         nodeprecatedlist="false" 
