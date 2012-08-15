@@ -33,6 +33,14 @@ public final class Fixed1616 {
   public static int fixed(int integral, int fractional) {
     return ((integral & 0xffff) << 16) | (fractional & 0xffff);
   }
+  
+  /**
+   * @param fixed the number to convert
+   * @return a double representing the 16-16 floating point number
+   */
+  public static double doubleValue(int fixed) {
+    return fixed / 65536.0; // shift the decimal 16 bits
+  }
 
   public static String toString(int fixed) {
     StringBuilder sb = new StringBuilder();
