@@ -3,19 +3,16 @@
 package com.google.typography.font.tools.fontinfo;
 
 import com.google.typography.font.sfntly.Font;
-import com.google.typography.font.sfntly.FontFactory;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * This is the main class for the command-line version of the font info tool
  *
- * @author yehh@google.com (Han-Wen Yeh)
+ * @author Han-Wen Yeh
  *
  */
 public class FontInfoMain {
@@ -57,7 +54,7 @@ public class FontInfoMain {
     // Load font
     Font[] fonts = null;
     try {
-      fonts = getFont(fileName);
+      fonts = FontUtils.getFonts(fileName);
     } catch (IOException e) {
       System.out.println("Unable to load font " + fileName);
       return;
@@ -73,6 +70,8 @@ public class FontInfoMain {
       // Print general information
       if (options.general || options.all) {
         if (options.csv) {
+          System.out.println(String.format("sfnt version: %s", FontInfo.sfntVersion(font)));
+          System.out.println();
           System.out.println("Font Tables");
           System.out.println(
               prependDataAndBuildCsv(FontInfo.listTables(font).csvStringArray(), fileName, i));
@@ -82,6 +81,8 @@ public class FontInfoMain {
               prependDataAndBuildCsv(FontInfo.listNameEntries(font).csvStringArray(), fileName, i));
           System.out.println();
         } else {
+          System.out.println(String.format("sfnt version: %s", FontInfo.sfntVersion(font)));
+          System.out.println();
           System.out.println("Font Tables:");
           FontInfo.listTables(font).prettyPrint();
           System.out.println();
@@ -224,42 +225,6 @@ public class FontInfoMain {
         }
       }
     }
-  }
-
-  /**
-   * Gets a Font object for a font file in the given path
-   *
-   * @param fontFile
-   *          the path to the font file
-   * @return the Font object representing the font
-   * @throws IOException
-   *           if font file does not exist or is invalid
-   */
-  private static Font[] getFont(String fontFile) throws IOException {
-    return getFont(new FileInputStream(fontFile));
-  }
-
-  /**
-   * Gets a Font object for a font file in the InputStream
-   *
-   * @param is
-   *          an InputStream containing the font file
-   * @return the Font object representing the font
-   * @throws IOException
-   *           if font file or is invalid
-   */
-  private static Font[] getFont(InputStream is) throws IOException {
-    FontFactory fontFactory = FontFactory.getInstance();
-    fontFactory.fingerprintFont(true);
-    Font[] fonts = null;
-
-    try {
-      fonts = fontFactory.loadFonts(is);
-    } finally {
-      is.close();
-    }
-
-    return fonts;
   }
 
   private static String prependDataAndBuildCsv(String[] arr, String fontName, int fontIndex) {
