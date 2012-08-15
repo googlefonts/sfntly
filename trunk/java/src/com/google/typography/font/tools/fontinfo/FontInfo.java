@@ -13,6 +13,7 @@ import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 import com.google.typography.font.sfntly.table.core.HorizontalHeaderTable;
+import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
 import com.google.typography.font.sfntly.table.core.NameTable;
 import com.google.typography.font.sfntly.table.core.NameTable.MacintoshLanguageId;
 import com.google.typography.font.sfntly.table.core.NameTable.NameEntry;
@@ -35,6 +36,7 @@ import com.ibm.icu.text.UnicodeSet;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -231,7 +233,7 @@ public class FontInfo {
    * @throws UnsupportedOperationException
    *           if font does not contain a UCS-4 or UCS-2 cmap
    */
-  public static int countChars(Font font) {
+  public static int numChars(Font font) {
     int numChars = 0;
     CMap cmap = getUCSCMap(font);
 
@@ -329,23 +331,25 @@ public class FontInfo {
         totalCount++;
       }
     }
-    int nonUnicodeCount = countChars(font) - totalCount;
+    int nonUnicodeCount = numChars(font) - totalCount;
     if (nonUnicodeCount > 0) {
       table.add(Arrays.asList(new String[] { "Unknown", String.format("%d", nonUnicodeCount) }));
     }
 
     return table;
   }
-  
+
   /**
-   * Gets a list of scripts covered by the font and the amount each block is covered.
+   * Gets a list of scripts covered by the font and the amount each block is
+   * covered.
    *
-   * @param font the source font
+   * @param font
+   *          the source font
    * @return a list of scripts covered by the font
    */
   public static DataDisplayTable listScriptCoverage(Font font) {
-    String[] header = {"Script", "Coverage"};
-    Align[] displayAlignment = {Align.Left, Align.Right};
+    String[] header = { "Script", "Coverage" };
+    Align[] displayAlignment = { Align.Left, Align.Right };
     DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
     table.setAlignment(Arrays.asList(displayAlignment));
     HashMap<Integer, Integer> coveredScripts = new HashMap<Integer, Integer>();
@@ -363,7 +367,8 @@ public class FontInfo {
       }
     }
 
-    // For each covered script, find the total size of the script and add coverage to table
+    // For each covered script, find the total size of the script and add
+    // coverage to table
     Set<Integer> sortedScripts = new TreeSet<Integer>(coveredScripts.keySet());
     int unknown = 0;
     for (Integer scriptCode : sortedScripts) {
@@ -376,25 +381,28 @@ public class FontInfo {
         continue;
       }
 
-      table.add(Arrays.asList(new String[] {
-          scriptName, String.format("%d / %d", coveredScripts.get(scriptCode), scriptSet.size())}));
+      table.add(Arrays.asList(new String[] { scriptName,
+          String.format("%d / %d", coveredScripts.get(scriptCode), scriptSet.size()) }));
     }
     if (unknown > 0) {
-      table.add(Arrays.asList(new String[] {"Unsupported script", String.format("%d", unknown)}));
+      table.add(Arrays.asList(new String[] { "Unsupported script", String.format("%d", unknown) }));
     }
 
     return table;
   }
 
   /**
-   * Gets a list of characters needed to fully cover scripts partially covered by the font
+   * Gets a list of characters needed to fully cover scripts partially covered
+   * by the font
    *
-   * @param font the source font
-   * @return a list of characters needed to fully cover partially-covered scripts
+   * @param font
+   *          the source font
+   * @return a list of characters needed to fully cover partially-covered
+   *         scripts
    */
   public static DataDisplayTable listCharsNeededToCoverScript(Font font) {
-    String[] header = {"Script", "Code Point", "Name"};
-    Align[] displayAlignment = {Align.Left, Align.Right, Align.Left};
+    String[] header = { "Script", "Code Point", "Name" };
+    Align[] displayAlignment = { Align.Left, Align.Right, Align.Left };
     DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
     table.setAlignment(Arrays.asList(displayAlignment));
     HashMap<Integer, UnicodeSet> coveredScripts = new HashMap<Integer, UnicodeSet>();
@@ -432,12 +440,25 @@ public class FontInfo {
       UnicodeSet uSet = coveredScripts.get(scriptCode);
       for (String charStr : uSet) {
         int codePoint = UCharacter.codePointAt(charStr, 0);
-        table.add(Arrays.asList(new String[] {String.format("%s", UScript.getName(scriptCode)),
-            getFormattedCodePointString(codePoint), UCharacter.getExtendedName(codePoint)}));
+        table.add(Arrays.asList(new String[] { String.format("%s", UScript.getName(scriptCode)),
+            getFormattedCodePointString(codePoint), UCharacter.getExtendedName(codePoint) }));
       }
     }
 
     return table;
+  }
+
+  /**
+   * Gets the number of glyphs in the given font
+   *
+   * @param font
+   *          the source font
+   * @return the number of glyphs in the font
+   * @throws UnsupportedOperationException
+   *           if font does not contain a valid glyf table
+   */
+  public static int numGlyphs(Font font) {
+    return ((MaximumProfileTable) getTable(font, Tag.maxp)).numGlyphs();
   }
 
   /**
@@ -510,7 +531,8 @@ public class FontInfo {
     }
 
     double percentage = instrSize * 100.0 / glyfTable.headerLength();
-    return String.format("%d (%s%% of glyf table)", instrSize, twoDecimalPlaces.format(percentage));
+    return String.format(
+        "%d bytes (%s%% of glyf table)", instrSize, twoDecimalPlaces.format(percentage));
   }
 
   /**
@@ -522,9 +544,7 @@ public class FontInfo {
    * @return the number of glyphs in the font that are used as subglyphs of
    *         other glyphs more than once
    */
-  // TODO Add whether each subglyph is associated with a code point or not
-  // Build glyphId to code point mapping for comparison purposes
-  public static DataDisplayTable subglyphFrequencyList(Font font) {
+  public static DataDisplayTable listSubglyphFrequency(Font font) {
     Map<Integer, Integer> subglyphFreq = new HashMap<Integer, Integer>();
     String[] header = { "Glyph ID", "Frequency" };
     Align[] displayAlignment = { Align.Right, Align.Right };
@@ -563,6 +583,39 @@ public class FontInfo {
     return table;
   }
 
+  /**
+   * Gets a list of IDs for glyphs that are not mapped by any cmap in the font
+   *
+   * @param font
+   *          the source font
+   * @return a list of unmapped glyphs
+   */
+  public static DataDisplayTable listUnmappedGlyphs(Font font) {
+    String[] header = { "Glyph ID" };
+    Align[] displayAlignment = { Align.Right };
+    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
+    table.setAlignment(Arrays.asList(displayAlignment));
+
+    // Get a set of all mapped glyph IDs
+    Set<Integer> mappedGlyphs = new HashSet<Integer>();
+    CMapTable cmapTable = getCMapTable(font);
+    for (CMap cmap : cmapTable) {
+      for (Integer codePoint : cmap) {
+        mappedGlyphs.add(cmap.glyphId(codePoint));
+      }
+    }
+
+    // Iterate through all glyph IDs and check if in the set
+    LocaTable locaTable = getLocaTable(font);
+    for (int i = 0; i < locaTable.numGlyphs(); i++) {
+      if (!mappedGlyphs.contains(i)) {
+        table.add(Arrays.asList(new String[] { String.format("%d", i) }));
+      }
+    }
+
+    return table;
+  }
+
   // TODO Calculate savings of subglyphs
   // public static int subglyphSavings(Font font) {}
 
@@ -579,8 +632,6 @@ public class FontInfo {
   // public static int listSimpleGlyphs(Font font) {}
   // public static int numCompositeglyphs(Font font) {}
   // public static int listCompositeGlyphs(Font font) {}
-
-  // TODO Find list of glyphs which are subglyphs only (check ALL cmaps)
 
   /**
    * Gets the table with the specified tag for the given font
