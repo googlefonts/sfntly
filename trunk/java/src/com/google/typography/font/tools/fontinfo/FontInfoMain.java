@@ -192,16 +192,17 @@ public class FontInfoMain {
 
       // Print glyph information
       if (options.glyphs || options.all) {
+        DataDisplayTable unmappedGlyphs = FontInfo.listUnmappedGlyphs(font);
         if (options.csv) {
           System.out.println(String.format("Total hinting size: %s", FontInfo.hintingSize(font)));
           System.out.println(String.format(
-              "Number of unmapped glyphs: %d / %d", FontInfo.listUnmappedGlyphs(font).getNumRows(),
+              "Number of unmapped glyphs: %d / %d", unmappedGlyphs.getNumRows(),
               FontInfo.numGlyphs(font)));
           System.out.println();
           if (options.detailed) {
             System.out.println("Unmapped glyphs:");
-            System.out.println(prependDataAndBuildCsv(
-                FontInfo.listUnmappedGlyphs(font).csvStringArray(), fileName, i));
+            System.out.println(
+                prependDataAndBuildCsv(unmappedGlyphs.csvStringArray(), fileName, i));
             System.out.println();
           }
           System.out.println("Subglyphs used by characters in the font:");
@@ -211,12 +212,12 @@ public class FontInfoMain {
         } else {
           System.out.println(String.format("Total hinting size: %s", FontInfo.hintingSize(font)));
           System.out.println(String.format(
-              "Number of unmapped glyphs: %d / %d", FontInfo.listUnmappedGlyphs(font).getNumRows(),
+              "Number of unmapped glyphs: %d / %d", unmappedGlyphs.getNumRows(),
               FontInfo.numGlyphs(font)));
           System.out.println();
           if (options.detailed) {
             System.out.println("Unmapped glyphs:");
-            FontInfo.listUnmappedGlyphs(font).prettyPrint();
+            unmappedGlyphs.prettyPrint();
             System.out.println();
           }
           System.out.println("Subglyphs used by characters in the font:");
