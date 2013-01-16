@@ -750,9 +750,21 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
   }
 
   private static class NameEntryId implements Comparable<NameEntryId> {
+    /* @see Font.PlatformId
+     */
     protected int platformId;
+    /* @see Font.UnicodeEncodingId
+     * @see Font.MacintoshEncodingId
+     * @see Font.WindowsEncodingId
+     */
     protected int encodingId;
+    /* @see NameTable.UnicodeLanguageId
+     * @see NameTable.MacintoshLanguageId
+     * @see NameTable.WindowsLanguageId
+     */
     protected int languageId;
+    /* @see NameTable.NameId
+     */
     protected int nameId;
 
     /**
@@ -1425,8 +1437,11 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
             nameRecordOffset + NameTable.Offset.nameRecordStringOffset.offset, stringOffset);
         nameRecordOffset += NameTable.Offset.nameRecordSize.offset;
         // string table
-        stringOffset += newData.writeBytes(
-            stringOffset + stringTableStartOffset, entry.getValue().nameAsBytes());
+        byte[] nameBytes = entry.getValue().nameAsBytes();
+        if (nameBytes.length > 0) {
+          stringOffset += newData.writeBytes(
+              stringOffset + stringTableStartOffset, entry.getValue().nameAsBytes());
+        }
       }
       return stringOffset + stringTableStartOffset;
     }
