@@ -166,7 +166,7 @@ public class Table extends FontDataTable {
     protected void notifyPostTableBuild(T table) {
       if (this.modelChanged() || this.dataChanged()) {
         Header header = new Header(this.header().tag(), table.dataLength());
-        table.header = header;
+        ((Table) table).header = header;
       }
     }
 
