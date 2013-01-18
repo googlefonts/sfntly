@@ -1,4 +1,4 @@
-package com.google.typography.font.sfntly;
+package com.google.typography.font.sfntly.issue_tests;
 
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
@@ -6,10 +6,10 @@ import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.NameTable;
 import com.google.typography.font.sfntly.testutils.TestFont;
 
+import junit.framework.TestCase;
+
 import java.io.File;
 import java.io.FileInputStream;
-
-import junit.framework.TestCase;
 
 /*
  * Test for Issue 27.
