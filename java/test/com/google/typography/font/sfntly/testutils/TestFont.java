@@ -33,7 +33,8 @@ public class TestFont {
 
   public enum TestFontNames {
     DROIDSANS("DroidSans-Regular.ttf"),
-    OPENSANS("OpenSans-Regular.ttf");
+    OPENSANS("OpenSans-Regular.ttf"),
+    ROBOTO("Roboto-Regular.ttf");
 
     private String path;
 
