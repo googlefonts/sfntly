@@ -1004,7 +1004,7 @@ public final class OS2Table extends Table {
     }
 
     public void setUsLastCharIndex(int lastIndex) {
-      this.internalWriteData().writeUShort(Offset.usFirstCharIndex.offset, lastIndex);
+      this.internalWriteData().writeUShort(Offset.usLastCharIndex.offset, lastIndex);
     }
 
     public int sTypoAscender() {
