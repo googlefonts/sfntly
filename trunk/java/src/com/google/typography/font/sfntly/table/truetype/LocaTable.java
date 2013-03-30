@@ -104,7 +104,7 @@ public final class LocaTable extends Table {
    * glyphs in the font.
    *
    * @param index the loca table index
-   * @return the loca table valueÍ
+   * @return the loca table value
    */
   public int loca(int index) {
     if (index > this.numGlyphs) {
@@ -386,7 +386,7 @@ public final class LocaTable extends Table {
      * of glyphs in the font.
      *
      * @param index the loca table index
-     * @return the loca table valueÍ
+     * @return the loca table value
      */
     public int loca(int index) {
       return this.getLocaList().get(index);
