@@ -45,6 +45,9 @@ public abstract class Glyph extends SubTable {
   }
 
   private static Glyph.GlyphType glyphType(ReadableFontData data, int offset, int length) {
+    if (offset > data.length()) {
+      throw new IndexOutOfBoundsException();
+    }
     if (length == 0) {
       return GlyphType.Simple;
     }
@@ -87,6 +90,15 @@ public abstract class Glyph extends SubTable {
     return this.glyphType;
   }
 
+  /**
+   * Gets the number of contours in the glyph. If this returns a number greater
+   * than or equal to zero it is the actual number of contours and this is a
+   * simple glyph. If there are zero contours in the glyph then none of the
+   * other data operations will return usable values. If it -1 then the glyph is
+   * a composite glyph.
+   * 
+   * @return number of contours
+   */
   public int numberOfContours() {
     return this.numberOfContours;
   }

@@ -198,4 +198,14 @@ public abstract class FontData {
   protected final int boundLength(int offset, int length) {
     return Math.min(length, this.boundLength - offset);
   }
+  
+  protected final boolean boundsCheck(int offset, int length) {
+    if (offset < 0 || offset >= this.boundLength) {
+      return false;
+    }
+    if (length < 0 || length + offset > this.boundLength) {
+      return false;
+    }
+    return true;
+  }
 }

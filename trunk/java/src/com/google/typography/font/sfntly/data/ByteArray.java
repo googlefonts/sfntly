@@ -98,7 +98,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
    */
   public int get(int index, byte[] b, int offset, int length) {
     if (index < 0 || index >= this.filledLength) {
-      return 0;
+      return -1;
     }
     int actualLength = Math.min(length, this.filledLength - index);
     return this.internalGet(index, b, offset, actualLength);
