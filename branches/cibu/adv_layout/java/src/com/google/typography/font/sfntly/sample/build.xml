@@ -2,6 +2,18 @@
 
   <import file="../../../../../../../common.xml" />
 
+  <target name="sfview" depends="sfntly-jar">
+    <mkdir dir="${dist_sfview.dir}" />
+    <jar destfile="${dist_sfview.dir}/sfview.jar" basedir="${classes.dir}" includes="com/google/typography/font/sfntly/sample/sfview/**">
+      <zipfileset src="${dist_lib.dir}/sfntly.jar" />
+      <zipfileset src="${lib.dir}/icu4j-charset-4_8_1_1.jar" />
+      <zipfileset src="${lib.dir}/icu4j-4_8_1_1.jar" />
+      <manifest>
+        <attribute name="Main-Class" value="com.google.typography.font.sfntly.sample.sfview.SFView"/>
+      </manifest>
+    </jar>
+  </target>
+
   <target name="sflint" depends="sfntly-jar">
     <mkdir dir="${dist_sflint.dir}" />
     <jar destfile="${dist_sflint.dir}/sflint.jar" basedir="${classes.dir}" includes="com/google/typography/font/sfntly/sample/sflint/**">
@@ -26,6 +38,6 @@
     </jar>
   </target>
 
-  <target name="all" depends="sflint, sfntdump" />
+  <target name="all" depends="sfview, sflint, sfntdump" />
 
 </project>
