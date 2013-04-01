@@ -198,4 +198,18 @@ public abstract class FontData {
   protected final int boundLength(int offset, int length) {
     return Math.min(length, this.boundLength - offset);
   }
+
+  /**
+   * Used by inspecting tooling only.
+   */
+  public final int boundOffset() {
+    return boundOffset;
+  }
+
+  /**
+   * Used by inspecting tooling only.
+   */
+  public final int boundLength() {
+    return boundLength;
+  }
 }
