@@ -14,6 +14,10 @@ public class ScriptListTable extends SubTable implements Iterable<ScriptTable> {
   static final int SCRIPT_COUNT_OFFSET = 0;
   static final int SCRIPT_RECORD_BASE = 2;
 
+  static final int SCRIPT_RECORD_SCRIPT_TAG_OFFSET = 0;
+  static final int SCRIPT_RECORD_SCRIPT_OFFSET = 4;
+  static final int SCRIPT_RECORD_SIZE = 6;
+
   private boolean dataIsCanonical;
 
   static ScriptListTable create(ReadableFontData data,
@@ -41,25 +45,43 @@ public class ScriptListTable extends SubTable implements Iterable<ScriptTable> {
     return readScriptCount(data);
   }
 
+  static int scriptRecordBase(int index) {
+    return SCRIPT_RECORD_BASE + index * SCRIPT_RECORD_SIZE;
+  }
+
+  static int readScriptRecordBaseForTag(ReadableFontData data, int scriptTag) {
+    int p = SCRIPT_RECORD_BASE;
+    int e = p + readScriptCount(data) * SCRIPT_RECORD_SIZE;
+    for (;p < e; p += SCRIPT_RECORD_SIZE) {
+      if (readScriptTagForRecord(data, p) == scriptTag) {
+        return p;
+      }
+    }
+    return 0;
+  }
+
+  static int readScriptTagForRecord(ReadableFontData data, int recordBase) {
+    return data.readULongAsInt(recordBase + SCRIPT_RECORD_SCRIPT_TAG_OFFSET);
+  }
+
+  static int readScriptBaseForRecord(ReadableFontData data, int recordBase) {
+    return data.readUShort(recordBase + SCRIPT_RECORD_SCRIPT_OFFSET);
+  }
+
+  public int scriptTagAt(int index) {
+    return readScriptTagForRecord(data, scriptRecordBase(index));
+  }
+
+  public ScriptTable scriptTableAt(int index) {
+    return scriptTableForRecord(scriptRecordBase(index));
+  }
+
   public boolean hasScriptTable(ScriptTag scriptTag) {
     return hasScriptTable(scriptTag.tag());
   }
 
   public boolean hasScriptTable(int scriptTag) {
-    return ScriptRecord.createFromScriptTag(
-        data, SCRIPT_RECORD_BASE, scriptCount(), scriptTag) != null;
-  }
-
-  public int scriptTagAt(int index) {
-    ScriptRecord scriptRecord =
-        ScriptRecord.createNthFromOffset(data, SCRIPT_RECORD_BASE, index);
-    return scriptRecord.scriptTag();
-  }
-
-  public ScriptTable scriptTableAt(int index) {
-    ScriptRecord scriptRecord =
-        ScriptRecord.createNthFromOffset(data, SCRIPT_RECORD_BASE, index);
-    return scriptTableForRecord(scriptRecord);
+    return readScriptRecordBaseForTag(data, scriptTag) > 0;
   }
 
   public ScriptTable scriptTableForTag(ScriptTag scriptTag) {
@@ -67,26 +89,19 @@ public class ScriptListTable extends SubTable implements Iterable<ScriptTable> {
   }
 
   public ScriptTable scriptTableForTag(int scriptTag) {
-    ScriptRecord scriptRecord = ScriptRecord.createFromScriptTag(
-        data, SCRIPT_RECORD_BASE, scriptCount(), scriptTag);
-    if (scriptRecord == null) {
-      return null;
-    }
-
-    scriptRecord = ScriptRecord.createFromOffset(data, scriptRecord.script());
-    return scriptTableForRecord(scriptRecord);
+    int recordBase = readScriptRecordBaseForTag(data, scriptTag);
+    return recordBase == 0 ? null : scriptTableForRecord(recordBase);
   }
-  
+
   @Override
   public Iterator<ScriptTable> iterator() {
     return new Iterator<ScriptTable>() {
-      Iterator<ScriptRecord> scriptRecordIterator =
-          ScriptRecord.getScriptRecordIterator(
-              data, SCRIPT_RECORD_BASE, scriptCount());
+      int p = SCRIPT_RECORD_BASE;
+      int e = p + scriptCount() * SCRIPT_RECORD_SIZE;
 
       @Override
       public boolean hasNext() {
-        return scriptRecordIterator.hasNext();
+        return p < e;
       }
 
       @Override
@@ -94,8 +109,8 @@ public class ScriptListTable extends SubTable implements Iterable<ScriptTable> {
         if (!hasNext()) {
           throw new NoSuchElementException();
         }
-        ScriptRecord scriptRecord = scriptRecordIterator.next();
-        ScriptTable table = scriptTableForRecord(scriptRecord);
+        ScriptTable table = scriptTableForRecord(p);
+        p += SCRIPT_RECORD_SIZE;
         return table;
       }
 
@@ -106,10 +121,10 @@ public class ScriptListTable extends SubTable implements Iterable<ScriptTable> {
     };
   }
 
-  private ScriptTable scriptTableForRecord(ScriptRecord scriptRecord) {
-    int scriptTableBase = scriptRecord.script();
-    int scriptTag = scriptRecord.scriptTag();
-    ReadableFontData newData = data.slice(scriptTableBase);
+  private ScriptTable scriptTableForRecord(int recordBase) {
+    int scriptBase = readScriptBaseForRecord(data, recordBase);
+    int scriptTag = readScriptTagForRecord(data, recordBase);
+    ReadableFontData newData = data.slice(scriptBase);
     return ScriptTable.create(newData, scriptTag, dataIsCanonical);
   }
 
@@ -154,35 +169,39 @@ public class ScriptListTable extends SubTable implements Iterable<ScriptTable> {
       if (data != null) {
         int scriptCount = readScriptCount(data);
 
+        int recordBase = SCRIPT_RECORD_BASE;
+        int recordEnd = recordBase + scriptCount * SCRIPT_RECORD_SIZE;
+
         // Start of the first subtable in the data, if we're canonical.
-        int subTableLimit = ScriptRecord.getBaseFor(SCRIPT_RECORD_BASE, scriptCount);
+        int subTableLimit = recordEnd;
 
         if (scriptCount > 0) {
-          Iterator<ScriptRecord> scriptRecordIterator =
-              ScriptRecord.getScriptRecordIterator(
-                  data, SCRIPT_RECORD_BASE, scriptCount());
           if (dataIsCanonical) {
             do {
               // Each table starts where the previous one ended.
               int offset = subTableLimit;
-              ScriptRecord scriptRecord = scriptRecordIterator.next();
-              int scriptTag = scriptRecord.scriptTag();
+              int scriptTag = readScriptTagForRecord(data, recordBase);
+              recordBase += SCRIPT_RECORD_SIZE;
               // Each table ends at the next start, or at the end of the data.
-              subTableLimit = scriptRecord.script();
+              if (recordBase < recordEnd) {
+                subTableLimit = readScriptBaseForRecord(data, recordBase);
+              } else {
+                subTableLimit = data.length();
+              }
               int length = subTableLimit - offset;
               ScriptTable.Builder builder =
                   createScriptTableBuilder(data, offset, length, scriptTag);
               builders.put(scriptTag, builder);
-            } while (scriptRecordIterator.hasNext());
+            } while (recordBase < recordEnd);
           } else {
             do {
-              ScriptRecord scriptRecord = scriptRecordIterator.next();
-              int offset = scriptRecord.script();
-              int scriptTag = scriptRecord.scriptTag();
+              int offset = readScriptBaseForRecord(data, recordBase);
+              int scriptTag = readScriptTagForRecord(data, recordBase);
+              recordBase += SCRIPT_RECORD_SIZE;
               ScriptTable.Builder builder =
                   createScriptTableBuilder(data, offset, -1, scriptTag);
               builders.put(scriptTag, builder);
-            } while (scriptRecordIterator.hasNext());
+            } while (recordBase < recordEnd);
           }
         }
       }
@@ -259,7 +278,7 @@ public class ScriptListTable extends SubTable implements Iterable<ScriptTable> {
         }
       }
       if (len > 0) {
-        len += ScriptRecord.getBaseFor(SCRIPT_RECORD_BASE, count);
+        len += SCRIPT_RECORD_BASE + count * SCRIPT_RECORD_SIZE;
       }
       serializedLength = len;
       serializedCount = count;
@@ -293,13 +312,14 @@ public class ScriptListTable extends SubTable implements Iterable<ScriptTable> {
       // scriptTables from the index in index order.  All
       // scriptTables are distinct; there's no sharing of tables.
       int rpos = SCRIPT_RECORD_BASE;
-      int rend = ScriptRecord.getBaseFor(SCRIPT_RECORD_BASE, serializedCount);
+      int rend = rpos + serializedCount * SCRIPT_RECORD_SIZE;
       int pos = rend;
       for (ScriptTable.Builder builder : builders.values()) {
         if (builder.serializedLength() > 0) {
-          ScriptRecord scriptRecord =
-              ScriptRecord.create(builder.scriptTag(), pos);
-          rpos += ScriptRecord.write(newData, rpos, scriptRecord);
+          newData.writeULong(rpos + SCRIPT_RECORD_SCRIPT_TAG_OFFSET,
+              builder.scriptTag());
+          newData.writeUShort(rpos + SCRIPT_RECORD_SCRIPT_OFFSET, pos);
+          rpos += SCRIPT_RECORD_SIZE;
           pos += builder.subSerialize(newData.slice(pos));
         }
       }
