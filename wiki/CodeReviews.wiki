@@ -3,7 +3,7 @@
 
 =sfntly Code Review=
 1.upload your changes to Rietveld
-  * from the root directory of your SVN copy run upload.py
+  * from the root directory of your SVN copy run upload.py (https://code.google.com/p/rietveld/wiki/UploadPyUsage)
   * authenticate as necessary
   * enter a subject line using the format "ticket:### description of submission"
 <br>2. go to Rietveld
