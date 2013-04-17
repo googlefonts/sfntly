@@ -7,7 +7,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual.Fmt1.SubRuleSet;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual.Fmt1.SubRuleSet.SubRule;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual.Fmt2.SubClassSet;
-import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual.Fmt2.SubClassSet.SubClassRule;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupList.GsubLookupType;
 import com.google.typography.font.sfntly.table.opentype.IntSet.IntIterator;
 
@@ -242,7 +241,7 @@ public class GsubLookupContextual extends GsubLookupTable {
     }
   }
 
-  static class Fmt1 extends ContextualSubTable {
+  public static class Fmt1 extends ContextualSubTable {
     static final int COVERAGE_OFFSET = 2;
     static final int SUB_RULE_SET_COUNT_OFFSET = 4;
     static final int SUB_RULE_SET_BASE = 6;

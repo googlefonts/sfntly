@@ -66,7 +66,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   }
 
   ScriptListTable createScriptList() {
-    return ScriptListTable.create(scriptListData(data, dataIsCanonical), dataIsCanonical);
+    return new ScriptListTable(scriptListData(data, dataIsCanonical), dataIsCanonical);
   }
 
   static int readFeatureListOffset(ReadableFontData data) {
@@ -197,9 +197,9 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     }
 
     private LangSysTable createLangSysTable(int scriptTag, int langSysTag) {
-      ScriptTable scriptTable = scriptList.scriptTableForTag(scriptTag);
+      ScriptTable scriptTable = scriptList.subTableForTag(scriptTag);
       if (scriptTable == null) {
-        scriptTable = scriptList.scriptTableForTag(ScriptTag.DFLT);
+        scriptTable = scriptList.subTableForTag(ScriptTag.DFLT.tag());
         if (scriptTable == null) {
           return null;
         }
@@ -548,7 +548,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
           new BidirectionalMultiMap<FeatureId<T>, LookupId<T>>();
 
       if (data != null) {
-        ScriptListTable sl = ScriptListTable.create(scriptListData(data, dataIsCanonical), dataIsCanonical);
+        ScriptListTable sl = new ScriptListTable(scriptListData(data, dataIsCanonical), dataIsCanonical);
         FeatureList fl = FeatureList.create(featureListData(data, dataIsCanonical), dataIsCanonical);
         LookupList ll = handleCreateLookupList(lookupListData(data, dataIsCanonical), dataIsCanonical);
 
@@ -573,9 +573,9 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
           }
         }
 
-        int scriptCount = sl.scriptCount();
+        int scriptCount = sl.recordList.count();
         for (int i = 0; i < scriptCount; ++i) {
-          ScriptTable st = sl.scriptTableAt(i);
+          ScriptTable st = sl.subTableAt(i);
           int scriptTag = st.scriptTag();
           int langSysCount = st.langSysCount();
           for (int j = 0; j < langSysCount; ++j) {
@@ -1073,7 +1073,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
 
       for (LangSysId<T> langSysId : langSysSet) {
         int scriptTag = langSysId.scriptTag;
-        ScriptTable.Builder st = slb.addScript(scriptTag);
+        ScriptTable.Builder st = new ScriptTable.Builder(slb.addBuiderForTag(scriptTag), scriptTag);
         int languageTag = langSysId.languageTag;
         LangSysTable.Builder lsb;
         if (languageTag == LanguageTag.DFLT.tag()) {

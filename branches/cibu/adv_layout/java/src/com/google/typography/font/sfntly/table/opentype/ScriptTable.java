@@ -5,6 +5,7 @@ package com.google.typography.font.sfntly.table.opentype;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
+import com.google.typography.font.sfntly.table.opentype.component.RecordsTable.VisibleBuilder;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -152,7 +153,7 @@ public class ScriptTable extends SubTable implements Iterable<LangSysTable> {
     return LangSysTable.create(newData, langSysTag);
   }
 
-  public static class Builder extends SubTable.Builder<ScriptTable> {
+  public static class Builder extends VisibleBuilder<ScriptTable> {
     private final int scriptTag;
     private TreeMap<Integer, LangSysTable.Builder> builders;
     private LangSysTable.Builder defaultBuilder;
@@ -176,6 +177,12 @@ public class ScriptTable extends SubTable implements Iterable<LangSysTable> {
 
     public Builder(ScriptTable table) {
       this(table.readFontData(), table.scriptTag, table.dataIsCanonical);
+    }
+
+    public Builder(SubTable.Builder<ScriptTable> builder, int scriptTag) {
+      super(builder.data());
+      this.scriptTag = scriptTag;
+      this.dataIsCanonical = true;
     }
 
     public int scriptTag() {

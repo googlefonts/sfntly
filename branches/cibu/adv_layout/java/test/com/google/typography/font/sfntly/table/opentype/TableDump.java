@@ -179,7 +179,7 @@ public class TableDump {
     if (silenced(scriptListTable)) {
       return;
     }
-    int numScripts = scriptListTable.scriptCount();
+    int numScripts = scriptListTable.scriptRecordList.count();
     formatln("Script List");
     for (int i = 0; i < numScripts; ++i) {
       ScriptTable scriptTable = scriptListTable.scriptTableAt(i);
