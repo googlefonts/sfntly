@@ -76,6 +76,8 @@ public class GsubLookupList extends LookupList {
       case GSUB_LIGATURE: return new GsubLookupLigature(lookupData, dataIsCanonical);
       case GSUB_CHAINING_CONTEXTUAL: return new GsubLookupChainingContextual(
           lookupData, dataIsCanonical);
+      case GSUB_CONTEXTUAL: return new GsubLookupContextual(
+          lookupData, dataIsCanonical);
       default: return null;
     }
   }

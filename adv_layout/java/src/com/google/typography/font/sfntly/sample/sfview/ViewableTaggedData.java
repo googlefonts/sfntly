@@ -305,6 +305,7 @@ public class ViewableTaggedData {
     private int x;  // current position of 'position' column (margin is to left)
     private int y;  // current base of line
     private int m;  // current open references in margin
+    private int last_m;  // current open references in margin
     private int lc; // line count
     private int rangeDepth;
     private int lastMarkedPosition;
@@ -375,8 +376,8 @@ public class ViewableTaggedData {
         m += 1;
         return;
       }
-      drawRef(ref);
       m -= 1;
+      drawRef(ref);
     }
 
     private boolean measuring() {
@@ -401,7 +402,11 @@ public class ViewableTaggedData {
     }
     
     void drawRef(Reference ref) {
-      int margin = -m * style.marginScale;
+      int non_overlapping_m = m;
+      if (last_m != 0 && last_m == m) {
+        non_overlapping_m++;
+      }
+      int margin = -non_overlapping_m * style.marginScale;
       int srcx = ref.srcx - style.marginOffset;
       int srcy = ref.srcy - metrics.baseline - metrics.xHeight;
       int trgx = ref.trgx - style.marginOffset;
@@ -419,13 +424,15 @@ public class ViewableTaggedData {
       trgx += metrics.marginWidth;
       mx += metrics.marginWidth;
 
-      g.setColor(colorForM(m));
+      g.setColor(colorForM(non_overlapping_m));
       g.drawLine(srcx, srcy, mx, srcy);
       g.drawLine(mx, srcy, mx, trgy);
       g.drawLine(mx, trgy, trgx, trgy);
       int[] xpts = { trgx, trgx - 3, trgx - 3 };
       int[] ypts = { trgy, trgy - 2, trgy + 2 };
       g.fillPolygon(xpts, ypts, 3);
+      
+      last_m = non_overlapping_m;
     }
 
     int updateWidth(String s, Font f, int w) {

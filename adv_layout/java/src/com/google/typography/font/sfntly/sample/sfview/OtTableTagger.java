@@ -8,6 +8,7 @@ import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.FeatureList;
 import com.google.typography.font.sfntly.table.opentype.FeatureTable;
 import com.google.typography.font.sfntly.table.opentype.GSubTable;
+import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupLigature;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupList;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupSingle;
@@ -282,6 +283,17 @@ public class OtTableTagger {
         }
       }
     });
+
+    register(new TagMethod(GsubLookupContextual.Fmt1.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+        GsubLookupContextual.Fmt1 table = (GsubLookupContextual.Fmt1) fdt;
+        td.tagRangeField(FieldType.SHORT, "format");
+        td.tagRangeField(FieldType.OFFSET, "coverage");
+        tagTable(table.coverage());
+      }
+    });
+
   }
 
   private static final Comparator<Class<? extends FontDataTable>> CLASS_NAME_COMPARATOR =

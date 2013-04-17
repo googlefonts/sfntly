@@ -331,7 +331,7 @@ public class FontInfo {
       if (count > 0) {
         table.add(Arrays.asList(new String[] { String.format(
             "%s [%s, %s]", block, UnicodeBlockData.getBlockStartCode(i),
-            UnicodeBlockData.getBlockEndCode(i)), String.format("%d / %d", count, set.size()) }));
+            UnicodeBlockData.getBlockEndCode(i)), String.format("%d / %d", count, set.limit()) }));
       }
       totalCount += count;
     }
@@ -395,7 +395,7 @@ public class FontInfo {
       }
 
       table.add(Arrays.asList(new String[] { scriptName,
-          String.format("%d / %d", coveredScripts.get(scriptCode), scriptSet.size()) }));
+          String.format("%d / %d", coveredScripts.get(scriptCode), scriptSet.limit()) }));
     }
     if (unknown > 0) {
       table.add(Arrays.asList(new String[] { "Unsupported script", String.format("%d", unknown) }));
