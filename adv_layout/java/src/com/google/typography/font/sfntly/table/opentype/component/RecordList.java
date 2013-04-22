@@ -6,9 +6,9 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-abstract class RecordList<T extends Record> implements Iterable<T> {
+public abstract class RecordList<T extends Record> implements Iterable<T> {
   private static final int COUNT_OFFSET = 0;
-  static final int RECORD_BASE = 2;
+  public static final int RECORD_BASE = 2;
 
   private final ReadableFontData readData;
   private final WritableFontData writeData;

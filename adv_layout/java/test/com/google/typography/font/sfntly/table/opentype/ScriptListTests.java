@@ -5,7 +5,6 @@ package com.google.typography.font.sfntly.table.opentype;
 import static org.junit.Assert.assertEquals;
 
 import com.google.typography.font.sfntly.data.WritableFontData;
-
 import org.junit.Test;
 
 /**
@@ -16,14 +15,16 @@ public class ScriptListTests {
   @Test
   public void testCreateEditor1() {
     ScriptListTable.Builder slBuilder = new ScriptListTable.Builder();
-    assertEquals(0, slBuilder.scriptCount());
+    assertEquals(0, slBuilder.subTableCount());
 
-    ScriptTable.Builder stBuilder = slBuilder.addScript(ScriptTag.latn.tag());
-    assertEquals(1, slBuilder.scriptCount());
-    assertEquals(0, stBuilder.langSysCount());
+    ScriptTable.Builder stBuilder = (ScriptTable.Builder)slBuilder.addBuiderForTag(ScriptTag.latn.tag()); 
+    assertEquals(1, slBuilder.subTableCount());
+    assertEquals(0, stBuilder.subTableCount());
 
-    LangSysTable.Builder lsBuilder = stBuilder.addLangSys(LanguageTag.ENG.tag());
-    assertEquals(1, stBuilder.langSysCount());
+    LangSysTable.Builder lsBuilder = new LangSysTable.Builder(
+        stBuilder.addBuiderForTag(LanguageTag.ENG.tag()),
+        LanguageTag.ENG.tag()); 
+    assertEquals(1, stBuilder.subTableCount());
     assertEquals(0, lsBuilder.featureCount());
 
     lsBuilder.addFeatureIndex(0);

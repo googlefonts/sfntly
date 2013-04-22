@@ -13,26 +13,34 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
-public abstract class RecordsTable<S extends SubTable> extends SubTable implements Iterable<S> {
-  final boolean dataIsCanonical;
+public abstract class RecordsTable<S extends SubTable>
+    extends SubTable implements Iterable<S> {
+  public final boolean dataIsCanonical;
   public final TagOffsetRecordList recordList;
-  public int tag;
+  public final int base;
+  
+  /////////////////
+  // constructors
+  
+  public RecordsTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+    super(data);
+    this.base = base;
+    this.dataIsCanonical = dataIsCanonical;
+    recordList = new TagOffsetRecordList(data.slice(base));
+  }
 
   public RecordsTable(ReadableFontData data, boolean dataIsCanonical) {
-    super(data);
-    this.dataIsCanonical = dataIsCanonical;
-    recordList = new TagOffsetRecordList(data);
+    this(data, 0, dataIsCanonical);
   }
+  
+  //////////////////
+  // public methods
 
   public S subTableAt(int index) {
     TagOffsetRecord record = recordList.get(index);
     return subTableForRecord(record);
   }
 
-//  public S scriptTableForTag(ScriptTag scriptTag) {
-//    return scriptTableForTag(scriptTag.tag());
-//  }
-//
   public S subTableForTag(int tag) {
     TagOffsetRecord record = recordList.getRecordForTag(tag);
     if (record == null) {
@@ -67,14 +75,18 @@ public abstract class RecordsTable<S extends SubTable> extends SubTable implemen
     };
   }
 
-  abstract protected S createSubTable(ReadableFontData data, int tag,
+  //////////////////////////////////////
+  // implementations pushed to subclasses
+
+  abstract protected S readSubTable(ReadableFontData data,
       boolean dataIsCanonical);
 
+  //////////////////////////////////////
+  // private methods
+
   private S subTableForRecord(TagOffsetRecord record) {
-    int tag = record.tag;
-    int offset = record.offset;
-    ReadableFontData newBase = data.slice(offset);
-    return createSubTable(newBase, tag, dataIsCanonical);
+    ReadableFontData newBase = data.slice(record.offset);
+    return readSubTable(newBase, dataIsCanonical);
   }
   
   public abstract static 
@@ -82,59 +94,160 @@ public abstract class RecordsTable<S extends SubTable> extends SubTable implemen
 
     protected int serializedLength;
     
+    protected VisibleBuilder() {
+      super(null);
+    }
+
     protected VisibleBuilder(ReadableFontData data) {
       super(data);
     }
 
     @Override
-    protected abstract int subSerialize(WritableFontData newData);
+    public abstract int subSerialize(WritableFontData newData);
 
     @Override
-    protected abstract int subDataSizeToSerialize();
-  }
+    public abstract int subDataSizeToSerialize();
+    
+    @Override
+    public abstract void subDataSet();
+
+    @Override
+    public abstract T subBuildTable(ReadableFontData data);
+ }
   
   public abstract static 
-  class Builder<T extends SubTable, S extends SubTable>
-       extends SubTable.Builder<T> {
-    private TreeMap<Integer, VisibleBuilder<S>> builders;
-    private boolean dataIsCanonical;
-    private int serializedCount;
+  class Builder<T extends SubTable, S extends SubTable> extends VisibleBuilder<T> {
+    
+    public TreeMap<Integer, VisibleBuilder<S>> builders;
+    protected boolean dataIsCanonical;
     protected int serializedLength;
+    private int serializedCount;
+    private final int base;    
 
+    /////////////////
+    // constructors
+    
     public Builder() {
-      super(null);
+      super();
+      base = 0;
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    public Builder(RecordsTable<T> table) {
+      this(table.readFontData(), table.base, table.dataIsCanonical);
+    }
+
+    public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data);
+      this.base = base;
       this.dataIsCanonical = dataIsCanonical;
       if (!dataIsCanonical) {
         prepareToEdit();
       }
     }
 
-    public Builder(RecordsTable<T> table) {
-      this(table.readFontData(), table.dataIsCanonical);
+    //////////////////
+    // public methods
+
+    public int subTableCount() {
+      if (builders == null) {
+        return new TagOffsetRecordList(internalReadData().slice(base)).count();
+      }
+      return builders.size();
     }
+
+    public
+    SubTable.Builder<? extends SubTable> builderForTag(int tag) {
+      prepareToEdit();
+      return builders.get(tag);
+    }
+
+    public 
+    VisibleBuilder<S> addBuiderForTag(int tag) {
+      prepareToEdit();
+      VisibleBuilder<S> builder = builders.get(tag);
+      if (builder == null) {
+        builder = createSubTableBuilder();
+        builders.put(tag, builder);
+      }
+      return builder;
+    }
+
+    public void removeBuilderForTag(int tag) {
+      prepareToEdit();
+      builders.remove(tag);
+    }
+
+    //////////////////////////////////////
+    // overriden methods
+
+    @Override
+    public int subDataSizeToSerialize() {
+      if (builders != null) {
+        computeSizeFromBuilders();
+      } else {
+        computeSizeFromData(internalReadData().slice(base));
+      }
+      return serializedLength;
+    }
+
+    @Override
+    protected boolean subReadyToSerialize() {
+      return true;
+    }
+
+
+    @Override
+    public int subSerialize(WritableFontData newData) {
+      if (serializedLength == 0) {
+        return 0;
+      }
+      
+      if (builders != null) {
+        return serializeFromBuilders(newData);
+      }
+      return serializeFromData(newData);
+    }
+
+    @Override
+    public void subDataSet() {
+      builders = null;
+    }
+
+    @Override
+    public T subBuildTable(ReadableFontData data) {
+      return readTable(data, 0, true);
+    }
+
+    //////////////////////////////////////
+    // implementations pushed to subclasses
+
+    protected abstract T readTable(ReadableFontData data, int base,
+        boolean dataIsCanonical);
 
     protected abstract
-    VisibleBuilder<S> createSubTableBuilder(
-        ReadableFontData data, int tag, boolean dataIsCanonical);
+    VisibleBuilder<S> createSubTableBuilder();    
     
-    private VisibleBuilder<S> createSubTableBuilder(
-        ReadableFontData data, int offset, int length, int tag) {
-      boolean dataIsCanonical = (length >= 0);
-      ReadableFontData newData = dataIsCanonical ?
-          data.slice(offset, length) : data.slice(offset);
-      return createSubTableBuilder(newData, tag, dataIsCanonical);
+    protected abstract
+    VisibleBuilder<S> createSubTableBuilder(
+        ReadableFontData data, int tag, boolean dataIsCanonical);    
+    
+    //////////////////////////////////////
+    // private methods
+
+    private void prepareToEdit() {
+      if (builders == null) {
+        initFromData(internalReadData(), base);
+        setModelChanged();
+      }
     }
 
-    private void initFromData(ReadableFontData data) {
+    private void initFromData(ReadableFontData data, int base) {
       builders = new TreeMap<Integer, VisibleBuilder<S>>();
       if (data == null) {
         return;
       }
-
+      
+      data = data.slice(base);
       // Start of the first subtable in the data, if we're canonical.
       TagOffsetRecordList recordList = new TagOffsetRecordList(data);
       if (recordList.count() == 0) {
@@ -167,61 +280,6 @@ public abstract class RecordsTable<S extends SubTable> extends SubTable implemen
           builders.put(tag, builder);
         } while (recordIterator.hasNext());
       }
-    }
-
-    private void prepareToEdit() {
-      if (builders == null) {
-        initFromData(internalReadData());
-        setModelChanged();
-      }
-    }
-
-    public int subTableCount() {
-      if (builders == null) {
-        return new TagOffsetRecordList(internalReadData()).count();
-      }
-      return builders.size();
-    }
-
-    protected abstract
-    VisibleBuilder<S> createSubTableBuilder(int tag);    
-    
-    /**
-     * Returns the builder for the language system specified by the tag, adding a
-     * new builder if necessary.
-     */
-    public 
-    SubTable.Builder<S> addBuiderForTag(int tag) {
-      prepareToEdit();
-      VisibleBuilder<S> builder = builders.get(tag);
-      if (builder == null) {
-        builder = createSubTableBuilder(tag);
-        builders.put(tag, builder);
-      }
-      return builder;
-    }
-
-    /**
-     * Return the builder for the script specified by the tag, or null if
-     * the tag is not currently listed.
-     */
-    public
-    SubTable.Builder<? extends SubTable> builderForTag(int tag) {
-      prepareToEdit();
-      return builders.get(tag);
-    }
-
-    /**
-     * Remove the sub table specified by the tag.
-     */
-    public void removeBuilderForTag(int tag) {
-      prepareToEdit();
-      builders.remove(tag);
-    }
-
-    @Override
-    protected boolean subReadyToSerialize() {
-      return true;
     }
 
     private void computeSizeFromBuilders() {
@@ -260,64 +318,46 @@ public abstract class RecordsTable<S extends SubTable> extends SubTable implemen
       serializedCount = count;
     }
 
-    @Override
-    public int subDataSizeToSerialize() {
-      if (builders != null) {
-        computeSizeFromBuilders();
-      } else {
-        computeSizeFromData(internalReadData());
-      }
-      return serializedLength;
-    }
-
     private int serializeFromBuilders(WritableFontData newData) {
       // The canonical form of the data consists of the header,
       // the index, then the
       // scriptTables from the index in index order.  All
       // scriptTables are distinct; there's no sharing of tables.
-      TagOffsetRecordList recordList = new TagOffsetRecordList(newData);
-      int subTablePos = TagOffsetRecordList.sizeOfListOfCount(serializedCount);
-      for (Entry<Integer, VisibleBuilder<S>> entry  : builders.entrySet()) {
+
+      // Find size for table
+      int tableSize = TagOffsetRecordList.sizeOfListOfCount(serializedCount);
+      
+      // Fill header in table and serialize its builder.
+      int tableFillPos = 0;
+      int subTableFillPos = tableSize;
+      
+      TagOffsetRecordList recordList =
+          new TagOffsetRecordList(newData.slice(tableFillPos));
+      for (Entry<Integer, VisibleBuilder<S>> entry : builders.entrySet()) {
         int tag = entry.getKey();
         VisibleBuilder<? extends SubTable> builder = entry.getValue();
         if (builder.serializedLength > 0) {
-          TagOffsetRecord record = new TagOffsetRecord(tag, subTablePos);
+          TagOffsetRecord record = new TagOffsetRecord(tag, subTableFillPos);
           recordList.append(record);
-          subTablePos += builder.subSerialize(newData.slice(subTablePos));
+          subTableFillPos += builder.subSerialize(newData.slice(subTableFillPos));
         }
       }
-      return subTablePos;
+      return subTableFillPos;
     }
 
     private int serializeFromData(WritableFontData newData) {
       // The source data must be canonical.
-      ReadableFontData data = internalReadData();
+      ReadableFontData data = internalReadData().slice(base);
       data.copyTo(newData);
       return data.length();
     }
 
-    @Override
-    public int subSerialize(WritableFontData newData) {
-      if (serializedLength == 0) {
-        return 0;
-      }
-      if (builders != null) {
-        return serializeFromBuilders(newData);
-      }
-      return serializeFromData(newData);
-    }
-
-    @Override
-    protected void subDataSet() {
-      builders = null;
-    }
-
-    abstract protected T createTable(ReadableFontData data,
-        boolean dataIsCanonical);
-
-    @Override
-    protected T subBuildTable(ReadableFontData data) {
-      return createTable(data, true);
+    private VisibleBuilder<S> createSubTableBuilder(
+        ReadableFontData data, int offset, int length, int tag) {
+      boolean dataIsCanonical = (length >= 0);
+      ReadableFontData newData = dataIsCanonical ?
+          data.slice(offset, length) : data.slice(offset);
+      return createSubTableBuilder(newData, tag, dataIsCanonical);
     }
   }
 }

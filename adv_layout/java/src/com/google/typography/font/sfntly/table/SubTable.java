@@ -77,7 +77,7 @@ public abstract class SubTable extends FontDataTable {
    *
    * @param <T> the type of the subtable
    */
-  protected abstract static class Builder<T extends SubTable> extends FontDataTable.Builder<T> {
+  public abstract static class Builder<T extends SubTable> extends FontDataTable.Builder<T> {
     private ReadableFontData masterData;
 
     /**

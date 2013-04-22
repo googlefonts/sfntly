@@ -4,9 +4,9 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
 public final class TagOffsetRecord implements Record {
-  static final int RECORD_SIZE = 6;
-  private static final int TAG_POS = 0;
-  private static final int OFFSET_POS = 4;
+  public static final int RECORD_SIZE = 6;
+  public static final int TAG_POS = 0;
+  public static final int OFFSET_POS = 4;
   public final int tag;
   public final int offset;
 

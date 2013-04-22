@@ -179,10 +179,10 @@ public class TableDump {
     if (silenced(scriptListTable)) {
       return;
     }
-    int numScripts = scriptListTable.scriptRecordList.count();
+    int numScripts = scriptListTable.recordList.count();
     formatln("Script List");
     for (int i = 0; i < numScripts; ++i) {
-      ScriptTable scriptTable = scriptListTable.scriptTableAt(i);
+      ScriptTable scriptTable = scriptListTable.subTableAt(i);
       format("%3d: ", i);
       in();
       dump(scriptTable);
@@ -198,7 +198,7 @@ public class TableDump {
     if (silenced(scriptTable)) {
       return;
     }
-    println(Tag.stringValue(scriptTable.scriptTag()));
+    println("script tag is no available in script table"); //, Tag.stringValue(scriptTable.scriptTag()));
     in();
     LangSysTable langSysTable = scriptTable.defaultLangSysTable();
     if (langSysTable != null) {
@@ -207,10 +207,10 @@ public class TableDump {
       dump(langSysTable);
       out();
     }
-    int numLangSystems = scriptTable.langSysCount();
+    int numLangSystems = scriptTable.recordList().count();
     for (int i = 0; i < numLangSystems; ++i) {
-      format("%3d: %s ", i, Tag.stringValue(scriptTable.langSysTagAt(i)));
-      langSysTable = scriptTable.langSysTableAt(i);
+      format("%3d: %s ", i, Tag.stringValue(scriptTable.recordList().get(i).tag));
+      langSysTable = scriptTable.subTableAt(i);
       in();
       dump(langSysTable);
       out();
