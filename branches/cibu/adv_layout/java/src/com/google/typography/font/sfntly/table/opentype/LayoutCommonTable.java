@@ -6,7 +6,7 @@ import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
-
+import com.google.typography.font.sfntly.table.opentype.component.TagOffsetRecord;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -204,7 +204,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
           return null;
         }
       }
-      LangSysTable langSysTable = scriptTable.langSysTableForTag(langSysTag);
+      LangSysTable langSysTable = scriptTable.subTableForTag(langSysTag);
       if (langSysTable == null) {
         langSysTable = scriptTable.defaultLangSysTable();
       }
@@ -573,13 +573,12 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
           }
         }
 
-        int scriptCount = sl.recordList.count();
-        for (int i = 0; i < scriptCount; ++i) {
-          ScriptTable st = sl.subTableAt(i);
-          int scriptTag = st.scriptTag();
-          int langSysCount = st.langSysCount();
-          for (int j = 0; j < langSysCount; ++j) {
-            LangSysTable lt = st.langSysTableAt(j);
+        for (TagOffsetRecord sr : sl.recordList) {
+          int scriptTag = sr.tag;
+          ScriptTable st = sl.subTableForTag(scriptTag);
+          for (TagOffsetRecord lr : st.recordList()) {
+            int langTag = lr.tag;
+            LangSysTable lt = st.subTableForTag(langTag);
             int languageTag = lt.langSysTag();
             processLangSysTable(lt, scriptTag, languageTag, featureIds);
           }
@@ -753,7 +752,6 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
         // Two LookupIds can compare equal without being equal.
         return this.id - rhs.id;
       }
-      @SuppressWarnings({"rawtypes", "unchecked"})
       @Override
       public void delete() {
         if (builder != null) {
@@ -1073,13 +1071,13 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
 
       for (LangSysId<T> langSysId : langSysSet) {
         int scriptTag = langSysId.scriptTag;
-        ScriptTable.Builder st = new ScriptTable.Builder(slb.addBuiderForTag(scriptTag), scriptTag);
+        ScriptTable.Builder stb = (ScriptTable.Builder)slb.addBuiderForTag(scriptTag);
         int languageTag = langSysId.languageTag;
         LangSysTable.Builder lsb;
         if (languageTag == LanguageTag.DFLT.tag()) {
-          lsb = st.defaultLangSysTableBuilder();
+          lsb = (LangSysTable.Builder)stb.buiderForHeader();
         } else {
-          lsb = st.addLangSys(languageTag);
+          lsb = (LangSysTable.Builder)stb.addBuiderForTag(languageTag);
         }
         if (langSysId.requiredFeature != null) {
           lsb.setRequiredFeatureIndex(langSysId.requiredFeature.id);

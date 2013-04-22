@@ -5,6 +5,7 @@ package com.google.typography.font.sfntly.table.opentype;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
+import com.google.typography.font.sfntly.table.opentype.component.RecordsTable.VisibleBuilder;
 
 import java.util.Arrays;
 
@@ -79,7 +80,7 @@ public class LangSysTable extends SubTable {
     return FEATURE_INDEX_BASE + featureCount * FEATURE_INDEX_SIZE;
   }
 
-  public static class Builder extends SubTable.Builder<LangSysTable> {
+  public static class Builder extends VisibleBuilder<LangSysTable> {
     private final int langSysTag;
     private int requiredFeatureIndex;
     private int featureCount;
@@ -99,6 +100,12 @@ public class LangSysTable extends SubTable {
       if (!dataIsCanonical) {
         prepareToEdit();
       }
+    }
+
+    public Builder(SubTable.Builder<LangSysTable> builder, int langSysTag) {
+      super(builder.data());
+      this.langSysTag = langSysTag;
+      this.dataIsCanonical = true;
     }
 
     public Builder(LangSysTable table) {
@@ -269,7 +276,7 @@ public class LangSysTable extends SubTable {
     }
 
     @Override
-    protected int subDataSizeToSerialize() {
+    public int subDataSizeToSerialize() {
       if (isEmpty()) {
         serializedLength = 0;
       } else {
@@ -279,7 +286,7 @@ public class LangSysTable extends SubTable {
     }
 
     @Override
-    protected int subSerialize(WritableFontData newData) {
+    public int subSerialize(WritableFontData newData) {
       if (serializedLength == 0) {
         return 0;
       }
@@ -296,12 +303,12 @@ public class LangSysTable extends SubTable {
     }
 
     @Override
-    protected void subDataSet() {
+    public void subDataSet() {
       featureList = null;
     }
 
     @Override
-    protected LangSysTable subBuildTable(ReadableFontData data) {
+    public LangSysTable subBuildTable(ReadableFontData data) {
       return new LangSysTable(data, langSysTag, true);
     }
   }

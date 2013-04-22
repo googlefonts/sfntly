@@ -9,41 +9,43 @@ import static org.junit.Assert.assertNotNull;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
+import com.google.typography.font.sfntly.table.opentype.component.RecordList;
+import com.google.typography.font.sfntly.table.opentype.component.TagOffsetRecord;
 
 import org.junit.Test;
 
 public class ScriptTableTests {
   @Test
   public void testCreateTableFromNullData() {
-    ScriptTable table = ScriptTable.create(null, 0, false);
+    ScriptTable table = new ScriptTable(null, false);
     assertEmptyTable(table);
     
-    ScriptTable.Builder builder = new ScriptTable.Builder(table);
+    ScriptTable.Builder builder = new ScriptTable.Builder(table.readFontData(), table.dataIsCanonical);
     ScriptTable newTable = builder.build();
     assertEmptyTable(table);
   }
   
   @Test
   public void testCreateEmptyTableFromData() {
-    ScriptTable table = ScriptTable.create(emptyScriptTableData(), 0, false);
+    ScriptTable table = new ScriptTable(emptyScriptTableData(), false);
     assertEmptyTable(table);
     
-    ScriptTable.Builder builder = new ScriptTable.Builder(table);
+    ScriptTable.Builder builder = new ScriptTable.Builder(table.readFontData(), table.dataIsCanonical);
     ScriptTable newTable = builder.build();
     assertEmptyTable(table);
     
-    builder = new ScriptTable.Builder(emptyScriptTableData(), 0, true);
+    builder = new ScriptTable.Builder(emptyScriptTableData(), true);
     newTable = builder.build();
     assertEmptyTable(table);
   }
   
   @Test
   public void testCreateBadTableFromData() {
-    ScriptTable table = ScriptTable.create(badScriptTableData(), 0, false);
+    ScriptTable table = new ScriptTable(badScriptTableData(), false);
     // We just use the table as it was passed to us.
     assertBadTable(table);
     
-    ScriptTable.Builder builder = new ScriptTable.Builder(table);
+    ScriptTable.Builder builder = new ScriptTable.Builder(table.readFontData(), table.dataIsCanonical);
     ScriptTable newTable = builder.build();
     // A builder created from non-canonical data edits the data and fixes it.
     assertFixedBadTable(newTable);
@@ -51,23 +53,23 @@ public class ScriptTableTests {
   
   private static void assertEmptyTable(ScriptTable table) {
     assertNull(table.defaultLangSysTable());
-    assertEquals(0, table.langSysCount());
+    assertEquals(0, table.recordList().count());
   }
   
   private static void assertBadTable(ScriptTable table) {
     assertNotNull(table.defaultLangSysTable());
-    assertEquals(3, table.langSysCount());
+    assertEquals(3, table.recordList().count());
   }
   
   private static void assertFixedBadTable(ScriptTable table) {
     assertNotNull(table.defaultLangSysTable());
-    assertEquals(1, table.langSysCount());
-    assertEquals(LANGSYS_JA, table.langSysTagAt(0));
+    assertEquals(1, table.recordList().count());
+    assertEquals(LANGSYS_JA, table.recordList().get(0).tag);
     
     // The default table has one feature, as does the JA table.
     // Both have been fixed.
     assertEquals(1, table.defaultLangSysTable().featureCount());
-    assertEquals(1, table.langSysTableAt(0).featureCount());
+    assertEquals(1, table.subTableAt(0).featureCount());
   }
   
   private static ReadableFontData emptyScriptTableData() {
@@ -77,9 +79,9 @@ public class ScriptTableTests {
   }
 
   private static int writeEmptyScriptTableData(WritableFontData data) {
-    data.writeUShort(ScriptTable.DEFAULT_LANG_SYS_OFFSET, 0);
-    data.writeUShort(ScriptTable.LANG_SYS_COUNT_OFFSET, 0);
-    return ScriptTable.LANG_SYS_RECORD_BASE;
+    data.writeUShort(ScriptTable.Header.DEFAULT_LANG_SYS_OFFSET, 0);
+    data.writeUShort(ScriptTable.Header.DEFAULT_LANG_SYS_OFFSET_LENGTH, 0);
+    return ScriptTable.Header.DEFAULT_LANG_SYS_OFFSET_LENGTH + RecordList.RECORD_BASE;
   }
   
   private static ReadableFontData badScriptTableData() {
@@ -115,26 +117,26 @@ public class ScriptTableTests {
     int THIRD_TABLE_POS = 64; // ES data
     
     // The default table is ok.
-    data.writeUShort(ScriptTable.DEFAULT_LANG_SYS_OFFSET, THIRD_TABLE_POS);
-    data.writeUShort(ScriptTable.LANG_SYS_COUNT_OFFSET, 3);
+    data.writeUShort(ScriptTable.Header.DEFAULT_LANG_SYS_OFFSET, THIRD_TABLE_POS);
+    data.writeUShort(ScriptTable.Header.DEFAULT_LANG_SYS_OFFSET_LENGTH, 3);
     // This first record is ok.
-    int offset = ScriptTable.LANG_SYS_RECORD_BASE;
-    data.writeULong(offset + ScriptTable.LANG_SYS_RECORD_LANG_SYS_TAG_OFFSET, LANGSYS_JA);
-    data.writeUShort(offset + ScriptTable.LANG_SYS_RECORD_LANG_SYS_OFFSET, FIRST_TABLE_POS);
+    int offset = ScriptTable.Header.DEFAULT_LANG_SYS_OFFSET_LENGTH + RecordList.RECORD_BASE;;
+    data.writeULong(offset + TagOffsetRecord.TAG_POS, LANGSYS_JA);
+    data.writeUShort(offset + TagOffsetRecord.OFFSET_POS, FIRST_TABLE_POS);
     // The second record is out of order.  The table it points to is empty.
-    offset += ScriptTable.LANG_SYS_RECORD_SIZE;
-    data.writeULong(offset + ScriptTable.LANG_SYS_RECORD_LANG_SYS_TAG_OFFSET, LANGSYS_EN);
-    data.writeUShort(offset + ScriptTable.LANG_SYS_RECORD_LANG_SYS_OFFSET, SECOND_TABLE_POS);
+    offset += TagOffsetRecord.RECORD_SIZE;
+    data.writeULong(offset + TagOffsetRecord.TAG_POS, LANGSYS_EN);
+    data.writeUShort(offset + TagOffsetRecord.OFFSET_POS, SECOND_TABLE_POS);
     // The third record is a duplicate.  It overrides the previous one, however the table
     // it points to is the same.
-    offset += ScriptTable.LANG_SYS_RECORD_SIZE;
-    data.writeULong(offset + ScriptTable.LANG_SYS_RECORD_LANG_SYS_TAG_OFFSET, LANGSYS_JA);
-    data.writeUShort(offset + ScriptTable.LANG_SYS_RECORD_LANG_SYS_OFFSET, FIRST_TABLE_POS);
+    offset += TagOffsetRecord.RECORD_SIZE;
+    data.writeULong(offset + TagOffsetRecord.TAG_POS, LANGSYS_JA);
+    data.writeUShort(offset + TagOffsetRecord.OFFSET_POS, FIRST_TABLE_POS);
     // The forth record points to the default table, which is bad.  The default table
     // takes precedence and this record is removed.
-    offset += ScriptTable.LANG_SYS_RECORD_SIZE;
-    data.writeULong(offset + ScriptTable.LANG_SYS_RECORD_LANG_SYS_TAG_OFFSET, LANGSYS_ES);
-    data.writeUShort(offset + ScriptTable.LANG_SYS_RECORD_LANG_SYS_OFFSET, THIRD_TABLE_POS);
+    offset += TagOffsetRecord.RECORD_SIZE;
+    data.writeULong(offset + TagOffsetRecord.TAG_POS, LANGSYS_ES);
+    data.writeUShort(offset + TagOffsetRecord.OFFSET_POS, THIRD_TABLE_POS);
     
     LangSysTableTests.writeBadLangSysTableData(data.slice(FIRST_TABLE_POS));
     LangSysTableTests.writeEmptyLangSysTableData(data.slice(SECOND_TABLE_POS));
