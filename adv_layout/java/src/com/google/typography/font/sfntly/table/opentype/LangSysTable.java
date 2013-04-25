@@ -7,7 +7,6 @@ import com.google.typography.font.sfntly.table.opentype.component.NumRecord;
 import com.google.typography.font.sfntly.table.opentype.component.RecordList;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 import com.google.typography.font.sfntly.table.opentype.langsystable.Header;
-import com.google.typography.font.sfntly.table.opentype.langsystable.HeaderBuilder;
 import com.google.typography.font.sfntly.table.opentype.langsystable.InnerArray;
 
 public class LangSysTable extends SubTable {
@@ -38,22 +37,22 @@ public class LangSysTable extends SubTable {
   public static class Builder extends VisibleBuilder<LangSysTable> {
 
     protected boolean dataIsCanonical;
-    public final HeaderBuilder headerBuilder;
-    public final InnerArray.Builder arrayBuilder;
+    protected final Header.Builder headerBuilder;
+    protected final InnerArray.Builder arrayBuilder;
 
     ////////////////
     // Constructors
 
     public Builder() {
       super();
-      headerBuilder = new HeaderBuilder();
+      headerBuilder = new Header.Builder();
       arrayBuilder = new InnerArray.Builder();
     }
 
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data);
       this.dataIsCanonical = dataIsCanonical;
-      headerBuilder = new HeaderBuilder(data, dataIsCanonical);
+      headerBuilder = new Header.Builder(data, dataIsCanonical);
       arrayBuilder = new InnerArray.Builder(
           data.slice(Header.RECORD_SIZE), dataIsCanonical);
     }
@@ -86,6 +85,10 @@ public class LangSysTable extends SubTable {
       return this;
     }
     
+    public int featureIndexCount() {
+      return arrayBuilder.count();
+    }
+
     ////////////////////////////////
     // Public methods to serialize
 

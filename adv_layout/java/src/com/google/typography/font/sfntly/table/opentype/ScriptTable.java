@@ -6,7 +6,7 @@ import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecord;
 import com.google.typography.font.sfntly.table.opentype.component.TagOffsetRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
-import com.google.typography.font.sfntly.table.opentype.scripttable.HeaderBuilder;
+import com.google.typography.font.sfntly.table.opentype.scripttable.Header;
 import com.google.typography.font.sfntly.table.opentype.scripttable.InnerArray;
 
 import java.util.Iterator;
@@ -22,7 +22,7 @@ public class ScriptTable extends SubTable implements Iterable<LangSysTable>  {
   public ScriptTable(ReadableFontData data, boolean dataIsCanonical) {
     super(data);
     this.dataIsCanonical = dataIsCanonical;
-    header = new NumRecord(data, HeaderBuilder.DEFAULT_LANG_SYS_OFFSET);
+    header = new NumRecord(data, Header.Builder.DEFAULT_LANG_SYS_OFFSET);
     array = new InnerArray(data, NumRecord.RECORD_SIZE, dataIsCanonical);
   }
 
@@ -52,12 +52,26 @@ public class ScriptTable extends SubTable implements Iterable<LangSysTable>  {
   }
 
   ////////////////////////////////////
+  // Methods specific to this class
+
+  public LangSysTable defaultLangSysTable() {
+    int offset = header.value;
+    if (offset == Header.Builder.DEFAULT_LANG_SYS_TAG) {
+      return null;
+    }
+    
+    ReadableFontData newData = data.slice(offset);
+    LangSysTable langSysTable = new LangSysTable(newData, dataIsCanonical);
+    return langSysTable;
+  }
+
+  ////////////////////////////////////
   // Builder
 
   public static class Builder extends VisibleBuilder<ScriptTable> {
 
     protected boolean dataIsCanonical;
-    private final HeaderBuilder headerBuilder;
+    private final Header.Builder headerBuilder;
     private final InnerArray.Builder arrayBuilder;
 
     ////////////////
@@ -65,16 +79,16 @@ public class ScriptTable extends SubTable implements Iterable<LangSysTable>  {
 
     public Builder() {
       super();
-      headerBuilder = new HeaderBuilder();
+      headerBuilder = new Header.Builder();
       arrayBuilder = new InnerArray.Builder();
     }
 
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data);
       this.dataIsCanonical = dataIsCanonical;
-      headerBuilder = new HeaderBuilder(data, dataIsCanonical);
+      headerBuilder = new Header.Builder(data, dataIsCanonical);
       arrayBuilder = new InnerArray.Builder(
-          data, HeaderBuilder.DEFAULT_LANG_SYS_OFFSET_LENGTH, dataIsCanonical);
+          data, Header.Builder.DEFAULT_LANG_SYS_OFFSET_LENGTH, dataIsCanonical);
     }
 
     ///////////////////////////////
@@ -100,7 +114,7 @@ public class ScriptTable extends SubTable implements Iterable<LangSysTable>  {
     }
 
     public VisibleBuilder<LangSysTable> buiderForHeader() {
-      return headerBuilder.builder();
+      return headerBuilder.initBuilder();
     }
 
     /////////////////////////////////
@@ -113,7 +127,7 @@ public class ScriptTable extends SubTable implements Iterable<LangSysTable>  {
 
     @Override
     public int subSerialize(WritableFontData newData) {
-      int newOffset = arrayBuilder.subSerialize(newData.slice(HeaderBuilder.DEFAULT_LANG_SYS_OFFSET_LENGTH));
+      int newOffset = arrayBuilder.subSerialize(newData.slice(Header.Builder.DEFAULT_LANG_SYS_OFFSET_LENGTH));
       return headerBuilder.subSerialize(newData, newOffset);
     }
 
@@ -150,16 +164,5 @@ public class ScriptTable extends SubTable implements Iterable<LangSysTable>  {
     public ScriptTable subBuildTable(ReadableFontData data) {
       return createTable(data, true);
     } 
-  }
-
-  public LangSysTable defaultLangSysTable() {
-    int offset = header.value;
-    if (offset == HeaderBuilder.DEFAULT_LANG_SYS_TAG) {
-      return null;
-    }
-    
-    ReadableFontData newData = data.slice(offset);
-    LangSysTable langSysTable = new LangSysTable(newData, dataIsCanonical);
-    return langSysTable;
   }
 }
