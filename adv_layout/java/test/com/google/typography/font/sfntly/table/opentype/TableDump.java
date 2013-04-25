@@ -226,18 +226,18 @@ public class TableDump {
     if (silenced(langSysTable)) {
       return;
     }
-    if (langSysTable.hasRequiredFeature()) {
-      print(langSysTable.requiredFeatureIndex());
+    if (langSysTable.header.hasRequiredFeature()) {
+      print(langSysTable.header.requiredFeature);
     } else {
       print("-");
     }
-    int featureCount = langSysTable.featureCount();
+    int featureCount = langSysTable.records().count();
     print(" [");
     for (int i = 0; i < featureCount; ++i) {
       if (i > 0) {
         print(" ");
       }
-      print(langSysTable.featureIndexAt(i));
+      print(langSysTable.records().get(i).value);
     }
     println("]");
   }

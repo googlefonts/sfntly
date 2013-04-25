@@ -3,7 +3,10 @@ package com.google.typography.font.sfntly.table.opentype.component;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public abstract class RecordList<T extends Record> implements Iterable<T> {
@@ -13,26 +16,34 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
   private final ReadableFontData readData;
   private final WritableFontData writeData;
   private int count;
-  
+  private List<T> recordsToWrite;
+
   public RecordList(WritableFontData data) {
     this.readData = null;
     this.writeData = data;
     this.count = 0;
-    writeData.writeUShort(COUNT_OFFSET, 0);
+    if (writeData != null) {
+      writeData.writeUShort(COUNT_OFFSET, 0);
+    }
   }
 
   public RecordList(ReadableFontData data) {
     this.readData = data;
     this.writeData = null;
-    this.count = data.readUShort(COUNT_OFFSET);
+    if (readData != null) {
+      this.count = data.readUShort(COUNT_OFFSET);
+    }
   }
 
   public int count() {
+    if (recordsToWrite != null) {
+      return recordsToWrite.size();
+    }
     return count;
   }
 
   public int limit() {
-    return sizeOfList(count);
+    return sizeOfList(count());
   }
 
   private int sizeOfList(int count) {
@@ -44,11 +55,32 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
   }
 
   public T get(int index) {
+    if (recordsToWrite != null) {
+      return recordsToWrite.get(index);
+    }
     return getRecordAt(readData, sizeOfList(index));
+  }
+
+  public boolean contains(T record) {
+    if (recordsToWrite != null) {
+      return recordsToWrite.contains(record);
+    }
+
+    Iterator<T> iterator = iterator();
+    while(iterator.hasNext()) {
+      if (record.equals(iterator.next())) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
   public Iterator<T> iterator() {
+    if (recordsToWrite != null) {
+      return recordsToWrite.iterator();
+    }
+
     return new Iterator<T>() {
       private int current = 0;
 
@@ -72,15 +104,45 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
     };
   }
 
-  public void append(T record) {
+  public RecordList<T> add(T record) {
+    copyFromRead();
+    recordsToWrite.add(record);
+    return this;
+  }
+
+  public RecordList<T> addAll(Collection<T> recordsToWrite) {
+    copyFromRead();
+    this.recordsToWrite.addAll(recordsToWrite);
+    return this;
+  }
+
+  public int write() {
     if (writeData == null) {
       throw new UnsupportedOperationException();
     }
-    record.writeTo(writeData, limit());
-    writeData.writeUShort(COUNT_OFFSET, ++count);
+    return writeTo(writeData);
   }
-  
+
+  public int writeTo(WritableFontData writeData) {
+    copyFromRead();
+    int bytesWrote = writeData.writeUShort(COUNT_OFFSET, count);
+    for(T record : recordsToWrite) {
+      bytesWrote += record.writeTo(writeData, bytesWrote);
+    }
+    return bytesWrote;
+  }
+
+  private void copyFromRead() {
+    if (recordsToWrite == null) {
+      recordsToWrite = new ArrayList<T>(count);
+      Iterator<T> iterator = iterator();
+      while(iterator.hasNext()) {
+        recordsToWrite.add(iterator.next());
+      }
+    }
+  }
+
   protected abstract T getRecordAt(ReadableFontData data, int pos);
-  
+
   protected abstract int recordSize();
 }

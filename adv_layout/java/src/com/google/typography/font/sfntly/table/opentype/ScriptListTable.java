@@ -1,9 +1,10 @@
 package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
+import com.google.typography.font.sfntly.table.opentype.component.TagOffsetsTable;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
-public class ScriptListTable extends RecordsTable<ScriptTable> {
+public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
 
   public ScriptListTable(ReadableFontData data, boolean dataIsCanonical) {
     super(data, dataIsCanonical);
@@ -16,7 +17,7 @@ public class ScriptListTable extends RecordsTable<ScriptTable> {
   }
 
   public static class Builder extends 
-  RecordsTable.Builder<ScriptListTable, ScriptTable> {
+  TagOffsetsTable.Builder<ScriptListTable, ScriptTable> {
 
     @Override
     protected VisibleBuilder<ScriptTable> createSubTableBuilder(

@@ -30,8 +30,8 @@ public final class TagOffsetRecordList extends RecordList<TagOffsetRecord> {
   }
   
   @Override
-  protected TagOffsetRecord getRecordAt(ReadableFontData data, int pos) {
-    return new TagOffsetRecord(data, pos);
+  protected TagOffsetRecord getRecordAt(ReadableFontData data, int offset) {
+    return new TagOffsetRecord(data, offset);
   }
 
   @Override

@@ -6,7 +6,11 @@ import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
+import com.google.typography.font.sfntly.table.opentype.component.NumRecord;
+import com.google.typography.font.sfntly.table.opentype.component.Record;
 import com.google.typography.font.sfntly.table.opentype.component.TagOffsetRecord;
+import com.google.typography.font.sfntly.table.opentype.langsystable.Header;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -140,7 +144,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
    */
   public Iterable<T> lookups(ScriptTag stag, LanguageTag ltag, Set<FeatureTag> featureSet) {
     init();
-    LangSysTable langSys = getLangSysTable(stag.tag(), ltag.tag());
+    LangSysTable langSys = getLangSysTableNew(stag.tag(), ltag.tag());
     Set<FeatureTable> features = getFeatureTableSet(langSys, featureSet);
     Iterable<T> lookups = getLookups(features);
     return lookups;
@@ -186,7 +190,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
         langSysTable = map.get(key);
       }
       if (langSysTable == null) {
-        langSysTable = createLangSysTable(scriptTag, langSysTag);
+        langSysTable = createLangSysTableNew(scriptTag, langSysTag);
         if (langSysTable != null) {
           synchronized(this) {
             map.put(key, langSysTable);
@@ -196,7 +200,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       return langSysTable;
     }
 
-    private LangSysTable createLangSysTable(int scriptTag, int langSysTag) {
+    private LangSysTable createLangSysTableNew(int scriptTag, int langSysTag) {
       ScriptTable scriptTable = scriptList.subTableForTag(scriptTag);
       if (scriptTable == null) {
         scriptTable = scriptList.subTableForTag(ScriptTag.DFLT.tag());
@@ -216,7 +220,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     return new LangSysCache();
   }
 
-  LangSysTable getLangSysTable(int scriptTag, int langSysTag) {
+  LangSysTable getLangSysTableNew(int scriptTag, int langSysTag) {
     return langSysCache.get(scriptTag, langSysTag);
   }
 
@@ -272,16 +276,16 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     }
     
     // Always include the langSys required feature even if features doesn't contain it.
-    if (langSys.hasRequiredFeature()) {
-      FeatureTable table = getFeatureTable(langSys.requiredFeatureIndex());
+    if (langSys.header.hasRequiredFeature()) {
+      FeatureTable table = getFeatureTable(langSys.header.requiredFeature);
       if (table != null) {
         result.add(table);
       }
     }
 
     // Only include other langSys features if features contains them.
-    for (int i = 0; i < langSys.featureCount(); ++i) {
-      FeatureTable table = featureCache.get(langSys.featureIndexAt(i));
+    for (NumRecord record : langSys.records()) {
+      FeatureTable table = featureCache.get(record.value);
       if (table != null) {
         FeatureTag tag = FeatureTag.forTagValue(table.featureTag());
         if (tag != null && features.contains(tag)) {
@@ -579,29 +583,28 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
           for (TagOffsetRecord lr : st.recordList()) {
             int langTag = lr.tag;
             LangSysTable lt = st.subTableForTag(langTag);
-            int languageTag = lt.langSysTag();
-            processLangSysTable(lt, scriptTag, languageTag, featureIds);
+            processLangSysTableNew(lt, scriptTag, langTag, featureIds);
           }
           LangSysTable lt = st.defaultLangSysTable();
           if (lt != null) {
             int languageTag = LanguageTag.DFLT.tag();
-            processLangSysTable(lt, scriptTag, languageTag, featureIds);
+            processLangSysTableNew(lt, scriptTag, languageTag, featureIds);
           }
         }
       }
     }
 
-    private void processLangSysTable(LangSysTable lt, int scriptTag, int languageTag,
+    private void processLangSysTableNew(LangSysTable lt, int scriptTag, int languageTag,
         List<FeatureId<T>> featureIds) {
       LangSysId<T> langSysId = newLangSys(scriptTag, languageTag);
-      int langSysFeatureCount = lt.featureCount();
+      int langSysFeatureCount = lt.records().count();
       for (int k = 0; k < langSysFeatureCount; ++k) {
-        int featureIndex = lt.featureIndexAt(k);
+        int featureIndex = lt.records().get(k).value;
         FeatureId<T> featureId = featureIds.get(featureIndex);
         addFeatureToLangSys(featureId, langSysId);
       }
-      if (lt.hasRequiredFeature()) {
-        int requiredFeatureIndex = lt.requiredFeatureIndex();
+      if (lt.header.hasRequiredFeature()) {
+        int requiredFeatureIndex = lt.header.requiredFeature;
         FeatureId<T> requiredFeatureId = featureIds.get(requiredFeatureIndex);
         setLangSysRequiredFeature(langSysId, requiredFeatureId);
       }
@@ -1086,7 +1089,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
           if (featureId.equals(langSysId.requiredFeature)) {
             continue;
           }
-          lsb.addFeatureIndex(featureId.id);
+          lsb.addFeatureIndices(featureId.id);
         }
       }
 
