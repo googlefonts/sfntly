@@ -12,7 +12,7 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecord;
 import com.google.typography.font.sfntly.table.opentype.component.RecordList;
 import com.google.typography.font.sfntly.table.opentype.component.TagOffsetRecord;
-import com.google.typography.font.sfntly.table.opentype.scripttable.HeaderBuilder;
+import com.google.typography.font.sfntly.table.opentype.scripttable.Header;
 
 import org.junit.Test;
 
@@ -81,9 +81,9 @@ public class ScriptTableTests {
   }
 
   private static int writeEmptyScriptTableData(WritableFontData data) {
-    data.writeUShort(HeaderBuilder.DEFAULT_LANG_SYS_OFFSET, 0);
+    data.writeUShort(Header.Builder.DEFAULT_LANG_SYS_OFFSET, 0);
     data.writeUShort(NumRecord.RECORD_SIZE, 0);
-    return HeaderBuilder.DEFAULT_LANG_SYS_OFFSET_LENGTH + RecordList.RECORD_BASE;
+    return Header.Builder.DEFAULT_LANG_SYS_OFFSET_LENGTH + RecordList.RECORD_BASE;
   }
   
   private static ReadableFontData badScriptTableData() {
@@ -119,10 +119,10 @@ public class ScriptTableTests {
     int THIRD_TABLE_POS = 64; // ES data
     
     // The default table is ok.
-    data.writeUShort(HeaderBuilder.DEFAULT_LANG_SYS_OFFSET, THIRD_TABLE_POS);
+    data.writeUShort(Header.Builder.DEFAULT_LANG_SYS_OFFSET, THIRD_TABLE_POS);
     data.writeUShort(NumRecord.RECORD_SIZE, 3);
     // This first record is ok.
-    int offset = HeaderBuilder.DEFAULT_LANG_SYS_OFFSET_LENGTH + RecordList.RECORD_BASE;;
+    int offset = Header.Builder.DEFAULT_LANG_SYS_OFFSET_LENGTH + RecordList.RECORD_BASE;;
     data.writeULong(offset + TagOffsetRecord.TAG_POS, LANGSYS_JA);
     data.writeUShort(offset + TagOffsetRecord.OFFSET_POS, FIRST_TABLE_POS);
     // The second record is out of order.  The table it points to is empty.

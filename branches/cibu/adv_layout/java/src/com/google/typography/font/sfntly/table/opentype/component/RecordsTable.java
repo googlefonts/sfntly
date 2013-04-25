@@ -7,14 +7,14 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 
 public abstract class RecordsTable<R extends Record>
-    extends SubTable {
+extends SubTable {
   public final boolean dataIsCanonical;
   public final RecordList<R> recordList;
   public final int base;
-  
+
   /////////////////
   // constructors
-  
+
   public RecordsTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data);
     this.base = base;
@@ -25,7 +25,7 @@ public abstract class RecordsTable<R extends Record>
   public RecordsTable(ReadableFontData data, boolean dataIsCanonical) {
     this(data, 0, dataIsCanonical);
   }
-  
+
   //////////////////////////////////////
   // implementations pushed to subclasses
 
@@ -36,7 +36,7 @@ public abstract class RecordsTable<R extends Record>
 
   public abstract static 
   class Builder<T extends SubTable, R extends Record> extends VisibleBuilder<T> {
-    
+
     protected RecordList<R> records;
     protected boolean dataIsCanonical;
     protected int serializedLength;
@@ -44,7 +44,7 @@ public abstract class RecordsTable<R extends Record>
 
     /////////////////
     // constructors
-    
+
     public Builder() {
       super();
       base = 0;
@@ -73,21 +73,23 @@ public abstract class RecordsTable<R extends Record>
     public RecordList<R> records() {
       return records;
     }
-    
+
     public int add(R record) {
       prepareToEdit();
       records.add(record);
       return records.count();
     }
-    
+
     public boolean contains(R record) {
-      if (records == null) {
-        initFromData(internalReadData(), base);
-      }
-      
+      initFromData(internalReadData(), base);
       return records.contains(record);
     }
-    
+
+    public int count() {
+      initFromData(internalReadData(), base);
+      return records.count();
+    }
+
     //////////////////////////////////////
     // overriden methods
 
@@ -106,11 +108,11 @@ public abstract class RecordsTable<R extends Record>
       if (serializedLength == 0) {
         return 0;
       }
-      
+
       if (records == null) {
         return serializeFromData(newData);
       }
-      
+
       return records.writeTo(newData);
     }
 
@@ -136,19 +138,19 @@ public abstract class RecordsTable<R extends Record>
         boolean dataIsCanonical);
 
     protected abstract RecordList<R> readRecordList(ReadableFontData data, int base);
-    
+
     //////////////////////////////////////
     // private methods
 
     private void prepareToEdit() {
-      if (records == null) {
-        initFromData(internalReadData(), base);
-        setModelChanged();
-      }
+      initFromData(internalReadData(), base);
+      setModelChanged();
     }
 
     private void initFromData(ReadableFontData data, int base) {
-      records = readRecordList(data, base);
+      if (records == null) {
+        records = readRecordList(data, base);
+      }
     }
 
     private void computeSizeFromData(ReadableFontData data) {

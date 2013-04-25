@@ -25,11 +25,10 @@ public class ScriptListTests {
 
     LangSysTable.Builder lsBuilder = (LangSysTable.Builder) stBuilder.addBuiderForTag(LanguageTag.ENG.tag()); 
     assertEquals(1, stBuilder.subTableCount());
-    assertEquals(0, lsBuilder.arrayBuilder.records().count());
+    assertEquals(0, lsBuilder.featureIndexCount());
 
-    lsBuilder.headerBuilder.set(new Header(0));
-    lsBuilder.headerBuilder.set(new Header(2));
-    assertEquals(2, lsBuilder.arrayBuilder.records().count());
+    lsBuilder.addFeatureIndices(0, 2);
+    assertEquals(2, lsBuilder.featureIndexCount());
 
     ScriptListTable slTable = slBuilder.build();
     System.out.println(slTable);
