@@ -9,8 +9,10 @@ import static org.junit.Assert.assertNotNull;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
+import com.google.typography.font.sfntly.table.opentype.component.NumRecord;
 import com.google.typography.font.sfntly.table.opentype.component.RecordList;
 import com.google.typography.font.sfntly.table.opentype.component.TagOffsetRecord;
+import com.google.typography.font.sfntly.table.opentype.scripttable.HeaderBuilder;
 
 import org.junit.Test;
 
@@ -68,8 +70,8 @@ public class ScriptTableTests {
     
     // The default table has one feature, as does the JA table.
     // Both have been fixed.
-    assertEquals(1, table.defaultLangSysTable().featureCount());
-    assertEquals(1, table.subTableAt(0).featureCount());
+    assertEquals(1, table.defaultLangSysTable().records().count());
+    assertEquals(1, table.subTableAt(0).records().count());
   }
   
   private static ReadableFontData emptyScriptTableData() {
@@ -79,9 +81,9 @@ public class ScriptTableTests {
   }
 
   private static int writeEmptyScriptTableData(WritableFontData data) {
-    data.writeUShort(ScriptTable.Header.DEFAULT_LANG_SYS_OFFSET, 0);
-    data.writeUShort(ScriptTable.Header.DEFAULT_LANG_SYS_OFFSET_LENGTH, 0);
-    return ScriptTable.Header.DEFAULT_LANG_SYS_OFFSET_LENGTH + RecordList.RECORD_BASE;
+    data.writeUShort(HeaderBuilder.DEFAULT_LANG_SYS_OFFSET, 0);
+    data.writeUShort(NumRecord.RECORD_SIZE, 0);
+    return HeaderBuilder.DEFAULT_LANG_SYS_OFFSET_LENGTH + RecordList.RECORD_BASE;
   }
   
   private static ReadableFontData badScriptTableData() {
@@ -117,10 +119,10 @@ public class ScriptTableTests {
     int THIRD_TABLE_POS = 64; // ES data
     
     // The default table is ok.
-    data.writeUShort(ScriptTable.Header.DEFAULT_LANG_SYS_OFFSET, THIRD_TABLE_POS);
-    data.writeUShort(ScriptTable.Header.DEFAULT_LANG_SYS_OFFSET_LENGTH, 3);
+    data.writeUShort(HeaderBuilder.DEFAULT_LANG_SYS_OFFSET, THIRD_TABLE_POS);
+    data.writeUShort(NumRecord.RECORD_SIZE, 3);
     // This first record is ok.
-    int offset = ScriptTable.Header.DEFAULT_LANG_SYS_OFFSET_LENGTH + RecordList.RECORD_BASE;;
+    int offset = HeaderBuilder.DEFAULT_LANG_SYS_OFFSET_LENGTH + RecordList.RECORD_BASE;;
     data.writeULong(offset + TagOffsetRecord.TAG_POS, LANGSYS_JA);
     data.writeUShort(offset + TagOffsetRecord.OFFSET_POS, FIRST_TABLE_POS);
     // The second record is out of order.  The table it points to is empty.
