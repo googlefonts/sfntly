@@ -7,10 +7,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecord;
-import com.google.typography.font.sfntly.table.opentype.component.Record;
 import com.google.typography.font.sfntly.table.opentype.component.TagOffsetRecord;
-import com.google.typography.font.sfntly.table.opentype.langsystable.Header;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,7 +34,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   protected final boolean dataIsCanonical;
 
   private ScriptListTable scriptList;
-  private FeatureList featureList;
+  private FeatureListTable featureList;
   private LookupList lookupList;
 
   private LangSysCache langSysCache;
@@ -90,8 +87,8 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     return commonData.slice(start);
   }
 
-  FeatureList createFeatureList() {
-    return FeatureList.create(featureListData(data, dataIsCanonical), dataIsCanonical);
+  FeatureListTable createFeatureList() {
+    return new FeatureListTable(featureListData(data, dataIsCanonical), dataIsCanonical);
   }
 
   static int readLookupListOffset(ReadableFontData data) {
@@ -256,7 +253,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     }
 
     private FeatureTable createFeatureTable(int featureIndex) {
-      return featureList.featureTableAt(featureIndex);
+      return featureList.subTableAt(featureIndex);
     }
   }
 
@@ -525,7 +522,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
 
     private int serializedLength;
     private ScriptListTable.Builder serializedScriptListBuilder;
-    private FeatureList.Builder serializedFeatureListBuilder;
+    private FeatureListTable.Builder serializedFeatureListBuilder;
     private LookupList.Builder serializedLookupListBuilder;
 
     /**
@@ -553,7 +550,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
 
       if (data != null) {
         ScriptListTable sl = new ScriptListTable(scriptListData(data, dataIsCanonical), dataIsCanonical);
-        FeatureList fl = FeatureList.create(featureListData(data, dataIsCanonical), dataIsCanonical);
+        FeatureListTable fl = new FeatureListTable(featureListData(data, dataIsCanonical), dataIsCanonical);
         LookupList ll = handleCreateLookupList(lookupListData(data, dataIsCanonical), dataIsCanonical);
 
         int lookupCount = ll.lookupCount();
@@ -564,10 +561,10 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
           lookupIds.add(lookupId);
         }
 
-        int featureCount = fl.featureCount();
+        int featureCount = fl.recordList.count();
         List<FeatureId<T>> featureIds = new ArrayList<FeatureId<T>>(featureCount);
         for (int i = 0; i < featureCount; ++i) {
-          FeatureTable ft = fl.featureTableAt(i);
+          FeatureTable ft = fl.subTableAt(i);
           FeatureId<T> featureId = newFeature(ft.featureTag());
           featureIds.add(featureId);
           int featureLookupCount = ft.lookupCount();
@@ -1055,7 +1052,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
 
     void prepareToSerialize() {
       ScriptListTable.Builder slb = new ScriptListTable.Builder();
-      FeatureList.Builder flb = new FeatureList.Builder();
+      FeatureListTable.Builder flb = new FeatureListTable.Builder();
       LookupList.Builder llb = createLookupListBuilder();
 
       deleteUnusedIds();
@@ -1066,7 +1063,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       }
 
       for (FeatureId<T> featureId : featureSet) {
-        FeatureTable.Builder ftb = flb.addFeature(featureId.featureTag);
+        FeatureTable.Builder ftb = (FeatureTable.Builder)flb.addBuilderForTag(featureId.featureTag);
         for (LookupId<T> lookupId : lookupsForFeature(featureId)) {
           ftb.appendLookupIndex(lookupId.id);
         }
@@ -1074,7 +1071,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
 
       for (LangSysId<T> langSysId : langSysSet) {
         int scriptTag = langSysId.scriptTag;
-        ScriptTable.Builder stb = (ScriptTable.Builder)slb.addBuiderForTag(scriptTag);
+        ScriptTable.Builder stb = (ScriptTable.Builder)slb.addBuilderForTag(scriptTag);
         int languageTag = langSysId.languageTag;
         LangSysTable.Builder lsb;
         if (languageTag == LanguageTag.DFLT.tag()) {

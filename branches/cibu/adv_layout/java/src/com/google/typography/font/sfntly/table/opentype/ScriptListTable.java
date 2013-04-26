@@ -35,7 +35,7 @@ public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
         ReadableFontData data,
         int baseUnused,
         boolean dataIsCanonical) {
-      return new ScriptListTable(data, true);
+      return new ScriptListTable(data, dataIsCanonical);
     }
   }
 }

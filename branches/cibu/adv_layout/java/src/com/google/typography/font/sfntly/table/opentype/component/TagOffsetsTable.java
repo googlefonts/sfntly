@@ -36,6 +36,10 @@ public abstract class TagOffsetsTable<S extends SubTable>
   //////////////////
   // public methods
 
+  public int tagAt(int index) {
+    return recordList.get(index).tag;
+  }
+  
   public S subTableAt(int index) {
     TagOffsetRecord record = recordList.get(index);
     return subTableForRecord(record);
@@ -136,7 +140,7 @@ public abstract class TagOffsetsTable<S extends SubTable>
     }
 
     public 
-    VisibleBuilder<S> addBuiderForTag(int tag) {
+    VisibleBuilder<S> addBuilderForTag(int tag) {
       prepareToEdit();
       VisibleBuilder<S> builder = builders.get(tag);
       if (builder == null) {

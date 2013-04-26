@@ -77,7 +77,7 @@ public class GSubTable extends Table {
    *
    * @return the FeatureList
    */
-  public FeatureList featureList() {
+  public FeatureListTable featureList() {
     return gsub.createFeatureList();
   }
 
