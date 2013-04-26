@@ -242,14 +242,14 @@ public class TableDump {
     println("]");
   }
 
-  public void dump(FeatureList featureList) {
+  public void dump(FeatureListTable featureList) {
     if (silenced(featureList)) {
       return;
     }
-    int numFeatures = featureList.featureCount();
-    println("FeatureList");
+    int numFeatures = featureList.recordList.count();
+    println("FeatureListTableNew");
     for (int i = 0; i < numFeatures; ++i) {
-      FeatureTable featureTable = featureList.featureTableAt(i);
+      FeatureTable featureTable = featureList.subTableAt(i);
       format("%3d: ", i);
       in();
       dump(featureTable);
@@ -381,7 +381,7 @@ public class TableDump {
     formatln("Version: %x", gSubTable.version());
     ScriptListTable scriptListTable = gSubTable.scriptList();
     dump(scriptListTable);
-    FeatureList featureList = gSubTable.featureList();
+    FeatureListTable featureList = gSubTable.featureList();
     dump(featureList);
     GsubLookupList lookupList = gSubTable.lookupList();
     dump(lookupList);

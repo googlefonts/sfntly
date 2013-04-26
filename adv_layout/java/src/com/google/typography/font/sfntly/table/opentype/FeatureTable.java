@@ -5,6 +5,7 @@ package com.google.typography.font.sfntly.table.opentype;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
 import java.util.Arrays;
 
@@ -67,7 +68,7 @@ public class FeatureTable extends SubTable {
     return indices;
   }
 
-  public static class Builder extends SubTable.Builder<FeatureTable> {
+  public static class Builder extends VisibleBuilder<FeatureTable> {
     private final int featureTag;
     private int lookupCount;
     private int[] lookupList;
@@ -214,7 +215,7 @@ public class FeatureTable extends SubTable {
     }
 
     @Override
-    protected int subDataSizeToSerialize() {
+    public int subDataSizeToSerialize() {
       if (isEmpty()) {
         serializedLength = 0;
       } else {
@@ -225,7 +226,7 @@ public class FeatureTable extends SubTable {
     }
 
     @Override
-    protected int subSerialize(WritableFontData newData) {
+    public int subSerialize(WritableFontData newData) {
       if (serializedLength == 0) {
         return 0;
       }
@@ -240,12 +241,12 @@ public class FeatureTable extends SubTable {
     }
 
     @Override
-    protected void subDataSet() {
+    public void subDataSet() {
       lookupList = null;
     }
 
     @Override
-    protected FeatureTable subBuildTable(ReadableFontData data) {
+    public FeatureTable subBuildTable(ReadableFontData data) {
       return new FeatureTable(data, featureTag, true);
     }
   }

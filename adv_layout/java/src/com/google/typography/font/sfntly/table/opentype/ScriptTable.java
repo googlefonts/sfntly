@@ -105,7 +105,7 @@ public class ScriptTable extends SubTable implements Iterable<LangSysTable>  {
 
     public VisibleBuilder<LangSysTable> addBuiderForTag(int tag) {
       setModelChanged();
-      return arrayBuilder.addBuiderForTag(tag);
+      return arrayBuilder.addBuilderForTag(tag);
     }
 
     public void removeBuilderForTag(int tag) {

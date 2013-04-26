@@ -5,7 +5,7 @@ package com.google.typography.font.sfntly.sample.sfview;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.FontDataTable;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
-import com.google.typography.font.sfntly.table.opentype.FeatureList;
+import com.google.typography.font.sfntly.table.opentype.FeatureListTable;
 import com.google.typography.font.sfntly.table.opentype.FeatureTable;
 import com.google.typography.font.sfntly.table.opentype.GSubTable;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual;
@@ -142,10 +142,10 @@ public class OtTableTagger {
       }
     });
 
-    register(new TagMethod(FeatureList.class) {
+    register(new TagMethod(FeatureListTable.class) {
       @Override
       public void tag(FontDataTable fdt) {
-        FeatureList table = (FeatureList) fdt;
+        FeatureListTable table = (FeatureListTable) fdt;
         int featureCount = td.tagRangeField(FieldType.SHORT, "feature count");
         for (int i = 0; i < featureCount; ++i) {
           td.tagRangeField(FieldType.TAG, null);

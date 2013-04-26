@@ -14,66 +14,67 @@ public class FeatureListTests {
 
   @Test
   public void testFeatureListFromData() {
-    FeatureList featureList = FeatureList.create(createFeatureListData1(), false);
+    FeatureListTable featureList = new FeatureListTable(createFeatureListData1(), false);
     // feature list is buggy, we've never edited it
-    assertEquals(3, featureList.featureCount());
-    assertEquals(FEATURE_LIGA, featureList.featureTagAt(0));
-    assertEquals(FEATURE_KERN, featureList.featureTagAt(1));
-    assertEquals(FEATURE_LIGA, featureList.featureTagAt(2));
+    assertEquals(3, featureList.recordList.count());
+    assertEquals(FEATURE_LIGA, featureList.recordList.get(0).tag);
+    assertEquals(FEATURE_KERN, featureList.recordList.get(1).tag);
+    assertEquals(FEATURE_LIGA, featureList.recordList.get(2).tag);
 
-    FeatureTable ligaFeatures = featureList.featureTableAt(0);
+    FeatureTable ligaFeatures = featureList.subTableAt(0);
     FeatureTableTests.assertFeatureTableData1(ligaFeatures, FEATURE_LIGA, false);
 
-    FeatureTable kernFeatures = featureList.featureTableAt(1);
+    FeatureTable kernFeatures = featureList.subTableAt(1);
     FeatureTableTests.assertFeatureTableData1(kernFeatures, FEATURE_KERN, false);
   }
 
   @Test
   public void testFeatureListBuilderFromNothing() {
-    FeatureList.Builder builder = new FeatureList.Builder();
-    assertEquals(0, builder.featureCount());
+    FeatureListTable.Builder builder = new FeatureListTable.Builder();
+    assertEquals(0, builder.subTableCount());
 
-    builder.addFeature(FEATURE_LIGA)
-      .appendLookupIndex(2);
-    assertEquals(1, builder.featureCount());
+    FeatureTable.Builder subTableBuilder;
+    subTableBuilder = (FeatureTable.Builder)builder.addBuilderForTag(FEATURE_LIGA);
+    subTableBuilder.appendLookupIndex(2);
+    assertEquals(1, builder.subTableCount());
 
-    builder.addFeature(FEATURE_KERN)
-      .appendLookupIndex(1);
-    assertEquals(2, builder.featureCount());
+    subTableBuilder = (FeatureTable.Builder)builder.addBuilderForTag(FEATURE_KERN);
+    subTableBuilder.appendLookupIndex(1);
+    assertEquals(2, builder.subTableCount());
 
     // add always creates a new builder
-    FeatureTable.Builder kernBuilder = builder.addFeature(FEATURE_KERN)
-      .insertLookupIndexBefore(0, 2);
-    assertEquals(3, builder.featureCount());
+    subTableBuilder = (FeatureTable.Builder)builder.addBuilderForTag(FEATURE_KERN);
+    
+    FeatureTable.Builder kernBuilder = subTableBuilder.insertLookupIndexBefore(0, 2);
+    assertEquals(3, builder.subTableCount());
     assertEquals(1, kernBuilder.lookupCount());
 
     // adding an empty feature is counted in the builder
-    builder.addFeature(FEATURE_LIGA);
-    assertEquals(4, builder.featureCount());
+    builder.addBuilderForTag(FEATURE_LIGA);
+    assertEquals(4, builder.subTableCount());
 
     // an empty feature is not added to the table.
     // features are sorted.
-    FeatureList featureList = builder.build();
-    assertEquals(3, featureList.featureCount());
-    assertEquals(FEATURE_LIGA, featureList.featureTagAt(0));
-    assertEquals(FEATURE_KERN, featureList.featureTagAt(1));
-    assertEquals(FEATURE_KERN, featureList.featureTagAt(2));
+    FeatureListTable featureList = builder.build();
+    assertEquals(3, featureList.recordList.count());
+    assertEquals(FEATURE_LIGA, featureList.tagAt(0));
+    assertEquals(FEATURE_KERN, featureList.tagAt(1));
+    assertEquals(FEATURE_KERN, featureList.tagAt(2));
 
     // the feature list is canonical
-    assertTrue(featureList.dataIsCanonical());
+    assertTrue(featureList.dataIsCanonical);
   }
 
   @Test
   public void testFeatureListBuilderFromTable() {
-    FeatureList featureList = FeatureList.create(createFeatureListData1(), false);
-    FeatureList.Builder builder = new FeatureList.Builder(featureList);
-    featureList = builder.build();
+    FeatureListTable.Builder builder = new FeatureListTable.Builder(createFeatureListData1(), 0, false);
+    FeatureListTable featureList = builder.build();
 
-    assertTrue(featureList.dataIsCanonical());
-    assertEquals(3, featureList.featureCount());
-    assertEquals(FEATURE_LIGA, featureList.featureTagAt(0));
-    assertEquals(FEATURE_KERN, featureList.featureTagAt(1));
-    assertEquals(FEATURE_LIGA, featureList.featureTagAt(2));
+    assertTrue(featureList.dataIsCanonical);
+    assertEquals(3, featureList.recordList.count());
+    assertEquals(FEATURE_LIGA, featureList.tagAt(0));
+    assertEquals(FEATURE_KERN, featureList.tagAt(1));
+    assertEquals(FEATURE_LIGA, featureList.tagAt(2));
   }
 
   static ReadableFontData createFeatureListData1() {
