@@ -10,9 +10,9 @@ import com.google.typography.font.sfntly.table.opentype.component.NumRecord;
 import com.google.typography.font.sfntly.table.opentype.component.TagOffsetRecord;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -221,13 +221,13 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     return langSysCache.get(scriptTag, langSysTag);
   }
 
-  private static final Comparator<FeatureTable> featureComparator =
-      new Comparator<FeatureTable>() {
-        @Override
-        public int compare(FeatureTable o1, FeatureTable o2) {
-          return o1.featureTag() - o2.featureTag();
-        }
-      };
+//  private static final Comparator<FeatureTable> featureComparator =
+//      new Comparator<FeatureTable>() {
+//        @Override
+//        public int compare(FeatureTable o1, FeatureTable o2) {
+//          return o1.featureTag() - o2.featureTag();
+//        }
+//      };
 
   private class FeatureCache {
     private Map<Integer, FeatureTable> map;
@@ -266,7 +266,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   }
 
   private Set<FeatureTable> getFeatureTableSet(LangSysTable langSys, Set<FeatureTag> features) {
-    Set<FeatureTable> result = new TreeSet<FeatureTable>(featureComparator);
+    Set<FeatureTable> result = new LinkedHashSet<FeatureTable>(); //featureComparator);
 
     if (langSys == null) {
       return result;
@@ -282,9 +282,11 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
 
     // Only include other langSys features if features contains them.
     for (NumRecord record : langSys.records()) {
-      FeatureTable table = featureCache.get(record.value);
+      
+      int tagValue = featureList.tagAt(record.value);
+      FeatureTable table = featureList.subTableAt(record.value);// featureCache.get(record.value);
       if (table != null) {
-        FeatureTag tag = FeatureTag.forTagValue(table.featureTag());
+        FeatureTag tag = FeatureTag.forTagValue(tagValue);
         if (tag != null && features.contains(tag)) {
           result.add(table);
         }
@@ -337,8 +339,8 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   private Iterable<T> getLookups(Set<FeatureTable> features) {
     Set<Integer> result = new TreeSet<Integer>();
     for (FeatureTable table : features) {
-      for (int i = 0; i < table.lookupCount(); ++i) {
-        result.add(table.lookupListIndexAt(i));
+      for (NumRecord lookupRecord : table.records()) {
+        result.add(lookupRecord.value);
       }
     }
     return new LookupIterable(result);
@@ -565,12 +567,11 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
         List<FeatureId<T>> featureIds = new ArrayList<FeatureId<T>>(featureCount);
         for (int i = 0; i < featureCount; ++i) {
           FeatureTable ft = fl.subTableAt(i);
-          FeatureId<T> featureId = newFeature(ft.featureTag());
+          int featureTag = fl.tagAt(i);
+          FeatureId<T> featureId = newFeature(featureTag);
           featureIds.add(featureId);
-          int featureLookupCount = ft.lookupCount();
-          for (int j = 0; j < featureLookupCount; ++j) {
-            int lookupIndex = ft.lookupListIndexAt(j);
-            addLookupToFeature(lookupIds.get(lookupIndex), featureId);
+          for (NumRecord lookupRecord : ft.records()) {
+            addLookupToFeature(lookupIds.get(lookupRecord.value), featureId);
           }
         }
 
@@ -1065,7 +1066,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       for (FeatureId<T> featureId : featureSet) {
         FeatureTable.Builder ftb = (FeatureTable.Builder)flb.addBuilderForTag(featureId.featureTag);
         for (LookupId<T> lookupId : lookupsForFeature(featureId)) {
-          ftb.appendLookupIndex(lookupId.id);
+          ftb.addValues(lookupId.id);
         }
       }
 

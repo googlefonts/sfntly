@@ -35,19 +35,19 @@ public class FeatureListTests {
 
     FeatureTable.Builder subTableBuilder;
     subTableBuilder = (FeatureTable.Builder)builder.addBuilderForTag(FEATURE_LIGA);
-    subTableBuilder.appendLookupIndex(2);
+    subTableBuilder.addValues(2);
     assertEquals(1, builder.subTableCount());
 
     subTableBuilder = (FeatureTable.Builder)builder.addBuilderForTag(FEATURE_KERN);
-    subTableBuilder.appendLookupIndex(1);
+    subTableBuilder.addValues(1);
     assertEquals(2, builder.subTableCount());
 
     // add always creates a new builder
     subTableBuilder = (FeatureTable.Builder)builder.addBuilderForTag(FEATURE_KERN);
     
-    FeatureTable.Builder kernBuilder = subTableBuilder.insertLookupIndexBefore(0, 2);
+    FeatureTable.Builder kernBuilder = subTableBuilder.addValues(2);
     assertEquals(3, builder.subTableCount());
-    assertEquals(1, kernBuilder.lookupCount());
+    assertEquals(1, kernBuilder.valueCount());
 
     // adding an empty feature is counted in the builder
     builder.addBuilderForTag(FEATURE_LIGA);

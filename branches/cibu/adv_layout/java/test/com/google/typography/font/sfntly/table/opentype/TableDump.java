@@ -265,13 +265,13 @@ public class TableDump {
     if (silenced(featureTable)) {
       return;
     }
-    print(Tag.stringValue(featureTable.featureTag()));
+    // print(Tag.stringValue(featureTable.featureTag()));
     print(" [");
-    for (int i = 0; i < featureTable.lookupCount(); ++i) {
+    for (int i = 0; i < featureTable.records().count(); ++i) {
       if (i > 0) {
         print(" ");
       }
-      print(featureTable.lookupListIndexAt(i));
+      print(featureTable.valueAt(i));
     }
     println("]");
   }

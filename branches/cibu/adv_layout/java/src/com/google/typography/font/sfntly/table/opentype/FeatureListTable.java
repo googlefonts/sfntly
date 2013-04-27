@@ -13,7 +13,7 @@ public class FeatureListTable extends TagOffsetsTable<FeatureTable> {
   @Override
   protected FeatureTable readSubTable(
       ReadableFontData data, boolean dataIsCanonical) {
-    return new FeatureTable(data, 0 /* dummy */, dataIsCanonical);
+    return new FeatureTable(data, dataIsCanonical);
   }
 
   public static class Builder extends 
@@ -30,12 +30,12 @@ public class FeatureListTable extends TagOffsetsTable<FeatureTable> {
     @Override
     protected VisibleBuilder<FeatureTable> createSubTableBuilder(
         ReadableFontData data, int tag, boolean dataIsCanonical) {
-      return new FeatureTable.Builder(data, tag, dataIsCanonical);
+      return new FeatureTable.Builder(data, dataIsCanonical);
     }
 
     @Override
     protected VisibleBuilder<FeatureTable> createSubTableBuilder() {
-      return new FeatureTable.Builder(0 /* dummy */);
+      return new FeatureTable.Builder();
     }
 
     @Override
