@@ -5,6 +5,7 @@ package com.google.typography.font.sfntly.sample.sfview;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.FontDataTable;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
+import com.google.typography.font.sfntly.table.opentype.CoverageTableNew;
 import com.google.typography.font.sfntly.table.opentype.FeatureListTable;
 import com.google.typography.font.sfntly.table.opentype.FeatureTable;
 import com.google.typography.font.sfntly.table.opentype.GSubTable;
@@ -24,6 +25,8 @@ import com.google.typography.font.sfntly.table.opentype.ScriptTable;
 import com.google.typography.font.sfntly.table.opentype.SubstSubtable;
 import com.google.typography.font.sfntly.table.opentype.TaggedData;
 import com.google.typography.font.sfntly.table.opentype.TaggedData.FieldType;
+import com.google.typography.font.sfntly.table.opentype.coveragetable.InnerArrayFmt1;
+import com.google.typography.font.sfntly.table.opentype.coveragetable.InnerArrayFmt2;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -216,6 +219,7 @@ public class OtTableTagger {
         LigatureSubst table = (LigatureSubst) fdt;
         td.tagRangeField(FieldType.SHORT, "subst format");
         td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
+        tagTable(table.coverage());
         td.tagRangeField(FieldType.SHORT, "subtable count");
         
         int subTableCount = table.recordList().count();
@@ -278,6 +282,39 @@ public class OtTableTagger {
       public void tag(FontDataTable fdt) {
         CoverageTable.Fmt2 table = (CoverageTable.Fmt2) fdt;
         td.tagRangeField(FieldType.SHORT, "format");
+        int rangeCount = td.tagRangeField(FieldType.SHORT, "range count");
+        for (int i = 0; i < rangeCount; ++i) {
+          td.tagRangeField(FieldType.SHORT, "start");
+          td.tagRangeField(FieldType.SHORT, "end");
+          td.tagRangeField(FieldType.SHORT, "offset");
+        }
+      }
+    });
+
+    register(new TagMethod(CoverageTableNew.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+        CoverageTableNew table = (CoverageTableNew) fdt;
+        td.tagRangeField(FieldType.SHORT, "format");
+        tagTable(table.array);
+      }
+    });
+
+    register(new TagMethod(InnerArrayFmt1.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+        InnerArrayFmt1 table = (InnerArrayFmt1) fdt;
+        int glyphCount = td.tagRangeField(FieldType.SHORT, "glyph count");
+        for (int i = 0; i < glyphCount; ++i) {
+          td.tagRangeField(FieldType.SHORT, String.valueOf(i+1));
+        }
+      }
+    });
+
+    register(new TagMethod(InnerArrayFmt2.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+        InnerArrayFmt2 table = (InnerArrayFmt2) fdt;
         int rangeCount = td.tagRangeField(FieldType.SHORT, "range count");
         for (int i = 0; i < rangeCount; ++i) {
           td.tagRangeField(FieldType.SHORT, "start");

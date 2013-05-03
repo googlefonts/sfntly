@@ -14,18 +14,20 @@ import java.util.Iterator;
 public class LigatureSubst extends SubstSubtable implements Iterable<NullTable>  {
   public final Header header;
   private final InnerArray array;
+  protected final CoverageTableNew coverage;
 
   ////////////////
   // Constructors
 
   public LigatureSubst(ReadableFontData data, boolean dataIsCanonical) {
     super(data, dataIsCanonical);
-    System.out.println("\n\nLigatureSubst Header");
-    for (int i = 0; i < 20; i++) {
-      System.out.printf("0x%04X %d\n", data.readUShort(i*2), data.readUShort(i*2));
-    }
+//    System.out.println("\n\nLigatureSubst Header");
+//    for (int i = 0; i < 20; i++) {
+//      System.out.printf("0x%04X %d\n", data.readUShort(i*2), data.readUShort(i*2));
+//    }
     header = new Header(data);
     array = new InnerArray(data, Header.RECORD_SIZE, dataIsCanonical);
+    coverage = new CoverageTableNew(data.slice(header.coverage), dataIsCanonical);
   }
 
   ////////////////////////////////////
@@ -52,7 +54,10 @@ public class LigatureSubst extends SubstSubtable implements Iterable<NullTable> 
   ////////////////////////////////////
   // Methods specific to this class
 
-
+  public CoverageTableNew coverage() {
+    return coverage;
+  }
+ 
   ////////////////////////////////////
   // Builder
 
