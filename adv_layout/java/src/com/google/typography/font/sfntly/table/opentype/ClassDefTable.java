@@ -291,12 +291,12 @@ public abstract class ClassDefTable extends OTSubTable {
       }
 
       @Override
-      protected void subDataSet() {
+      public void subDataSet() {
         values = null;
       }
 
       @Override
-      protected Fmt1 subBuildTable(ReadableFontData data) {
+      public Fmt1 subBuildTable(ReadableFontData data) {
         return new Fmt1(data, true);
       }
     }
@@ -568,12 +568,12 @@ public abstract class ClassDefTable extends OTSubTable {
       }
 
       @Override
-      protected void subDataSet() {
+      public void subDataSet() {
         ranges = null;
       }
 
       @Override
-      protected Fmt2 subBuildTable(ReadableFontData data) {
+      public Fmt2 subBuildTable(ReadableFontData data) {
         return new Fmt2(data, true);
       }
     }

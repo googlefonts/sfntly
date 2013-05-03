@@ -4,8 +4,8 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.opentype.GsubLookupList.GsubLookupType;
 import com.google.typography.font.sfntly.table.opentype.IntSet.IntIterator;
+import com.google.typography.font.sfntly.table.opentype.component.GsubLookupType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -90,7 +90,7 @@ public class GsubLookupLigature extends GsubLookupTable {
     }
 
     @Override
-    protected GsubLookupLigature subBuildTable(ReadableFontData data) {
+    public GsubLookupLigature subBuildTable(ReadableFontData data) {
       return new GsubLookupLigature(data, true);
     }
   }
@@ -104,7 +104,7 @@ public class GsubLookupLigature extends GsubLookupTable {
 
     protected final CoverageTable coverage;
 
-    protected LigatureSubTable(ReadableFontData data, boolean dataIsCanonical) {
+    public LigatureSubTable(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       int offset = data.readUShort(COVERAGE_OFFSET);
       coverage = CoverageTable.forData(data.slice(offset));
@@ -303,12 +303,12 @@ public class GsubLookupLigature extends GsubLookupTable {
         }
 
         @Override
-        protected void subDataSet() {
+        public void subDataSet() {
           builders = null;
         }
 
         @Override
-        protected LigatureSet subBuildTable(ReadableFontData data) {
+        public LigatureSet subBuildTable(ReadableFontData data) {
           return new LigatureSet(data, true);
         }
       }
@@ -501,12 +501,12 @@ public class GsubLookupLigature extends GsubLookupTable {
         }
 
         @Override
-        protected void subDataSet() {
+        public void subDataSet() {
           components = null;
         }
 
         @Override
-        protected LigatureTable subBuildTable(ReadableFontData data) {
+        public LigatureTable subBuildTable(ReadableFontData data) {
           return new LigatureTable(data, true);
         }
       }
@@ -607,12 +607,12 @@ public class GsubLookupLigature extends GsubLookupTable {
       }
 
       @Override
-      protected LigatureSubTable subBuildTable(ReadableFontData data) {
+      public LigatureSubTable subBuildTable(ReadableFontData data) {
         return new LigatureSubTable(data, true);
       }
 
       @Override
-      protected void subDataSet() {
+      public void subDataSet() {
        coverageBuilder = null;
        glyphToSetBuilderMap = null;
       }

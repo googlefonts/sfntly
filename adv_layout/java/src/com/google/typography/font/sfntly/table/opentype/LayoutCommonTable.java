@@ -35,7 +35,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
 
   private ScriptListTable scriptList;
   private FeatureListTable featureList;
-  private LookupList lookupList;
+  private LookupListTable lookupList;
 
   private LangSysCache langSysCache;
   private FeatureCache featureCache;
@@ -108,11 +108,11 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     return commonData.slice(start);
   }
 
-  LookupList createLookupList() {
+  LookupListTable createLookupList() {
     return handleCreateLookupList(lookupListData(data, dataIsCanonical), dataIsCanonical);
   }
 
-  protected abstract LookupList handleCreateLookupList(ReadableFontData data,
+  protected abstract LookupListTable handleCreateLookupList(ReadableFontData data,
       boolean dataIsCanonical);
 
   private void init() {
@@ -139,11 +139,11 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
    * @param featureSet the features (set may be empty)
    * @return the lookups
    */
-  public Iterable<T> lookups(ScriptTag stag, LanguageTag ltag, Set<FeatureTag> featureSet) {
+  public Iterable<LookupTableNew> lookups(ScriptTag stag, LanguageTag ltag, Set<FeatureTag> featureSet) {
     init();
     LangSysTable langSys = getLangSysTableNew(stag.tag(), ltag.tag());
     Set<FeatureTable> features = getFeatureTableSet(langSys, featureSet);
-    Iterable<T> lookups = getLookups(features);
+    Iterable<LookupTableNew> lookups = getLookups(features);
     return lookups;
   }
 
@@ -297,14 +297,14 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   }
 
   class LookupCache {
-    private Map<Integer, T> map;
+    private Map<Integer, LookupTableNew> map;
 
     private LookupCache() {
-      map = new HashMap<Integer, T>();
+      map = new HashMap<Integer, LookupTableNew>();
     }
 
-    public T get(int lookupIndex) {
-      T lookup;
+    public LookupTableNew get(int lookupIndex) {
+      LookupTableNew lookup;
       synchronized(this) {
         lookup = map.get(lookupIndex);
       }
@@ -320,8 +320,8 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     }
 
     @SuppressWarnings("unchecked")
-    private T createLookupTable(int lookupIndex) {
-      return (T) lookupList.lookupAt(lookupIndex);
+    private LookupTableNew createLookupTable(int lookupIndex) {
+      return lookupList.subTableAt(lookupIndex);
     }
   }
 
@@ -329,14 +329,14 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     return new LookupCache();
   }
 
-  T getLookupTable(int lookupIndex) {
+  LookupTableNew getLookupTable(int lookupIndex) {
     return lookupCache.get(lookupIndex);
   }
 
   /**
    * Returns the lookups for the provided features, in lookup list order.
    */
-  private Iterable<T> getLookups(Set<FeatureTable> features) {
+  private Iterable<LookupTableNew> getLookups(Set<FeatureTable> features) {
     Set<Integer> result = new TreeSet<Integer>();
     for (FeatureTable table : features) {
       for (NumRecord lookupRecord : table.records()) {
@@ -346,7 +346,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     return new LookupIterable(result);
   }
 
-  private class LookupIterable implements Iterable<T> {
+  private class LookupIterable implements Iterable<LookupTableNew> {
     private Set<Integer> lookupIndices;
 
     public LookupIterable(Set<Integer> lookupIndices) {
@@ -354,14 +354,14 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     }
 
     @Override
-    public Iterator<T> iterator() {
+    public LookupIterator iterator() {
       return new LookupIterator(lookupIndices.iterator());
     }
   }
 
-  private class LookupIterator implements Iterator<T> {
+  private class LookupIterator implements Iterator<LookupTableNew> {
     private Iterator<Integer> indices;
-    private T nextLookup;
+    private LookupTableNew nextLookup;
 
     public LookupIterator(Iterator<Integer> indices) {
       this.indices = indices;
@@ -374,18 +374,18 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     }
 
     @Override
-    public T next() {
+    public LookupTableNew next() {
       if (!hasNext()) {
         throw new NoSuchElementException();
       }
-      T table = nextLookup;
+      LookupTableNew table = nextLookup;
       nextLookup = advance();
       return table;
     }
 
-    private T advance() {
+    private LookupTableNew advance() {
       while (indices.hasNext()) {
-        T table = getLookupTable(indices.next());
+        LookupTableNew table = getLookupTable(indices.next());
         if (table != null) {
           return table;
         }
@@ -525,7 +525,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     private int serializedLength;
     private ScriptListTable.Builder serializedScriptListBuilder;
     private FeatureListTable.Builder serializedFeatureListBuilder;
-    private LookupList.Builder serializedLookupListBuilder;
+    private LookupListTable.Builder serializedLookupListBuilder;
 
     /**
      * @param data the GSUB or GPOS data
@@ -553,12 +553,12 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       if (data != null) {
         ScriptListTable sl = new ScriptListTable(scriptListData(data, dataIsCanonical), dataIsCanonical);
         FeatureListTable fl = new FeatureListTable(featureListData(data, dataIsCanonical), dataIsCanonical);
-        LookupList ll = handleCreateLookupList(lookupListData(data, dataIsCanonical), dataIsCanonical);
+        LookupListTable ll = handleCreateLookupList(lookupListData(data, dataIsCanonical), dataIsCanonical);
 
-        int lookupCount = ll.lookupCount();
+        int lookupCount = ll.recordList.count();
         List<LookupId<T>> lookupIds = new ArrayList<LookupId<T>>(lookupCount);
         for (int i = 0; i < lookupCount; ++i) {
-          T lookupTable = (T) ll.lookupAt(i);
+          NumRecord lookupTable = ll.recordList.get(i);
           LookupId<T> lookupId = newLookup(lookupTable);
           lookupIds.add(lookupId);
         }
@@ -608,7 +608,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       }
     }
 
-    protected abstract LookupList handleCreateLookupList(ReadableFontData data,
+    protected abstract LookupListTable handleCreateLookupList(ReadableFontData data,
         boolean dataIsCanonical);
 
     private void prepareToEdit() {
@@ -738,14 +738,14 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
 
     public static class LookupId<T extends LookupTable> extends ObjectId<T>
         implements Comparable<LookupId<T>> {
-      private final T lookup;
-      LookupId(Builder<T> builder, T lookup) {
+      private final LookupTableNew lookup;
+      LookupId(Builder<T> builder, LookupTableNew lookup2) {
         super(builder, builder.nextLookupId++);
-        this.lookup = lookup;
+        this.lookup = lookup2;
       }
       @Override
       public String toString() {
-        return lookup.lookupType() + "(" + id + ")";
+        return lookup.header.lookupType + "(" + id + ")";
       }
       @Override
       public int compareTo(LookupId<T> rhs) {
@@ -841,7 +841,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       return this;
     }
 
-    public LookupId<T> newLookup(T lookup) {
+    public LookupId<T> newLookup(LookupTableNew lookup) {
       LookupId<T> id = new LookupId<T>(this, lookup);
       prepareToEdit();
       lookupList.add(id);
@@ -1096,7 +1096,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       serializedLookupListBuilder = llb;
     }
 
-    protected abstract LookupList.Builder createLookupListBuilder();
+    protected abstract LookupListTable.Builder createLookupListBuilder();
 
     private int renumberIds(Iterable<? extends ObjectId<T>> ids) {
       int n = 0;
@@ -1112,6 +1112,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       nextLangSysId = renumberIds(langSysSet);
     }
 
+    
     @Override
     protected int subSerialize(WritableFontData newData) {
       if (serializedLength == 0) {

@@ -321,7 +321,7 @@ public abstract class LookupTable extends OTSubTable {
     }
 
     @Override
-    protected void subDataSet() {
+    public void subDataSet() {
       builders = null;
     }
   }

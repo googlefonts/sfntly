@@ -9,13 +9,13 @@ public class GsubCommonTable extends LayoutCommonTable<GsubLookupTable> {
   }
 
   @Override
-  GsubLookupList createLookupList() {
-    return (GsubLookupList) super.createLookupList();
+  LookupListTable createLookupList() {
+    return super.createLookupList();
   }
 
   @Override
-  protected LookupList handleCreateLookupList(ReadableFontData data, boolean dataIsCanonical) {
-    return new GsubLookupList(data, dataIsCanonical);
+  protected LookupListTable handleCreateLookupList(ReadableFontData data, boolean dataIsCanonical) {
+    return new LookupListTable(data, dataIsCanonical);
   }
 
   public static class Builder extends LayoutCommonTable.Builder<GsubLookupTable> {
@@ -29,8 +29,8 @@ public class GsubCommonTable extends LayoutCommonTable<GsubLookupTable> {
     }
 
     @Override
-    protected LookupList handleCreateLookupList(ReadableFontData data, boolean dataIsCanonical) {
-      return new GsubLookupList(data, dataIsCanonical);
+    protected LookupListTable handleCreateLookupList(ReadableFontData data, boolean dataIsCanonical) {
+      return new LookupListTable(data, dataIsCanonical);
     }
 
     @Override
@@ -39,8 +39,8 @@ public class GsubCommonTable extends LayoutCommonTable<GsubLookupTable> {
     }
 
     @Override
-    protected LookupList.Builder createLookupListBuilder() {
-      return new GsubLookupList.Builder();
+    protected LookupListTable.Builder createLookupListBuilder() {
+      return new LookupListTable.Builder();
     }
   }
 }

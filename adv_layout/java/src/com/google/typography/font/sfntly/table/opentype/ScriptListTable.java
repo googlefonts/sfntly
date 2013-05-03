@@ -38,4 +38,5 @@ public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
       return new ScriptListTable(data, dataIsCanonical);
     }
   }
+
 }

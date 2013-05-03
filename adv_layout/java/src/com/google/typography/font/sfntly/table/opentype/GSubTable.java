@@ -86,7 +86,7 @@ public class GSubTable extends Table {
    *
    * @return the LookupList
    */
-  public GsubLookupList lookupList() {
+  public LookupListTable lookupList() {
     return gsub.createLookupList();
   }
 
@@ -102,7 +102,7 @@ public class GSubTable extends Table {
    * @param featureSet the features (set may be empty)
    * @return the lookups
    */
-  public Iterable<GsubLookupTable> lookups(ScriptTag stag, LanguageTag ltag, Set<FeatureTag> featureSet) {
+  public Iterable<LookupTableNew> lookups(ScriptTag stag, LanguageTag ltag, Set<FeatureTag> featureSet) {
     return gsub.lookups(stag, ltag, featureSet);
   }
 

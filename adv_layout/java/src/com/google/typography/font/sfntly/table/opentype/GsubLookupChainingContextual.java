@@ -10,7 +10,7 @@ import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual.Fmt
 import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual.Fmt2Builder;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual.Fmt3;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual.Fmt3Builder;
-import com.google.typography.font.sfntly.table.opentype.GsubLookupList.GsubLookupType;
+import com.google.typography.font.sfntly.table.opentype.component.GsubLookupType;
 
 /**
  * @author dougfelt@google.com (Doug Felt)
@@ -74,7 +74,7 @@ public class GsubLookupChainingContextual extends GsubLookupTable {
     }
 
     @Override
-    protected GsubLookupChainingContextual subBuildTable(ReadableFontData data) {
+    public GsubLookupChainingContextual subBuildTable(ReadableFontData data) {
       // TODO(dougfelt): Auto-generated method stub
       return null;
     }

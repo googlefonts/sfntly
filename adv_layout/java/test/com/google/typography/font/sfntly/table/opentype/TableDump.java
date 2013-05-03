@@ -7,9 +7,9 @@ import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupLigature.LigatureSubTable;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupLigature.LigatureSubTable.LigatureSet;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupLigature.LigatureSubTable.LigatureTable;
-import com.google.typography.font.sfntly.table.opentype.GsubLookupList.GsubLookupType;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupSingle.SingleSubTable;
 import com.google.typography.font.sfntly.table.opentype.IntSet.IntIterator;
+import com.google.typography.font.sfntly.table.opentype.component.GsubLookupType;
 
 import java.io.PrintWriter;
 
@@ -157,21 +157,28 @@ public class TableDump {
       println("null");
       return;
     }
-    if (obj instanceof GsubLookupTable) {
-      dumpLookup((GsubLookupTable) obj);
+    if (obj instanceof LookupTableNew) {
+      dumpLookup((LookupTableNew) obj);
       return;
     }
     println(obj);
   }
 
-  public void dumpLookup(GsubLookupTable lookup) {
+  public void dumpLookup(LookupTableNew lookup) {
     if (silenced(lookup)) {
       return;
     }
-    switch (lookup.lookupType()) {
-      case GSUB_SINGLE: dump((GsubLookupSingle) lookup); break;
-      case GSUB_LIGATURE: dump((GsubLookupLigature) lookup); break;
-      default: println(lookup.lookupType());
+
+    formatln("Lookup Table");
+    formatln("lookup type: %d", lookup.header.lookupType);
+    formatln("lookup flag: 0x%X", lookup.header.lookupFlag);
+    
+    int i = 0;
+    for (LigatureSubTable subtable : lookup) {
+      format("%3d: ", ++i);
+      in();
+      dump(subtable);
+      out();
     }
   }
 
@@ -276,18 +283,19 @@ public class TableDump {
     println("]");
   }
 
-  public void dump(GsubLookupList lookupList) {
+  public void dump(LookupListTable lookupList) {
     if (silenced(lookupList)) {
       return;
     }
-    int numLookups = lookupList.lookupCount();
+    int numLookups = lookupList.recordList.count();
     println("Lookup List");
     for (int i = 0; i < numLookups; ++i) {
-      GsubLookupType type = lookupList.lookupTypeAt(i);
+      LookupTableNew subtable = lookupList.subTableAt(i);
+      GsubLookupType type = GsubLookupType.forTypeNum(subtable.header.lookupType);
       format("%3d: ", i);
       if (displayType(type)) {
         in();
-        dumpLookup(lookupList.lookupAt(i));
+        dumpLookup(subtable);
         out();
       } else {
         println(type);

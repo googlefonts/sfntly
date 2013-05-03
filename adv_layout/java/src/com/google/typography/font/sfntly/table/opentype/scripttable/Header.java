@@ -21,6 +21,16 @@ public class Header extends SubTable implements Record {
     return record.writeTo(newData, base);
   }
 
+  @Override
+  public String toHtml() {
+    Class<? extends Header> clzz = this.getClass();
+    StringBuilder sb = new StringBuilder(clzz.getSimpleName() + "\n");
+    sb.append("<div>\n");
+    sb.append(record.toHtml());
+    sb.append("</div>\n");
+    return sb.toString();
+  }
+  
   public static class Builder {
     public static final int DEFAULT_LANG_SYS_OFFSET = 0;
     public static final int DEFAULT_LANG_SYS_TAG = 0;

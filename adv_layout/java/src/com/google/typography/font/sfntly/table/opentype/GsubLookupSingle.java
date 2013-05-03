@@ -4,8 +4,8 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.opentype.GsubLookupList.GsubLookupType;
 import com.google.typography.font.sfntly.table.opentype.IntSet.IntIterator;
+import com.google.typography.font.sfntly.table.opentype.component.GsubLookupType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -105,7 +105,7 @@ public class GsubLookupSingle extends GsubLookupTable {
     }
 
     @Override
-    protected GsubLookupSingle subBuildTable(ReadableFontData data) {
+    public GsubLookupSingle subBuildTable(ReadableFontData data) {
       return new GsubLookupSingle(data, true);
     }
 
@@ -195,7 +195,7 @@ public class GsubLookupSingle extends GsubLookupTable {
       }
 
       @Override
-      protected void subDataSet() {
+      public void subDataSet() {
         coverageBuilder = null;
       }
 
@@ -368,7 +368,7 @@ public class GsubLookupSingle extends GsubLookupTable {
     }
 
     @Override
-    protected Fmt1 subBuildTable(ReadableFontData data) {
+    public Fmt1 subBuildTable(ReadableFontData data) {
       return new Fmt1(data, true);
     }
   }
@@ -483,13 +483,13 @@ public class GsubLookupSingle extends GsubLookupTable {
     }
 
     @Override
-    protected void subDataSet() {
+    public void subDataSet() {
       glyphMap = null;
       super.subDataSet();
     }
 
     @Override
-    protected Fmt2 subBuildTable(ReadableFontData data) {
+    public Fmt2 subBuildTable(ReadableFontData data) {
       return new Fmt2(data, true);
     }
   }
