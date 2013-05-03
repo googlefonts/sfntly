@@ -6,6 +6,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.FontDataTable;
 import com.google.typography.font.sfntly.table.SubTable;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
 /**
  * Consolidates dataIsCanonical handling and building logic used by the OpenType tables.
@@ -56,7 +57,7 @@ public abstract class OTSubTable extends SubTable {
     return sliceData(base, index, count, 2, data.length());
   }
 
-  protected abstract static class Builder<T extends OTSubTable> extends FontDataTable.Builder<T> {
+  protected abstract static class Builder<T extends OTSubTable> extends VisibleBuilder<T> {
     protected final boolean dataIsCanonical;
     private int serializedLength;
 
@@ -135,7 +136,8 @@ public abstract class OTSubTable extends SubTable {
      * call this recursively on its sub-tables.
      */
     @Override
-    protected final int subDataSizeToSerialize() {
+    public
+    final int subDataSizeToSerialize() {
       if (serializedLength == -1) {
         if (unedited()) {
             prepareToEdit();
@@ -153,7 +155,8 @@ public abstract class OTSubTable extends SubTable {
      * finishes, resets serializedLength.
      */
     @Override
-    protected final int subSerialize(WritableFontData newData) {
+    public
+    final int subSerialize(WritableFontData newData) {
       if (unedited()) {
         internalReadData().copyTo(newData);
       } else {

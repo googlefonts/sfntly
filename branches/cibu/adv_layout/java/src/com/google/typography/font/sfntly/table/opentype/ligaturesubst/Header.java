@@ -1,45 +1,44 @@
-package com.google.typography.font.sfntly.table.opentype.featuretable;
+package com.google.typography.font.sfntly.table.opentype.ligaturesubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.Record;
-import com.google.typography.font.sfntly.table.opentype.component.RecordList;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
-import java.util.Iterator;
-
 public final class Header extends SubTable implements Record {
-  public static final int RECORD_SIZE = 2;
-  public static final int FEATURE_PARAMS_OFFSET = 0;
-  public static final int FEATURE_PARAMS_DEFAULT = 0x0000;
+  public static final int RECORD_SIZE = 4;
+  public static final int SUBST_FORMAT_OFFSET = 0;
+  public static final int COVERAGE_OFFSET = 2;
   
-  public final int featureParams;
+  public final int substFormat;
+  public final int coverage;
 
   public Header(ReadableFontData data) {
     super(data);
-    this.featureParams = data.readUShort(FEATURE_PARAMS_OFFSET);
+    this.substFormat = data.readUShort(SUBST_FORMAT_OFFSET);
+    if (this.substFormat != 1) {
+      throw new IllegalStateException("Subt format value is " + this.substFormat + " (not 1).");
+    }
+    this.coverage = data.readUShort(COVERAGE_OFFSET);
   }
 
-  public Header() {
+  public Header(int lookupType, int lookupFlag) {
     super(null);
-    this.featureParams = FEATURE_PARAMS_DEFAULT;
+    this.substFormat = lookupType;
+    this.coverage = lookupFlag;
   }
 
   @Override
   public int writeTo(WritableFontData newData, int base) {
-    return newData.writeUShort(base + FEATURE_PARAMS_OFFSET, featureParams);
+    newData.writeUShort(base + SUBST_FORMAT_OFFSET, substFormat);
+    newData.writeUShort(base + COVERAGE_OFFSET, coverage);
+    return RECORD_SIZE;
   }
   
   @Override
   public String toHtml() {
-    Class<? extends Header> clzz = this.getClass();
-    StringBuilder sb = new StringBuilder(clzz.getSimpleName());
-    sb.append("\n");
-    sb.append("<div>\n");
-    sb.append("feature params: " + featureParams + "\n");
-    sb.append("</div>\n");
-    return sb.toString();
+    return null;
   }
   
   public static class Builder extends VisibleBuilder<Header> {
@@ -48,7 +47,13 @@ public final class Header extends SubTable implements Record {
     public Builder() {}
 
     public Builder(ReadableFontData data,  boolean dataIsCanonical) {
-      builder = (data == null) ? new Header() : new Header(data);
+      if (data != null) {
+        builder = new Header(data);
+      }
+    }
+
+    public Builder(Header header) {
+      set(header);
     }
 
     public void set(Header header) {

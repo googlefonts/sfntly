@@ -10,15 +10,18 @@ import com.google.typography.font.sfntly.table.opentype.FeatureTable;
 import com.google.typography.font.sfntly.table.opentype.GSubTable;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupLigature;
-import com.google.typography.font.sfntly.table.opentype.GsubLookupList;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupSingle;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupTable;
 import com.google.typography.font.sfntly.table.opentype.LangSysTable;
-import com.google.typography.font.sfntly.table.opentype.LookupList;
+import com.google.typography.font.sfntly.table.opentype.LigatureSubst;
+import com.google.typography.font.sfntly.table.opentype.LookupListTable;
 import com.google.typography.font.sfntly.table.opentype.LookupSubTable;
 import com.google.typography.font.sfntly.table.opentype.LookupTable;
+import com.google.typography.font.sfntly.table.opentype.LookupTableNew;
+import com.google.typography.font.sfntly.table.opentype.NullTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTable;
+import com.google.typography.font.sfntly.table.opentype.SubstSubtable;
 import com.google.typography.font.sfntly.table.opentype.TaggedData;
 import com.google.typography.font.sfntly.table.opentype.TaggedData.FieldType;
 
@@ -169,42 +172,69 @@ public class OtTableTagger {
       }
     });
 
-    register(new TagMethod(LookupList.class) {
+    register(new TagMethod(LookupListTable.class) {
       @Override
       public void tag(FontDataTable fdt) {
-        LookupList table = (LookupList) fdt;
+        LookupListTable table = (LookupListTable) fdt;
         int lookupCount = td.tagRangeField(FieldType.SHORT, "lookup count");
         for (int i = 0; i < lookupCount; ++i) {
           td.tagRangeField(FieldType.OFFSET, null);
         }
         for (int i = 0; i < lookupCount; ++i) {
-          LookupTable lookup = table.lookupAt(i);
+          LookupTableNew lookup = table.subTableAt(i);
           if (lookup != null) {
             tagTable(lookup);
           }
         }
       }
-    }, GsubLookupList.class);
+    });
 
-    register(new TagMethod(LookupTable.class) {
+    register(new TagMethod(LookupTableNew.class) {
       @Override
       public void tag(FontDataTable fdt) {
-        LookupTable table = (LookupTable) fdt;
+        LookupTableNew table = (LookupTableNew) fdt;
         td.tagRangeField(FieldType.SHORT, "lookup type");
         td.tagRangeField(FieldType.SHORT, "lookup flags");
         int subTableCount = td.tagRangeField(FieldType.SHORT, "subtable count");
         for (int i = 0; i < subTableCount; ++i) {
           td.tagRangeField(FieldType.OFFSET, null);
         }
-        if (table.useMarkFilteringSet()) {
-          td.tagRangeField(FieldType.SHORT, "mark filtering set");
-        }
+// TODO(cibu): introduce this back.
+//        if (table.useMarkFilteringSet()) {
+//          td.tagRangeField(FieldType.SHORT, "mark filtering set");
+//        }
         for (int i = 0; i < subTableCount; ++i) {
-          LookupSubTable subTable = table.subTableAt(i);
+          SubstSubtable subTable = table.subTableAt(i);
           tagTable(subTable);
         }
       }
     }, GsubLookupTable.class, GsubLookupSingle.class, GsubLookupLigature.class);
+
+    register(new TagMethod(LigatureSubst.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+        LigatureSubst table = (LigatureSubst) fdt;
+        td.tagRangeField(FieldType.SHORT, "subst format");
+        td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
+        td.tagRangeField(FieldType.SHORT, "subtable count");
+        
+        int subTableCount = table.recordList().count();
+        for (int i = 0; i < subTableCount; ++i) {
+          td.tagRangeField(FieldType.OFFSET, null);
+        }
+
+        for (int i = 0; i < subTableCount; ++i) {
+          NullTable subTable = table.subTableAt(i);
+          tagTable(subTable);
+        }
+      }
+    });
+
+    register(new TagMethod(NullTable.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+      }
+    });
 
     register(new TagMethod(GsubLookupSingle.Fmt1.class) {
       @Override

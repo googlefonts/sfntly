@@ -7,8 +7,8 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual.Fmt1.SubRuleSet;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual.Fmt1.SubRuleSet.SubRule;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual.Fmt2.SubClassSet;
-import com.google.typography.font.sfntly.table.opentype.GsubLookupList.GsubLookupType;
 import com.google.typography.font.sfntly.table.opentype.IntSet.IntIterator;
+import com.google.typography.font.sfntly.table.opentype.component.GsubLookupType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,7 +126,7 @@ public class GsubLookupContextual extends GsubLookupTable {
     }
 
     @Override
-    protected GsubLookupContextual subBuildTable(ReadableFontData data) {
+    public GsubLookupContextual subBuildTable(ReadableFontData data) {
       return new GsubLookupContextual(data, true);
     }
   }
@@ -513,7 +513,7 @@ public class GsubLookupContextual extends GsubLookupTable {
     }
 
     @Override
-    protected Fmt1 subBuildTable(ReadableFontData data) {
+    public Fmt1 subBuildTable(ReadableFontData data) {
       return new Fmt1(data, true);
     }
 
@@ -593,7 +593,7 @@ public class GsubLookupContextual extends GsubLookupTable {
     }
 
     @Override
-    protected void subDataSet() {
+    public void subDataSet() {
       builderMap = null;
       coverageBuilder = null;
     }
@@ -749,12 +749,12 @@ public class GsubLookupContextual extends GsubLookupTable {
       }
 
       @Override
-      protected void subDataSet() {
+      public void subDataSet() {
         ruleList = null;
       }
 
       @Override
-      protected SubRuleSet subBuildTable(ReadableFontData data) {
+      public SubRuleSet subBuildTable(ReadableFontData data) {
         return new SubRuleSet(data, true);
       }
 
@@ -895,12 +895,12 @@ public class GsubLookupContextual extends GsubLookupTable {
         }
 
         @Override
-        protected void subDataSet() {
+        public void subDataSet() {
           substitutions = null;
         }
 
         @Override
-        protected SubRule subBuildTable(ReadableFontData data) {
+        public SubRule subBuildTable(ReadableFontData data) {
           return new SubRule(data, true);
         }
       }
@@ -1092,12 +1092,12 @@ public class GsubLookupContextual extends GsubLookupTable {
         }
         
         @Override
-        protected void subDataSet() {
+        public void subDataSet() {
           ruleBuilderList = null;
         }
         
         @Override
-        protected SubClassSet subBuildTable(ReadableFontData data) {
+        public SubClassSet subBuildTable(ReadableFontData data) {
           return new SubClassSet(data, true);
         }
       }
@@ -1353,13 +1353,13 @@ public class GsubLookupContextual extends GsubLookupTable {
           }
           
           @Override
-          protected void subDataSet() {
+          public void subDataSet() {
             glyphClasses = null;
             substitutions = null;
           }
           
           @Override
-          protected SubClassRule subBuildTable(ReadableFontData data) {
+          public SubClassRule subBuildTable(ReadableFontData data) {
             return new SubClassRule(data, true);
           }
         }
@@ -1529,14 +1529,14 @@ public class GsubLookupContextual extends GsubLookupTable {
     }
 
     @Override
-    protected void subDataSet() {
+    public void subDataSet() {
       cb = null;
       cdb = null;
       setBuilders = null;
     }
 
     @Override
-    protected Fmt2 subBuildTable(ReadableFontData data) {
+    public Fmt2 subBuildTable(ReadableFontData data) {
       return new Fmt2(data, true);
     }
   }
@@ -1629,7 +1629,7 @@ public class GsubLookupContextual extends GsubLookupTable {
     }
 
     @Override
-    protected Fmt3 subBuildTable(ReadableFontData data) {
+    public Fmt3 subBuildTable(ReadableFontData data) {
       // TODO(dougfelt): Auto-generated method stub
       return null;
     }
@@ -1657,7 +1657,7 @@ public class GsubLookupContextual extends GsubLookupTable {
     }
 
     @Override
-    protected void subDataSet() {
+    public void subDataSet() {
       // TODO(dougfelt): Auto-generated method stub
     }
   }

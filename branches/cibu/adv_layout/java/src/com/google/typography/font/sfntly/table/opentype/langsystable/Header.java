@@ -42,7 +42,20 @@ public final class Header extends SubTable implements Record {
     return RECORD_SIZE;
   }
   
-  
+  @Override
+  public String toHtml() {
+    Class<? extends Header> clzz = this.getClass();
+    StringBuilder sb = new StringBuilder(clzz.getSimpleName());
+    sb.append("\n");
+    sb.append("<div>\n");
+    sb.append("lookup order: " + lookupOrder + '\n');
+    sb.append("</div>\n");
+    sb.append("<div>\n");
+    sb.append(String.format("required feature index: 0x%04X\n", requiredFeature));
+    sb.append("</div>\n");
+    return sb.toString();
+  }
+    
   public static class Builder extends VisibleBuilder<Header> {
     private Header builder;
 
