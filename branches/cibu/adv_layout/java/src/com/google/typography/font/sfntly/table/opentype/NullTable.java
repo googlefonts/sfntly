@@ -30,7 +30,7 @@ public final class NullTable extends SubstSubtable {
     return RECORD_SIZE;
   }
   
-  public static class Builder extends SubstSubtable.Builder<SubstSubtable, NullTable> {
+  public static class Builder extends VisibleBuilder<NullTable> {
     public Builder() {}
     public Builder(ReadableFontData data,  boolean dataIsCanonical) {}
     public Builder(NullTable table) {}
