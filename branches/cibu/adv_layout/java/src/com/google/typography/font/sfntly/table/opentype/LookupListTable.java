@@ -13,13 +13,14 @@ public class LookupListTable extends OffsetRecordTable<LookupTableNew> {
 
   @Override
   protected LookupTableNew readSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return new LookupTableNew(data, dataIsCanonical);
+    return new LookupTableNew(data, base, dataIsCanonical);
   }
-  
+
   public static class Builder extends OffsetRecordTable.Builder<LookupListTable, LookupTableNew> {
 
     @Override
-    protected LookupListTable readTable(ReadableFontData data, int baseUnused, boolean dataIsCanonical) {
+    protected LookupListTable readTable(
+        ReadableFontData data, int baseUnused, boolean dataIsCanonical) {
       return new LookupListTable(data, dataIsCanonical);
     }
 
@@ -54,4 +55,3 @@ public class LookupListTable extends OffsetRecordTable<LookupTableNew> {
     return FIELD_COUNT;
   }
 }
-

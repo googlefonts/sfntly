@@ -20,11 +20,13 @@ import com.google.typography.font.sfntly.table.opentype.LookupTableNew;
 import com.google.typography.font.sfntly.table.opentype.NullTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTable;
+import com.google.typography.font.sfntly.table.opentype.SingleSubst;
 import com.google.typography.font.sfntly.table.opentype.SubstSubtable;
 import com.google.typography.font.sfntly.table.opentype.TaggedData;
 import com.google.typography.font.sfntly.table.opentype.TaggedData.FieldType;
 import com.google.typography.font.sfntly.table.opentype.coveragetable.InnerArrayFmt1;
 import com.google.typography.font.sfntly.table.opentype.coveragetable.InnerArrayFmt2;
+import com.google.typography.font.sfntly.table.opentype.singlesubst.HeaderFmt1;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -72,6 +74,7 @@ public class OtTableTagger {
 
   abstract class TagMethod {
     protected final Class<? extends FontDataTable> clzz;
+
     TagMethod(Class<? extends FontDataTable> clzz) {
       this.clzz = clzz;
     }
@@ -92,8 +95,8 @@ public class OtTableTagger {
     tagMethodRegistry.put(m.clzz, m);
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
-  private void register(TagMethod m, Class ... clzzs) {
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+  private void register(TagMethod m, Class... clzzs) {
     tagMethodRegistry.put(m.clzz, m);
     for (Class<? extends FontDataTable> clzz : clzzs) {
       tagMethodRegistry.put(clzz, m);
@@ -200,10 +203,10 @@ public class OtTableTagger {
         for (int i = 0; i < subTableCount; ++i) {
           td.tagRangeField(FieldType.OFFSET, null);
         }
-// TODO(cibu): introduce this back.
-//        if (table.useMarkFilteringSet()) {
-//          td.tagRangeField(FieldType.SHORT, "mark filtering set");
-//        }
+        // TODO(cibu): introduce this back.
+        // if (table.useMarkFilteringSet()) {
+        // td.tagRangeField(FieldType.SHORT, "mark filtering set");
+        // }
         for (int i = 0; i < subTableCount; ++i) {
           SubstSubtable subTable = table.subTableAt(i);
           tagTable(subTable);
@@ -219,7 +222,7 @@ public class OtTableTagger {
         td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
         tagTable(table.coverage());
         td.tagRangeField(FieldType.SHORT, "subtable count");
-        
+
         int subTableCount = table.recordList().count();
         for (int i = 0; i < subTableCount; ++i) {
           td.tagRangeField(FieldType.OFFSET, null);
@@ -228,6 +231,31 @@ public class OtTableTagger {
         for (int i = 0; i < subTableCount; ++i) {
           NullTable subTable = table.subTableAt(i);
           tagTable(subTable);
+        }
+      }
+    });
+
+    register(new TagMethod(SingleSubst.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+        SingleSubst table = (SingleSubst) fdt;
+        td.tagRangeField(FieldType.SHORT, "format");
+        switch (table.format) {
+        case 1:
+          HeaderFmt1 tableFmt1 = table.fmt1;
+          td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
+          tagTable(tableFmt1.coverage);
+          td.tagRangeField(FieldType.SHORT, "delta glyph id");
+          break;
+        case 2:
+          com.google.typography.font.sfntly.table.opentype.singlesubst.InnerArrayFmt2 tableFmt2 = table.fmt2;
+          td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
+          tagTable(tableFmt2.coverage);
+          td.tagRangeField(FieldType.SHORT, "glyph count");
+          for (int i = 0; i < tableFmt2.recordList.count(); ++i) {
+            td.tagRangeField(FieldType.SHORT, null);
+          }
+          break;
         }
       }
     });
@@ -258,7 +286,7 @@ public class OtTableTagger {
         tagTable(table.coverage());
         int glyphCount = td.tagRangeField(FieldType.SHORT, "glyph count");
         for (int i = 0; i < glyphCount; ++i) {
-          td.tagRangeField(FieldType.SHORT, String.valueOf(i+1));
+          td.tagRangeField(FieldType.SHORT, String.valueOf(i + 1));
         }
       }
     });
@@ -270,7 +298,7 @@ public class OtTableTagger {
         td.tagRangeField(FieldType.SHORT, "format");
         int glyphCount = td.tagRangeField(FieldType.SHORT, "glyph count");
         for (int i = 0; i < glyphCount; ++i) {
-          td.tagRangeField(FieldType.SHORT, String.valueOf(i+1));
+          td.tagRangeField(FieldType.SHORT, String.valueOf(i + 1));
         }
       }
     });
@@ -294,30 +322,21 @@ public class OtTableTagger {
       public void tag(FontDataTable fdt) {
         CoverageTableNew table = (CoverageTableNew) fdt;
         td.tagRangeField(FieldType.SHORT, "format");
-        tagTable(table.array);
-      }
-    });
-
-    register(new TagMethod(InnerArrayFmt1.class) {
-      @Override
-      public void tag(FontDataTable fdt) {
-        InnerArrayFmt1 table = (InnerArrayFmt1) fdt;
-        int glyphCount = td.tagRangeField(FieldType.SHORT, "glyph count");
-        for (int i = 0; i < glyphCount; ++i) {
-          td.tagRangeField(FieldType.SHORT, String.valueOf(i+1));
+        if (table.header.format == 1) {
+          InnerArrayFmt1 tableFmt1 = (InnerArrayFmt1) table.array;
+          td.tagRangeField(FieldType.SHORT, "glyph count");
+          for (int i = 0; i < tableFmt1.recordList.count(); ++i) {
+            td.tagRangeField(FieldType.SHORT, String.valueOf(i + 1));
+          }
         }
-      }
-    });
-
-    register(new TagMethod(InnerArrayFmt2.class) {
-      @Override
-      public void tag(FontDataTable fdt) {
-        InnerArrayFmt2 table = (InnerArrayFmt2) fdt;
-        int rangeCount = td.tagRangeField(FieldType.SHORT, "range count");
-        for (int i = 0; i < rangeCount; ++i) {
-          td.tagRangeField(FieldType.SHORT, "start");
-          td.tagRangeField(FieldType.SHORT, "end");
-          td.tagRangeField(FieldType.SHORT, "offset");
+        if (table.header.format == 2) {
+          InnerArrayFmt2 tableFmt2 = (InnerArrayFmt2) table.array;
+          td.tagRangeField(FieldType.SHORT, "range count");
+          for (int i = 0; i < tableFmt2.recordList.count(); ++i) {
+            td.tagRangeField(FieldType.SHORT, "start");
+            td.tagRangeField(FieldType.SHORT, "end");
+            td.tagRangeField(FieldType.SHORT, "offset");
+          }
         }
       }
     });
@@ -362,15 +381,15 @@ public class OtTableTagger {
   }
 
   private static final Comparator<Class<? extends FontDataTable>> CLASS_NAME_COMPARATOR =
-      new Comparator<Class<? extends FontDataTable>>() {
-        @Override
-        public int compare(Class<? extends FontDataTable> o1, Class<? extends FontDataTable> o2) {
-          return o1.getName().compareTo(o2.getName());
-        }
-  };
+    new Comparator<Class<? extends FontDataTable>>() {
+    @Override
+    public int compare(Class<? extends FontDataTable> o1, Class<? extends FontDataTable> o2) {
+      return o1.getName().compareTo(o2.getName());
+    }
+    };
 
-  private static Set<Class<? extends FontDataTable>> missedClasses =
-      new TreeSet<Class<? extends FontDataTable>>(CLASS_NAME_COMPARATOR);
+  private static Set<Class<? extends FontDataTable>>
+      missedClasses = new TreeSet<Class<? extends FontDataTable>>(CLASS_NAME_COMPARATOR);
 
   private TagMethod getTagMethod(FontDataTable table) {
     Class<? extends FontDataTable> clzz = table.getClass();

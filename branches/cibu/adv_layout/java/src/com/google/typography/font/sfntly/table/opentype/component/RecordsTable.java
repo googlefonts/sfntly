@@ -4,19 +4,15 @@ package com.google.typography.font.sfntly.table.opentype.component;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.SubTable;
 
-public abstract class RecordsTable<R extends Record>
-extends HeaderTable {
+public abstract class RecordsTable<R extends Record> extends HeaderTable {
   public final RecordList<R> recordList;
-  public final int base;
 
-  /////////////////
+  // ///////////////
   // constructors
 
   public RecordsTable(ReadableFontData data, int base, boolean dataIsCanonical) {
-    super(data);
-    this.base = base;
+    super(data, base, dataIsCanonical);
     recordList = createRecordList(data.slice(base + headerSize()));
   }
 
@@ -24,22 +20,22 @@ extends HeaderTable {
     this(data, 0, dataIsCanonical);
   }
 
-  //////////////////////////////////////
+  // ////////////////////////////////////
   // implementations pushed to subclasses
 
   abstract protected RecordList<R> createRecordList(ReadableFontData data);
 
-  //////////////////////////////////////
+  // ////////////////////////////////////
   // builder
 
-  public abstract static 
-  class Builder<T extends SubTable, R extends Record> extends HeaderTable.Builder<T> {
+  public abstract static class Builder<T extends HeaderTable, R extends Record>
+      extends HeaderTable.Builder<T> {
 
     protected RecordList<R> records;
     protected int serializedLength;
     protected final int base;
 
-    /////////////////
+    // ///////////////
     // constructors
 
     public Builder() {
@@ -68,8 +64,8 @@ extends HeaderTable {
       base = other.base;
       records = other.records;
     }
-    
-    //////////////////
+
+    // ////////////////
     // public methods
 
     public RecordList<R> records() {
@@ -92,7 +88,7 @@ extends HeaderTable {
       return records.count();
     }
 
-    //////////////////////////////////////
+    // ////////////////////////////////////
     // overriden methods
 
     @Override
@@ -133,15 +129,14 @@ extends HeaderTable {
       records = null;
     }
 
-    //////////////////////////////////////
+    // ////////////////////////////////////
     // implementations pushed to subclasses
 
-    protected abstract T readTable(ReadableFontData data, int base,
-        boolean dataIsCanonical);
+    protected abstract T readTable(ReadableFontData data, int base, boolean dataIsCanonical);
 
     protected abstract RecordList<R> readRecordList(ReadableFontData data, int base);
 
-    //////////////////////////////////////
+    // ////////////////////////////////////
     // private methods
 
     private void prepareToEdit() {

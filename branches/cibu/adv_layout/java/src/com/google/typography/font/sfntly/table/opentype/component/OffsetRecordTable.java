@@ -11,19 +11,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public abstract class OffsetRecordTable<S extends SubTable>
-extends HeaderTable implements Iterable<S> {
-  public final boolean dataIsCanonical;
+public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
+    implements Iterable<S> {
   public final NumRecordList recordList;
-  public final int base;
 
-  /////////////////
+  // ///////////////
   // constructors
 
   public OffsetRecordTable(ReadableFontData data, int base, boolean dataIsCanonical) {
-    super(data);
-    this.base = base;
-    this.dataIsCanonical = dataIsCanonical;
+    super(data, base, dataIsCanonical);
     recordList = new NumRecordList(data.slice(base + headerSize()));
   }
 
@@ -31,7 +27,7 @@ extends HeaderTable implements Iterable<S> {
     this(data, 0, dataIsCanonical);
   }
 
-  //////////////////
+  // ////////////////
   // public methods
 
   public S subTableAt(int index) {
@@ -65,13 +61,12 @@ extends HeaderTable implements Iterable<S> {
     };
   }
 
-  //////////////////////////////////////
+  // ////////////////////////////////////
   // implementations pushed to subclasses
 
-  abstract protected S readSubTable(ReadableFontData data,
-      boolean dataIsCanonical);
+  abstract protected S readSubTable(ReadableFontData data, boolean dataIsCanonical);
 
-  //////////////////////////////////////
+  // ////////////////////////////////////
   // private methods
 
   private S subTableForRecord(NumRecord record) {
@@ -79,16 +74,17 @@ extends HeaderTable implements Iterable<S> {
     return readSubTable(newBase, dataIsCanonical);
   }
 
-  public abstract static 
-  class Builder<T extends OffsetRecordTable<? extends SubTable>, S extends SubTable> extends HeaderTable.Builder<T> {
+  public abstract static class Builder<
+      T extends OffsetRecordTable<? extends SubTable>, S extends SubTable>
+      extends HeaderTable.Builder<T> {
 
     public List<VisibleBuilder<S>> builders;
     protected boolean dataIsCanonical;
     protected int serializedLength;
     private int serializedCount;
-    private final int base;    
+    private final int base;
 
-    /////////////////
+    // ///////////////
     // constructors
 
     public Builder() {
@@ -103,7 +99,7 @@ extends HeaderTable implements Iterable<S> {
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
       this(data, 0, dataIsCanonical);
     }
-    
+
     public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data);
       this.base = base;
@@ -113,7 +109,7 @@ extends HeaderTable implements Iterable<S> {
       }
     }
 
-    //////////////////
+    // ////////////////
     // public methods
 
     public int subTableCount() {
@@ -123,22 +119,19 @@ extends HeaderTable implements Iterable<S> {
       return builders.size();
     }
 
-    public
-    SubTable.Builder<? extends SubTable> builderForTag(int tag) {
+    public SubTable.Builder<? extends SubTable> builderForTag(int tag) {
       prepareToEdit();
       return builders.get(tag);
     }
 
-    public 
-    VisibleBuilder<S> addBuilder() {
+    public VisibleBuilder<S> addBuilder() {
       prepareToEdit();
       VisibleBuilder<S> builder = createSubTableBuilder();
       builders.add(builder);
       return builder;
     }
 
-    public 
-    VisibleBuilder<S> addBuilder(S subTable) {
+    public VisibleBuilder<S> addBuilder(S subTable) {
       prepareToEdit();
       VisibleBuilder<S> builder = createSubTableBuilder(subTable);
       builders.add(builder);
@@ -150,7 +143,7 @@ extends HeaderTable implements Iterable<S> {
       builders.remove(tag);
     }
 
-    //////////////////////////////////////
+    // ////////////////////////////////////
     // overriden methods
 
     @Override
@@ -167,7 +160,6 @@ extends HeaderTable implements Iterable<S> {
     protected boolean subReadyToSerialize() {
       return true;
     }
-
 
     @Override
     public int subSerialize(WritableFontData newData) {
@@ -191,23 +183,19 @@ extends HeaderTable implements Iterable<S> {
       return readTable(data, 0, true);
     }
 
-    //////////////////////////////////////
+    // ////////////////////////////////////
     // implementations pushed to subclasses
 
-    protected abstract T readTable(ReadableFontData data, int base,
-        boolean dataIsCanonical);
+    protected abstract T readTable(ReadableFontData data, int base, boolean dataIsCanonical);
 
-    protected abstract
-    VisibleBuilder<S> createSubTableBuilder();    
+    protected abstract VisibleBuilder<S> createSubTableBuilder();
 
-    protected abstract
-    VisibleBuilder<S> createSubTableBuilder(
-        ReadableFontData data, boolean dataIsCanonical);    
+    protected abstract VisibleBuilder<S> createSubTableBuilder(
+        ReadableFontData data, boolean dataIsCanonical);
 
-    protected abstract
-    VisibleBuilder<S> createSubTableBuilder(S subTable);    
+    protected abstract VisibleBuilder<S> createSubTableBuilder(S subTable);
 
-    //////////////////////////////////////
+    // ////////////////////////////////////
     // private methods
 
     private void prepareToEdit() {
@@ -279,7 +267,7 @@ extends HeaderTable implements Iterable<S> {
     private int serializeFromBuilders(WritableFontData newData) {
       // The canonical form of the data consists of the header,
       // the index, then the
-      // scriptTables from the index in index order.  All
+      // scriptTables from the index in index order. All
       // scriptTables are distinct; there's no sharing of tables.
 
       // Find size for table
@@ -307,8 +295,7 @@ extends HeaderTable implements Iterable<S> {
       return data.length();
     }
 
-    private VisibleBuilder<S> createSubTableBuilder(
-        ReadableFontData data, int offset) {
+    private VisibleBuilder<S> createSubTableBuilder(ReadableFontData data, int offset) {
       ReadableFontData newData = data.slice(offset);
       return createSubTableBuilder(newData, dataIsCanonical);
     }

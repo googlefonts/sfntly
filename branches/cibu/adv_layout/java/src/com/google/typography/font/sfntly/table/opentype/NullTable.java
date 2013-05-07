@@ -7,35 +7,40 @@ import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder
 public final class NullTable extends SubstSubtable {
   public static final int RECORD_SIZE = 0;
 
-  public NullTable(ReadableFontData data, boolean dataIsCanonical) {
-    super(data, dataIsCanonical);
+  public NullTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+    super(data, base, dataIsCanonical);
     System.out.println("\n" + this.getClass().getSimpleName());
     for (int i = 0; i < 5; i++) {
-      System.out.printf("0x%04X %d\n", data.readUShort(i*2), data.readUShort(i*2));
+      System.out.printf("0x%04X %d\n", data.readUShort(i * 2), data.readUShort(i * 2));
     }
   }
 
   public NullTable(ReadableFontData data) {
-    super(data, false);
+    super(data, 0, false);
   }
 
   public NullTable() {
-    super(null, false);
+    super(null, 0, false);
   }
 
   public int writeTo(WritableFontData newData, int base) {
     return RECORD_SIZE;
   }
-  
+
   public static class Builder extends VisibleBuilder<NullTable> {
-    public Builder() {}
-    public Builder(ReadableFontData data,  boolean dataIsCanonical) {}
-    public Builder(NullTable table) {}
+    public Builder() {
+    }
+
+    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    }
+
+    public Builder(NullTable table) {
+    }
 
     public void set(NullTable header) {
       setModelChanged();
     }
-    
+
     @Override
     public int subDataSizeToSerialize() {
       return NullTable.RECORD_SIZE;
@@ -44,7 +49,7 @@ public final class NullTable extends SubstSubtable {
     public int subSerialize(WritableFontData newData, int subTableOffset) {
       return NullTable.RECORD_SIZE;
     }
-    
+
     @Override
     public int subSerialize(WritableFontData newData) {
       return NullTable.RECORD_SIZE;
@@ -56,7 +61,8 @@ public final class NullTable extends SubstSubtable {
     }
 
     @Override
-    public void subDataSet() {}
+    public void subDataSet() {
+    }
 
     @Override
     protected boolean subReadyToSerialize() {

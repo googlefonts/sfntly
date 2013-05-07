@@ -13,17 +13,13 @@ import java.util.TreeMap;
 
 public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
     implements Iterable<S> {
-  public final boolean dataIsCanonical;
   public final TagOffsetRecordList recordList;
-  public final int base;
 
   // ///////////////
   // constructors
 
   public TagOffsetsTable(ReadableFontData data, int base, boolean dataIsCanonical) {
-    super(data);
-    this.base = base;
-    this.dataIsCanonical = dataIsCanonical;
+    super(data, base, dataIsCanonical);
     recordList = new TagOffsetRecordList(data.slice(headerSize() + base));
   }
 
@@ -90,7 +86,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
     return readSubTable(newBase, dataIsCanonical);
   }
 
-  public abstract static class Builder<T extends SubTable, S extends SubTable>
+  public abstract static class Builder<T extends HeaderTable, S extends SubTable>
       extends HeaderTable.Builder<T> {
 
     public TreeMap<Integer, VisibleBuilder<S>> builders;
