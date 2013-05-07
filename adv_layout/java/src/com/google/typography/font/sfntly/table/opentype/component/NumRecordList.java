@@ -14,6 +14,10 @@ public final class NumRecordList extends RecordList<NumRecord> {
     super(data);
   }
 
+  public NumRecordList(ReadableFontData data, int countDecrement) {
+    super(data, countDecrement);
+  }
+
   public static int sizeOfListOfCount(int count) {
     return RecordList.RECORD_BASE + count * NumRecord.RECORD_SIZE;
   }
@@ -28,7 +32,7 @@ public final class NumRecordList extends RecordList<NumRecord> {
     }
     return false;
   }
-  
+
   @Override
   protected NumRecord getRecordAt(ReadableFontData data, int offset) {
     return new NumRecord(data, offset);

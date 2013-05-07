@@ -1,16 +1,15 @@
 package com.google.typography.font.sfntly.table.opentype.ligaturesubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.table.opentype.NullTable;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
-public class LigatureSet extends OffsetRecordTable<NullTable> {
+public class LigatureSet extends OffsetRecordTable<Ligature> {
   public LigatureSet(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
-  public static class Builder extends OffsetRecordTable.Builder<LigatureSet, NullTable> {
+  public static class Builder extends OffsetRecordTable.Builder<LigatureSet, Ligature> {
 
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
@@ -30,19 +29,19 @@ public class LigatureSet extends OffsetRecordTable<NullTable> {
     }
 
     @Override
-    protected VisibleBuilder<NullTable> createSubTableBuilder() {
-      return new NullTable.Builder();
+    protected VisibleBuilder<Ligature> createSubTableBuilder() {
+      return new Ligature.Builder();
     }
 
     @Override
-    protected VisibleBuilder<NullTable> createSubTableBuilder(
+    protected VisibleBuilder<Ligature> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
-      return new NullTable.Builder(data, dataIsCanonical);
+      return new Ligature.Builder(data, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<NullTable> createSubTableBuilder(NullTable subTable) {
-      return new NullTable.Builder(subTable);
+    protected VisibleBuilder<Ligature> createSubTableBuilder(Ligature subTable) {
+      return new Ligature.Builder(subTable);
     }
 
     @Override
@@ -56,8 +55,8 @@ public class LigatureSet extends OffsetRecordTable<NullTable> {
   }
 
   @Override
-  protected NullTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return new NullTable(data, base, dataIsCanonical);
+  protected Ligature readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+    return new Ligature(data, base, dataIsCanonical);
   }
 
   @Override

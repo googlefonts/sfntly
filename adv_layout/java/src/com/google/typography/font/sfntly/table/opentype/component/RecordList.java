@@ -28,10 +28,14 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
   }
 
   public RecordList(ReadableFontData data) {
+    this(data, 0);
+  }
+
+  public RecordList(ReadableFontData data, int countDecrement) {
     this.readData = data;
     this.writeData = null;
     if (readData != null) {
-      this.count = data.readUShort(COUNT_OFFSET);
+      this.count = data.readUShort(COUNT_OFFSET) - countDecrement;
     }
   }
 
@@ -67,7 +71,7 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
     }
 
     Iterator<T> iterator = iterator();
-    while(iterator.hasNext()) {
+    while (iterator.hasNext()) {
       if (record.equals(iterator.next())) {
         return true;
       }
@@ -126,7 +130,7 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
   public int writeTo(WritableFontData writeData) {
     copyFromRead();
     int bytesWrote = writeData.writeUShort(COUNT_OFFSET, count);
-    for(T record : recordsToWrite) {
+    for (T record : recordsToWrite) {
       bytesWrote += record.writeTo(writeData, bytesWrote);
     }
     return bytesWrote;
@@ -136,7 +140,7 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
     if (recordsToWrite == null) {
       recordsToWrite = new ArrayList<T>(count);
       Iterator<T> iterator = iterator();
-      while(iterator.hasNext()) {
+      while (iterator.hasNext()) {
         recordsToWrite.add(iterator.next());
       }
     }
