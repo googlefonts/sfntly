@@ -1,122 +1,71 @@
 package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecord;
+import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.RecordList;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
-import com.google.typography.font.sfntly.table.opentype.featuretable.Header;
-import com.google.typography.font.sfntly.table.opentype.featuretable.InnerArray;
+import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
 
-public class FeatureTable extends SubTable {
-  public final Header header;
-  private final InnerArray array;
-  public boolean dataIsCanonical;
-
-  ////////////////
-  // Constructors
+public class FeatureTable extends RecordsTable<NumRecord> {
+  public static final int FIELD_COUNT = 1;
+  public static final int FEATURE_PARAMS_INDEX = 0;
+  public static final int FEATURE_PARAMS_DEFAULT = 0;
 
   public FeatureTable(ReadableFontData data, boolean dataIsCanonical) {
-    super(data);
-    this.dataIsCanonical = dataIsCanonical;
-    header = new Header(data);
-    array = new InnerArray(data.slice(Header.RECORD_SIZE), dataIsCanonical);
+    super(data, dataIsCanonical);
   }
 
-  //////////////////////////////////////////
-  // Utility methods specific to this class
-  
-  public RecordList<NumRecord> records() {
-    return array.recordList;
+  @Override
+  protected RecordList<NumRecord> createRecordList(ReadableFontData data) {
+    return new NumRecordList(data);
   }
 
-  public int valueAt(int i) {
-    return array.recordList.get(i).value;
+  @Override
+  public int fieldCount() {
+    return FIELD_COUNT;
   }
 
-  ////////////////////////////////////
-  // Builder
-
-  public static class Builder extends VisibleBuilder<FeatureTable> {
-
-    protected boolean dataIsCanonical;
-    protected final Header.Builder headerBuilder;
-    protected final InnerArray.Builder arrayBuilder;
-
-    ////////////////
-    // Constructors
+  public static class Builder extends 
+  RecordsTable.Builder<FeatureTable, NumRecord> {
 
     public Builder() {
       super();
-      headerBuilder = new Header.Builder();
-      arrayBuilder = new InnerArray.Builder();
     }
 
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
-      super(data);
-      this.dataIsCanonical = dataIsCanonical;
-      headerBuilder = new Header.Builder(data, dataIsCanonical);
-      arrayBuilder = new InnerArray.Builder(
-          data.slice(Header.RECORD_SIZE), dataIsCanonical);
+      super(data, dataIsCanonical);
     }
 
-    public Builder(FeatureTable table) {
-      this(table.readFontData(), table.dataIsCanonical);
+    public Builder(RecordsTable.Builder<FeatureTable, NumRecord> builder) {
+      super();
+      records = builder.records();
     }
     
-    ////////////////////////////////
-    // Public methods to update
-
-    public Builder addValues(int... indices) {
-      for (int index : indices) {
-        NumRecord record = new NumRecord(index);
-        if (!arrayBuilder.contains(record)) {
-          arrayBuilder.add(new NumRecord(index));
-        }
+    @Override
+    protected FeatureTable readTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+      if (base != 0) {
+        throw new UnsupportedOperationException();
       }
-      return this;
-    }
-
-    public int valueAt(int i) {
-      return arrayBuilder.records().get(i).value;
-    }
-
-    public int valueCount() {
-      return arrayBuilder.count();
-    }
-
-    ////////////////////////////////
-    // Public methods to serialize
-
-    @Override
-    public int subDataSizeToSerialize() {
-      return headerBuilder.subDataSizeToSerialize() + arrayBuilder.subDataSizeToSerialize();
+      return new FeatureTable(data, dataIsCanonical);
     }
 
     @Override
-    public int subSerialize(WritableFontData newData) {
-      int newOffset = headerBuilder.subSerialize(newData);
-      return arrayBuilder.subSerialize(newData.slice(newOffset));
-    }
-
-    /////////////////////
-    // Overriden methods
-
-    @Override
-    public FeatureTable subBuildTable(ReadableFontData data) {
-      return new FeatureTable(data, false);
-    } 
-
-    @Override
-    protected boolean subReadyToSerialize() {
-      return true;
+    protected RecordList<NumRecord> readRecordList(ReadableFontData data, int base) {
+      if (base != 0) {
+        throw new UnsupportedOperationException();
+      }      
+      return new NumRecordList(data);
     }
 
     @Override
-    public void subDataSet() {
-      headerBuilder.subDataSet();
-      arrayBuilder.subDataSet();
+    public int fieldCount() {
+      return FIELD_COUNT;
+    }
+
+    @Override
+    protected void initFields() {
+      setField(FEATURE_PARAMS_INDEX, FEATURE_PARAMS_DEFAULT);
     }
   }
 }
+

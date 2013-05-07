@@ -21,9 +21,4 @@ public final class NumRecord implements Record {
     newData.writeUShort(base + TAG_POS, value);
     return RECORD_SIZE;
   }
-
-  @Override
-  public String toHtml() {
-    return String.valueOf(value);
-  }
 }

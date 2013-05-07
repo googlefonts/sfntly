@@ -3,7 +3,6 @@ package com.google.typography.font.sfntly.table.opentype.coveragetable;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.Record;
-import com.google.typography.font.sfntly.table.opentype.langsystable.Header;
 
 public final class RangeRecord implements Record {
   public static final int RECORD_SIZE = 6;
@@ -31,12 +30,5 @@ public final class RangeRecord implements Record {
     newData.writeUShort(base + START_OFFSET, start);
     newData.writeUShort(base + END_OFFSET, end);
     return RECORD_SIZE;
-  }
-  
-  @Override
-  public String toHtml() {
-    Class<? extends RangeRecord> clzz = this.getClass();
-    StringBuilder sb = new StringBuilder(clzz.getSimpleName() + "\n");
-    return sb.toString();
   }
 }

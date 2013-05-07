@@ -16,8 +16,6 @@ import com.google.typography.font.sfntly.table.opentype.GsubLookupTable;
 import com.google.typography.font.sfntly.table.opentype.LangSysTable;
 import com.google.typography.font.sfntly.table.opentype.LigatureSubst;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
-import com.google.typography.font.sfntly.table.opentype.LookupSubTable;
-import com.google.typography.font.sfntly.table.opentype.LookupTable;
 import com.google.typography.font.sfntly.table.opentype.LookupTableNew;
 import com.google.typography.font.sfntly.table.opentype.NullTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptListTable;
@@ -38,8 +36,8 @@ import java.util.TreeSet;
  * @author dougfelt@google.com (Doug Felt)
  */
 public class OtTableTagger {
-  private TaggedData td;
-  private Map<Class<? extends FontDataTable>, TagMethod> tagMethodRegistry;
+  private final TaggedData td;
+  private final Map<Class<? extends FontDataTable>, TagMethod> tagMethodRegistry;
 
   public OtTableTagger(TaggedData tdata) {
     this.td = tdata;
@@ -141,8 +139,8 @@ public class OtTableTagger {
         LangSysTable table = (LangSysTable) fdt;
         td.tagRangeField(FieldType.SHORT_IGNORED, "lookup order");
         td.tagRangeField(FieldType.SHORT_IGNORED_FFFF, "required feature");
-        int featureCount = td.tagRangeField(FieldType.SHORT, "feature count");
-        for (int i = 0; i < featureCount; ++i) {
+        td.tagRangeField(FieldType.SHORT, "feature count");
+        for (int i = 0; i < table.recordList.count(); ++i) {
           td.tagRangeField(FieldType.SHORT, null);
         }
       }
@@ -168,8 +166,8 @@ public class OtTableTagger {
       public void tag(FontDataTable fdt) {
         FeatureTable table = (FeatureTable) fdt;
         td.tagRangeField(FieldType.OFFSET_NONZERO, "feature params");
-        int lookupCount = td.tagRangeField(FieldType.SHORT, "lookup count");
-        for (int i = 0; i < lookupCount; ++i) {
+        td.tagRangeField(FieldType.SHORT, "lookup count");
+        for (int i = 0; i < table.recordList.count(); ++i) {
           td.tagRangeField(FieldType.SHORT, null);
         }
       }

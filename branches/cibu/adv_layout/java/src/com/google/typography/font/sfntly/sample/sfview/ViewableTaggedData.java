@@ -16,15 +16,19 @@ import java.awt.font.LineMetrics;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 /**
  * @author dougfelt@google.com (Doug Felt)
  */
 public class ViewableTaggedData {
   private List<Marker> markers = new ArrayList<Marker>();
-  private Style style;
-  private Metrics metrics;
+  private final Style style;
+  private final Metrics metrics;
 
   ViewableTaggedData(List<Marker> markers) {
     this(markers, new Style(), new Metrics());
@@ -142,7 +146,7 @@ public class ViewableTaggedData {
   }
 
   static class TaggedDataImpl implements TaggedData {
-    private List<Marker> markers = new ArrayList<Marker>();
+    private final List<Marker> markers = new ArrayList<Marker>();
     private RangeNode rangeStack;
 
     @Override
@@ -298,14 +302,12 @@ public class ViewableTaggedData {
   }
 
   static class DrawContext {
-    private Style style;
-    private Metrics metrics;
-    private Graphics g; // if null, we are measuring
+    private final Style style;
+    private final Metrics metrics;
+    private final Graphics g; // if null, we are measuring
     private FontRenderContext frc; // used when measuring
-    private int x;  // current position of 'position' column (margin is to left)
+    private final int x;  // current position of 'position' column (margin is to left)
     private int y;  // current base of line
-    private int m;  // current open references in margin
-    private int last_m;  // current open references in margin
     private int lc; // line count
     private int rangeDepth;
     private int lastMarkedPosition;
@@ -363,20 +365,16 @@ public class ViewableTaggedData {
     void srcRef(Reference ref) {
       ref.setSrc(x, y);
       if (ref.sourcePosition < ref.targetPosition) {
-        m += 1;
         return;
       }
       drawRef(ref);
-      m -= 1;
     }
 
     void trgRef(Reference ref) {
       ref.setTrg(x, y);
       if (ref.sourcePosition > ref.targetPosition) {
-        m += 1;
         return;
       }
-      m -= 1;
       drawRef(ref);
     }
 
@@ -402,16 +400,14 @@ public class ViewableTaggedData {
     }
     
     void drawRef(Reference ref) {
-      int non_overlapping_m = m;
-      if (last_m != 0 && last_m == m) {
-        non_overlapping_m++;
-      }
-      int margin = -non_overlapping_m * style.marginScale;
+      int m = RefWidthFinder.add(ref);
+      
       int srcx = ref.srcx - style.marginOffset;
       int srcy = ref.srcy - metrics.baseline - metrics.xHeight;
       int trgx = ref.trgx - style.marginOffset;
       int trgy = ref.trgy - metrics.baseline - metrics.xHeight;
 
+      int margin = -m * style.marginScale;
       int mx = Math.min(srcx, trgx) - style.marginPad + margin;
       if (measuring()) {
         if (-mx > metrics.marginWidth) {
@@ -424,15 +420,13 @@ public class ViewableTaggedData {
       trgx += metrics.marginWidth;
       mx += metrics.marginWidth;
 
-      g.setColor(colorForM(non_overlapping_m));
+      g.setColor(colorForM(m));
       g.drawLine(srcx, srcy, mx, srcy);
       g.drawLine(mx, srcy, mx, trgy);
       g.drawLine(mx, trgy, trgx, trgy);
       int[] xpts = { trgx, trgx - 3, trgx - 3 };
       int[] ypts = { trgy, trgy - 2, trgy + 2 };
       g.fillPolygon(xpts, ypts, 3);
-      
-      last_m = non_overlapping_m;
     }
 
     int updateWidth(String s, Font f, int w) {
@@ -604,6 +598,62 @@ public class ViewableTaggedData {
     }
   }
 
+  static class WidthUsageRecord {
+    final Map<Integer, Integer> widthUsageMap;
+
+    public WidthUsageRecord() {
+      widthUsageMap = new HashMap<Integer, Integer>();
+    }
+    
+    public WidthUsageRecord(int width) {
+      this();
+      widthUsageMap.put(width, 1); 
+    }
+
+    public WidthUsageRecord(WidthUsageRecord other, int width) {
+      widthUsageMap = new HashMap<Integer, Integer>(other.widthUsageMap);
+      int currValue = widthUsageMap.containsKey(width) ? widthUsageMap.get(width) : 0;
+      widthUsageMap.put(width, currValue + 1); 
+    }
+    
+    public int lowestEquality(WidthUsageRecord other) {
+      for(int i = 0; this.widthUsageMap.containsKey(i); i++) {
+        if (other.widthUsageMap.get(i) == this.widthUsageMap.get(i)) {
+          return i;
+        }
+      }
+      return other.widthUsageMap.keySet().size(); 
+    }
+  }
+
+  static class RefWidthFinder {
+    static final Map<Integer, Integer> cache = new TreeMap<Integer, Integer>();
+    static final Map<Integer, WidthUsageRecord> widthUsageMap = new TreeMap<Integer, WidthUsageRecord>();
+
+    public static int add(Reference ref) {
+      int src = ref.sourcePosition;
+      int trg = ref.targetPosition;
+      
+      if (cache.containsKey(trg)) {
+        return cache.get(trg);
+      }
+      
+      WidthUsageRecord srcRecord = new WidthUsageRecord();
+      WidthUsageRecord trgRecord = new WidthUsageRecord();
+      for (Entry<Integer, WidthUsageRecord> entry  : widthUsageMap.entrySet()) {
+        if (entry.getKey() <= src) {
+          srcRecord = entry.getValue();
+        }
+        trgRecord = entry.getValue();
+      }
+      
+      int width = srcRecord.lowestEquality(trgRecord);
+      widthUsageMap.put(trg, new WidthUsageRecord(trgRecord, width));
+      cache.put(trg, width);
+      return width;
+    }
+  }
+  
   static abstract class Marker implements Comparable<Marker> {
     final int position;
     Marker(int position) {
@@ -705,9 +755,9 @@ public class ViewableTaggedData {
   }
 
   static class ReferenceSource extends Marker {
-    private Reference ref;
-    private int value;
-    private String label;
+    private final Reference ref;
+    private final int value;
+    private final String label;
 
     ReferenceSource(Reference ref, int value, String label) {
       super(ref.sourcePosition);
@@ -730,7 +780,7 @@ public class ViewableTaggedData {
   }
 
   static class ReferenceTarget extends Marker {
-    private Reference ref;
+    private final Reference ref;
 
     ReferenceTarget(Reference ref) {
       super(ref.targetPosition);

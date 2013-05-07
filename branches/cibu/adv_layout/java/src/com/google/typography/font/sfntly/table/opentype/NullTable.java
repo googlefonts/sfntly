@@ -2,9 +2,6 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.SubTable;
-import com.google.typography.font.sfntly.table.opentype.LookupTable.LookupType;
-import com.google.typography.font.sfntly.table.opentype.component.Record;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
 public final class NullTable extends SubstSubtable {

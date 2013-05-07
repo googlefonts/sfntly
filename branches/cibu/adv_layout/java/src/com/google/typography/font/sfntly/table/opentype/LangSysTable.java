@@ -1,74 +1,69 @@
 package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecord;
+import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.RecordList;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
-import com.google.typography.font.sfntly.table.opentype.langsystable.Header;
-import com.google.typography.font.sfntly.table.opentype.langsystable.InnerArray;
+import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
 
-public class LangSysTable extends SubTable {
-  public final Header header;
-  private final InnerArray array;
-  private boolean dataIsCanonical;
+public class LangSysTable extends RecordsTable<NumRecord> {
+  public static final int FIELD_COUNT = 2;
 
-  ////////////////
-  // Constructors
+  public static final int LOOKUP_ORDER_INDEX = 0;
+  public static final int LOOKUP_ORDER_CONST = 0;
+
+  public static final int REQ_FEATURE_INDEX_INDEX = 1;
+  public static final int NO_REQ_FEATURE = 0xffff;
 
   public LangSysTable(ReadableFontData data, boolean dataIsCanonical) {
-    super(data);
-    this.dataIsCanonical = dataIsCanonical;
-    header = new Header(data);
-    array = new InnerArray(data.slice(Header.RECORD_SIZE), dataIsCanonical);
+    super(data, dataIsCanonical);
+    // System.out.println("\n" + this.getClass().getSimpleName());
+    // for (int i = 0; i < 20; i++) {
+    // System.out.printf("0x%04X %d\n", data.readUShort(i * 2),
+    // data.readUShort(i * 2));
+    // }
+
+    if (getField(LOOKUP_ORDER_INDEX) != LOOKUP_ORDER_CONST) {
+      throw new IllegalArgumentException();
+    }
   }
 
-  //////////////////////////////////////////
-  // Utility methods specific to this class
-  
-  public RecordList<NumRecord> records() {
-    return array.recordList;
+  public boolean hasRequiredFeature() {
+    return getField(REQ_FEATURE_INDEX_INDEX) != NO_REQ_FEATURE;
   }
 
-  ////////////////////////////////////
-  // Builder
+  @Override
+  protected RecordList<NumRecord> createRecordList(ReadableFontData data) {
+    return new NumRecordList(data);
+  }
 
-  public static class Builder extends VisibleBuilder<LangSysTable> {
+  @Override
+  public int fieldCount() {
+    return FIELD_COUNT;
+  }
 
-    protected boolean dataIsCanonical;
-    protected final Header.Builder headerBuilder;
-    protected final InnerArray.Builder arrayBuilder;
-
-    ////////////////
-    // Constructors
+  public static class Builder extends RecordsTable.Builder<LangSysTable, NumRecord> {
 
     public Builder() {
       super();
-      headerBuilder = new Header.Builder();
-      arrayBuilder = new InnerArray.Builder();
     }
 
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
-      super(data);
-      this.dataIsCanonical = dataIsCanonical;
-      headerBuilder = new Header.Builder(data, dataIsCanonical);
-      arrayBuilder = new InnerArray.Builder(
-          data.slice(Header.RECORD_SIZE), dataIsCanonical);
+      super(data, dataIsCanonical);
     }
 
-    public Builder(LangSysTable table) {
-      this(table.readFontData(), table.dataIsCanonical);
+    public Builder(RecordsTable.Builder<LangSysTable, NumRecord> builder) {
+      super(builder);
     }
-    
-    ////////////////////////////////
+
+    // //////////////////////////////
     // Public methods to update
 
     public Builder addFeatureIndices(int... indices) {
       for (int index : indices) {
         NumRecord record = new NumRecord(index);
-        if (!arrayBuilder.contains(record)) {
-          arrayBuilder.add(new NumRecord(index));
+        if (!records.contains(record)) {
+          records.add(new NumRecord(index));
         }
       }
       return this;
@@ -76,50 +71,39 @@ public class LangSysTable extends SubTable {
 
     public Builder setRequiredFeatureIndex(int index) {
       NumRecord record = new NumRecord(index);
-      if (!arrayBuilder.contains(record)) {
+      if (!records.contains(record)) {
         return this;
       }
-      
-      Header header = new Header(index);
-      headerBuilder.set(header);
+
+      setField(REQ_FEATURE_INDEX_INDEX, index);
       return this;
     }
-    
-    public int featureIndexCount() {
-      return arrayBuilder.count();
-    }
-
-    ////////////////////////////////
-    // Public methods to serialize
 
     @Override
-    public int subDataSizeToSerialize() {
-      return headerBuilder.subDataSizeToSerialize() + arrayBuilder.subDataSizeToSerialize();
+    protected void initFields() {
+      setField(LOOKUP_ORDER_INDEX, LOOKUP_ORDER_CONST);
+      setField(REQ_FEATURE_INDEX_INDEX, NO_REQ_FEATURE);
     }
 
     @Override
-    public int subSerialize(WritableFontData newData) {
-      int newOffset = headerBuilder.subSerialize(newData);
-      return arrayBuilder.subSerialize(newData.slice(newOffset));
-    }
-
-    /////////////////////
-    // Overriden methods
-
-    @Override
-    public LangSysTable subBuildTable(ReadableFontData data) {
-      return new LangSysTable(data, false);
-    } 
-
-    @Override
-    protected boolean subReadyToSerialize() {
-      return true;
+    protected LangSysTable readTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+      if (base != 0) {
+        throw new UnsupportedOperationException();
+      }
+      return new LangSysTable(data, dataIsCanonical);
     }
 
     @Override
-    public void subDataSet() {
-      headerBuilder.subDataSet();
-      arrayBuilder.subDataSet();
+    protected RecordList<NumRecord> readRecordList(ReadableFontData data, int base) {
+      if (base != 0) {
+        throw new UnsupportedOperationException();
+      }
+      return new NumRecordList(data);
+    }
+
+    @Override
+    public int fieldCount() {
+      return FIELD_COUNT;
     }
   }
 }
