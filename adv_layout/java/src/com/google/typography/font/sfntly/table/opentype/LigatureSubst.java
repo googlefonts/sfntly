@@ -6,10 +6,11 @@ import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.InnerArrayFmt1;
+import com.google.typography.font.sfntly.table.opentype.ligaturesubst.LigatureSet;
 
 import java.util.Iterator;
 
-public class LigatureSubst extends SubstSubtable implements Iterable<NullTable> {
+public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet> {
   private final InnerArrayFmt1 array;
 
   // //////////////
@@ -17,7 +18,6 @@ public class LigatureSubst extends SubstSubtable implements Iterable<NullTable> 
 
   public LigatureSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
-    dumpData();
     if (format != 1) {
       throw new IllegalStateException("Subt format value is " + format + " (should be 1).");
     }
@@ -31,16 +31,16 @@ public class LigatureSubst extends SubstSubtable implements Iterable<NullTable> 
     return array.recordList;
   }
 
-  public NullTable subTableAt(int index) {
+  public LigatureSet subTableAt(int index) {
     return array.subTableAt(index);
   }
 
   @Override
-  public Iterator<NullTable> iterator() {
+  public Iterator<LigatureSet> iterator() {
     return array.iterator();
   }
 
-  protected NullTable createSubTable(ReadableFontData data, boolean dataIsCanonical) {
+  protected LigatureSet createSubTable(ReadableFontData data, boolean dataIsCanonical) {
     return array.readSubTable(data, dataIsCanonical);
   }
 
@@ -88,7 +88,7 @@ public class LigatureSubst extends SubstSubtable implements Iterable<NullTable> 
       return arrayBuilder.builderForTag(tag);
     }
 
-    public VisibleBuilder<NullTable> addBuilder() {
+    public VisibleBuilder<LigatureSet> addBuilder() {
       setModelChanged();
       return arrayBuilder.addBuilder();
     }

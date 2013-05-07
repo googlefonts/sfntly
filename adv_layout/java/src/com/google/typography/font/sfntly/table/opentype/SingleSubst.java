@@ -14,7 +14,6 @@ public class SingleSubst extends SubstSubtable {
 
   public SingleSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
-    dumpData();
     switch (format) {
     case 1:
       fmt1 = new HeaderFmt1(data, headerSize(), dataIsCanonical);
