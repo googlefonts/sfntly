@@ -7,8 +7,7 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 
 public abstract class RecordsTable<R extends Record>
-extends SubTable {
-  public final boolean dataIsCanonical;
+extends HeaderTable {
   public final RecordList<R> recordList;
   public final int base;
 
@@ -18,8 +17,7 @@ extends SubTable {
   public RecordsTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data);
     this.base = base;
-    this.dataIsCanonical = dataIsCanonical;
-    recordList = createRecordList(data.slice(base));
+    recordList = createRecordList(data.slice(base + headerSize()));
   }
 
   public RecordsTable(ReadableFontData data, boolean dataIsCanonical) {
@@ -35,12 +33,11 @@ extends SubTable {
   // builder
 
   public abstract static 
-  class Builder<T extends SubTable, R extends Record> extends VisibleBuilder<T> {
+  class Builder<T extends SubTable, R extends Record> extends HeaderTable.Builder<T> {
 
     protected RecordList<R> records;
-    protected boolean dataIsCanonical;
     protected int serializedLength;
-    private final int base;
+    protected final int base;
 
     /////////////////
     // constructors
@@ -61,12 +58,17 @@ extends SubTable {
     public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data);
       this.base = base;
-      this.dataIsCanonical = dataIsCanonical;
       if (!dataIsCanonical) {
         prepareToEdit();
       }
     }
 
+    public Builder(RecordsTable.Builder<T, R> other) {
+      super();
+      base = other.base;
+      records = other.records;
+    }
+    
     //////////////////
     // public methods
 
@@ -98,7 +100,7 @@ extends SubTable {
       if (records != null) {
         serializedLength = records.limit();
       } else {
-        computeSizeFromData(internalReadData().slice(base));
+        computeSizeFromData(internalReadData().slice(base + headerSize()));
       }
       return serializedLength;
     }
@@ -143,7 +145,7 @@ extends SubTable {
     // private methods
 
     private void prepareToEdit() {
-      initFromData(internalReadData(), base);
+      initFromData(internalReadData(), base + headerSize());
       setModelChanged();
     }
 
@@ -164,7 +166,7 @@ extends SubTable {
 
     private int serializeFromData(WritableFontData newData) {
       // The source data must be canonical.
-      ReadableFontData data = internalReadData().slice(base);
+      ReadableFontData data = internalReadData().slice(base + headerSize());
       data.copyTo(newData);
       return data.length();
     }

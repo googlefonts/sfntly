@@ -2,167 +2,114 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.SubTable;
-import com.google.typography.font.sfntly.table.opentype.component.NumRecord;
-import com.google.typography.font.sfntly.table.opentype.component.TagOffsetRecordList;
+import com.google.typography.font.sfntly.table.opentype.component.TagOffsetsTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
-import com.google.typography.font.sfntly.table.opentype.scripttable.Header;
-import com.google.typography.font.sfntly.table.opentype.scripttable.InnerArray;
 
-import java.util.Iterator;
+public class ScriptTable extends TagOffsetsTable<LangSysTable> {
+  public static final int FIELD_COUNT = 1;
 
-public class ScriptTable extends SubTable implements Iterable<LangSysTable>  {
-  private final NumRecord header;
-  private final InnerArray array;
-  public final boolean dataIsCanonical;
+  public static final int DEFAULT_LANG_SYS_INDEX = 0;
+  public static final int NO_DEFAULT_LANG_SYS = 0;
 
-  ////////////////
-  // Constructors
+  public ScriptTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+    super(data, base, dataIsCanonical);
+    // System.out.println("\n" + this.getClass().getSimpleName());
+    // for (int i = 0; i < 20; i++) {
+    // System.out.printf("0x%04X %d\n", data.readUShort(i * 2),
+    // data.readUShort(i * 2));
+    // }
 
-  public ScriptTable(ReadableFontData data, boolean dataIsCanonical) {
-    super(data);
-    this.dataIsCanonical = dataIsCanonical;
-    header = new NumRecord(data, Header.Builder.DEFAULT_LANG_SYS_OFFSET);
-    array = new InnerArray(data, NumRecord.RECORD_SIZE, dataIsCanonical);
   }
-
-  ////////////////////////////////////
-  // Methods redirected to the array
-
-  public TagOffsetRecordList recordList() {
-    return array.recordList;
-  }
-
-  public LangSysTable subTableAt(int index) {
-    return array.subTableAt(index);
-  }
-
-  public LangSysTable subTableForTag(int tag) {
-    return array.subTableForTag(tag);
-  }
-
-  @Override
-  public Iterator<LangSysTable> iterator() {
-    return array.iterator();
-  }
-
-  protected LangSysTable createSubTable(
-      ReadableFontData data, boolean dataIsCanonical) {
-    return array.readSubTable(data, dataIsCanonical);
-  }
-
-  ////////////////////////////////////
-  // Methods specific to this class
 
   public LangSysTable defaultLangSysTable() {
-    int offset = header.value;
-    if (offset == Header.Builder.DEFAULT_LANG_SYS_TAG) {
+    int defaultLangSysOffset = getField(DEFAULT_LANG_SYS_INDEX);
+    if (defaultLangSysOffset == NO_DEFAULT_LANG_SYS) {
       return null;
     }
-    
-    ReadableFontData newData = data.slice(offset);
+
+    ReadableFontData newData = data.slice(defaultLangSysOffset);
     LangSysTable langSysTable = new LangSysTable(newData, dataIsCanonical);
     return langSysTable;
   }
 
-  ////////////////////////////////////
-  // Builder
+  @Override
+  public LangSysTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+    return new LangSysTable(data, dataIsCanonical);
+  }
 
-  public static class Builder extends VisibleBuilder<ScriptTable> {
+  @Override
+  public int fieldCount() {
+    return FIELD_COUNT;
+  }
 
-    protected boolean dataIsCanonical;
-    private final Header.Builder headerBuilder;
-    private final InnerArray.Builder arrayBuilder;
-
-    ////////////////
-    // Constructors
+  public static class Builder extends TagOffsetsTable.Builder<ScriptTable, LangSysTable> {
+    private VisibleBuilder<LangSysTable> defLangSysBuilder;
 
     public Builder() {
       super();
-      headerBuilder = new Header.Builder();
-      arrayBuilder = new InnerArray.Builder();
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
-      super(data);
-      this.dataIsCanonical = dataIsCanonical;
-      headerBuilder = new Header.Builder(data, dataIsCanonical);
-      arrayBuilder = new InnerArray.Builder(
-          data, Header.Builder.DEFAULT_LANG_SYS_OFFSET_LENGTH, dataIsCanonical);
+    public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
+      super(data, base, dataIsCanonical);
+      int defLangSys = getField(DEFAULT_LANG_SYS_INDEX);
+      if (defLangSys != NO_DEFAULT_LANG_SYS) {
+        defLangSysBuilder = new LangSysTable.Builder(data.slice(defLangSys), dataIsCanonical);
+      }
     }
 
-    ///////////////////////////////
-    // Public methods for builders
-
-    public int subTableCount() {
-      return arrayBuilder.subTableCount();
+    public Builder(ScriptTable.Builder other) {
+      super(other);
+      defLangSysBuilder = other.defLangSysBuilder;
     }
 
-    public SubTable.Builder<? extends SubTable> builderForTag(int tag) {
-      setModelChanged();
-      return arrayBuilder.builderForTag(tag);
+    @Override
+    public VisibleBuilder<LangSysTable> createSubTableBuilder(
+        ReadableFontData data, int tag, boolean dataIsCanonical) {
+      return new LangSysTable.Builder(data, dataIsCanonical);
     }
 
-    public VisibleBuilder<LangSysTable> addBuiderForTag(int tag) {
-      setModelChanged();
-      return arrayBuilder.addBuilderForTag(tag);
+    @Override
+    public VisibleBuilder<LangSysTable> createSubTableBuilder() {
+      return new LangSysTable.Builder();
     }
 
-    public void removeBuilderForTag(int tag) {
-      setModelChanged();
-      arrayBuilder.removeBuilderForTag(tag);
+    @Override
+    protected ScriptTable readTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+      return new ScriptTable(data, base, dataIsCanonical);
     }
-
-    public VisibleBuilder<LangSysTable> buiderForHeader() {
-      return headerBuilder.initBuilder();
-    }
-
-    /////////////////////////////////
-    // Public methods to serialize
 
     @Override
     public int subDataSizeToSerialize() {
-      return headerBuilder.subDataSizeToSerialize() + arrayBuilder.subDataSizeToSerialize();
+      int size = super.subDataSizeToSerialize();
+      if (defLangSysBuilder != null) {
+        size += defLangSysBuilder.subDataSizeToSerialize();
+      }
+      return size;
     }
 
     @Override
     public int subSerialize(WritableFontData newData) {
-      int newOffset = arrayBuilder.subSerialize(newData.slice(Header.Builder.DEFAULT_LANG_SYS_OFFSET_LENGTH));
-      return headerBuilder.subSerialize(newData, newOffset);
-    }
-
-    /////////////////////////////////////////
-    // Protected impls pushed to subclasses
-
-    protected VisibleBuilder<LangSysTable> createSubTableBuilder() {
-      return arrayBuilder.createSubTableBuilder();
-    }
-
-    protected VisibleBuilder<LangSysTable> createSubTableBuilder(
-        ReadableFontData data, int tag, boolean dataIsCanonical) {
-      return arrayBuilder.createSubTableBuilder(data, tag, dataIsCanonical);
-    }
-
-    protected ScriptTable createTable(ReadableFontData data, boolean dataIsCanonical) {
-      return new ScriptTable(data, true);
-    }    
-
-    /////////////////////
-    // Overriden methods
-
-    @Override
-    protected boolean subReadyToSerialize() {
-      return true;
+      int byteCount = super.subSerialize(newData);
+      if (defLangSysBuilder != null) {
+        byteCount += defLangSysBuilder.subSerialize(newData.slice(byteCount));
+      }
+      return byteCount;
     }
 
     @Override
     public void subDataSet() {
-      arrayBuilder.subDataSet();
+      super.subDataSet();
+      defLangSysBuilder = null;
     }
 
     @Override
-    public ScriptTable subBuildTable(ReadableFontData data) {
-      return createTable(data, true);
-    } 
+    public int fieldCount() {
+      return FIELD_COUNT;
+    }
+
+    @Override
+    protected void initFields() {
+      setField(DEFAULT_LANG_SYS_INDEX, NO_DEFAULT_LANG_SYS);
+    }
   }
 }

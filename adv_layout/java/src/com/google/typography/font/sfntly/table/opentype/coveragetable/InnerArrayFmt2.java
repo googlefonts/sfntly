@@ -15,6 +15,11 @@ public class InnerArrayFmt2 extends RecordsTable<RangeRecord> {
     return new RangeRecordList(data);
   }
 
+  @Override
+  public int fieldCount() {
+    return 0;
+  }
+
   public static class Builder extends 
   RecordsTable.Builder<InnerArrayFmt2, RangeRecord> {
 
@@ -45,6 +50,14 @@ public class InnerArrayFmt2 extends RecordsTable<RangeRecord> {
         throw new UnsupportedOperationException();
       }      
       return new RangeRecordList(data);
+    }
+    @Override
+    public int fieldCount() {
+      return 0;
+    }
+
+    @Override
+    protected void initFields() {
     }
   }
 }

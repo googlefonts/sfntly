@@ -4,7 +4,6 @@ import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.opentype.GSubTable;
-import com.google.typography.font.sfntly.table.opentype.component.HtmlDump;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,9 +30,9 @@ public class HtmlViewer {
     writer.println("    <link href=special.css rel=stylesheet type=text/css>");
     writer.println("  </head>");
     writer.println("  <body>");
-    writer.println(gsub.scriptList().toHtml());
-    writer.println(gsub.featureList().toHtml());
-    writer.println(gsub.lookupList().toHtml());
+//    writer.println(gsub.scriptList().toHtml());
+//    writer.println(gsub.featureList().toHtml());
+//    writer.println(gsub.lookupList().toHtml());
     writer.println("  </body>");
     writer.println("</html>");
     writer.close();

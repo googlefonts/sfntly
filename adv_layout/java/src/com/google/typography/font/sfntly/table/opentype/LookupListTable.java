@@ -1,11 +1,11 @@
 package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.table.FontDataTable;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
 public class LookupListTable extends OffsetRecordTable<LookupTableNew> {
+  public static final int FIELD_COUNT = 0;
 
   public LookupListTable(ReadableFontData data, boolean dataIsCanonical) {
     super(data, dataIsCanonical);
@@ -38,12 +38,20 @@ public class LookupListTable extends OffsetRecordTable<LookupTableNew> {
     protected VisibleBuilder<LookupTableNew> createSubTableBuilder(LookupTableNew subTable) {
       return new LookupTableNew.Builder(subTable);
     }
+
+    @Override
+    protected void initFields() {
+    }
+
+    @Override
+    public int fieldCount() {
+      return FIELD_COUNT;
+    }
   }
 
   @Override
-  public String toHtml() {
-    Class<? extends FontDataTable> clzz = this.getClass();
-    return clzz.getName();
+  public int fieldCount() {
+    return FIELD_COUNT;
   }
 }
 

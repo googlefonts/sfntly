@@ -5,8 +5,6 @@ package com.google.typography.font.sfntly.table.opentype.component;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
-import com.google.typography.font.sfntly.table.opentype.component.NumRecord;
-import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,7 +12,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public abstract class OffsetRecordTable<S extends SubTable>
-extends SubTable implements Iterable<S>, HtmlDump {
+extends HeaderTable implements Iterable<S> {
   public final boolean dataIsCanonical;
   public final NumRecordList recordList;
   public final int base;
@@ -26,7 +24,7 @@ extends SubTable implements Iterable<S>, HtmlDump {
     super(data);
     this.base = base;
     this.dataIsCanonical = dataIsCanonical;
-    recordList = new NumRecordList(data.slice(base));
+    recordList = new NumRecordList(data.slice(base + headerSize()));
   }
 
   public OffsetRecordTable(ReadableFontData data, boolean dataIsCanonical) {
@@ -67,12 +65,6 @@ extends SubTable implements Iterable<S>, HtmlDump {
     };
   }
 
-  @Override
-  public String toHtml() {
-    Class<? extends OffsetRecordTable> clzz = this.getClass();
-    return clzz.getSimpleName() + recordList.toHtml();
-  }
-
   //////////////////////////////////////
   // implementations pushed to subclasses
 
@@ -88,7 +80,7 @@ extends SubTable implements Iterable<S>, HtmlDump {
   }
 
   public abstract static 
-  class Builder<T extends OffsetRecordTable<? extends SubTable>, S extends SubTable> extends VisibleBuilder<T> {
+  class Builder<T extends OffsetRecordTable<? extends SubTable>, S extends SubTable> extends HeaderTable.Builder<T> {
 
     public List<VisibleBuilder<S>> builders;
     protected boolean dataIsCanonical;
@@ -108,6 +100,10 @@ extends SubTable implements Iterable<S>, HtmlDump {
       this(table.readFontData(), table.base, table.dataIsCanonical);
     }
 
+    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+      this(data, 0, dataIsCanonical);
+    }
+    
     public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data);
       this.base = base;
@@ -122,7 +118,7 @@ extends SubTable implements Iterable<S>, HtmlDump {
 
     public int subTableCount() {
       if (builders == null) {
-        return new NumRecordList(internalReadData().slice(base)).count();
+        return new NumRecordList(internalReadData().slice(base + headerSize())).count();
       }
       return builders.size();
     }
@@ -162,7 +158,7 @@ extends SubTable implements Iterable<S>, HtmlDump {
       if (builders != null) {
         computeSizeFromBuilders();
       } else {
-        computeSizeFromData(internalReadData().slice(base));
+        computeSizeFromData(internalReadData().slice(base + headerSize()));
       }
       return serializedLength;
     }
@@ -227,7 +223,7 @@ extends SubTable implements Iterable<S>, HtmlDump {
         return;
       }
 
-      data = data.slice(base);
+      data = data.slice(base + headerSize());
       // Start of the first subtable in the data, if we're canonical.
       NumRecordList recordList = new NumRecordList(data);
       if (recordList.count() == 0) {

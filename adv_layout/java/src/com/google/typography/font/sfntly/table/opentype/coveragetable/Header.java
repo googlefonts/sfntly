@@ -4,10 +4,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.Record;
-import com.google.typography.font.sfntly.table.opentype.component.RecordList;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
-
-import java.util.Iterator;
 
 public final class Header extends SubTable implements Record {
   public static final int RECORD_SIZE = 2;
@@ -29,17 +26,6 @@ public final class Header extends SubTable implements Record {
   @Override
   public int writeTo(WritableFontData newData, int base) {
     return newData.writeUShort(base + FORMAT_OFFSET, format);
-  }
-  
-  @Override
-  public String toHtml() {
-    Class<? extends Header> clzz = this.getClass();
-    StringBuilder sb = new StringBuilder(clzz.getSimpleName());
-    sb.append("\n");
-    sb.append("<div>\n");
-    sb.append("feature params: " + format + "\n");
-    sb.append("</div>\n");
-    return sb.toString();
   }
   
   public static class Builder extends VisibleBuilder<Header> {

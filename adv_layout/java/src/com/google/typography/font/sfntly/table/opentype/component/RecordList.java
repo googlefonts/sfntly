@@ -2,7 +2,6 @@ package com.google.typography.font.sfntly.table.opentype.component;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.FontDataTable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public abstract class RecordList<T extends Record> implements Iterable<T>, HtmlDump {
+public abstract class RecordList<T extends Record> implements Iterable<T> {
   private static final int COUNT_OFFSET = 0;
   public static final int RECORD_BASE = 2;
 
@@ -141,21 +140,6 @@ public abstract class RecordList<T extends Record> implements Iterable<T>, HtmlD
         recordsToWrite.add(iterator.next());
       }
     }
-  }
-
-  @Override
-  public String toHtml() {
-    Class<? extends RecordList> clzz = this.getClass();
-    StringBuilder sb = new StringBuilder(clzz.getSimpleName());
-    sb.append("\n");
-    Iterator<T> iterator = iterator();
-    while(iterator.hasNext()) {
-      sb.append("<div>\n");
-      sb.append(iterator.next().toHtml());
-      sb.append("</div>\n");
-    }
-
-    return sb.toString();
   }
 
   protected abstract T getRecordAt(ReadableFontData data, int pos);

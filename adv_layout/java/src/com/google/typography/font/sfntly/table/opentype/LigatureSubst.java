@@ -4,15 +4,13 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
-import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
-import com.google.typography.font.sfntly.table.opentype.ligaturesubst.Header;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.InnerArray;
 
 import java.util.Iterator;
 
+
 public class LigatureSubst extends SubstSubtable implements Iterable<NullTable>  {
-  public final Header header;
   private final InnerArray array;
   protected final CoverageTableNew coverage;
 
@@ -25,9 +23,8 @@ public class LigatureSubst extends SubstSubtable implements Iterable<NullTable> 
 //    for (int i = 0; i < 20; i++) {
 //      System.out.printf("0x%04X %d\n", data.readUShort(i*2), data.readUShort(i*2));
 //    }
-    header = new Header(data);
-    array = new InnerArray(data, Header.RECORD_SIZE, dataIsCanonical);
-    coverage = new CoverageTableNew(data.slice(header.coverage), dataIsCanonical);
+    array = new InnerArray(data, dataIsCanonical);
+    coverage = new CoverageTableNew(data.slice(array.getField(InnerArray.COVERAGE_INDEX)), dataIsCanonical);
   }
 
   ////////////////////////////////////
@@ -63,7 +60,6 @@ public class LigatureSubst extends SubstSubtable implements Iterable<NullTable> 
 
   public static class Builder extends SubstSubtable.Builder<SubstSubtable, NullTable> {
 
-    private final Header.Builder headerBuilder;
     private final InnerArray.Builder arrayBuilder;
 
     ////////////////
@@ -71,21 +67,18 @@ public class LigatureSubst extends SubstSubtable implements Iterable<NullTable> 
 
     public Builder() {
       super();
-      headerBuilder = new Header.Builder();
       arrayBuilder = new InnerArray.Builder();
     }
 
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       this.dataIsCanonical = dataIsCanonical;
-      headerBuilder = new Header.Builder(data, dataIsCanonical);
-      arrayBuilder = new InnerArray.Builder(data, Header.RECORD_SIZE, dataIsCanonical);
+      arrayBuilder = new InnerArray.Builder(data, dataIsCanonical);
     }
 
     public Builder(SubstSubtable subTable) {
       LigatureSubst ligSubst = (LigatureSubst) subTable;
       this.dataIsCanonical = subTable.dataIsCanonical;
-      headerBuilder = new Header.Builder(ligSubst.header);
       arrayBuilder = new InnerArray.Builder(ligSubst.array);
     }
 
@@ -111,22 +104,17 @@ public class LigatureSubst extends SubstSubtable implements Iterable<NullTable> 
       arrayBuilder.removeBuilderForTag(tag);
     }
 
-    public VisibleBuilder<Header> buiderForHeader() {
-      return headerBuilder;
-    }
-
     /////////////////////////////////
     // Public methods to serialize
 
     @Override
     public int subDataSizeToSerialize() {
-      return headerBuilder.subDataSizeToSerialize() + arrayBuilder.subDataSizeToSerialize();
+      return arrayBuilder.subDataSizeToSerialize();
     }
 
     @Override
     public int subSerialize(WritableFontData newData) {
-      int newOffset = arrayBuilder.subSerialize(newData.slice(Header.RECORD_SIZE));
-      return headerBuilder.subSerialize(newData, newOffset);
+      return arrayBuilder.subSerialize(newData);
     }
 
     ///////////////////////////////////

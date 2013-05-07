@@ -9,24 +9,22 @@ public class FeatureListTable extends TagOffsetsTable<FeatureTable> {
   public FeatureListTable(ReadableFontData data, boolean dataIsCanonical) {
     super(data, dataIsCanonical);
   }
-  
+
   @Override
-  protected FeatureTable readSubTable(
-      ReadableFontData data, boolean dataIsCanonical) {
+  protected FeatureTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
     return new FeatureTable(data, dataIsCanonical);
   }
 
-  public static class Builder extends 
-  TagOffsetsTable.Builder<FeatureListTable, FeatureTable> {
+  public static class Builder extends TagOffsetsTable.Builder<FeatureListTable, FeatureTable> {
 
     public Builder() {
       super();
     }
-    
+
     public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data, 0, false);
     }
-    
+
     @Override
     protected VisibleBuilder<FeatureTable> createSubTableBuilder(
         ReadableFontData data, int tag, boolean dataIsCanonical) {
@@ -40,10 +38,22 @@ public class FeatureListTable extends TagOffsetsTable<FeatureTable> {
 
     @Override
     protected FeatureListTable readTable(
-        ReadableFontData data,
-        int baseUnused,
-        boolean dataIsCanonical) {
+        ReadableFontData data, int baseUnused, boolean dataIsCanonical) {
       return new FeatureListTable(data, dataIsCanonical);
     }
+
+    @Override
+    protected void initFields() {
+    }
+
+    @Override
+    public int fieldCount() {
+      return 0;
+    }
+  }
+
+  @Override
+  public int fieldCount() {
+    return 0;
   }
 }
