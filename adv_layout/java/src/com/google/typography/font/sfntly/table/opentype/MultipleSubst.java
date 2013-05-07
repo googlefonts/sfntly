@@ -5,23 +5,23 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
-import com.google.typography.font.sfntly.table.opentype.ligaturesubst.InnerArrayFmt1;
-import com.google.typography.font.sfntly.table.opentype.ligaturesubst.LigatureSet;
+import com.google.typography.font.sfntly.table.opentype.multiplesubst.GlyphIds;
+import com.google.typography.font.sfntly.table.opentype.multiplesubst.Sequence;
 
 import java.util.Iterator;
 
-public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet> {
-  private final InnerArrayFmt1 array;
+public class MultipleSubst extends SubstSubtable implements Iterable<Sequence> {
+  private final GlyphIds array;
 
   // //////////////
   // Constructors
 
-  public LigatureSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
+  public MultipleSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     if (format != 1) {
       throw new IllegalStateException("Subt format value is " + format + " (should be 1).");
     }
-    array = new InnerArrayFmt1(data, headerSize(), dataIsCanonical);
+    array = new GlyphIds(data, headerSize(), dataIsCanonical);
   }
 
   // //////////////////////////////////
@@ -31,16 +31,16 @@ public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet
     return array.recordList;
   }
 
-  public LigatureSet subTableAt(int index) {
+  public Sequence subTableAt(int index) {
     return array.subTableAt(index);
   }
 
   @Override
-  public Iterator<LigatureSet> iterator() {
+  public Iterator<Sequence> iterator() {
     return array.iterator();
   }
 
-  protected LigatureSet createSubTable(ReadableFontData data, boolean dataIsCanonical) {
+  protected Sequence createSubTable(ReadableFontData data, boolean dataIsCanonical) {
     return array.readSubTable(data, dataIsCanonical);
   }
 
@@ -54,26 +54,26 @@ public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet
   // //////////////////////////////////
   // Builder
 
-  public static class Builder extends SubstSubtable.Builder<SubstSubtable, LigatureSet> {
+  public static class Builder extends SubstSubtable.Builder<SubstSubtable, NullTable> {
 
-    private final InnerArrayFmt1.Builder arrayBuilder;
+    private final GlyphIds.Builder arrayBuilder;
 
     // //////////////
     // Constructors
 
     public Builder() {
       super();
-      arrayBuilder = new InnerArrayFmt1.Builder();
+      arrayBuilder = new GlyphIds.Builder();
     }
 
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
-      arrayBuilder = new InnerArrayFmt1.Builder(data, dataIsCanonical);
+      arrayBuilder = new GlyphIds.Builder(data, dataIsCanonical);
     }
 
     public Builder(SubstSubtable subTable) {
-      LigatureSubst ligSubst = (LigatureSubst) subTable;
-      arrayBuilder = new InnerArrayFmt1.Builder(ligSubst.array);
+      MultipleSubst multiSubst = (MultipleSubst) subTable;
+      arrayBuilder = new GlyphIds.Builder(multiSubst.array);
     }
 
     // /////////////////////////////
@@ -88,7 +88,7 @@ public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet
       return arrayBuilder.builderForTag(tag);
     }
 
-    public VisibleBuilder<LigatureSet> addBuilder() {
+    public VisibleBuilder<Sequence> addBuilder() {
       setModelChanged();
       return arrayBuilder.addBuilder();
     }
@@ -125,8 +125,8 @@ public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet
     }
 
     @Override
-    public LigatureSubst subBuildTable(ReadableFontData data) {
-      return new LigatureSubst(data, 0, true);
+    public MultipleSubst subBuildTable(ReadableFontData data) {
+      return new MultipleSubst(data, 0, true);
     }
   }
 }

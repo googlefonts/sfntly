@@ -17,6 +17,7 @@ import com.google.typography.font.sfntly.table.opentype.LangSysTable;
 import com.google.typography.font.sfntly.table.opentype.LigatureSubst;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
 import com.google.typography.font.sfntly.table.opentype.LookupTableNew;
+import com.google.typography.font.sfntly.table.opentype.MultipleSubst;
 import com.google.typography.font.sfntly.table.opentype.NullTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTable;
@@ -28,6 +29,7 @@ import com.google.typography.font.sfntly.table.opentype.coveragetable.InnerArray
 import com.google.typography.font.sfntly.table.opentype.coveragetable.InnerArrayFmt2;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.Ligature;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.LigatureSet;
+import com.google.typography.font.sfntly.table.opentype.multiplesubst.Sequence;
 import com.google.typography.font.sfntly.table.opentype.singlesubst.HeaderFmt1;
 
 import java.util.Comparator;
@@ -287,6 +289,38 @@ public class OtTableTagger {
             td.tagRangeField(FieldType.SHORT, null);
           }
           break;
+        }
+      }
+    });
+
+    register(new TagMethod(MultipleSubst.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+        MultipleSubst table = (MultipleSubst) fdt;
+        td.tagRangeField(FieldType.SHORT, "subst format");
+        td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
+        tagTable(table.coverage());
+        td.tagRangeField(FieldType.SHORT, "sequence count");
+
+        int subTableCount = table.recordList().count();
+        for (int i = 0; i < subTableCount; ++i) {
+          td.tagRangeField(FieldType.OFFSET, null);
+        }
+
+        for (int i = 0; i < subTableCount; ++i) {
+          Sequence subTable = table.subTableAt(i);
+          tagTable(subTable);
+        }
+      }
+    });
+
+    register(new TagMethod(Sequence.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+        Sequence table = (Sequence) fdt;
+        td.tagRangeField(FieldType.SHORT, "glyph count");
+        for (int i = 0; i < table.recordList.count(); ++i) {
+          td.tagRangeField(FieldType.SHORT, null);
         }
       }
     });
