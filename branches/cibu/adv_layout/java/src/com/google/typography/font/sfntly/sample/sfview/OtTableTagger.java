@@ -26,6 +26,7 @@ import com.google.typography.font.sfntly.table.opentype.TaggedData;
 import com.google.typography.font.sfntly.table.opentype.TaggedData.FieldType;
 import com.google.typography.font.sfntly.table.opentype.coveragetable.InnerArrayFmt1;
 import com.google.typography.font.sfntly.table.opentype.coveragetable.InnerArrayFmt2;
+import com.google.typography.font.sfntly.table.opentype.ligaturesubst.Ligature;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.LigatureSet;
 import com.google.typography.font.sfntly.table.opentype.singlesubst.HeaderFmt1;
 
@@ -245,10 +246,22 @@ public class OtTableTagger {
           td.tagRangeField(FieldType.OFFSET, null);
         }
         for (int i = 0; i < table.recordList.count(); ++i) {
-          NullTable lookup = table.subTableAt(i);
+          Ligature lookup = table.subTableAt(i);
           if (lookup != null) {
             tagTable(lookup);
           }
+        }
+      }
+    });
+
+    register(new TagMethod(Ligature.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+        Ligature table = (Ligature) fdt;
+        td.tagRangeField(FieldType.SHORT, "lig glyph");
+        td.tagRangeField(FieldType.SHORT, "glyph count + 1");
+        for (int i = 0; i < table.recordList.count(); ++i) {
+          td.tagRangeField(FieldType.SHORT, null);
         }
       }
     });
