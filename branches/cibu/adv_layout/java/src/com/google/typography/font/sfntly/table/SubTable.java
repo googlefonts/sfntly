@@ -173,8 +173,9 @@ public abstract class SubTable extends FontDataTable {
 
   protected void dumpData() {
     System.out.println("\n\n" + this.getClass().getSimpleName());
-    for (int i = 0; i < 20; i++) {
-      System.out.printf("0x%04X %d\n", data.readUShort(i * 2), data.readUShort(i * 2));
+    int readableCount = Math.min(20, data.length());
+    for (int i = 0; i < readableCount; i += 2) {
+      System.out.printf("0x%04X %d\n", data.readUShort(i), data.readUShort(i));
     }
   }
 }

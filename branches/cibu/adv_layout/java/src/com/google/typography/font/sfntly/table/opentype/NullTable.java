@@ -9,10 +9,7 @@ public final class NullTable extends SubstSubtable {
 
   public NullTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
-    System.out.println("\n" + this.getClass().getSimpleName());
-    for (int i = 0; i < 5; i++) {
-      System.out.printf("0x%04X %d\n", data.readUShort(i * 2), data.readUShort(i * 2));
-    }
+    dumpData();
   }
 
   public NullTable(ReadableFontData data) {

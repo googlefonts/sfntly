@@ -26,6 +26,7 @@ import com.google.typography.font.sfntly.table.opentype.TaggedData;
 import com.google.typography.font.sfntly.table.opentype.TaggedData.FieldType;
 import com.google.typography.font.sfntly.table.opentype.coveragetable.InnerArrayFmt1;
 import com.google.typography.font.sfntly.table.opentype.coveragetable.InnerArrayFmt2;
+import com.google.typography.font.sfntly.table.opentype.ligaturesubst.LigatureSet;
 import com.google.typography.font.sfntly.table.opentype.singlesubst.HeaderFmt1;
 
 import java.util.Comparator;
@@ -229,8 +230,25 @@ public class OtTableTagger {
         }
 
         for (int i = 0; i < subTableCount; ++i) {
-          NullTable subTable = table.subTableAt(i);
+          LigatureSet subTable = table.subTableAt(i);
           tagTable(subTable);
+        }
+      }
+    });
+
+    register(new TagMethod(LigatureSet.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+        LigatureSet table = (LigatureSet) fdt;
+        td.tagRangeField(FieldType.SHORT, "lookup count");
+        for (int i = 0; i < table.recordList.count(); ++i) {
+          td.tagRangeField(FieldType.OFFSET, null);
+        }
+        for (int i = 0; i < table.recordList.count(); ++i) {
+          NullTable lookup = table.subTableAt(i);
+          if (lookup != null) {
+            tagTable(lookup);
+          }
         }
       }
     });

@@ -2,11 +2,10 @@ package com.google.typography.font.sfntly.table.opentype.ligaturesubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.CoverageTableNew;
-import com.google.typography.font.sfntly.table.opentype.NullTable;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
-public class InnerArrayFmt1 extends OffsetRecordTable<NullTable> {
+public class InnerArrayFmt1 extends OffsetRecordTable<LigatureSet> {
   public static final int FIELD_COUNT = 1;
 
   public static final int COVERAGE_INDEX = 0;
@@ -15,20 +14,16 @@ public class InnerArrayFmt1 extends OffsetRecordTable<NullTable> {
 
   public InnerArrayFmt1(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
-    dumpData();
     int coverageOffset = getField(COVERAGE_INDEX);
-    System.out.println("base : " + base);
-    System.out.println("coverageOffset : " + coverageOffset);
-
     coverage = new CoverageTableNew(data.slice(coverageOffset), dataIsCanonical);
   }
 
   @Override
-  public NullTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return new NullTable(data, base, dataIsCanonical);
+  public LigatureSet readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+    return new LigatureSet(data, 0, dataIsCanonical);
   }
 
-  public static class Builder extends OffsetRecordTable.Builder<InnerArrayFmt1, NullTable> {
+  public static class Builder extends OffsetRecordTable.Builder<InnerArrayFmt1, LigatureSet> {
 
     public Builder() {
       super();
@@ -48,19 +43,19 @@ public class InnerArrayFmt1 extends OffsetRecordTable<NullTable> {
     }
 
     @Override
-    protected VisibleBuilder<NullTable> createSubTableBuilder() {
-      return new NullTable.Builder();
+    protected VisibleBuilder<LigatureSet> createSubTableBuilder() {
+      return new LigatureSet.Builder();
     }
 
     @Override
-    protected VisibleBuilder<NullTable> createSubTableBuilder(
+    protected VisibleBuilder<LigatureSet> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
-      return new NullTable.Builder(data, dataIsCanonical);
+      return new LigatureSet.Builder(data, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<NullTable> createSubTableBuilder(NullTable subTable) {
-      return new NullTable.Builder(subTable);
+    protected VisibleBuilder<LigatureSet> createSubTableBuilder(LigatureSet subTable) {
+      return new LigatureSet.Builder(subTable);
     }
 
     @Override
