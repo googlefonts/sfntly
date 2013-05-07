@@ -5,29 +5,26 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
-import com.google.typography.font.sfntly.table.opentype.ligaturesubst.InnerArray;
+import com.google.typography.font.sfntly.table.opentype.ligaturesubst.InnerArrayFmt1;
 
 import java.util.Iterator;
 
+public class LigatureSubst extends SubstSubtable implements Iterable<NullTable> {
+  private final InnerArrayFmt1 array;
 
-public class LigatureSubst extends SubstSubtable implements Iterable<NullTable>  {
-  private final InnerArray array;
-  protected final CoverageTableNew coverage;
-
-  ////////////////
+  // //////////////
   // Constructors
 
-  public LigatureSubst(ReadableFontData data, boolean dataIsCanonical) {
-    super(data, dataIsCanonical);
-//    System.out.println("\n\nLigatureSubst Header");
-//    for (int i = 0; i < 20; i++) {
-//      System.out.printf("0x%04X %d\n", data.readUShort(i*2), data.readUShort(i*2));
-//    }
-    array = new InnerArray(data, dataIsCanonical);
-    coverage = new CoverageTableNew(data.slice(array.getField(InnerArray.COVERAGE_INDEX)), dataIsCanonical);
+  public LigatureSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
+    super(data, base, dataIsCanonical);
+    dumpData();
+    if (format != 1) {
+      throw new IllegalStateException("Subt format value is " + format + " (should be 1).");
+    }
+    array = new InnerArrayFmt1(data, headerSize(), dataIsCanonical);
   }
 
-  ////////////////////////////////////
+  // //////////////////////////////////
   // Methods redirected to the array
 
   public NumRecordList recordList() {
@@ -43,46 +40,43 @@ public class LigatureSubst extends SubstSubtable implements Iterable<NullTable> 
     return array.iterator();
   }
 
-  protected NullTable createSubTable(
-      ReadableFontData data, boolean dataIsCanonical) {
+  protected NullTable createSubTable(ReadableFontData data, boolean dataIsCanonical) {
     return array.readSubTable(data, dataIsCanonical);
   }
 
-  ////////////////////////////////////
+  // //////////////////////////////////
   // Methods specific to this class
 
   public CoverageTableNew coverage() {
-    return coverage;
+    return array.coverage;
   }
- 
-  ////////////////////////////////////
+
+  // //////////////////////////////////
   // Builder
 
   public static class Builder extends SubstSubtable.Builder<SubstSubtable, NullTable> {
 
-    private final InnerArray.Builder arrayBuilder;
+    private final InnerArrayFmt1.Builder arrayBuilder;
 
-    ////////////////
+    // //////////////
     // Constructors
 
     public Builder() {
       super();
-      arrayBuilder = new InnerArray.Builder();
+      arrayBuilder = new InnerArrayFmt1.Builder();
     }
 
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
-      this.dataIsCanonical = dataIsCanonical;
-      arrayBuilder = new InnerArray.Builder(data, dataIsCanonical);
+      arrayBuilder = new InnerArrayFmt1.Builder(data, dataIsCanonical);
     }
 
     public Builder(SubstSubtable subTable) {
       LigatureSubst ligSubst = (LigatureSubst) subTable;
-      this.dataIsCanonical = subTable.dataIsCanonical;
-      arrayBuilder = new InnerArray.Builder(ligSubst.array);
+      arrayBuilder = new InnerArrayFmt1.Builder(ligSubst.array);
     }
 
-    ///////////////////////////////
+    // /////////////////////////////
     // Public methods for builders
 
     public int subTableCount() {
@@ -104,7 +98,7 @@ public class LigatureSubst extends SubstSubtable implements Iterable<NullTable> 
       arrayBuilder.removeBuilderForTag(tag);
     }
 
-    /////////////////////////////////
+    // ///////////////////////////////
     // Public methods to serialize
 
     @Override
@@ -117,7 +111,7 @@ public class LigatureSubst extends SubstSubtable implements Iterable<NullTable> 
       return arrayBuilder.subSerialize(newData);
     }
 
-    ///////////////////////////////////
+    // /////////////////////////////////
     // must implement abstract methods
 
     @Override
@@ -132,7 +126,7 @@ public class LigatureSubst extends SubstSubtable implements Iterable<NullTable> 
 
     @Override
     public LigatureSubst subBuildTable(ReadableFontData data) {
-      return new LigatureSubst(data, true);
-    } 
+      return new LigatureSubst(data, 0, true);
+    }
   }
 }
