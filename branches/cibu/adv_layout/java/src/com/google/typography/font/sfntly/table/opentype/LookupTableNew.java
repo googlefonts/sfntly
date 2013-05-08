@@ -29,6 +29,7 @@ public class LookupTableNew extends OffsetRecordTable<SubstSubtable> {
     case GSUB_MULTIPLE:
       return new MultipleSubst(data, base, dataIsCanonical);
     case GSUB_CONTEXTUAL:
+      return new ContextSubst(data, base, dataIsCanonical);
     case GSUB_CHAINING_CONTEXTUAL:
       System.out.println("Missing lookup type: " + lookupType);
       return new NullTable(data, base, dataIsCanonical);
