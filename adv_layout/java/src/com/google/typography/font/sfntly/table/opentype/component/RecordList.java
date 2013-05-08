@@ -11,19 +11,28 @@ import java.util.NoSuchElementException;
 
 public abstract class RecordList<T extends Record> implements Iterable<T> {
   private static final int COUNT_OFFSET = 0;
-  public static final int RECORD_BASE = 2;
+  public static final int RECORD_BASE_DEFAULT = 2;
+  public final int base;
+  public final int recordBase;
 
   private final ReadableFontData readData;
   private final WritableFontData writeData;
   private int count;
   private List<T> recordsToWrite;
 
-  public RecordList(WritableFontData data) {
-    this.readData = null;
-    this.writeData = data;
-    this.count = 0;
-    if (writeData != null) {
-      writeData.writeUShort(COUNT_OFFSET, 0);
+  /*
+   *public RecordList(WritableFontData data) { this.readData = null;
+   * this.writeData = data; this.count = 0; this.base = 0; this.recordBase =
+   * RECORD_BASE_DEFAULT; if (writeData != null) {
+   * writeData.writeUShort(COUNT_OFFSET, 0); } }
+   */
+  public RecordList(ReadableFontData data, int base, int recordBaseOffset, int countDecrement) {
+    this.readData = data;
+    this.writeData = null;
+    this.base = base;
+    this.recordBase = base + RECORD_BASE_DEFAULT + recordBaseOffset;
+    if (readData != null) {
+      this.count = data.readUShort(base + COUNT_OFFSET) - countDecrement;
     }
   }
 
@@ -32,11 +41,7 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
   }
 
   public RecordList(ReadableFontData data, int countDecrement) {
-    this.readData = data;
-    this.writeData = null;
-    if (readData != null) {
-      this.count = data.readUShort(COUNT_OFFSET) - countDecrement;
-    }
+    this(data, 0, 0, countDecrement);
   }
 
   public int count() {
@@ -51,7 +56,7 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
   }
 
   private int sizeOfList(int count) {
-    return baseAt(RECORD_BASE, count);
+    return baseAt(recordBase, count);
   }
 
   private int baseAt(int base, int index) {
@@ -129,11 +134,13 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
 
   public int writeTo(WritableFontData writeData) {
     copyFromRead();
-    int bytesWrote = writeData.writeUShort(COUNT_OFFSET, count);
+
+    writeData.writeUShort(base + COUNT_OFFSET, count);
+    int nextWritePos = recordBase;
     for (T record : recordsToWrite) {
-      bytesWrote += record.writeTo(writeData, bytesWrote);
+      nextWritePos += record.writeTo(writeData, nextWritePos);
     }
-    return bytesWrote;
+    return nextWritePos - recordBase + RECORD_BASE_DEFAULT; // bytes wrote
   }
 
   private void copyFromRead() {

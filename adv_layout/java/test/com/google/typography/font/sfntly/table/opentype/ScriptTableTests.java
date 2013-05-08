@@ -83,7 +83,7 @@ public class ScriptTableTests {
   private static int writeEmptyScriptTableData(WritableFontData data) {
     data.writeUShort(Header.Builder.DEFAULT_LANG_SYS_OFFSET, 0);
     data.writeUShort(NumRecord.RECORD_SIZE, 0);
-    return Header.Builder.DEFAULT_LANG_SYS_OFFSET_LENGTH + RecordList.RECORD_BASE;
+    return Header.Builder.DEFAULT_LANG_SYS_OFFSET_LENGTH + RecordList.recordBase;
   }
   
   private static ReadableFontData badScriptTableData() {
@@ -122,7 +122,7 @@ public class ScriptTableTests {
     data.writeUShort(Header.Builder.DEFAULT_LANG_SYS_OFFSET, THIRD_TABLE_POS);
     data.writeUShort(NumRecord.RECORD_SIZE, 3);
     // This first record is ok.
-    int offset = Header.Builder.DEFAULT_LANG_SYS_OFFSET_LENGTH + RecordList.RECORD_BASE;;
+    int offset = Header.Builder.DEFAULT_LANG_SYS_OFFSET_LENGTH + RecordList.recordBase;;
     data.writeULong(offset + TagOffsetRecord.TAG_POS, LANGSYS_JA);
     data.writeUShort(offset + TagOffsetRecord.OFFSET_POS, FIRST_TABLE_POS);
     // The second record is out of order.  The table it points to is empty.

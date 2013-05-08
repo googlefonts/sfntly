@@ -4,8 +4,6 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.RecordList;
 
-import java.util.Iterator;
-
 public final class RangeRecordList extends RecordList<RangeRecord> {
   public RangeRecordList(WritableFontData data) {
     super(data);
@@ -16,7 +14,7 @@ public final class RangeRecordList extends RecordList<RangeRecord> {
   }
 
   public static int sizeOfListOfCount(int count) {
-    return RecordList.RECORD_BASE + count * RangeRecord.RECORD_SIZE;
+    return RecordList.RECORD_BASE_DEFAULT + count * RangeRecord.RECORD_SIZE;
   }
 
   @Override
