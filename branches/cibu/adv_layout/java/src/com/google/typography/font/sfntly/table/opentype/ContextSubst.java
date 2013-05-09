@@ -5,14 +5,15 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.contextsubst.SubClassSetArray;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRuleSet;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRuleSetArray;
 
 import java.util.Iterator;
 
 public class ContextSubst extends SubstSubtable implements Iterable<SubRuleSet> {
-  private final SubRuleSetArray array;
-  private NullTable fmt2;
+  private final SubRuleSetArray ruleSets;
+  private SubClassSetArray classSets;
 
   // //////////////
   // Constructors
@@ -21,12 +22,12 @@ public class ContextSubst extends SubstSubtable implements Iterable<SubRuleSet> 
     super(data, base, dataIsCanonical);
     switch (format) {
     case 1:
-      array = new SubRuleSetArray(data, headerSize(), dataIsCanonical);
-      fmt2 = null;
+      ruleSets = new SubRuleSetArray(data, headerSize(), dataIsCanonical);
+      classSets = null;
       break;
     case 2:
-      array = null;
-      fmt2 = new NullTable(data, headerSize(), dataIsCanonical);
+      ruleSets = null;
+      classSets = new SubClassSetArray(data, headerSize(), dataIsCanonical);
       break;
     default:
       throw new IllegalStateException("Subt format value is " + format + " (should be 1 or 2).");
@@ -37,27 +38,32 @@ public class ContextSubst extends SubstSubtable implements Iterable<SubRuleSet> 
   // Methods redirected to the array
 
   public NumRecordList recordList() {
-    return array.recordList;
+    return (format == 1) ? ruleSets.recordList : classSets.recordList;
   }
 
   public SubRuleSet subTableAt(int index) {
-    return array.subTableAt(index);
+    return (format == 1) ? ruleSets.subTableAt(index) : classSets.subTableAt(index);
   }
 
   @Override
   public Iterator<SubRuleSet> iterator() {
-    return array.iterator();
+    return (format == 1) ? ruleSets.iterator() : classSets.iterator();
   }
 
   protected SubRuleSet createSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return array.readSubTable(data, dataIsCanonical);
+    return (format == 1) ? ruleSets.readSubTable(data, dataIsCanonical)
+        : classSets.readSubTable(data, dataIsCanonical);
   }
 
   // //////////////////////////////////
   // Methods specific to this class
 
   public CoverageTableNew coverage() {
-    return array.coverage;
+    return (format == 1) ? ruleSets.coverage : classSets.coverage;
+  }
+
+  public NullTable classDef() {
+    return (format == 2) ? classSets.classDef : null;
   }
 
   // //////////////////////////////////
@@ -82,7 +88,7 @@ public class ContextSubst extends SubstSubtable implements Iterable<SubRuleSet> 
 
     public Builder(SubstSubtable subTable) {
       ContextSubst ligSubst = (ContextSubst) subTable;
-      arrayBuilder = new SubRuleSetArray.Builder(ligSubst.array);
+      arrayBuilder = new SubRuleSetArray.Builder(ligSubst.ruleSets);
     }
 
     // /////////////////////////////

@@ -70,6 +70,10 @@ public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
   // private methods
 
   private S subTableForRecord(NumRecord record) {
+    if (record.value == 0) {
+      // No reference to itself is allowed.
+      return null;
+    }
     ReadableFontData newBase = data.slice(record.value);
     return readSubTable(newBase, dataIsCanonical);
   }
