@@ -333,18 +333,21 @@ public class OtTableTagger {
       public void tag(FontDataTable fdt) {
         ContextSubst table = (ContextSubst) fdt;
         td.tagRangeField(FieldType.SHORT, "subst format");
-        if (table.format == 1) {
-          td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
-          tagTable(table.coverage());
-          td.tagRangeField(FieldType.SHORT, "sub rule set count");
+        td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
+        tagTable(table.coverage());
+        if (table.format == 2) {
+          td.tagRangeField(FieldType.OFFSET_NONZERO, "class def offset");
+          tagTable(table.classDef());
+        }
+        td.tagRangeField(FieldType.SHORT, "sub rule set count");
 
-          int subTableCount = table.recordList().count();
-          for (int i = 0; i < subTableCount; ++i) {
-            td.tagRangeField(FieldType.OFFSET, null);
-          }
-
-          for (int i = 0; i < subTableCount; ++i) {
-            SubRuleSet subTable = table.subTableAt(i);
+        int subTableCount = table.recordList().count();
+        for (int i = 0; i < subTableCount; ++i) {
+          td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+        }
+        for (int i = 0; i < subTableCount; ++i) {
+          SubRuleSet subTable = table.subTableAt(i);
+          if (subTable != null) {
             tagTable(subTable);
           }
         }
