@@ -4,26 +4,24 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.RangeRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.RecordList;
-import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
-import com.google.typography.font.sfntly.table.opentype.coveragetable.InnerArrayFmt1;
 
-public class CoverageTableNew extends SubstSubtable {
-  public final RecordsTable<?> array;
+public class ClassDefTableNew extends SubstSubtable {
+  public final RangeRecordTable array;
+  public boolean dataIsCanonical;
 
   // //////////////
   // Constructors
 
-  public CoverageTableNew(ReadableFontData data, int base, boolean dataIsCanonical) {
+  public ClassDefTableNew(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
+    this.dataIsCanonical = dataIsCanonical;
+
     switch (format) {
-    case 1:
-      array = new InnerArrayFmt1(data, headerSize(), dataIsCanonical);
-      break;
     case 2:
       array = new RangeRecordTable(data, headerSize(), dataIsCanonical);
       break;
     default:
-      throw new IllegalArgumentException("coverage format " + format + " unexpected");
+      throw new IllegalArgumentException("class def format " + format + " unexpected");
     }
   }
 
@@ -37,33 +35,25 @@ public class CoverageTableNew extends SubstSubtable {
   // //////////////////////////////////
   // Builder
 
-  public static class Builder extends SubstSubtable.Builder<CoverageTableNew> {
+  public static class Builder extends SubstSubtable.Builder<ClassDefTableNew> {
 
-    protected final RecordsTable.Builder<?, ?> arrayBuilder;
+    protected final RangeRecordTable.Builder arrayBuilder;
 
     // //////////////
     // Constructors
 
-    public Builder() {
-      super();
-      arrayBuilder = new InnerArrayFmt1.Builder();
-    }
-
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       switch (format) {
-      case 1:
-        arrayBuilder = new InnerArrayFmt1.Builder(data, headerSize(), dataIsCanonical);
-        break;
       case 2:
         arrayBuilder = new RangeRecordTable.Builder(data, headerSize(), dataIsCanonical);
         break;
       default:
-        throw new IllegalArgumentException("coverage format " + format + " unexpected");
+        throw new IllegalArgumentException("class def format " + format + " unexpected");
       }
     }
 
-    public Builder(CoverageTableNew table) {
+    public Builder(ClassDefTableNew table) {
       this(table.readFontData(), table.dataIsCanonical);
     }
 
@@ -92,13 +82,13 @@ public class CoverageTableNew extends SubstSubtable {
     // Overriden methods
 
     @Override
-    public CoverageTableNew subBuildTable(ReadableFontData data) {
-      return new CoverageTableNew(data, 0, false);
+    public ClassDefTableNew subBuildTable(ReadableFontData data) {
+      return new ClassDefTableNew(data, 0, false);
     }
 
     @Override
     protected boolean subReadyToSerialize() {
-      return super.subReadyToSerialize();
+      return super.subReadyToSerialize() && true;
     }
 
     @Override

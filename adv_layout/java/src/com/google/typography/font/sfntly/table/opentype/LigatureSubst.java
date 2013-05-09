@@ -54,7 +54,7 @@ public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet
   // //////////////////////////////////
   // Builder
 
-  public static class Builder extends SubstSubtable.Builder<SubstSubtable, LigatureSet> {
+  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
 
     private final InnerArrayFmt1.Builder arrayBuilder;
 
