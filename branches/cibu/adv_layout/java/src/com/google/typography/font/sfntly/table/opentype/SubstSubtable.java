@@ -1,7 +1,6 @@
 package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.HeaderTable;
 
 public abstract class SubstSubtable extends HeaderTable {
@@ -20,13 +19,14 @@ public abstract class SubstSubtable extends HeaderTable {
     return FIELD_COUNT;
   }
 
-  public abstract static class Builder<T extends SubstSubtable, S extends SubTable>
-      extends HeaderTable.Builder<T> {
+  public abstract static class Builder<T extends SubstSubtable> extends HeaderTable.Builder<T> {
     protected boolean dataIsCanonical;
+    public int format;
 
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data);
       this.dataIsCanonical = dataIsCanonical;
+      format = getField(FORMAT_INDEX);
     }
 
     public Builder() {

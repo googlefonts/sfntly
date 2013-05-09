@@ -4,6 +4,7 @@ package com.google.typography.font.sfntly.sample.sfview;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.FontDataTable;
+import com.google.typography.font.sfntly.table.opentype.ClassDefTableNew;
 import com.google.typography.font.sfntly.table.opentype.ContextSubst;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.CoverageTableNew;
@@ -26,10 +27,10 @@ import com.google.typography.font.sfntly.table.opentype.SingleSubst;
 import com.google.typography.font.sfntly.table.opentype.SubstSubtable;
 import com.google.typography.font.sfntly.table.opentype.TaggedData;
 import com.google.typography.font.sfntly.table.opentype.TaggedData.FieldType;
+import com.google.typography.font.sfntly.table.opentype.component.RangeRecordTable;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.DoubleRecordTable;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRuleSet;
 import com.google.typography.font.sfntly.table.opentype.coveragetable.InnerArrayFmt1;
-import com.google.typography.font.sfntly.table.opentype.coveragetable.InnerArrayFmt2;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.Ligature;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.LigatureSet;
 import com.google.typography.font.sfntly.table.opentype.multiplesubst.Sequence;
@@ -381,7 +382,7 @@ public class OtTableTagger {
           td.tagRangeField(FieldType.SHORT, "glyph id");
         }
         int lookupCount = table.substLookupRecords.count();
-        for (int i = 0; i < glyphCount; ++i) {
+        for (int i = 0; i < lookupCount; ++i) {
           td.tagRangeField(FieldType.SHORT, "sequence index");
           td.tagRangeField(FieldType.SHORT, "lookup list index");
         }
@@ -450,15 +451,32 @@ public class OtTableTagger {
       public void tag(FontDataTable fdt) {
         CoverageTableNew table = (CoverageTableNew) fdt;
         td.tagRangeField(FieldType.SHORT, "format");
-        if (table.header.format == 1) {
+        if (table.format == 1) {
           InnerArrayFmt1 tableFmt1 = (InnerArrayFmt1) table.array;
           td.tagRangeField(FieldType.SHORT, "glyph count");
           for (int i = 0; i < tableFmt1.recordList.count(); ++i) {
             td.tagRangeField(FieldType.SHORT, String.valueOf(i + 1));
           }
         }
-        if (table.header.format == 2) {
-          InnerArrayFmt2 tableFmt2 = (InnerArrayFmt2) table.array;
+        if (table.format == 2) {
+          RangeRecordTable tableFmt2 = (RangeRecordTable) table.array;
+          td.tagRangeField(FieldType.SHORT, "range count");
+          for (int i = 0; i < tableFmt2.recordList.count(); ++i) {
+            td.tagRangeField(FieldType.SHORT, "start");
+            td.tagRangeField(FieldType.SHORT, "end");
+            td.tagRangeField(FieldType.SHORT, "offset");
+          }
+        }
+      }
+    });
+
+    register(new TagMethod(ClassDefTableNew.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+        ClassDefTableNew table = (ClassDefTableNew) fdt;
+        td.tagRangeField(FieldType.SHORT, "format");
+        if (table.format == 2) {
+          RangeRecordTable tableFmt2 = table.array;
           td.tagRangeField(FieldType.SHORT, "range count");
           for (int i = 0; i < tableFmt2.recordList.count(); ++i) {
             td.tagRangeField(FieldType.SHORT, "start");

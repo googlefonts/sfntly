@@ -62,14 +62,14 @@ public class ContextSubst extends SubstSubtable implements Iterable<SubRuleSet> 
     return (format == 1) ? ruleSets.coverage : classSets.coverage;
   }
 
-  public NullTable classDef() {
+  public ClassDefTableNew classDef() {
     return (format == 2) ? classSets.classDef : null;
   }
 
   // //////////////////////////////////
   // Builder
 
-  public static class Builder extends SubstSubtable.Builder<SubstSubtable, SubRuleSet> {
+  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
 
     private final SubRuleSetArray.Builder arrayBuilder;
 

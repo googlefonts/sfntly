@@ -38,7 +38,7 @@ public class SingleSubst extends SubstSubtable {
   // //////////////////////////////////
   // Builder
 
-  public static class Builder extends SubstSubtable.Builder<SubstSubtable, NullTable> {
+  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
 
     private final HeaderFmt1.Builder fmt1Builder;
     private final InnerArrayFmt2.Builder fmt2Builder;

@@ -17,7 +17,7 @@ public class InnerArrayFmt2 extends RecordsTable<NumRecord> {
   public InnerArrayFmt2(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     int coverageOffset = getField(COVERAGE_INDEX);
-    coverage = new CoverageTableNew(data.slice(coverageOffset), dataIsCanonical);
+    coverage = new CoverageTableNew(data.slice(coverageOffset), 0, dataIsCanonical);
   }
 
   @Override

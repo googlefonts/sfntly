@@ -54,7 +54,7 @@ public class MultipleSubst extends SubstSubtable implements Iterable<Sequence> {
   // //////////////////////////////////
   // Builder
 
-  public static class Builder extends SubstSubtable.Builder<SubstSubtable, NullTable> {
+  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
 
     private final GlyphIds.Builder arrayBuilder;
 
