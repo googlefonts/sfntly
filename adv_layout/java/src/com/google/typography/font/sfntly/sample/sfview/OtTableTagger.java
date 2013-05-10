@@ -4,6 +4,7 @@ package com.google.typography.font.sfntly.sample.sfview;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.FontDataTable;
+import com.google.typography.font.sfntly.table.opentype.ChainContextSubst;
 import com.google.typography.font.sfntly.table.opentype.ClassDefTableNew;
 import com.google.typography.font.sfntly.table.opentype.ContextSubst;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
@@ -385,6 +386,34 @@ public class OtTableTagger {
         for (int i = 0; i < lookupCount; ++i) {
           td.tagRangeField(FieldType.SHORT, "sequence index");
           td.tagRangeField(FieldType.SHORT, "lookup list index");
+        }
+      }
+    });
+
+    register(new TagMethod(ChainContextSubst.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+        ChainContextSubst table = (ChainContextSubst) fdt;
+        td.tagRangeField(FieldType.SHORT, "subst format");
+        td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
+        tagTable(table.coverage());
+        // if (table.format == 2) {
+        // td.tagRangeField(FieldType.OFFSET_NONZERO, "class def offset");
+        // tagTable(table.classDef());
+        // }
+        if (table.format == 1) {
+          td.tagRangeField(FieldType.SHORT, "chain sub rule set count");
+
+          int subTableCount = table.recordList().count();
+          for (int i = 0; i < subTableCount; ++i) {
+            td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+          }
+          for (int i = 0; i < subTableCount; ++i) {
+            NullTable subTable = table.subTableAt(i);
+            if (subTable != null) {
+              tagTable(subTable);
+            }
+          }
         }
       }
     });
