@@ -22,6 +22,10 @@ public final class NumRecordList extends RecordList<NumRecord> {
     super(data, 0, recordBaseOffset, countDecrement);
   }
 
+  public NumRecordList(ReadableFontData data, int base, int recordBaseOffset, int countDecrement) {
+    super(data, base, recordBaseOffset, countDecrement);
+  }
+
   public static int sizeOfListOfCount(int count) {
     return RecordList.RECORD_BASE_DEFAULT + count * NumRecord.RECORD_SIZE;
   }

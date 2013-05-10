@@ -2,10 +2,10 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
+import com.google.typography.font.sfntly.table.opentype.component.NumRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.RangeRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.RecordList;
 import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
-import com.google.typography.font.sfntly.table.opentype.coveragetable.InnerArrayFmt1;
 
 public class CoverageTableNew extends SubstSubtable {
   public final RecordsTable<?> array;
@@ -17,7 +17,7 @@ public class CoverageTableNew extends SubstSubtable {
     super(data, base, dataIsCanonical);
     switch (format) {
     case 1:
-      array = new InnerArrayFmt1(data, headerSize(), dataIsCanonical);
+      array = new NumRecordTable(data, headerSize(), dataIsCanonical);
       break;
     case 2:
       array = new RangeRecordTable(data, headerSize(), dataIsCanonical);
@@ -46,14 +46,14 @@ public class CoverageTableNew extends SubstSubtable {
 
     public Builder() {
       super();
-      arrayBuilder = new InnerArrayFmt1.Builder();
+      arrayBuilder = new NumRecordTable.Builder();
     }
 
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       switch (format) {
       case 1:
-        arrayBuilder = new InnerArrayFmt1.Builder(data, headerSize(), dataIsCanonical);
+        arrayBuilder = new NumRecordTable.Builder(data, headerSize(), dataIsCanonical);
         break;
       case 2:
         arrayBuilder = new RangeRecordTable.Builder(data, headerSize(), dataIsCanonical);

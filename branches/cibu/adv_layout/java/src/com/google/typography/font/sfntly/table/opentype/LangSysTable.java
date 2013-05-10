@@ -17,12 +17,6 @@ public class LangSysTable extends RecordsTable<NumRecord> {
 
   public LangSysTable(ReadableFontData data, boolean dataIsCanonical) {
     super(data, dataIsCanonical);
-    // System.out.println("\n" + this.getClass().getSimpleName());
-    // for (int i = 0; i < 20; i++) {
-    // System.out.printf("0x%04X %d\n", data.readUShort(i * 2),
-    // data.readUShort(i * 2));
-    // }
-
     if (getField(LOOKUP_ORDER_INDEX) != LOOKUP_ORDER_CONST) {
       throw new IllegalArgumentException();
     }
