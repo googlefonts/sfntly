@@ -1,14 +1,10 @@
-package com.google.typography.font.sfntly.table.opentype.coveragetable;
+package com.google.typography.font.sfntly.table.opentype.component;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.table.opentype.component.NumRecord;
-import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
-import com.google.typography.font.sfntly.table.opentype.component.RecordList;
-import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
 
-public class InnerArrayFmt1 extends RecordsTable<NumRecord> {
+public class NumRecordTable extends RecordsTable<NumRecord> {
 
-  public InnerArrayFmt1(ReadableFontData data, int base, boolean dataIsCanonical) {
+  public NumRecordTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
@@ -22,7 +18,7 @@ public class InnerArrayFmt1 extends RecordsTable<NumRecord> {
     return 0;
   }
 
-  public static class Builder extends RecordsTable.Builder<InnerArrayFmt1, NumRecord> {
+  public static class Builder extends RecordsTable.Builder<NumRecordTable, NumRecord> {
 
     public Builder() {
       super();
@@ -32,17 +28,21 @@ public class InnerArrayFmt1 extends RecordsTable<NumRecord> {
       super(data, base, dataIsCanonical);
     }
 
-    public Builder(RecordsTable.Builder<InnerArrayFmt1, NumRecord> builder) {
+    public Builder(RecordsTable.Builder<NumRecordTable, NumRecord> builder) {
       super();
       records = builder.records();
     }
 
+    public Builder(NumRecordTable table) {
+      super(table);
+    }
+
     @Override
-    protected InnerArrayFmt1 readTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+    protected NumRecordTable readTable(ReadableFontData data, int base, boolean dataIsCanonical) {
       if (base != 0) {
         throw new UnsupportedOperationException();
       }
-      return new InnerArrayFmt1(data, base, dataIsCanonical);
+      return new NumRecordTable(data, base, dataIsCanonical);
     }
 
     @Override

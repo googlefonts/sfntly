@@ -3,13 +3,14 @@ package com.google.typography.font.sfntly.table.opentype;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
+import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSet;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSetArray;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
 import java.util.Iterator;
 
-public class ChainContextSubst extends SubstSubtable implements Iterable<NullTable> {
+public class ChainContextSubst extends SubstSubtable implements Iterable<ChainSubRuleSet> {
   private final ChainSubRuleSetArray ruleSets;
   private final NullTable classSets;
 
@@ -40,16 +41,16 @@ public class ChainContextSubst extends SubstSubtable implements Iterable<NullTab
     return (format == 1) ? ruleSets.recordList : null;
   }
 
-  public NullTable subTableAt(int index) {
+  public ChainSubRuleSet subTableAt(int index) {
     return (format == 1) ? ruleSets.subTableAt(index) : null;
   }
 
   @Override
-  public Iterator<NullTable> iterator() {
+  public Iterator<ChainSubRuleSet> iterator() {
     return (format == 1) ? ruleSets.iterator() : null;
   }
 
-  protected NullTable createSubTable(ReadableFontData data, boolean dataIsCanonical) {
+  protected ChainSubRuleSet createSubTable(ReadableFontData data, boolean dataIsCanonical) {
     return (format == 1) ? ruleSets.readSubTable(data, dataIsCanonical) : null;
   }
 
@@ -101,7 +102,7 @@ public class ChainContextSubst extends SubstSubtable implements Iterable<NullTab
       return arrayBuilder.builderForTag(tag);
     }
 
-    public VisibleBuilder<NullTable> addBuilder() {
+    public VisibleBuilder<ChainSubRuleSet> addBuilder() {
       setModelChanged();
       return arrayBuilder.addBuilder();
     }

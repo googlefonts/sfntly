@@ -2,10 +2,11 @@ package com.google.typography.font.sfntly.table.opentype.multiplesubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.CoverageTableNew;
+import com.google.typography.font.sfntly.table.opentype.component.NumRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
-public class GlyphIds extends OffsetRecordTable<Sequence> {
+public class GlyphIds extends OffsetRecordTable<NumRecordTable> {
   public static final int FIELD_COUNT = 1;
 
   public static final int COVERAGE_INDEX = 0;
@@ -18,7 +19,7 @@ public class GlyphIds extends OffsetRecordTable<Sequence> {
     coverage = new CoverageTableNew(data.slice(coverageOffset), 0, dataIsCanonical);
   }
 
-  public static class Builder extends OffsetRecordTable.Builder<GlyphIds, Sequence> {
+  public static class Builder extends OffsetRecordTable.Builder<GlyphIds, NumRecordTable> {
 
     public Builder() {
       super();
@@ -48,19 +49,19 @@ public class GlyphIds extends OffsetRecordTable<Sequence> {
     }
 
     @Override
-    protected VisibleBuilder<Sequence> createSubTableBuilder() {
-      return new Sequence.Builder();
+    protected VisibleBuilder<NumRecordTable> createSubTableBuilder() {
+      return new NumRecordTable.Builder();
     }
 
     @Override
-    protected VisibleBuilder<Sequence> createSubTableBuilder(
+    protected VisibleBuilder<NumRecordTable> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
-      return new Sequence.Builder(data, dataIsCanonical);
+      return new NumRecordTable.Builder(data, 0, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<Sequence> createSubTableBuilder(Sequence subTable) {
-      return new Sequence.Builder(subTable);
+    protected VisibleBuilder<NumRecordTable> createSubTableBuilder(NumRecordTable subTable) {
+      return new NumRecordTable.Builder(subTable);
     }
   }
 
@@ -70,7 +71,7 @@ public class GlyphIds extends OffsetRecordTable<Sequence> {
   }
 
   @Override
-  public Sequence readSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return new Sequence(data, dataIsCanonical);
+  public NumRecordTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+    return new NumRecordTable(data, 0, dataIsCanonical);
   }
 }

@@ -4,13 +4,13 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
+import com.google.typography.font.sfntly.table.opentype.component.NumRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 import com.google.typography.font.sfntly.table.opentype.multiplesubst.GlyphIds;
-import com.google.typography.font.sfntly.table.opentype.multiplesubst.Sequence;
 
 import java.util.Iterator;
 
-public class MultipleSubst extends SubstSubtable implements Iterable<Sequence> {
+public class MultipleSubst extends SubstSubtable implements Iterable<NumRecordTable> {
   private final GlyphIds array;
 
   // //////////////
@@ -31,16 +31,16 @@ public class MultipleSubst extends SubstSubtable implements Iterable<Sequence> {
     return array.recordList;
   }
 
-  public Sequence subTableAt(int index) {
+  public NumRecordTable subTableAt(int index) {
     return array.subTableAt(index);
   }
 
   @Override
-  public Iterator<Sequence> iterator() {
+  public Iterator<NumRecordTable> iterator() {
     return array.iterator();
   }
 
-  protected Sequence createSubTable(ReadableFontData data, boolean dataIsCanonical) {
+  protected NumRecordTable createSubTable(ReadableFontData data, boolean dataIsCanonical) {
     return array.readSubTable(data, dataIsCanonical);
   }
 
@@ -88,7 +88,7 @@ public class MultipleSubst extends SubstSubtable implements Iterable<Sequence> {
       return arrayBuilder.builderForTag(tag);
     }
 
-    public VisibleBuilder<Sequence> addBuilder() {
+    public VisibleBuilder<NumRecordTable> addBuilder() {
       setModelChanged();
       return arrayBuilder.addBuilder();
     }

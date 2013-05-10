@@ -2,11 +2,10 @@ package com.google.typography.font.sfntly.table.opentype.chaincontextsubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.CoverageTableNew;
-import com.google.typography.font.sfntly.table.opentype.NullTable;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
-public class ChainSubRuleSetArray extends OffsetRecordTable<NullTable> {
+public class ChainSubRuleSetArray extends OffsetRecordTable<ChainSubRuleSet> {
   public static final int FIELD_COUNT = 1;
 
   public static final int COVERAGE_INDEX = 0;
@@ -21,11 +20,12 @@ public class ChainSubRuleSetArray extends OffsetRecordTable<NullTable> {
   }
 
   @Override
-  public NullTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return new NullTable(data, 0, dataIsCanonical);
+  public ChainSubRuleSet readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+    return new ChainSubRuleSet(data, 0, dataIsCanonical);
   }
 
-  public static class Builder extends OffsetRecordTable.Builder<ChainSubRuleSetArray, NullTable> {
+  public static class Builder
+      extends OffsetRecordTable.Builder<ChainSubRuleSetArray, ChainSubRuleSet> {
 
     public Builder() {
       super();
@@ -46,19 +46,19 @@ public class ChainSubRuleSetArray extends OffsetRecordTable<NullTable> {
     }
 
     @Override
-    protected VisibleBuilder<NullTable> createSubTableBuilder() {
-      return new NullTable.Builder();
+    protected VisibleBuilder<ChainSubRuleSet> createSubTableBuilder() {
+      return new ChainSubRuleSet.Builder();
     }
 
     @Override
-    protected VisibleBuilder<NullTable> createSubTableBuilder(
+    protected VisibleBuilder<ChainSubRuleSet> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
-      return new NullTable.Builder(data, dataIsCanonical);
+      return new ChainSubRuleSet.Builder(data, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<NullTable> createSubTableBuilder(NullTable subTable) {
-      return new NullTable.Builder(subTable);
+    protected VisibleBuilder<ChainSubRuleSet> createSubTableBuilder(ChainSubRuleSet subTable) {
+      return new ChainSubRuleSet.Builder(subTable);
     }
 
     @Override

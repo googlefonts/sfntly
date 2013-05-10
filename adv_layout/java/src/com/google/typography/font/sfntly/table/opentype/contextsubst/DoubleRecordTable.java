@@ -10,16 +10,16 @@ import com.google.typography.font.sfntly.table.opentype.component.SubstLookupRec
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
 public class DoubleRecordTable extends SubTable {
-  public final NumRecordList inputGlyphIds;
-  public final SubstLookupRecordList substLookupRecords;
+  public final NumRecordList inputGlyphs;
+  public final SubstLookupRecordList lookupRecords;
 
   // ///////////////
   // constructors
 
   public DoubleRecordTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data);
-    inputGlyphIds = new NumRecordList(data, 2, 1);
-    substLookupRecords = new SubstLookupRecordList(data, 2, inputGlyphIds.limit());
+    inputGlyphs = new NumRecordList(data, 2, 1);
+    lookupRecords = new SubstLookupRecordList(data, 2, inputGlyphs.limit());
   }
 
   public DoubleRecordTable(ReadableFontData data, boolean dataIsCanonical) {
