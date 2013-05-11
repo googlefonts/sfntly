@@ -19,7 +19,7 @@ public class ChainSubRule extends SubTable {
   public ChainSubRule(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data);
     backtrackGlyphs = new NumRecordList(data);
-    inputGlyphs = new NumRecordList(data, backtrackGlyphs.limit(), 0, 0);
+    inputGlyphs = new NumRecordList(data, backtrackGlyphs.limit(), 0, 1);
     lookAheadGlyphs = new NumRecordList(data, inputGlyphs.limit(), 0, 0);
     lookupRecords = new SubstLookupRecordList(data, lookAheadGlyphs.limit(), 0);
   }

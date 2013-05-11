@@ -30,6 +30,7 @@ import com.google.typography.font.sfntly.table.opentype.TaggedData;
 import com.google.typography.font.sfntly.table.opentype.TaggedData.FieldType;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRule;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSet;
+import com.google.typography.font.sfntly.table.opentype.classdef.InnerArrayFmt1;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.RangeRecordTable;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.DoubleRecordTable;
@@ -398,23 +399,24 @@ public class OtTableTagger {
         td.tagRangeField(FieldType.SHORT, "subst format");
         td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
         tagTable(table.coverage());
-        // if (table.format == 2) {
-        // td.tagRangeField(FieldType.OFFSET_NONZERO, "class def offset");
-        // tagTable(table.classDef());
-        // }
-        if (table.format == 1) {
-          td.tagRangeField(
-              FieldType.SHORT, "chain sub rule set count ====================================");
+        if (table.format == 2) {
+          td.tagRangeField(FieldType.OFFSET_NONZERO, "backtrack class def offset");
+          tagTable(table.backtrackClassDef());
+          td.tagRangeField(FieldType.OFFSET_NONZERO, "input class def offset");
+          tagTable(table.inputClassDef());
+          td.tagRangeField(FieldType.OFFSET_NONZERO, "look ahead class def offset");
+          tagTable(table.lookAheadClassDef());
+        }
+        td.tagRangeField(FieldType.SHORT, "chain sub rule set count");
 
-          int subTableCount = table.recordList().count();
-          for (int i = 0; i < subTableCount; ++i) {
-            td.tagRangeField(FieldType.OFFSET_NONZERO, null);
-          }
-          for (int i = 0; i < subTableCount; ++i) {
-            ChainSubRuleSet subTable = table.subTableAt(i);
-            if (subTable != null) {
-              tagTable(subTable);
-            }
+        int subTableCount = table.recordList().count();
+        for (int i = 0; i < subTableCount; ++i) {
+          td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+        }
+        for (int i = 0; i < subTableCount; ++i) {
+          ChainSubRuleSet subTable = table.subTableAt(i);
+          if (subTable != null) {
+            tagTable(subTable);
           }
         }
       }
@@ -459,11 +461,11 @@ public class OtTableTagger {
         }
 
         td.tagRangeField(FieldType.SHORT, "subst lookup record count");
-        // int lookupCount = table.lookupRecords.count();
-        // for (int i = 0; i < lookupCount; ++i) {
-        // td.tagRangeField(FieldType.SHORT, "sequence index");
-        // td.tagRangeField(FieldType.SHORT, "lookup list index");
-        // }
+        int lookupCount = table.lookupRecords.count();
+        for (int i = 0; i < lookupCount; ++i) {
+          td.tagRangeField(FieldType.SHORT, "sequence index");
+          td.tagRangeField(FieldType.SHORT, "lookup list index");
+        }
       }
     });
 
@@ -553,9 +555,17 @@ public class OtTableTagger {
       public void tag(FontDataTable fdt) {
         ClassDefTableNew table = (ClassDefTableNew) fdt;
         td.tagRangeField(FieldType.SHORT, "format");
+        td.tagRangeField(FieldType.SHORT, "start glypyh");
+        if (table.format == 1) {
+          InnerArrayFmt1 tableFmt1 = (InnerArrayFmt1) table.array;
+          td.tagRangeField(FieldType.SHORT, "glyph count/class value array size");
+          for (int i = 0; i < tableFmt1.recordList.count(); ++i) {
+            td.tagRangeField(FieldType.SHORT, null);
+          }
+        }
         if (table.format == 2) {
-          RangeRecordTable tableFmt2 = table.array;
-          td.tagRangeField(FieldType.SHORT, "range count");
+          RangeRecordTable tableFmt2 = (RangeRecordTable) table.array;
+          td.tagRangeField(FieldType.SHORT, "class range count");
           for (int i = 0; i < tableFmt2.recordList.count(); ++i) {
             td.tagRangeField(FieldType.SHORT, "start");
             td.tagRangeField(FieldType.SHORT, "end");
