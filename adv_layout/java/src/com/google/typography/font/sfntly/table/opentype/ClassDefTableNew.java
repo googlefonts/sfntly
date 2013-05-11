@@ -2,11 +2,13 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
+import com.google.typography.font.sfntly.table.opentype.classdef.InnerArrayFmt1;
 import com.google.typography.font.sfntly.table.opentype.component.RangeRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.RecordList;
+import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
 
 public class ClassDefTableNew extends SubstSubtable {
-  public final RangeRecordTable array;
+  public final RecordsTable<?> array;
   public boolean dataIsCanonical;
 
   // //////////////
@@ -17,6 +19,9 @@ public class ClassDefTableNew extends SubstSubtable {
     this.dataIsCanonical = dataIsCanonical;
 
     switch (format) {
+    case 1:
+      array = new InnerArrayFmt1(data, headerSize(), dataIsCanonical);
+      break;
     case 2:
       array = new RangeRecordTable(data, headerSize(), dataIsCanonical);
       break;
@@ -37,7 +42,7 @@ public class ClassDefTableNew extends SubstSubtable {
 
   public static class Builder extends SubstSubtable.Builder<ClassDefTableNew> {
 
-    protected final RangeRecordTable.Builder arrayBuilder;
+    protected final RecordsTable.Builder<?, ?> arrayBuilder;
 
     // //////////////
     // Constructors
@@ -45,6 +50,9 @@ public class ClassDefTableNew extends SubstSubtable {
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       switch (format) {
+      case 1:
+        arrayBuilder = new InnerArrayFmt1.Builder(data, headerSize(), dataIsCanonical);
+        break;
       case 2:
         arrayBuilder = new RangeRecordTable.Builder(data, headerSize(), dataIsCanonical);
         break;
