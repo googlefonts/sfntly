@@ -15,7 +15,7 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
   public final int base;
   public final int recordBase;
 
-  private final ReadableFontData readData;
+  final ReadableFontData readData;
   private final WritableFontData writeData;
   private int count;
   private List<T> recordsToWrite;

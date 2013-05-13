@@ -6,6 +6,7 @@ import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubClassSetArray;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSet;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSetArray;
+import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.InnerArraysFmt3;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
@@ -14,6 +15,7 @@ import java.util.Iterator;
 public class ChainContextSubst extends SubstSubtable implements Iterable<ChainSubRuleSet> {
   private final ChainSubRuleSetArray ruleSets;
   private final ChainSubClassSetArray classSets;
+  public final InnerArraysFmt3 fmt3Array;
 
   // //////////////
   // Constructors
@@ -24,11 +26,17 @@ public class ChainContextSubst extends SubstSubtable implements Iterable<ChainSu
     case 1:
       ruleSets = new ChainSubRuleSetArray(data, headerSize(), dataIsCanonical);
       classSets = null;
+      fmt3Array = null;
       break;
     case 2:
       ruleSets = null;
       classSets = new ChainSubClassSetArray(data, headerSize(), dataIsCanonical);
-      dumpData();
+      fmt3Array = null;
+      break;
+    case 3:
+      ruleSets = null;
+      classSets = null;
+      fmt3Array = new InnerArraysFmt3(data, headerSize(), dataIsCanonical);
       break;
     default:
       throw new IllegalStateException("Subt format value is " + format + " (should be 1 or 2).");
@@ -39,28 +47,62 @@ public class ChainContextSubst extends SubstSubtable implements Iterable<ChainSu
   // Methods redirected to the array
 
   public NumRecordList recordList() {
-    return (format == 1) ? ruleSets.recordList : classSets.recordList;
+    switch (format) {
+    case 1:
+      return ruleSets.recordList;
+    case 2:
+      return classSets.recordList;
+    default:
+      return null;
+    }
   }
 
   public ChainSubRuleSet subTableAt(int index) {
-    return (format == 1) ? ruleSets.subTableAt(index) : classSets.subTableAt(index);
+    switch (format) {
+    case 1:
+      return ruleSets.subTableAt(index);
+    case 2:
+      return classSets.subTableAt(index);
+    default:
+      return null;
+    }
   }
 
   @Override
   public Iterator<ChainSubRuleSet> iterator() {
-    return (format == 1) ? ruleSets.iterator() : classSets.iterator();
+    switch (format) {
+    case 1:
+      return ruleSets.iterator();
+    case 2:
+      return classSets.iterator();
+    default:
+      return null;
+    }
   }
 
   protected ChainSubRuleSet createSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return (format == 1) ? ruleSets.readSubTable(data, dataIsCanonical)
-        : classSets.readSubTable(data, dataIsCanonical);
+    switch (format) {
+    case 1:
+      return ruleSets.readSubTable(data, dataIsCanonical);
+    case 2:
+      return classSets.readSubTable(data, dataIsCanonical);
+    default:
+      return null;
+    }
   }
 
   // //////////////////////////////////
   // Methods specific to this class
 
   public CoverageTableNew coverage() {
-    return (format == 1) ? ruleSets.coverage : classSets.coverage;
+    switch (format) {
+    case 1:
+      return ruleSets.coverage;
+    case 2:
+      return classSets.coverage;
+    default:
+      return null;
+    }
   }
 
   public ClassDefTableNew backtrackClassDef() {

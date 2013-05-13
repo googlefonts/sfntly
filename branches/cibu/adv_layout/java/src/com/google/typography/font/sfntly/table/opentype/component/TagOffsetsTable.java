@@ -167,11 +167,6 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
     }
 
     @Override
-    protected boolean subReadyToSerialize() {
-      return true;
-    }
-
-    @Override
     public int subSerialize(WritableFontData newData) {
       if (serializedLength == 0) {
         return 0;
@@ -182,6 +177,11 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
         return serializeFromBuilders(newData.slice(writtenBytes));
       }
       return serializeFromData(newData.slice(writtenBytes));
+    }
+
+    @Override
+    protected boolean subReadyToSerialize() {
+      return true;
     }
 
     @Override
