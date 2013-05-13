@@ -27,6 +27,11 @@ public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
     this(data, 0, dataIsCanonical);
   }
 
+  public OffsetRecordTable(NumRecordList records) {
+    super(records.readData, records.base, false);
+    recordList = records;
+  }
+
   // ////////////////
   // public methods
 
@@ -87,6 +92,8 @@ public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
     protected int serializedLength;
     private int serializedCount;
     private final int base;
+    private int serializedSubtablePartLength;
+    private int serializedTablePartLength;
 
     // ///////////////
     // constructors
@@ -110,6 +117,15 @@ public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
       this.dataIsCanonical = dataIsCanonical;
       if (!dataIsCanonical) {
         prepareToEdit();
+      }
+    }
+
+    public Builder(NumRecordList records) {
+      super();
+      base = records.base;
+      if (builders == null) {
+        initFromData(records);
+        setModelChanged();
       }
     }
 
@@ -160,21 +176,35 @@ public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
       return serializedLength;
     }
 
+    public int tableSizeToSerialize() {
+      computeSizeFromBuilders();
+      return serializedTablePartLength;
+    }
+
+    public int subTableSizeToSerialize() {
+      computeSizeFromBuilders();
+      return serializedSubtablePartLength;
+    }
+
     @Override
     protected boolean subReadyToSerialize() {
       return true;
     }
 
-    @Override
-    public int subSerialize(WritableFontData newData) {
+    public int subSerialize(WritableFontData newData, int subTableWriteOffset) {
       if (serializedLength == 0) {
         return 0;
       }
 
       if (builders != null) {
-        return serializeFromBuilders(newData);
+        return serializeFromBuilders(newData, subTableWriteOffset);
       }
       return serializeFromData(newData);
+    }
+
+    @Override
+    public int subSerialize(WritableFontData newData) {
+      return subSerialize(newData, 0);
     }
 
     @Override
@@ -210,14 +240,17 @@ public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
     }
 
     private void initFromData(ReadableFontData data, int base) {
+      NumRecordList recordList = new NumRecordList(data, base + headerSize(), 0, 0);
+      initFromData(recordList);
+    }
+
+    private void initFromData(NumRecordList recordList) {
+      ReadableFontData data = recordList.readData;
       builders = new ArrayList<VisibleBuilder<S>>();
       if (data == null) {
         return;
       }
 
-      data = data.slice(base + headerSize());
-      // Start of the first subtable in the data, if we're canonical.
-      NumRecordList recordList = new NumRecordList(data);
       if (recordList.count() == 0) {
         return;
       }
@@ -249,10 +282,11 @@ public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
           len += sublen;
         }
       }
+      serializedSubtablePartLength = len;
       if (len > 0) {
-        len += NumRecordList.sizeOfListOfCount(count);
+        serializedTablePartLength = NumRecordList.sizeOfListOfCount(count);
       }
-      serializedLength = len;
+      serializedLength = serializedTablePartLength + serializedSubtablePartLength;
       serializedCount = count;
     }
 
@@ -268,7 +302,7 @@ public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
       serializedCount = count;
     }
 
-    private int serializeFromBuilders(WritableFontData newData) {
+    private int serializeFromBuilders(WritableFontData newData, int subTableWriteOffset) {
       // The canonical form of the data consists of the header,
       // the index, then the
       // scriptTables from the index in index order. All
@@ -279,6 +313,9 @@ public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
 
       // Fill header in table and serialize its builder.
       int subTableFillPos = tableSize;
+      if (subTableWriteOffset > 0) {
+        subTableFillPos = subTableWriteOffset;
+      }
 
       NumRecordList recordList = new NumRecordList(newData);
       for (VisibleBuilder<S> builder : builders) {

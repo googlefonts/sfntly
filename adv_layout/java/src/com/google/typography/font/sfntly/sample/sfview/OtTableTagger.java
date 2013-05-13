@@ -397,26 +397,66 @@ public class OtTableTagger {
       public void tag(FontDataTable fdt) {
         ChainContextSubst table = (ChainContextSubst) fdt;
         td.tagRangeField(FieldType.SHORT, "subst format");
-        td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
-        tagTable(table.coverage());
-        if (table.format == 2) {
-          td.tagRangeField(FieldType.OFFSET_NONZERO, "backtrack class def offset");
-          tagTable(table.backtrackClassDef());
-          td.tagRangeField(FieldType.OFFSET_NONZERO, "input class def offset");
-          tagTable(table.inputClassDef());
-          td.tagRangeField(FieldType.OFFSET_NONZERO, "look ahead class def offset");
-          tagTable(table.lookAheadClassDef());
-        }
-        td.tagRangeField(FieldType.SHORT, "chain sub rule set count");
+        if (table.format == 1 || table.format == 2) {
+          td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
+          tagTable(table.coverage());
+          if (table.format == 2) {
+            td.tagRangeField(FieldType.OFFSET_NONZERO, "backtrack class def offset");
+            tagTable(table.backtrackClassDef());
+            td.tagRangeField(FieldType.OFFSET_NONZERO, "input class def offset");
+            tagTable(table.inputClassDef());
+            td.tagRangeField(FieldType.OFFSET_NONZERO, "look ahead class def offset");
+            tagTable(table.lookAheadClassDef());
+          }
+          td.tagRangeField(FieldType.SHORT, "chain sub rule set count");
 
-        int subTableCount = table.recordList().count();
-        for (int i = 0; i < subTableCount; ++i) {
-          td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+          int subTableCount = table.recordList().count();
+          for (int i = 0; i < subTableCount; ++i) {
+            td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+          }
+          for (int i = 0; i < subTableCount; ++i) {
+            ChainSubRuleSet subTable = table.subTableAt(i);
+            if (subTable != null) {
+              tagTable(subTable);
+            }
+          }
         }
-        for (int i = 0; i < subTableCount; ++i) {
-          ChainSubRuleSet subTable = table.subTableAt(i);
-          if (subTable != null) {
-            tagTable(subTable);
+        if (table.format == 3) {
+          td.tagRangeField(FieldType.SHORT, "backtrackGlyphs coverage count");
+          int subTableCount = table.fmt3Array.backtrackGlyphs.recordList.count();
+          for (int i = 0; i < subTableCount; ++i) {
+            td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+            CoverageTableNew subTable = table.fmt3Array.backtrackGlyphs.subTableAt(i);
+            if (subTable != null) {
+              tagTable(subTable);
+            }
+          }
+
+          td.tagRangeField(FieldType.SHORT, "input glyphs coverage count");
+          subTableCount = table.fmt3Array.inputGlyphs.recordList.count();
+          for (int i = 0; i < subTableCount; ++i) {
+            td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+            CoverageTableNew subTable = table.fmt3Array.inputGlyphs.subTableAt(i);
+            if (subTable != null) {
+              tagTable(subTable);
+            }
+          }
+
+          td.tagRangeField(FieldType.SHORT, "lookahead glyphs coverage count");
+          subTableCount = table.fmt3Array.lookAheadGlyphs.recordList.count();
+          for (int i = 0; i < subTableCount; ++i) {
+            td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+            CoverageTableNew subTable = table.fmt3Array.lookAheadGlyphs.subTableAt(i);
+            if (subTable != null) {
+              tagTable(subTable);
+            }
+          }
+
+          td.tagRangeField(FieldType.SHORT, "subst lookup record count");
+          int lookupCount = table.fmt3Array.lookupRecords.count();
+          for (int i = 0; i < lookupCount; ++i) {
+            td.tagRangeField(FieldType.SHORT, "sequence index");
+            td.tagRangeField(FieldType.SHORT, "lookup list index");
           }
         }
       }
