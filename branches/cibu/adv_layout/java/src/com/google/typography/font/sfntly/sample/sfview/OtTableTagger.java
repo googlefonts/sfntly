@@ -60,6 +60,9 @@ public class OtTableTagger {
   }
 
   public void tag(GSubTable gsub) {
+    if (gsub == null) {
+      return;
+    }
     tagTable(gsub.scriptList());
     tagTable(gsub.featureList());
     tagTable(gsub.lookupList());

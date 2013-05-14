@@ -55,11 +55,7 @@ public class ViewableTaggedData {
     // shades of blue hue 221.8 saturation 5% to 35% value 93.5 (yafla)
     // E3E6EE, D7DEEE, CBD6EE, BFCDEE, B3C5EE, A7BDEE, 9BB4EE
     Color[] depthColors = {
-        new Color(0x9BB4EE),
-        new Color(0xB3C5EE),
-        new Color(0xCBD6EE),
-        new Color(0xE3E6EE)
-    };
+        new Color(0x9BB4EE), new Color(0xB3C5EE), new Color(0xCBD6EE), new Color(0xE3E6EE) };
 
     Style() {
       marginScale = 4; // distance between lines
@@ -101,13 +97,12 @@ public class ViewableTaggedData {
 
     void zero() {
       lineHeight = baseline = xHeight = 0;
-      marginWidth = positionWidth = dataWidth = altWidth = labelWidth =
-          headerWidth = totalWidth = 0;
+      marginWidth = positionWidth = dataWidth = altWidth = labelWidth = headerWidth = totalWidth = 0;
     }
 
     void updateTotalWidth() {
-      totalWidth = marginWidth + Math.max(positionWidth + dataWidth + altWidth
-          + labelWidth, headerWidth);
+      totalWidth = marginWidth
+          + Math.max(positionWidth + dataWidth + altWidth + labelWidth, headerWidth);
     }
   }
 
@@ -128,8 +123,10 @@ public class ViewableTaggedData {
 
   /**
    * Compute metrics and return the dimensions.
-   * @param zeroMetrics zero the metrics before computing (otherwise use
-   * existing cell widths and line height as minimums).
+   *
+   * @param zeroMetrics
+   *          zero the metrics before computing (otherwise use existing cell
+   *          widths and line height as minimums).
    * @return the dimensions
    */
   public Dimension measure(boolean zeroMetrics) {
@@ -191,11 +188,16 @@ public class ViewableTaggedData {
 
       /**
        * Represent a range.
-       * @param label label to use for the range
-       * @param data the data in the range
-       * @param next the next node in the change
-       * @param base the base of this node as an absolute position in the data
-       *  (includes data.boundOffset())
+       *
+       * @param label
+       *          label to use for the range
+       * @param data
+       *          the data in the range
+       * @param next
+       *          the next node in the change
+       * @param base
+       *          the base of this node as an absolute position in the data
+       *          (includes data.boundOffset())
        */
       RangeNode(String label, ReadableFontData data, RangeNode next, int base) {
         this.label = label;
@@ -224,8 +226,7 @@ public class ViewableTaggedData {
       if (rangeStack == null) {
         throw new IllegalStateException("not in a range");
       }
-      tagRange(rangeStack.label, rangeStack.base, rangeStack.pos,
-          rangeStack.depth);
+      tagRange(rangeStack.label, rangeStack.base, rangeStack.pos, rangeStack.depth);
       rangeStack = rangeStack.next;
     }
 
@@ -252,50 +253,57 @@ public class ViewableTaggedData {
       int value;
       String alt;
       switch (ft) {
-        case OFFSET_NONZERO:
-          value = data.readUShort(pos);
-          if (value == 0) {
-            alt = null;
-            width = 2;
-            break;
-          }
-          // fall through
-        case OFFSET:
-          value = data.readUShort(pos);
-          alt = String.format("#%04x", base + value);
-          width = 2;
-          tagTarget(position, value, base + value, null);
-          break;
-        case SHORT:
-          value = data.readUShort(pos);
-          alt = String.valueOf(value);
-          width = 2;
-          break;
-        case SHORT_IGNORED:
-          value = data.readUShort(pos);
+      case OFFSET_NONZERO:
+        value = data.readUShort(pos);
+        if (value == 0) {
           alt = null;
           width = 2;
           break;
-        case SHORT_IGNORED_FFFF:
-          value = data.readUShort(pos);
-          alt = value == 0xffff ? null : String.valueOf(value);
-          width = 2;
-          break;
-        case TAG:
-          value = data.readULongAsInt(pos);
-          alt = Tag.stringValue(value);
-          width = 4;
-          break;
-        default:
-          throw new IllegalStateException("unimplemented field type");
+        }
+      // fall through
+      case OFFSET:
+        value = data.readUShort(pos);
+        alt = String.format("#%04x", base + value);
+        width = 2;
+        tagTarget(position, value, base + value, null);
+        break;
+      case SHORT:
+        value = data.readUShort(pos);
+        alt = String.valueOf(value);
+        width = 2;
+        break;
+      case SHORT_IGNORED:
+        value = data.readUShort(pos);
+        alt = null;
+        width = 2;
+        break;
+      case SHORT_IGNORED_FFFF:
+        value = data.readUShort(pos);
+        alt = value == 0xffff ? null : String.valueOf(value);
+        width = 2;
+        break;
+      case TAG:
+        value = data.readULongAsInt(pos);
+        alt = Tag.stringValue(value);
+        width = 4;
+        break;
+      default:
+        throw new IllegalStateException("unimplemented field type");
       }
       tagField(position, width, value, alt, label);
       rangeStack.pos += width;
 
       switch (ft) {
-        case OFFSET: value += base; break;
-        case OFFSET_NONZERO: if (value != 0) value += base; break;
-        default: break;
+      case OFFSET:
+        value += base;
+        break;
+      case OFFSET_NONZERO:
+        if (value != 0) {
+          value += base;
+        }
+        break;
+      default:
+        break;
       }
       return value;
     }
@@ -306,8 +314,9 @@ public class ViewableTaggedData {
     private final Metrics metrics;
     private final Graphics g; // if null, we are measuring
     private FontRenderContext frc; // used when measuring
-    private final int x;  // current position of 'position' column (margin is to left)
-    private int y;  // current base of line
+    private final int x; // current position of 'position' column (margin is to
+                         // left)
+    private int y; // current base of line
     private int lc; // line count
     private int rangeDepth;
     private int lastMarkedPosition;
@@ -382,8 +391,7 @@ public class ViewableTaggedData {
       return g == null;
     }
 
-    private static final Color[] REF_COLORS = {
-        Color.BLUE,
+    private static final Color[] REF_COLORS = { Color.BLUE,
         Color.RED,
         Color.BLACK,
         Color.GREEN,
@@ -392,16 +400,17 @@ public class ViewableTaggedData {
         Color.CYAN,
         Color.DARK_GRAY,
         Color.MAGENTA,
-        Color.ORANGE
-    };
+        Color.ORANGE };
 
     private Color colorForM(int m) {
       return REF_COLORS[m % REF_COLORS.length];
     }
-    
+
+    RefWidthFinder refWidthFinder = new RefWidthFinder();
+
     void drawRef(Reference ref) {
-      int m = RefWidthFinder.add(ref);
-      
+      int m = refWidthFinder.add(ref);
+
       int srcx = ref.srcx - style.marginOffset;
       int srcy = ref.srcy - metrics.baseline - metrics.xHeight;
       int trgx = ref.trgx - style.marginOffset;
@@ -468,7 +477,7 @@ public class ViewableTaggedData {
       int colorIndex = rangeDepth % colors.length;
       g.setColor(rangeDepth == -1 ? Color.WHITE : colors[colorIndex]);
       g.fillRect(metrics.marginWidth, y - metrics.lineHeight,
-            metrics.totalWidth - metrics.marginWidth, metrics.lineHeight);
+          metrics.totalWidth - metrics.marginWidth, metrics.lineHeight);
     }
 
     void drawLine(int position, int value, int width, String alt, String label) {
@@ -566,9 +575,11 @@ public class ViewableTaggedData {
       this.length = length;
       this.depth = depth;
     }
+
     int start() {
       return start;
     }
+
     int limit() {
       return start + length;
     }
@@ -604,63 +615,72 @@ public class ViewableTaggedData {
     public WidthUsageRecord() {
       widthUsageMap = new HashMap<Integer, Integer>();
     }
-    
+
     public WidthUsageRecord(int width) {
       this();
-      widthUsageMap.put(width, 1); 
+      widthUsageMap.put(width, 1);
     }
 
     public WidthUsageRecord(WidthUsageRecord other, int width) {
       widthUsageMap = new HashMap<Integer, Integer>(other.widthUsageMap);
       int currValue = widthUsageMap.containsKey(width) ? widthUsageMap.get(width) : 0;
-      widthUsageMap.put(width, currValue + 1); 
+      widthUsageMap.put(width, currValue + 1);
     }
-    
+
     public int lowestEquality(WidthUsageRecord other) {
-      for(int i = 0; this.widthUsageMap.containsKey(i); i++) {
+      for (int i = 0; this.widthUsageMap.containsKey(i); i++) {
         if (other.widthUsageMap.get(i) == this.widthUsageMap.get(i)) {
           return i;
         }
       }
-      return other.widthUsageMap.keySet().size(); 
+      return other.widthUsageMap.keySet().size();
     }
   }
 
   static class RefWidthFinder {
-    static final Map<Integer, Integer> cache = new TreeMap<Integer, Integer>();
-    static final Map<Integer, WidthUsageRecord> widthUsageMap = new TreeMap<Integer, WidthUsageRecord>();
+    final Map<Integer, Integer> cache;
+    final Map<Integer, WidthUsageRecord> widthUsageMap;
 
-    public static int add(Reference ref) {
+    public RefWidthFinder() {
+      cache = new TreeMap<Integer, Integer>();
+      widthUsageMap = new TreeMap<Integer, WidthUsageRecord>();
+    }
+
+    public int add(Reference ref) {
       int src = ref.sourcePosition;
       int trg = ref.targetPosition;
-      
+
       if (cache.containsKey(trg)) {
         return cache.get(trg);
       }
-      
+
       WidthUsageRecord srcRecord = new WidthUsageRecord();
       WidthUsageRecord trgRecord = new WidthUsageRecord();
-      for (Entry<Integer, WidthUsageRecord> entry  : widthUsageMap.entrySet()) {
+      for (Entry<Integer, WidthUsageRecord> entry : widthUsageMap.entrySet()) {
         if (entry.getKey() <= src) {
           srcRecord = entry.getValue();
         }
         trgRecord = entry.getValue();
       }
-      
+
       int width = srcRecord.lowestEquality(trgRecord);
       widthUsageMap.put(trg, new WidthUsageRecord(trgRecord, width));
       cache.put(trg, width);
       return width;
     }
   }
-  
+
   static abstract class Marker implements Comparable<Marker> {
     final int position;
+
     Marker(int position) {
       this.position = position;
     }
+
     abstract int order(Marker rhs);
+
     abstract void draw(DrawContext c);
+
     @Override
     public int compareTo(Marker rhs) {
       int result = this.position - rhs.position;
@@ -676,10 +696,8 @@ public class ViewableTaggedData {
       return order(rhs);
     }
 
-    static final Object[] classOrder = {
-      RangeEnd.class, RangeStart.class, ReferenceTarget.class, Field.class,
-      ReferenceSource.class
-    };
+    static final Object[] classOrder = { RangeEnd.class, RangeStart.class, ReferenceTarget.class,
+        Field.class, ReferenceSource.class };
 
     static int classOrder(Class<? extends Marker> clzz) {
       for (int i = 0; i < classOrder.length; ++i) {
