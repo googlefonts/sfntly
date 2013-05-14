@@ -27,6 +27,7 @@ public class LookupTableNew extends OffsetRecordTable<SubstSubtable> {
     case GSUB_SINGLE:
       return new SingleSubst(data, base, dataIsCanonical);
     case GSUB_MULTIPLE:
+    case GSUB_ALTERNATE:
       return new MultipleSubst(data, base, dataIsCanonical);
     case GSUB_CONTEXTUAL:
       return new ContextSubst(data, base, dataIsCanonical);
