@@ -34,10 +34,7 @@ public abstract class LookupTable extends OTSubTable {
   static final int FLAG_USE_MARK_FILTERING_SET = 0x10;
 
   public enum LookupFlag {
-    RIGHT_TO_LEFT(1),
-    IGNORE_BASE_GLYPHS(2),
-    IGNORE_LIGATURES(4),
-    IGNORE_MARKS(8);
+    RIGHT_TO_LEFT(1), IGNORE_BASE_GLYPHS(2), IGNORE_LIGATURES(4), IGNORE_MARKS(8);
 
     boolean isSet(int flags) {
       return isFlagSet(flags, mask);
@@ -52,6 +49,7 @@ public abstract class LookupTable extends OTSubTable {
     }
 
     private final int mask;
+
     private LookupFlag(int mask) {
       this.mask = mask;
     }
@@ -125,8 +123,8 @@ public abstract class LookupTable extends OTSubTable {
     return readOffsetForIndex(data, index);
   }
 
-  static ReadableFontData readSubTableDataAt(ReadableFontData data, boolean dataIsCanonical,
-      int index) {
+  static ReadableFontData readSubTableDataAt(
+      ReadableFontData data, boolean dataIsCanonical, int index) {
     int start = readOffsetForIndex(data, index);
     if (dataIsCanonical) {
       int limit;
@@ -173,15 +171,14 @@ public abstract class LookupTable extends OTSubTable {
 
     protected Builder() {
     }
-    
+
     protected Builder(T table) {
       super(table);
     }
 
     abstract LookupType lookupType();
 
-    protected abstract LookupSubTable.Builder<?> createSubTableBuilder(
-        ReadableFontData data);
+    protected abstract LookupSubTable.Builder<?> createSubTableBuilder(ReadableFontData data);
 
     public boolean isSet(LookupFlag flag) {
       return flag.isSet(flags);
@@ -251,7 +248,7 @@ public abstract class LookupTable extends OTSubTable {
     boolean unedited() {
       return builders == null;
     }
-    
+
     @Override
     void readModel(ReadableFontData data, boolean dataIsCanonical) {
       flags = readLookupFlags(data);

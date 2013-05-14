@@ -1,7 +1,7 @@
 package com.google.typography.font.sfntly.table.opentype.ligaturesubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.table.opentype.CoverageTableNew;
+import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
@@ -10,12 +10,12 @@ public class InnerArrayFmt1 extends OffsetRecordTable<LigatureSet> {
 
   public static final int COVERAGE_INDEX = 0;
   public static final int COVERAGE_DEFAULT = 0;
-  public final CoverageTableNew coverage;
+  public final CoverageTable coverage;
 
   public InnerArrayFmt1(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     int coverageOffset = getField(COVERAGE_INDEX);
-    coverage = new CoverageTableNew(data.slice(coverageOffset), 0, dataIsCanonical);
+    coverage = new CoverageTable(data.slice(coverageOffset), 0, dataIsCanonical);
   }
 
   @Override

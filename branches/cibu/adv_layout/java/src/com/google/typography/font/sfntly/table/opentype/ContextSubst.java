@@ -58,11 +58,11 @@ public class ContextSubst extends SubstSubtable implements Iterable<SubRuleSet> 
   // //////////////////////////////////
   // Methods specific to this class
 
-  public CoverageTableNew coverage() {
+  public CoverageTable coverage() {
     return (format == 1) ? ruleSets.coverage : classSets.coverage;
   }
 
-  public ClassDefTableNew classDef() {
+  public ClassDefTable classDef() {
     return (format == 2) ? classSets.classDef : null;
   }
 

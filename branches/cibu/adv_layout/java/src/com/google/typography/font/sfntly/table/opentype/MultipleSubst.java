@@ -47,7 +47,7 @@ public class MultipleSubst extends SubstSubtable implements Iterable<NumRecordTa
   // //////////////////////////////////
   // Methods specific to this class
 
-  public CoverageTableNew coverage() {
+  public CoverageTable coverage() {
     return array.coverage;
   }
 

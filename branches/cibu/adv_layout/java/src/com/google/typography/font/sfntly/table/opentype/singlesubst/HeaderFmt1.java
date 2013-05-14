@@ -1,7 +1,7 @@
 package com.google.typography.font.sfntly.table.opentype.singlesubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.table.opentype.CoverageTableNew;
+import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.component.HeaderTable;
 
 public class HeaderFmt1 extends HeaderTable {
@@ -13,12 +13,12 @@ public class HeaderFmt1 extends HeaderTable {
   public static final int DELTA_GLYPH_ID_INDEX = 1;
   public static final int DELTA_GLYPH_ID_DEFAULT = 0;
 
-  public final CoverageTableNew coverage;
+  public final CoverageTable coverage;
 
   public HeaderFmt1(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     int coverageOffset = getField(COVERAGE_INDEX);
-    coverage = new CoverageTableNew(data.slice(coverageOffset), 0, dataIsCanonical);
+    coverage = new CoverageTable(data.slice(coverageOffset), 0, dataIsCanonical);
   }
 
   @Override

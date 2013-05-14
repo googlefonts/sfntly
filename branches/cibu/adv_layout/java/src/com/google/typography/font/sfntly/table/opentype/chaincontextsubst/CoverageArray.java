@@ -1,12 +1,12 @@
 package com.google.typography.font.sfntly.table.opentype.chaincontextsubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.table.opentype.CoverageTableNew;
+import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
-public class CoverageArray extends OffsetRecordTable<CoverageTableNew> {
+public class CoverageArray extends OffsetRecordTable<CoverageTable> {
   public static final int FIELD_COUNT = 0;
 
   public CoverageArray(ReadableFontData data, int base, boolean dataIsCanonical) {
@@ -18,11 +18,11 @@ public class CoverageArray extends OffsetRecordTable<CoverageTableNew> {
   }
 
   @Override
-  public CoverageTableNew readSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return new CoverageTableNew(data, 0, dataIsCanonical);
+  public CoverageTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+    return new CoverageTable(data, 0, dataIsCanonical);
   }
 
-  public static class Builder extends OffsetRecordTable.Builder<CoverageArray, CoverageTableNew> {
+  public static class Builder extends OffsetRecordTable.Builder<CoverageArray, CoverageTable> {
 
     public Builder() {
       super();
@@ -46,19 +46,19 @@ public class CoverageArray extends OffsetRecordTable<CoverageTableNew> {
     }
 
     @Override
-    protected VisibleBuilder<CoverageTableNew> createSubTableBuilder() {
-      return new CoverageTableNew.Builder();
+    protected VisibleBuilder<CoverageTable> createSubTableBuilder() {
+      return new CoverageTable.Builder();
     }
 
     @Override
-    protected VisibleBuilder<CoverageTableNew> createSubTableBuilder(
+    protected VisibleBuilder<CoverageTable> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
-      return new CoverageTableNew.Builder(data, dataIsCanonical);
+      return new CoverageTable.Builder(data, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<CoverageTableNew> createSubTableBuilder(CoverageTableNew subTable) {
-      return new CoverageTableNew.Builder(subTable);
+    protected VisibleBuilder<CoverageTable> createSubTableBuilder(CoverageTable subTable) {
+      return new CoverageTable.Builder(subTable);
     }
 
     @Override

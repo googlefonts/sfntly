@@ -29,7 +29,8 @@ public class GsubCommonTable extends LayoutCommonTable<GsubLookupTable> {
     }
 
     @Override
-    protected LookupListTable handleCreateLookupList(ReadableFontData data, boolean dataIsCanonical) {
+    protected LookupListTable handleCreateLookupList(
+        ReadableFontData data, boolean dataIsCanonical) {
       return new LookupListTable(data, dataIsCanonical);
     }
 
@@ -41,6 +42,17 @@ public class GsubCommonTable extends LayoutCommonTable<GsubLookupTable> {
     @Override
     protected LookupListTable.Builder createLookupListBuilder() {
       return new LookupListTable.Builder();
+    }
+
+    @Override
+    protected int subDataSizeToSerialize() {
+      // TODO(cibu): do real implementation
+      return 0;
+    }
+
+    @Override
+    protected void subDataSet() {
+      // TODO(cibu): do real implementation
     }
   }
 }

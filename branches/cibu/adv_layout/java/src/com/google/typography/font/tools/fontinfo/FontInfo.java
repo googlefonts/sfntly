@@ -4,10 +4,10 @@ package com.google.typography.font.tools.fontinfo;
 
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Font.MacintoshEncodingId;
+import com.google.typography.font.sfntly.Font.PlatformId;
 import com.google.typography.font.sfntly.Font.UnicodeEncodingId;
 import com.google.typography.font.sfntly.Font.WindowsEncodingId;
 import com.google.typography.font.sfntly.Tag;
-import com.google.typography.font.sfntly.Font.PlatformId;
 import com.google.typography.font.sfntly.math.Fixed1616;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.core.CMap;
@@ -331,7 +331,7 @@ public class FontInfo {
       if (count > 0) {
         table.add(Arrays.asList(new String[] { String.format(
             "%s [%s, %s]", block, UnicodeBlockData.getBlockStartCode(i),
-            UnicodeBlockData.getBlockEndCode(i)), String.format("%d / %d", count, set.limit()) }));
+            UnicodeBlockData.getBlockEndCode(i)), String.format("%d / %d", count, set.size()) }));
       }
       totalCount += count;
     }
@@ -395,7 +395,7 @@ public class FontInfo {
       }
 
       table.add(Arrays.asList(new String[] { scriptName,
-          String.format("%d / %d", coveredScripts.get(scriptCode), scriptSet.limit()) }));
+          String.format("%d / %d", coveredScripts.get(scriptCode), scriptSet.size()) }));
     }
     if (unknown > 0) {
       table.add(Arrays.asList(new String[] { "Unsupported script", String.format("%d", unknown) }));

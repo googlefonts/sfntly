@@ -1,8 +1,8 @@
 package com.google.typography.font.sfntly.table.opentype.contextsubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.table.opentype.ClassDefTableNew;
-import com.google.typography.font.sfntly.table.opentype.CoverageTableNew;
+import com.google.typography.font.sfntly.table.opentype.ClassDefTable;
+import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
@@ -14,15 +14,15 @@ public class SubClassSetArray extends OffsetRecordTable<SubRuleSet> {
   public static final int CLASS_DEF_INDEX = 1;
   public static final int CLASS_DEF_DEFAULT = 0;
 
-  public final CoverageTableNew coverage;
-  public final ClassDefTableNew classDef;
+  public final CoverageTable coverage;
+  public final ClassDefTable classDef;
 
   public SubClassSetArray(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     int coverageOffset = getField(COVERAGE_INDEX);
-    coverage = new CoverageTableNew(data.slice(coverageOffset), 0, dataIsCanonical);
+    coverage = new CoverageTable(data.slice(coverageOffset), 0, dataIsCanonical);
     int classDefOffset = getField(CLASS_DEF_INDEX);
-    classDef = new ClassDefTableNew(data.slice(classDefOffset), 0, dataIsCanonical);
+    classDef = new ClassDefTable(data.slice(classDefOffset), 0, dataIsCanonical);
   }
 
   @Override

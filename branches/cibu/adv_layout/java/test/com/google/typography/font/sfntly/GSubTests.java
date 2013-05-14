@@ -10,12 +10,8 @@ import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
 import com.google.typography.font.sfntly.table.opentype.FeatureTag;
 import com.google.typography.font.sfntly.table.opentype.GSubTable;
 import com.google.typography.font.sfntly.table.opentype.GsubCommonTable;
-import com.google.typography.font.sfntly.table.opentype.GsubLookupSingle;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupTable;
 import com.google.typography.font.sfntly.table.opentype.LanguageTag;
-import com.google.typography.font.sfntly.table.opentype.LayoutCommonTable.Builder.FeatureId;
-import com.google.typography.font.sfntly.table.opentype.LayoutCommonTable.Builder.LangSysId;
-import com.google.typography.font.sfntly.table.opentype.LayoutCommonTable.Builder.LookupId;
 import com.google.typography.font.sfntly.table.opentype.LookupTableNew;
 import com.google.typography.font.sfntly.table.opentype.ScriptTag;
 import com.google.typography.font.sfntly.table.opentype.TableDump;
@@ -43,9 +39,9 @@ public class GSubTests extends TestCase {
   }
 
   private static class FontEntry {
-    private String fileName;
-    private int index;
-    private Font font;
+    private final String fileName;
+    private final int index;
+    private final Font font;
 
     private FontEntry(String fileName, int index, Font font) {
       this.fileName = fileName;
@@ -105,8 +101,8 @@ public class GSubTests extends TestCase {
 
     td.println();
     td.println("Lookups for mlym_DFLT");
-    Iterable<LookupTableNew> lookups =
-        gsub.lookups(ScriptTag.mlym, LanguageTag.DFLT, EnumSet.allOf(FeatureTag.class));
+    Iterable<LookupTableNew> lookups = gsub.lookups(
+        ScriptTag.mlym, LanguageTag.DFLT, EnumSet.allOf(FeatureTag.class));
     for (LookupTableNew table : lookups) {
       td.dumpLookup(table);
     }
@@ -117,7 +113,8 @@ public class GSubTests extends TestCase {
   public void testCMapBuilder() {
     Font.Builder fontBuilder = FontFactory.getInstance().newFontBuilder();
     CMapTable.Builder cmapTableBuilder = (CMapTable.Builder) fontBuilder.newTableBuilder(Tag.cmap);
-    CMapFormat4.Builder cmapBuilder = (CMapFormat4.Builder) cmapTableBuilder.newCMapBuilder(CMapId.WINDOWS_BMP, CMapFormat.Format4);
+    CMapFormat4.Builder cmapBuilder = (CMapFormat4.Builder) cmapTableBuilder.newCMapBuilder(
+        CMapId.WINDOWS_BMP, CMapFormat.Format4);
     cmapBuilder.setLanguage(0);
     cmapBuilder.getSegments().add(new Segment(0, 10, 0, 0));
     Font font = fontBuilder.build();
@@ -128,7 +125,8 @@ public class GSubTests extends TestCase {
     Font.Builder fontBuilder = FontFactory.getInstance().newFontBuilder();
     GSubTable.Builder gsubTableBuilder = (GSubTable.Builder) fontBuilder.newTableBuilder(Tag.GSUB);
     GsubCommonTable.Builder commonBuilder = gsubTableBuilder.commonBuilder();
-    LangSysId<GsubLookupTable> langSysId = commonBuilder.newLangSys(ScriptTag.latn, LanguageTag.ENG);
+    LangSysId<GsubLookupTable> langSysId = commonBuilder.newLangSys(
+        ScriptTag.latn, LanguageTag.ENG);
     FeatureId<GsubLookupTable> featureId = commonBuilder.newFeature(FeatureTag.dlig);
     GsubLookupSingle.Builder lookupBuilder = new GsubLookupSingle.Builder();
     lookupBuilder.addFmt1Builder().setDeltaGlyphId(100).addRange(10, 19);
