@@ -94,7 +94,7 @@ public class ChainContextSubst extends SubstSubtable implements Iterable<ChainSu
   // //////////////////////////////////
   // Methods specific to this class
 
-  public CoverageTableNew coverage() {
+  public CoverageTable coverage() {
     switch (format) {
     case 1:
       return ruleSets.coverage;
@@ -105,15 +105,15 @@ public class ChainContextSubst extends SubstSubtable implements Iterable<ChainSu
     }
   }
 
-  public ClassDefTableNew backtrackClassDef() {
+  public ClassDefTable backtrackClassDef() {
     return (format == 2) ? classSets.backtrackClassDef : null;
   }
 
-  public ClassDefTableNew inputClassDef() {
+  public ClassDefTable inputClassDef() {
     return (format == 2) ? classSets.inputClassDef : null;
   }
 
-  public ClassDefTableNew lookAheadClassDef() {
+  public ClassDefTable lookAheadClassDef() {
     return (format == 2) ? classSets.lookAheadClassDef : null;
   }
 

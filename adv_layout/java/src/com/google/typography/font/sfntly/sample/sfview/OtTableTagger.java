@@ -5,17 +5,12 @@ package com.google.typography.font.sfntly.sample.sfview;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.FontDataTable;
 import com.google.typography.font.sfntly.table.opentype.ChainContextSubst;
-import com.google.typography.font.sfntly.table.opentype.ClassDefTableNew;
+import com.google.typography.font.sfntly.table.opentype.ClassDefTable;
 import com.google.typography.font.sfntly.table.opentype.ContextSubst;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
-import com.google.typography.font.sfntly.table.opentype.CoverageTableNew;
 import com.google.typography.font.sfntly.table.opentype.FeatureListTable;
 import com.google.typography.font.sfntly.table.opentype.FeatureTable;
 import com.google.typography.font.sfntly.table.opentype.GSubTable;
-import com.google.typography.font.sfntly.table.opentype.GsubLookupContextual;
-import com.google.typography.font.sfntly.table.opentype.GsubLookupLigature;
-import com.google.typography.font.sfntly.table.opentype.GsubLookupSingle;
-import com.google.typography.font.sfntly.table.opentype.GsubLookupTable;
 import com.google.typography.font.sfntly.table.opentype.LangSysTable;
 import com.google.typography.font.sfntly.table.opentype.LigatureSubst;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
@@ -118,14 +113,6 @@ public class OtTableTagger {
 
   private void register(TagMethod m) {
     tagMethodRegistry.put(m.clzz, m);
-  }
-
-  @SuppressWarnings({ "rawtypes", "unchecked" })
-  private void register(TagMethod m, Class... clzzs) {
-    tagMethodRegistry.put(m.clzz, m);
-    for (Class<? extends FontDataTable> clzz : clzzs) {
-      tagMethodRegistry.put(clzz, m);
-    }
   }
 
   void registerTagMethods() {
@@ -237,7 +224,7 @@ public class OtTableTagger {
           tagTable(subTable);
         }
       }
-    }, GsubLookupTable.class, GsubLookupSingle.class, GsubLookupLigature.class);
+    });
 
     register(new TagMethod(LigatureSubst.class) {
       @Override
@@ -440,7 +427,7 @@ public class OtTableTagger {
           int subTableCount = table.fmt3Array.backtrackGlyphs.recordList.count();
           for (int i = 0; i < subTableCount; ++i) {
             td.tagRangeField(FieldType.OFFSET_NONZERO, null);
-            CoverageTableNew subTable = table.fmt3Array.backtrackGlyphs.subTableAt(i);
+            CoverageTable subTable = table.fmt3Array.backtrackGlyphs.subTableAt(i);
             if (subTable != null) {
               tagTable(subTable);
             }
@@ -450,7 +437,7 @@ public class OtTableTagger {
           subTableCount = table.fmt3Array.inputGlyphs.recordList.count();
           for (int i = 0; i < subTableCount; ++i) {
             td.tagRangeField(FieldType.OFFSET_NONZERO, null);
-            CoverageTableNew subTable = table.fmt3Array.inputGlyphs.subTableAt(i);
+            CoverageTable subTable = table.fmt3Array.inputGlyphs.subTableAt(i);
             if (subTable != null) {
               tagTable(subTable);
             }
@@ -460,7 +447,7 @@ public class OtTableTagger {
           subTableCount = table.fmt3Array.lookAheadGlyphs.recordList.count();
           for (int i = 0; i < subTableCount; ++i) {
             td.tagRangeField(FieldType.OFFSET_NONZERO, null);
-            CoverageTableNew subTable = table.fmt3Array.lookAheadGlyphs.subTableAt(i);
+            CoverageTable subTable = table.fmt3Array.lookAheadGlyphs.subTableAt(i);
             if (subTable != null) {
               tagTable(subTable);
             }
@@ -529,61 +516,10 @@ public class OtTableTagger {
       }
     });
 
-    register(new TagMethod(GsubLookupSingle.Fmt1.class) {
+    register(new TagMethod(CoverageTable.class) {
       @Override
       public void tag(FontDataTable fdt) {
-        GsubLookupSingle.Fmt1 table = (GsubLookupSingle.Fmt1) fdt;
-        td.tagRangeField(FieldType.SHORT, "format");
-        td.tagRangeField(FieldType.OFFSET, "coverage");
-        tagTable(table.coverage());
-        td.tagRangeField(FieldType.SHORT, "delta");
-      }
-    });
-
-    register(new TagMethod(GsubLookupSingle.Fmt2.class) {
-      @Override
-      public void tag(FontDataTable fdt) {
-        GsubLookupSingle.Fmt2 table = (GsubLookupSingle.Fmt2) fdt;
-        td.tagRangeField(FieldType.SHORT, "format");
-        td.tagRangeField(FieldType.OFFSET, "coverage");
-        tagTable(table.coverage());
-        int glyphCount = td.tagRangeField(FieldType.SHORT, "glyph count");
-        for (int i = 0; i < glyphCount; ++i) {
-          td.tagRangeField(FieldType.GLYPH, null);
-        }
-      }
-    });
-
-    register(new TagMethod(CoverageTable.Fmt1.class) {
-      @Override
-      public void tag(FontDataTable fdt) {
-        CoverageTable.Fmt1 table = (CoverageTable.Fmt1) fdt;
-        td.tagRangeField(FieldType.SHORT, "format");
-        int glyphCount = td.tagRangeField(FieldType.SHORT, "glyph count");
-        for (int i = 0; i < glyphCount; ++i) {
-          td.tagRangeField(FieldType.SHORT, String.valueOf(i + 1));
-        }
-      }
-    });
-
-    register(new TagMethod(CoverageTable.Fmt2.class) {
-      @Override
-      public void tag(FontDataTable fdt) {
-        CoverageTable.Fmt2 table = (CoverageTable.Fmt2) fdt;
-        td.tagRangeField(FieldType.SHORT, "format");
-        int rangeCount = td.tagRangeField(FieldType.SHORT, "range count");
-        for (int i = 0; i < rangeCount; ++i) {
-          td.tagRangeField(FieldType.SHORT, "start");
-          td.tagRangeField(FieldType.SHORT, "end");
-          td.tagRangeField(FieldType.SHORT, "offset");
-        }
-      }
-    });
-
-    register(new TagMethod(CoverageTableNew.class) {
-      @Override
-      public void tag(FontDataTable fdt) {
-        CoverageTableNew table = (CoverageTableNew) fdt;
+        CoverageTable table = (CoverageTable) fdt;
         td.tagRangeField(FieldType.SHORT, "format");
         if (table.format == 1) {
           NumRecordTable tableFmt1 = (NumRecordTable) table.array;
@@ -604,10 +540,10 @@ public class OtTableTagger {
       }
     });
 
-    register(new TagMethod(ClassDefTableNew.class) {
+    register(new TagMethod(ClassDefTable.class) {
       @Override
       public void tag(FontDataTable fdt) {
-        ClassDefTableNew table = (ClassDefTableNew) fdt;
+        ClassDefTable table = (ClassDefTable) fdt;
         td.tagRangeField(FieldType.SHORT, "format");
         td.tagRangeField(FieldType.SHORT, "start glypyh");
         if (table.format == 1) {
@@ -626,43 +562,6 @@ public class OtTableTagger {
             td.tagRangeField(FieldType.SHORT, "offset");
           }
         }
-      }
-    });
-
-    register(new TagMethod(GsubLookupLigature.LigatureSubTable.class) {
-      @Override
-      public void tag(FontDataTable fdt) {
-        GsubLookupLigature.LigatureSubTable table = (GsubLookupLigature.LigatureSubTable) fdt;
-        td.tagRangeField(FieldType.SHORT, "format");
-        td.tagRangeField(FieldType.OFFSET, "coverage");
-        tagTable(table.coverage());
-        int setCount = td.tagRangeField(FieldType.SHORT, "set count");
-        for (int i = 0; i < setCount; ++i) {
-          int setBase = td.tagRangeField(FieldType.OFFSET, String.valueOf(i));
-          td.pushRangeAtOffset("LigatureSet", setBase);
-          int ligCount = td.tagRangeField(FieldType.SHORT, "ligature table count");
-          for (int j = 0; j < ligCount; ++j) {
-            int ligBase = td.tagRangeField(FieldType.OFFSET, String.valueOf(j));
-            td.pushRangeAtOffset("LigatureTable", ligBase);
-            td.tagRangeField(FieldType.SHORT, "lig glyph");
-            int cmpCount = td.tagRangeField(FieldType.SHORT, "component count");
-            for (int k = 1; k < cmpCount; ++k) {
-              td.tagRangeField(FieldType.SHORT, String.valueOf(k));
-            }
-            td.popRange();
-          }
-          td.popRange();
-        }
-      }
-    });
-
-    register(new TagMethod(GsubLookupContextual.Fmt1.class) {
-      @Override
-      public void tag(FontDataTable fdt) {
-        GsubLookupContextual.Fmt1 table = (GsubLookupContextual.Fmt1) fdt;
-        td.tagRangeField(FieldType.SHORT, "format");
-        td.tagRangeField(FieldType.OFFSET, "coverage");
-        tagTable(table.coverage());
       }
     });
 

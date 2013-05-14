@@ -21,20 +21,14 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
 
-import java.util.Set;
-
-
 /**
  * A GSub table.
  */
 public class GSubTable extends Table {
-  private GsubCommonTable gsub;
+  private final GsubCommonTable gsub;
 
   enum Offset {
-    version(0),
-    scriptList(4),
-    featureList(6),
-    lookupList(8);
+    version(0), scriptList(4), featureList(6), lookupList(8);
 
     final int offset;
 
@@ -46,12 +40,14 @@ public class GSubTable extends Table {
   /**
    * Constructor.
    *
-   * @param header header for the table
-   * @param data data for the table
+   * @param header
+   *          header for the table
+   * @param data
+   *          data for the table
    */
   private GSubTable(Header header, ReadableFontData data, boolean dataIsCanonical) {
     super(header, data);
-    gsub = new GsubCommonTable(data,  dataIsCanonical);
+    gsub = new GsubCommonTable(data, dataIsCanonical);
   }
 
   /**
@@ -91,32 +87,18 @@ public class GSubTable extends Table {
   }
 
   /**
-   * Given a script and language tag and a set of features, return the corresponding
-   * lookups in the order specified by the font.  If the specification requires
-   * features to be applied in a given order, they should be passed in separate calls.
-   * Regardless of what is in the featureSet, required features for the LangSys will
-   * always be included.
-   *
-   * @param stag the script tag
-   * @param ltag the language tag
-   * @param featureSet the features (set may be empty)
-   * @return the lookups
-   */
-  public Iterable<LookupTableNew> lookups(ScriptTag stag, LanguageTag ltag, Set<FeatureTag> featureSet) {
-    return gsub.lookups(stag, ltag, featureSet);
-  }
-
-  /**
    * GSUB Table Builder.
    */
   public static class Builder extends Table.Builder<GSubTable> {
-    private GsubCommonTable.Builder gsub;
+    private final GsubCommonTable.Builder gsub;
 
     /**
      * Creates a new builder using the header information and data provided.
      *
-     * @param header the header information
-     * @param data the data holding the table
+     * @param header
+     *          the header information
+     * @param data
+     *          the data holding the table
      * @return a new builder
      */
     public static Builder createBuilder(Header header, WritableFontData data) {
@@ -128,8 +110,10 @@ public class GSubTable extends Table {
      * but if editing operations are attempted then a writable copy will be made
      * the readable data will be discarded.
      *
-     * @param header the table header
-     * @param data the readable data for the table
+     * @param header
+     *          the table header
+     * @param data
+     *          the readable data for the table
      */
     protected Builder(Header header, ReadableFontData data) {
       super(header, data);
@@ -153,12 +137,12 @@ public class GSubTable extends Table {
 
     @Override
     protected int subDataSizeToSerialize() {
-      return gsub.subDataSizeToSerialize();
+      return 0; // TODO(cibu): need to implement using gsub
     }
 
     @Override
     protected void subDataSet() {
-      gsub.subDataSet();
+      // TODO(cibu): need to implement using gsub
     }
 
     @Override

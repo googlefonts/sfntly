@@ -34,7 +34,7 @@ public abstract class GsubLookupSubTable extends LookupSubTable {
       super(table);
     }
 
-   @Override
+    @Override
     public abstract GsubLookupType lookupType();
   }
 }

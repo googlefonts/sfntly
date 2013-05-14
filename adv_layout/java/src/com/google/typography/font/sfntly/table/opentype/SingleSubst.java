@@ -31,7 +31,7 @@ public class SingleSubst extends SubstSubtable {
   // //////////////////////////////////
   // Methods specific to this class
 
-  public CoverageTableNew coverage() {
+  public CoverageTable coverage() {
     return fmt1.coverage;
   }
 

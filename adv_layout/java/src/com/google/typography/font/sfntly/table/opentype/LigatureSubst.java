@@ -47,7 +47,7 @@ public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet
   // //////////////////////////////////
   // Methods specific to this class
 
-  public CoverageTableNew coverage() {
+  public CoverageTable coverage() {
     return array.coverage;
   }
 
