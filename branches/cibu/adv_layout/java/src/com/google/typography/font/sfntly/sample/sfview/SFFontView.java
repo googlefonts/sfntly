@@ -5,6 +5,7 @@ package com.google.typography.font.sfntly.sample.sfview;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.sample.sfview.ViewableTaggedData.TaggedDataImpl;
+import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.opentype.GSubTable;
 
 import java.awt.Color;
@@ -21,12 +22,13 @@ import javax.swing.SwingConstants;
  */
 public class SFFontView extends JComponent implements Scrollable {
   private static final long serialVersionUID = 1L;
-  private ViewableTaggedData viewer;
+  private final ViewableTaggedData viewer;
 
   public SFFontView(Font font) {
     setBackground(Color.WHITE);
 
-    TaggedDataImpl tdata = new ViewableTaggedData.TaggedDataImpl();
+    PostScriptTable post = font.getTable(Tag.post);
+    TaggedDataImpl tdata = new ViewableTaggedData.TaggedDataImpl(post);
     OtTableTagger tagger = new OtTableTagger(tdata);
     GSubTable gsub = font.getTable(Tag.GSUB);
     tagger.tag(gsub);

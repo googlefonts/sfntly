@@ -11,10 +11,6 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
 public class SFView {
-  // private static final String fileName =
-  // "/home/build/google3/googledata/third_party/" +
-  // "fonts/ascender/arial.ttf";
-
   public static void main(String[] args) throws IOException {
 
     for (String fontName : args) {

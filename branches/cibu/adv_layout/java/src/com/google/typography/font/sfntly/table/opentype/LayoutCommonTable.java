@@ -8,6 +8,7 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecord;
 import com.google.typography.font.sfntly.table.opentype.component.TagOffsetRecord;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,7 +43,8 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   private LookupCache lookupCache;
 
   /**
-   * @param data the GSUB or GPOS data
+   * @param data
+   *          the GSUB or GPOS data
    */
   protected LayoutCommonTable(ReadableFontData data, boolean dataIsCanonical) {
     super(data);
@@ -112,8 +114,8 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     return handleCreateLookupList(lookupListData(data, dataIsCanonical), dataIsCanonical);
   }
 
-  protected abstract LookupListTable handleCreateLookupList(ReadableFontData data,
-      boolean dataIsCanonical);
+  protected abstract LookupListTable handleCreateLookupList(
+      ReadableFontData data, boolean dataIsCanonical);
 
   private void init() {
     if (scriptList == null) {
@@ -128,18 +130,22 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   }
 
   /**
-   * Given a script and language tag and a set of features, return the corresponding
-   * lookups in the order specified by the font.  If the specification requires
-   * features to be applied in a given order, they should be passed in separate calls.
-   * Regardless of what is in the featureSet, required features for the LangSys will
-   * always be included.
+   * Given a script and language tag and a set of features, return the
+   * corresponding lookups in the order specified by the font. If the
+   * specification requires features to be applied in a given order, they should
+   * be passed in separate calls. Regardless of what is in the featureSet,
+   * required features for the LangSys will always be included.
    *
-   * @param stag the script tag
-   * @param ltag the language tag
-   * @param featureSet the features (set may be empty)
+   * @param stag
+   *          the script tag
+   * @param ltag
+   *          the language tag
+   * @param featureSet
+   *          the features (set may be empty)
    * @return the lookups
    */
-  public Iterable<LookupTableNew> lookups(ScriptTag stag, LanguageTag ltag, Set<FeatureTag> featureSet) {
+  public Iterable<LookupTableNew> lookups(
+      ScriptTag stag, LanguageTag ltag, Set<FeatureTag> featureSet) {
     init();
     LangSysTable langSys = getLangSysTableNew(stag.tag(), ltag.tag());
     Set<FeatureTable> features = getFeatureTableSet(langSys, featureSet);
@@ -150,31 +156,33 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   private static class LangSysCacheKey {
     private final int scriptTag;
     private final int langSysTag;
+
     private LangSysCacheKey(ScriptTag stag, LanguageTag ltag) {
       this(stag.tag(), ltag.tag());
     }
+
     private LangSysCacheKey(int scriptTag, int langSysTag) {
       this.scriptTag = scriptTag;
       this.langSysTag = langSysTag;
     }
+
     @Override
     public int hashCode() {
       return scriptTag ^ langSysTag;
     }
+
     @Override
     public boolean equals(Object rhs) {
-      return rhs instanceof LangSysCacheKey &&
-          equals((LangSysCacheKey) rhs);
+      return rhs instanceof LangSysCacheKey && equals((LangSysCacheKey) rhs);
     }
+
     private boolean equals(LangSysCacheKey rhs) {
-      return rhs != null &&
-          this.scriptTag == rhs.scriptTag &&
-          this.langSysTag == rhs.langSysTag;
+      return rhs != null && this.scriptTag == rhs.scriptTag && this.langSysTag == rhs.langSysTag;
     }
   }
 
   private class LangSysCache {
-    private Map<LangSysCacheKey, LangSysTable> map;
+    private final Map<LangSysCacheKey, LangSysTable> map;
 
     LangSysCache() {
       this.map = new HashMap<LangSysCacheKey, LangSysTable>();
@@ -183,13 +191,13 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     public LangSysTable get(int scriptTag, int langSysTag) {
       LangSysCacheKey key = new LangSysCacheKey(scriptTag, langSysTag);
       LangSysTable langSysTable;
-      synchronized(this) {
+      synchronized (this) {
         langSysTable = map.get(key);
       }
       if (langSysTable == null) {
         langSysTable = createLangSysTableNew(scriptTag, langSysTag);
         if (langSysTable != null) {
-          synchronized(this) {
+          synchronized (this) {
             map.put(key, langSysTable);
           }
         }
@@ -221,16 +229,16 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     return langSysCache.get(scriptTag, langSysTag);
   }
 
-//  private static final Comparator<FeatureTable> featureComparator =
-//      new Comparator<FeatureTable>() {
-//        @Override
-//        public int compare(FeatureTable o1, FeatureTable o2) {
-//          return o1.featureTag() - o2.featureTag();
-//        }
-//      };
+  // private static final Comparator<FeatureTable> featureComparator =
+  // new Comparator<FeatureTable>() {
+  // @Override
+  // public int compare(FeatureTable o1, FeatureTable o2) {
+  // return o1.featureTag() - o2.featureTag();
+  // }
+  // };
 
   private class FeatureCache {
-    private Map<Integer, FeatureTable> map;
+    private final Map<Integer, FeatureTable> map;
 
     private FeatureCache() {
       this.map = new HashMap<Integer, FeatureTable>();
@@ -238,13 +246,13 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
 
     public FeatureTable get(int featureIndex) {
       FeatureTable featureTable;
-      synchronized(this) {
+      synchronized (this) {
         featureTable = map.get(featureIndex);
       }
       if (featureTable == null) {
         featureTable = createFeatureTable(featureIndex);
         if (featureTable != null) {
-          synchronized(this) {
+          synchronized (this) {
             map.put(featureIndex, featureTable);
           }
         }
@@ -266,13 +274,14 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   }
 
   private Set<FeatureTable> getFeatureTableSet(LangSysTable langSys, Set<FeatureTag> features) {
-    Set<FeatureTable> result = new LinkedHashSet<FeatureTable>(); //featureComparator);
+    Set<FeatureTable> result = new LinkedHashSet<FeatureTable>(); // featureComparator);
 
     if (langSys == null) {
       return result;
     }
-    
-    // Always include the langSys required feature even if features doesn't contain it.
+
+    // Always include the langSys required feature even if features doesn't
+    // contain it.
     if (langSys.header.hasRequiredFeature()) {
       FeatureTable table = getFeatureTable(langSys.header.requiredFeature);
       if (table != null) {
@@ -282,7 +291,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
 
     // Only include other langSys features if features contains them.
     for (NumRecord record : langSys.records()) {
-      
+
       int tagValue = featureList.tagAt(record.value);
       FeatureTable table = featureList.subTableAt(record.value);// featureCache.get(record.value);
       if (table != null) {
@@ -297,7 +306,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   }
 
   class LookupCache {
-    private Map<Integer, LookupTableNew> map;
+    private final Map<Integer, LookupTableNew> map;
 
     private LookupCache() {
       map = new HashMap<Integer, LookupTableNew>();
@@ -305,13 +314,13 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
 
     public LookupTableNew get(int lookupIndex) {
       LookupTableNew lookup;
-      synchronized(this) {
+      synchronized (this) {
         lookup = map.get(lookupIndex);
       }
       if (lookup == null) {
         lookup = createLookupTable(lookupIndex);
         if (lookup != null) {
-          synchronized(this) {
+          synchronized (this) {
             map.put(lookupIndex, lookup);
           }
         }
@@ -347,7 +356,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   }
 
   private class LookupIterable implements Iterable<LookupTableNew> {
-    private Set<Integer> lookupIndices;
+    private final Set<Integer> lookupIndices;
 
     public LookupIterable(Set<Integer> lookupIndices) {
       this.lookupIndices = lookupIndices;
@@ -360,7 +369,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   }
 
   private class LookupIterator implements Iterator<LookupTableNew> {
-    private Iterator<Integer> indices;
+    private final Iterator<Integer> indices;
     private LookupTableNew nextLookup;
 
     public LookupIterator(Iterator<Integer> indices) {
@@ -400,8 +409,8 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   }
 
   static class BidirectionalMultiMap<X, Y> {
-    private Map<X, Set<Y>> xyMap;
-    private Map<Y, Set<X>> yxMap;
+    private final Map<X, Set<Y>> xyMap;
+    private final Map<Y, Set<X>> yxMap;
 
     BidirectionalMultiMap() {
       xyMap = new HashMap<X, Set<Y>>();
@@ -528,7 +537,8 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     private LookupListTable.Builder serializedLookupListBuilder;
 
     /**
-     * @param data the GSUB or GPOS data
+     * @param data
+     *          the GSUB or GPOS data
      */
     protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data);
@@ -545,15 +555,16 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       featureSet = new TreeSet<FeatureId<T>>();
       lookupList = new ArrayList<LookupId<T>>();
 
-      langSysFeatureBmm =
-          new BidirectionalMultiMap<LangSysId<T>, FeatureId<T>>();
-      featureLookupBmm =
-          new BidirectionalMultiMap<FeatureId<T>, LookupId<T>>();
+      langSysFeatureBmm = new BidirectionalMultiMap<LangSysId<T>, FeatureId<T>>();
+      featureLookupBmm = new BidirectionalMultiMap<FeatureId<T>, LookupId<T>>();
 
       if (data != null) {
-        ScriptListTable sl = new ScriptListTable(scriptListData(data, dataIsCanonical), dataIsCanonical);
-        FeatureListTable fl = new FeatureListTable(featureListData(data, dataIsCanonical), dataIsCanonical);
-        LookupListTable ll = handleCreateLookupList(lookupListData(data, dataIsCanonical), dataIsCanonical);
+        ScriptListTable sl = new ScriptListTable(
+            scriptListData(data, dataIsCanonical), dataIsCanonical);
+        FeatureListTable fl = new FeatureListTable(
+            featureListData(data, dataIsCanonical), dataIsCanonical);
+        LookupListTable ll = handleCreateLookupList(
+            lookupListData(data, dataIsCanonical), dataIsCanonical);
 
         int lookupCount = ll.recordList.count();
         List<LookupId<T>> lookupIds = new ArrayList<LookupId<T>>(lookupCount);
@@ -592,8 +603,8 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       }
     }
 
-    private void processLangSysTableNew(LangSysTable lt, int scriptTag, int languageTag,
-        List<FeatureId<T>> featureIds) {
+    private void processLangSysTableNew(
+        LangSysTable lt, int scriptTag, int languageTag, List<FeatureId<T>> featureIds) {
       LangSysId<T> langSysId = newLangSys(scriptTag, languageTag);
       int langSysFeatureCount = lt.records().count();
       for (int k = 0; k < langSysFeatureCount; ++k) {
@@ -608,8 +619,8 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       }
     }
 
-    protected abstract LookupListTable handleCreateLookupList(ReadableFontData data,
-        boolean dataIsCanonical);
+    protected abstract LookupListTable handleCreateLookupList(
+        ReadableFontData data, boolean dataIsCanonical);
 
     private void prepareToEdit() {
       if (lookupList == null) {
@@ -620,17 +631,22 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     private static abstract class ObjectId<T extends LookupTable> {
       protected Builder<T> builder;
       protected int id;
+
       protected ObjectId(Builder<T> builder, int id) {
         this.builder = builder;
         this.id = id;
       }
+
       public boolean isDeleted() {
         return builder == null;
       }
+
       public abstract void delete();
+
       void markDeleted() {
         builder = null;
       }
+
       // only called by builder to reset the ids
       void setId(int id) {
         this.id = id;
@@ -644,7 +660,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     }
 
     public static class LangSysId<T extends LookupTable> extends ObjectId<T>
-        implements Comparable<LangSysId<T>>{
+        implements Comparable<LangSysId<T>> {
       private final int scriptTag;
       private final int languageTag;
       private FeatureId<T> requiredFeature;
@@ -654,25 +670,28 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
         this.scriptTag = scriptTag;
         this.languageTag = languageTag;
       }
+
       @Override
       public int hashCode() {
         return scriptTag ^ languageTag;
       }
+
       @SuppressWarnings("unchecked")
       @Override
       public boolean equals(Object rhs) {
-        return rhs instanceof LayoutCommonTable.Builder.LangSysId &&
-            equals((LangSysId<T>) rhs);
+        return rhs instanceof LayoutCommonTable.Builder.LangSysId && equals((LangSysId<T>) rhs);
       }
+
       public boolean equals(LangSysId<T> rhs) {
-        return this.builder == rhs.builder &&
-            this.scriptTag == rhs.scriptTag &&
-            this.languageTag == rhs.languageTag;
+        return this.builder == rhs.builder && this.scriptTag == rhs.scriptTag
+            && this.languageTag == rhs.languageTag;
       }
+
       @Override
       public String toString() {
         return Tag.stringValue(scriptTag).trim() + "_" + Tag.stringValue(languageTag).trim();
       }
+
       @Override
       public int compareTo(LangSysId<T> rhs) {
         int d = this.scriptTag - rhs.scriptTag;
@@ -681,19 +700,23 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
         }
         return d;
       }
+
       @Override
       public void delete() {
         if (builder != null) {
           builder.deleteLangSys(this);
         }
       }
+
       boolean hasFeature(FeatureId<T> feature) {
         return !isDeleted() && builder.hasLangSysWithFeature(this, feature);
       }
+
       /** Called by builder only. */
       void setRequiredFeature(FeatureId<T> feature) {
         this.requiredFeature = feature;
       }
+
       /** Called by builder only. */
       FeatureId<T> requiredFeature() {
         return requiredFeature;
@@ -708,10 +731,12 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
         super(builder, builder.nextFeatureId++);
         this.featureTag = featureTag;
       }
+
       @Override
       public String toString() {
         return Tag.stringValue(featureTag).trim() + "(" + id + ")";
       }
+
       @Override
       public int compareTo(FeatureId<T> rhs) {
         // Equality is by identity.
@@ -722,15 +747,18 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
         }
         return d;
       }
+
       @Override
       public void delete() {
         if (builder != null) {
           builder.deleteFeature(this);
         }
       }
+
       public boolean hasLangSys(LangSysId<T> langSysId) {
         return !isDeleted() && builder.hasLangSysWithFeature(langSysId, this);
       }
+
       public boolean hasLookup(LookupId<T> lookupId) {
         return !isDeleted() && builder.hasFeatureWithLookup(this, lookupId);
       }
@@ -739,26 +767,31 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     public static class LookupId<T extends LookupTable> extends ObjectId<T>
         implements Comparable<LookupId<T>> {
       private final LookupTableNew lookup;
+
       LookupId(Builder<T> builder, LookupTableNew lookup2) {
         super(builder, builder.nextLookupId++);
         this.lookup = lookup2;
       }
+
       @Override
       public String toString() {
         return lookup.header.lookupType + "(" + id + ")";
       }
+
       @Override
       public int compareTo(LookupId<T> rhs) {
         // Equality is by identity.
         // Two LookupIds can compare equal without being equal.
         return this.id - rhs.id;
       }
+
       @Override
       public void delete() {
         if (builder != null) {
           builder.deleteLookup(this);
         }
       }
+
       public boolean hasFeature(FeatureId<T> featureId) {
         return !isDeleted() && builder.hasFeatureWithLookup(featureId, this);
       }
@@ -769,12 +802,13 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     }
 
     /**
-     * Returns a langSysId for this builder for the given script and language tags,
-     * minting a new one if needed.  Use LanguageTag.DFLT for the default language
-     * system for the script.  The DFLT script can only have a DFLT language tag.
+     * Returns a langSysId for this builder for the given script and language
+     * tags, minting a new one if needed. Use LanguageTag.DFLT for the default
+     * language system for the script. The DFLT script can only have a DFLT
+     * language tag.
      *
-     * @throws IllegalArgumentException if scriptTag is DFLT and languageTag
-     * is not.
+     * @throws IllegalArgumentException
+     *           if scriptTag is DFLT and languageTag is not.
      */
     public LangSysId<T> newLangSys(int scriptTag, int languageTag) {
       prepareToEdit();
@@ -789,9 +823,9 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
           return id;
         }
       }
-     LangSysId<T> id = new LangSysId<T>(this, scriptTag, languageTag);
-     langSysSet.add(id);
-     return id;
+      LangSysId<T> id = new LangSysId<T>(this, scriptTag, languageTag);
+      langSysSet.add(id);
+      return id;
     }
 
     public Builder<T> deleteLangSys(LangSysId<T> langSys) {
@@ -857,8 +891,8 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       return this;
     }
 
-    public Builder<T> setLangSysRequiredFeature(LangSysId<T> langSys,
-        FeatureId<T> requiredFeature) {
+    public Builder<T> setLangSysRequiredFeature(
+        LangSysId<T> langSys, FeatureId<T> requiredFeature) {
       langSys.setRequiredFeature(requiredFeature);
       return addFeatureToLangSys(requiredFeature, langSys);
     }
@@ -1064,7 +1098,8 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       }
 
       for (FeatureId<T> featureId : featureSet) {
-        FeatureTable.Builder ftb = (FeatureTable.Builder)flb.addBuilderForTag(featureId.featureTag);
+        FeatureTable.Builder ftb = (FeatureTable.Builder) flb.addBuilderForTag(
+            featureId.featureTag);
         for (LookupId<T> lookupId : lookupsForFeature(featureId)) {
           ftb.addValues(lookupId.id);
         }
@@ -1072,13 +1107,13 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
 
       for (LangSysId<T> langSysId : langSysSet) {
         int scriptTag = langSysId.scriptTag;
-        ScriptTable.Builder stb = (ScriptTable.Builder)slb.addBuilderForTag(scriptTag);
+        ScriptTable.Builder stb = (ScriptTable.Builder) slb.addBuilderForTag(scriptTag);
         int languageTag = langSysId.languageTag;
         LangSysTable.Builder lsb;
         if (languageTag == LanguageTag.DFLT.tag()) {
-          lsb = (LangSysTable.Builder)stb.buiderForHeader();
+          lsb = (LangSysTable.Builder) stb.buiderForHeader();
         } else {
-          lsb = (LangSysTable.Builder)stb.addBuiderForTag(languageTag);
+          lsb = (LangSysTable.Builder) stb.addBuiderForTag(languageTag);
         }
         if (langSysId.requiredFeature != null) {
           lsb.setRequiredFeatureIndex(langSysId.requiredFeature.id);
@@ -1112,7 +1147,6 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       nextLangSysId = renumberIds(langSysSet);
     }
 
-    
     @Override
     protected int subSerialize(WritableFontData newData) {
       if (serializedLength == 0) {

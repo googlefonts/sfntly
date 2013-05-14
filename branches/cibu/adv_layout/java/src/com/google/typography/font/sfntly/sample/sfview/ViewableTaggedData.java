@@ -4,6 +4,7 @@ package com.google.typography.font.sfntly.sample.sfview;
 
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.ReadableFontData;
+import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.opentype.TaggedData;
 
 import java.awt.Color;
@@ -145,6 +146,11 @@ public class ViewableTaggedData {
   static class TaggedDataImpl implements TaggedData {
     private final List<Marker> markers = new ArrayList<Marker>();
     private RangeNode rangeStack;
+    private final PostScriptTable post;
+
+    public TaggedDataImpl(PostScriptTable post) {
+      this.post = post;
+    }
 
     @Override
     public void tagRange(String string, int start, int length, int depth) {
@@ -286,6 +292,12 @@ public class ViewableTaggedData {
         value = data.readULongAsInt(pos);
         alt = Tag.stringValue(value);
         width = 4;
+        break;
+      case GLYPH:
+        value = data.readUShort(pos);
+        alt = String.valueOf(value);
+        label = ((label != null) ? label + ": " : "") + post.glyphName(value);
+        width = 2;
         break;
       default:
         throw new IllegalStateException("unimplemented field type");
