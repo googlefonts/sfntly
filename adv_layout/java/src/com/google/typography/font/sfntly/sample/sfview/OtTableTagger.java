@@ -39,8 +39,10 @@ import com.google.typography.font.sfntly.table.opentype.ligaturesubst.Ligature;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.LigatureSet;
 import com.google.typography.font.sfntly.table.opentype.singlesubst.HeaderFmt1;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -63,10 +65,13 @@ public class OtTableTagger {
     if (gsub == null) {
       return;
     }
+
     tagTable(gsub.scriptList());
     tagTable(gsub.featureList());
     tagTable(gsub.lookupList());
   }
+
+  private final List<String> tableCache = new ArrayList<String>();
 
   public void tagTable(FontDataTable table) {
     if (table == null) {
@@ -76,6 +81,12 @@ public class OtTableTagger {
     if (data == null) {
       return;
     }
+
+    if (tableCache.contains(table.toString())) {
+      return;
+    }
+    tableCache.add(table.toString());
+
     TagMethod tm = getTagMethod(table);
     if (tm == null) {
       td.pushRange(table.getClass().getSimpleName(), data);
@@ -270,10 +281,10 @@ public class OtTableTagger {
       @Override
       public void tag(FontDataTable fdt) {
         Ligature table = (Ligature) fdt;
-        td.tagRangeField(FieldType.SHORT, "lig glyph");
+        td.tagRangeField(FieldType.GLYPH, "lig glyph");
         td.tagRangeField(FieldType.SHORT, "glyph count + 1");
         for (int i = 0; i < table.recordList.count(); ++i) {
-          td.tagRangeField(FieldType.SHORT, null);
+          td.tagRangeField(FieldType.GLYPH, null);
         }
       }
     });
@@ -296,7 +307,7 @@ public class OtTableTagger {
           tagTable(tableFmt2.coverage);
           td.tagRangeField(FieldType.SHORT, "glyph count");
           for (int i = 0; i < tableFmt2.recordList.count(); ++i) {
-            td.tagRangeField(FieldType.SHORT, null);
+            td.tagRangeField(FieldType.GLYPH, null);
           }
           break;
         }
@@ -330,7 +341,7 @@ public class OtTableTagger {
         NumRecordTable table = (NumRecordTable) fdt;
         td.tagRangeField(FieldType.SHORT, "glyph count");
         for (int i = 0; i < table.recordList.count(); ++i) {
-          td.tagRangeField(FieldType.SHORT, null);
+          td.tagRangeField(FieldType.GLYPH, null);
         }
       }
     });
@@ -385,7 +396,7 @@ public class OtTableTagger {
         td.tagRangeField(FieldType.SHORT, "subst lookup record count");
         int glyphCount = table.inputGlyphs.count();
         for (int i = 0; i < glyphCount; ++i) {
-          td.tagRangeField(FieldType.SHORT, "glyph id");
+          td.tagRangeField(FieldType.GLYPH, "glyph id");
         }
         int lookupCount = table.lookupRecords.count();
         for (int i = 0; i < lookupCount; ++i) {
@@ -488,19 +499,19 @@ public class OtTableTagger {
         td.tagRangeField(FieldType.SHORT, "backtrack glyph count");
         int glyphCount = table.backtrackGlyphs.count();
         for (int i = 0; i < glyphCount; ++i) {
-          td.tagRangeField(FieldType.SHORT, String.valueOf(i + 1));
+          td.tagRangeField(FieldType.GLYPH, null);
         }
 
         td.tagRangeField(FieldType.SHORT, "input glyph count");
         glyphCount = table.inputGlyphs.count();
         for (int i = 0; i < glyphCount; ++i) {
-          td.tagRangeField(FieldType.SHORT, String.valueOf(i + 1));
+          td.tagRangeField(FieldType.GLYPH, null);
         }
 
         td.tagRangeField(FieldType.SHORT, "look ahead glyph count");
         glyphCount = table.lookAheadGlyphs.count();
         for (int i = 0; i < glyphCount; ++i) {
-          td.tagRangeField(FieldType.SHORT, String.valueOf(i + 1));
+          td.tagRangeField(FieldType.GLYPH, null);
         }
 
         td.tagRangeField(FieldType.SHORT, "subst lookup record count");
@@ -538,7 +549,7 @@ public class OtTableTagger {
         tagTable(table.coverage());
         int glyphCount = td.tagRangeField(FieldType.SHORT, "glyph count");
         for (int i = 0; i < glyphCount; ++i) {
-          td.tagRangeField(FieldType.SHORT, String.valueOf(i + 1));
+          td.tagRangeField(FieldType.GLYPH, null);
         }
       }
     });
@@ -578,7 +589,7 @@ public class OtTableTagger {
           NumRecordTable tableFmt1 = (NumRecordTable) table.array;
           td.tagRangeField(FieldType.SHORT, "glyph count");
           for (int i = 0; i < tableFmt1.recordList.count(); ++i) {
-            td.tagRangeField(FieldType.SHORT, String.valueOf(i + 1));
+            td.tagRangeField(FieldType.GLYPH, null);
           }
         }
         if (table.format == 2) {
