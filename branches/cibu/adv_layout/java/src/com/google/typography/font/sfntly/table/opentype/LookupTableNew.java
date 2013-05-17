@@ -14,8 +14,36 @@ public class LookupTableNew extends OffsetRecordTable<SubstSubtable> {
   public static final int LOOKUP_FLAG_INDEX = 1;
   public static final int LOOKUP_FLAG_DEFAULT = 0;
 
+  public enum LookupFlagBit {
+    RIGHT_TO_LEFT(0x0001),
+    IGNORE_BASE_GLYPHS(0x0002),
+    IGNORE_LIGATURES(0x0004),
+    IGNORE_MARKS(0x0008),
+    USE_MARK_FILTERING_SET(0x0010),
+    RESERVED(0x00E0),
+    MARK_ATTACHMENT_TYPE(0xFF00);
+
+    private int bit;
+
+    private LookupFlagBit(int bit) {
+      this.bit = bit;
+    }
+
+    public int getValue(int value) {
+      return bit & value;
+    }
+  }
+
   public LookupTableNew(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
+    int lookupFlag = getField(LOOKUP_FLAG_INDEX);
+    if (LookupFlagBit.USE_MARK_FILTERING_SET.getValue(lookupFlag) != 0) {
+      throw new IllegalArgumentException(
+          "Lookup Flag has Use Mark Filtering Set which is unimplemented.");
+    }
+    if (LookupFlagBit.RESERVED.getValue(lookupFlag) != 0) {
+      throw new IllegalArgumentException("Reserved bits of Lookup Flag are not 0");
+    }
   }
 
   @Override
@@ -33,6 +61,8 @@ public class LookupTableNew extends OffsetRecordTable<SubstSubtable> {
       return new ContextSubst(data, base, dataIsCanonical);
     case GSUB_CHAINING_CONTEXTUAL:
       return new ChainContextSubst(data, base, dataIsCanonical);
+    case GSUB_EXTENSION:
+      return new ExtensionSubst(data, base, dataIsCanonical);
     default:
       throw new IllegalArgumentException("LookupType is " + lookupType);
     }

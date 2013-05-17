@@ -57,6 +57,6 @@ public interface TaggedData {
   void popRange();
 
   static enum FieldType {
-    TAG, SHORT, SHORT_IGNORED, SHORT_IGNORED_FFFF, OFFSET, OFFSET_NONZERO, GLYPH;
+    TAG, SHORT, SHORT_IGNORED, SHORT_IGNORED_FFFF, OFFSET, OFFSET_NONZERO, OFFSET32, GLYPH;
   }
 }

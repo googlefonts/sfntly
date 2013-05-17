@@ -273,6 +273,12 @@ public class ViewableTaggedData {
         width = 2;
         tagTarget(position, value, base + value, null);
         break;
+      case OFFSET32:
+        value = data.readULongAsInt(pos);
+        alt = String.format("#%04x", base + value);
+        width = 4;
+        tagTarget(position, value, base + value, null);
+        break;
       case SHORT:
         value = data.readUShort(pos);
         alt = String.valueOf(value);
@@ -307,6 +313,7 @@ public class ViewableTaggedData {
 
       switch (ft) {
       case OFFSET:
+      case OFFSET32:
         value += base;
         break;
       case OFFSET_NONZERO:
@@ -622,62 +629,72 @@ public class ViewableTaggedData {
   }
 
   static class WidthUsageRecord {
-    final Map<Integer, Integer> widthUsageMap;
+    final Map<Integer, Integer> widthUsage = new HashMap<Integer, Integer>();
+    private int width;
+    static private final WidthUsageRecord EMPTY = new WidthUsageRecord();
 
-    public WidthUsageRecord() {
-      widthUsageMap = new HashMap<Integer, Integer>();
-    }
+    public static WidthUsageRecord copyWithWidthAdded(WidthUsageRecord other, int width) {
+      WidthUsageRecord current = new WidthUsageRecord();
+      current.width = width;
 
-    public WidthUsageRecord(int width) {
-      this();
-      widthUsageMap.put(width, 1);
-    }
+      current.widthUsage.putAll(other.widthUsage);
+      int count = 0;
+      if (current.widthUsage.containsKey(width)) {
+        count = current.widthUsage.get(width);
+      }
+      current.widthUsage.put(width, count + 1);
 
-    public WidthUsageRecord(WidthUsageRecord other, int width) {
-      widthUsageMap = new HashMap<Integer, Integer>(other.widthUsageMap);
-      int currValue = widthUsageMap.containsKey(width) ? widthUsageMap.get(width) : 0;
-      widthUsageMap.put(width, currValue + 1);
+      return current;
     }
 
     public int lowestEquality(WidthUsageRecord other) {
-      for (int i = 0; this.widthUsageMap.containsKey(i); i++) {
-        if (other.widthUsageMap.get(i) == this.widthUsageMap.get(i)) {
+      for (int i = 0; this.widthUsage.containsKey(i); i++) {
+        if (other.widthUsage.get(i) == this.widthUsage.get(i)) {
           return i;
         }
       }
-      return other.widthUsageMap.keySet().size();
+      return other.widthUsage.keySet().size();
+    }
+
+    public int width() {
+      return width;
+    }
+
+    @Override
+    public String toString() {
+      return "{" + widthUsage.toString() + ", " + width + "}";
     }
   }
 
   static class RefWidthFinder {
-    final Map<Integer, Integer> cache;
-    final Map<Integer, WidthUsageRecord> widthUsageMap;
+    final TreeMap<Integer, WidthUsageRecord> tgt2widthUsage;
+    static private final int MAX_WIDTH = 600;
 
     public RefWidthFinder() {
-      cache = new TreeMap<Integer, Integer>();
-      widthUsageMap = new TreeMap<Integer, WidthUsageRecord>();
+      tgt2widthUsage = new TreeMap<Integer, WidthUsageRecord>();
     }
 
     public int add(Reference ref) {
       int src = ref.sourcePosition;
       int trg = ref.targetPosition;
 
-      if (cache.containsKey(trg)) {
-        return cache.get(trg);
+      if (tgt2widthUsage.containsKey(trg)) {
+        return tgt2widthUsage.get(trg).width();
       }
 
-      WidthUsageRecord srcRecord = new WidthUsageRecord();
-      WidthUsageRecord trgRecord = new WidthUsageRecord();
-      for (Entry<Integer, WidthUsageRecord> entry : widthUsageMap.entrySet()) {
-        if (entry.getKey() <= src) {
-          srcRecord = entry.getValue();
-        }
-        trgRecord = entry.getValue();
-      }
+      Entry<Integer, WidthUsageRecord> entry = tgt2widthUsage.floorEntry(src);
+      WidthUsageRecord srcWidthUsage = (entry != null) ? entry.getValue() : WidthUsageRecord.EMPTY;
 
-      int width = srcRecord.lowestEquality(trgRecord);
-      widthUsageMap.put(trg, new WidthUsageRecord(trgRecord, width));
-      cache.put(trg, width);
+      entry = tgt2widthUsage.lastEntry();
+      WidthUsageRecord lastWidthUsage = (entry != null) ? entry.getValue() : WidthUsageRecord.EMPTY;
+
+      int width = srcWidthUsage.lowestEquality(lastWidthUsage);
+      if (width > MAX_WIDTH) {
+        width = MAX_WIDTH;
+      }
+      WidthUsageRecord trgWidthUsage = WidthUsageRecord.copyWithWidthAdded(lastWidthUsage, width);
+
+      tgt2widthUsage.put(trg, trgWidthUsage);
       return width;
     }
   }

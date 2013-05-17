@@ -8,6 +8,7 @@ import com.google.typography.font.sfntly.table.opentype.ChainContextSubst;
 import com.google.typography.font.sfntly.table.opentype.ClassDefTable;
 import com.google.typography.font.sfntly.table.opentype.ContextSubst;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
+import com.google.typography.font.sfntly.table.opentype.ExtensionSubst;
 import com.google.typography.font.sfntly.table.opentype.FeatureListTable;
 import com.google.typography.font.sfntly.table.opentype.FeatureTable;
 import com.google.typography.font.sfntly.table.opentype.GSubTable;
@@ -510,9 +511,15 @@ public class OtTableTagger {
       }
     });
 
-    register(new TagMethod(NullTable.class) {
+    register(new TagMethod(ExtensionSubst.class) {
       @Override
       public void tag(FontDataTable fdt) {
+        ExtensionSubst table = (ExtensionSubst) fdt;
+        td.tagRangeField(FieldType.SHORT, "format");
+        td.tagRangeField(FieldType.SHORT, "lookup type");
+        td.tagRangeField(FieldType.OFFSET32, "lookup offset");
+        SubstSubtable subTable = table.subTable();
+        tagTable(subTable);
       }
     });
 
@@ -565,6 +572,11 @@ public class OtTableTagger {
       }
     });
 
+    register(new TagMethod(NullTable.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+      }
+    });
   }
 
   private static final Comparator<Class<? extends FontDataTable>> CLASS_NAME_COMPARATOR =
