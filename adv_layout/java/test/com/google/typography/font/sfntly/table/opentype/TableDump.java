@@ -171,7 +171,7 @@ public class TableDump {
 
     formatln("Lookup Table");
     formatln("lookup type: %d", lookup.header.lookupType);
-    formatln("lookup flag: 0x%X", lookup.header.lookupFlag);
+    formatln("lookup flag: 0x%X", lookup.header.lookupType);
     
     int i = 0;
     for (LigatureSubTable subtable : lookup) {
