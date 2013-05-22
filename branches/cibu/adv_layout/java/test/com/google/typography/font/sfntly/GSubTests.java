@@ -12,7 +12,7 @@ import com.google.typography.font.sfntly.table.opentype.GSubTable;
 import com.google.typography.font.sfntly.table.opentype.GsubCommonTable;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupTable;
 import com.google.typography.font.sfntly.table.opentype.LanguageTag;
-import com.google.typography.font.sfntly.table.opentype.LookupTableNew;
+import com.google.typography.font.sfntly.table.opentype.LookupTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTag;
 import com.google.typography.font.sfntly.table.opentype.TableDump;
 import com.google.typography.font.sfntly.testutils.TestFont.TestFontNames;
@@ -101,9 +101,9 @@ public class GSubTests extends TestCase {
 
     td.println();
     td.println("Lookups for mlym_DFLT");
-    Iterable<LookupTableNew> lookups = gsub.lookups(
+    Iterable<LookupTable> lookups = gsub.lookups(
         ScriptTag.mlym, LanguageTag.DFLT, EnumSet.allOf(FeatureTag.class));
-    for (LookupTableNew table : lookups) {
+    for (LookupTable table : lookups) {
       td.dumpLookup(table);
     }
     td.flush();

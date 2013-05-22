@@ -15,7 +15,7 @@ import com.google.typography.font.sfntly.table.opentype.GSubTable;
 import com.google.typography.font.sfntly.table.opentype.LangSysTable;
 import com.google.typography.font.sfntly.table.opentype.LigatureSubst;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
-import com.google.typography.font.sfntly.table.opentype.LookupTableNew;
+import com.google.typography.font.sfntly.table.opentype.LookupTable;
 import com.google.typography.font.sfntly.table.opentype.MultipleSubst;
 import com.google.typography.font.sfntly.table.opentype.NullTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptListTable;
@@ -199,7 +199,7 @@ public class OtTableTagger {
           td.tagRangeField(FieldType.OFFSET, null);
         }
         for (int i = 0; i < lookupCount; ++i) {
-          LookupTableNew lookup = table.subTableAt(i);
+          LookupTable lookup = table.subTableAt(i);
           if (lookup != null) {
             tagTable(lookup);
           }
@@ -209,10 +209,10 @@ public class OtTableTagger {
       }
     });
 
-    register(new TagMethod(LookupTableNew.class) {
+    register(new TagMethod(LookupTable.class) {
       @Override
       public void tag(FontDataTable fdt) {
-        LookupTableNew table = (LookupTableNew) fdt;
+        LookupTable table = (LookupTable) fdt;
         td.tagRangeField(FieldType.SHORT, "lookup type");
         td.tagRangeField(FieldType.SHORT, "lookup flags");
         int subTableCount = td.tagRangeField(FieldType.SHORT, "subtable count");

@@ -5,7 +5,7 @@ package com.google.typography.font.sfntly.table.opentype;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
-import com.google.typography.font.sfntly.table.opentype.LookupTable.LookupType;
+import com.google.typography.font.sfntly.table.opentype.LookupTableOld.LookupType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public abstract class LookupList extends SubTable {
     if (data == null) {
       return -1;
     }
-    return data.readUShort(offset + LookupTable.LOOKUP_TYPE_OFFSET);
+    return data.readUShort(offset + LookupTableOld.LOOKUP_TYPE_OFFSET);
   }
 
   static ReadableFontData readLookupData(ReadableFontData data, boolean dataIsCanonical,
@@ -74,15 +74,15 @@ public abstract class LookupList extends SubTable {
 
   public abstract LookupType lookupTypeAt(int index);
 
-  public LookupTable lookupAt(int index) {
+  public LookupTableOld lookupAt(int index) {
     ReadableFontData lookupData = readLookupData(data, dataIsCanonical, index);
     return createLookup(lookupData);
   }
 
-  protected abstract LookupTable createLookup(ReadableFontData data);
+  protected abstract LookupTableOld createLookup(ReadableFontData data);
 
   static abstract class Builder extends SubTable.Builder<LookupList> {
-    private List<LookupTable.Builder<?>> builders;
+    private List<LookupTableOld.Builder<?>> builders;
     protected boolean dataIsCanonical;
     private int serializedCount;
     private int serializedLength;
@@ -96,15 +96,15 @@ public abstract class LookupList extends SubTable {
       this(null, false);
     }
 
-    protected abstract LookupTable.Builder createLookupBuilder(
+    protected abstract LookupTableOld.Builder createLookupBuilder(
         ReadableFontData lookupData);
 
     void initFromData(ReadableFontData data) {
       int count = readLookupCount(data);
-      builders = new ArrayList<LookupTable.Builder<?>>(count);
+      builders = new ArrayList<LookupTableOld.Builder<?>>(count);
       for (int i = 0; i < count; ++i) {
         ReadableFontData lookupData = readLookupData(data, dataIsCanonical, i);
-        LookupTable.Builder lookup = createLookupBuilder(lookupData);
+        LookupTableOld.Builder lookup = createLookupBuilder(lookupData);
         if (lookup != null) {
           builders.add(lookup);
         }
@@ -124,24 +124,24 @@ public abstract class LookupList extends SubTable {
       return builders.size();
     }
 
-    public LookupTable.Builder lookupAt(int index) {
+    public LookupTableOld.Builder lookupAt(int index) {
       prepareToEdit();
       return builders.get(index);
     }
 
-    public Builder addLookup(LookupTable lookup) {
+    public Builder addLookup(LookupTableOld lookup) {
       return addLookup(lookup.builder());
     }
 
-    public Builder addLookup(LookupTable.Builder lookup) {
+    public Builder addLookup(LookupTableOld.Builder lookup) {
       return addLookupAt(lookup, lookupCount());
     }
 
-    public Builder addLookupAt(LookupTable lookup, int index) {
+    public Builder addLookupAt(LookupTableOld lookup, int index) {
       return addLookupAt(lookup.builder(), index);
     }
 
-    public Builder addLookupAt(LookupTable.Builder lookup, int index) {
+    public Builder addLookupAt(LookupTableOld.Builder lookup, int index) {
       prepareToEdit();
       builders.add(index, lookup);
       return this;
@@ -149,7 +149,7 @@ public abstract class LookupList extends SubTable {
 
     public Builder moveLookup(int fromIndex, int toIndex) {
       prepareToEdit();
-      LookupTable.Builder builder = builders.remove(fromIndex);
+      LookupTableOld.Builder builder = builders.remove(fromIndex);
       builders.add(toIndex, builder);
       return this;
     }
@@ -168,7 +168,7 @@ public abstract class LookupList extends SubTable {
       int rpos = LOOKUP_OFFSET_BASE;
       int spos = rpos + serializedCount * LOOKUP_OFFSET_SIZE;
       for (int i = 0; i < builders.size(); ++i) {
-        LookupTable.Builder builder = builders.get(i);
+        LookupTableOld.Builder builder = builders.get(i);
         int s = builder.subDataSizeToSerialize();
         if (s > 0) {
           newData.writeUShort(rpos, spos);

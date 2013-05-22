@@ -335,7 +335,8 @@ public class ViewableTaggedData {
       for (List<Rule> rules : rulesList) {
         System.out.println(
             "------------------------------ " + (i++) + " --------------------------------");
-        for (Rule rule : rules) {
+
+        for (Rule rule : rules.subList(0, Math.min(rules.size(), 30))) {
           System.out.println(toString(rule));
         }
       }

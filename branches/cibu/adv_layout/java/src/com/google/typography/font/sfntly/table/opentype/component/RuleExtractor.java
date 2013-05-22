@@ -1,24 +1,31 @@
 package com.google.typography.font.sfntly.table.opentype.component;
 
 import com.google.typography.font.sfntly.table.opentype.ChainContextSubst;
+import com.google.typography.font.sfntly.table.opentype.ClassDefTable;
 import com.google.typography.font.sfntly.table.opentype.ContextSubst;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.ExtensionSubst;
 import com.google.typography.font.sfntly.table.opentype.LigatureSubst;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
-import com.google.typography.font.sfntly.table.opentype.LookupTableNew;
+import com.google.typography.font.sfntly.table.opentype.LookupTable;
 import com.google.typography.font.sfntly.table.opentype.MultipleSubst;
 import com.google.typography.font.sfntly.table.opentype.SingleSubst;
+import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubClassSetArray;
+import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRule;
+import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSet;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSetArray;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.CoverageArray;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.InnerArraysFmt3;
+import com.google.typography.font.sfntly.table.opentype.classdef.InnerArrayFmt1;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.Ligature;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.LigatureSet;
 import com.google.typography.font.sfntly.table.opentype.singlesubst.HeaderFmt1;
 import com.google.typography.font.sfntly.table.opentype.singlesubst.InnerArrayFmt2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RuleExtractor {
 
@@ -39,7 +46,11 @@ public class RuleExtractor {
     case 1:
       return extract(table.fmt1Table());
     case 2:
-      return extract(table.fmt2Table());
+      List<Integer> result = new ArrayList<Integer>();
+      for (List<Integer> glyphIds : extract(table.fmt2Table()).values()) {
+        result.addAll(glyphIds);
+      }
+      return result;
     default:
       throw new IllegalArgumentException("unimplemented format " + table.format);
     }
@@ -53,10 +64,10 @@ public class RuleExtractor {
     return result;
   }
 
-  public static List<Integer> extract(RangeRecordTable table) {
-    List<Integer> result = new ArrayList<Integer>();
+  public static Map<Integer, List<Integer>> extract(RangeRecordTable table) {
+    Map<Integer, List<Integer>> result = new HashMap<Integer, List<Integer>>();
     for (RangeRecord record : table.recordList) {
-      result.addAll(extract(record));
+      result.put(record.property, extract(record));
     }
     return result;
   }
@@ -128,6 +139,8 @@ public class RuleExtractor {
     switch (table.format) {
     case 1:
       return extract(table.fmt1Table());
+    case 2:
+      return extract(table.fmt2Table(), allLookupRules);
     case 3:
       return extract(table.fmt3Table(), allLookupRules);
     default:
@@ -139,10 +152,116 @@ public class RuleExtractor {
     throw new IllegalArgumentException("unimplemented extractor for ChainSubRuleSetArray");
   }
 
+  public static List<Rule> extract(ChainSubClassSetArray table, List<List<Rule>> allLookupRules) {
+    Map<Integer, List<Integer>> backtrackClassDef = extract(table.backtrackClassDef);
+    Map<Integer, List<Integer>> inputClassDef = extract(table.inputClassDef);
+    Map<Integer, List<Integer>> lookAheadClassDef = extract(table.lookAheadClassDef);
+
+    List<Rule> result = new ArrayList<Rule>();
+    int i = 0;
+    for (ChainSubRuleSet chainSubRuleSet : table) {
+
+      if (chainSubRuleSet != null) {
+        result.addAll(extract(chainSubRuleSet,
+            backtrackClassDef,
+            i,
+            inputClassDef,
+            lookAheadClassDef,
+            allLookupRules));
+      }
+      i++;
+    }
+    return result;
+  }
+
+  public static Map<Integer, List<Integer>> extract(ClassDefTable table) {
+    switch (table.format) {
+    case 1:
+      return extract(table.fmt1Table());
+    case 2:
+      return extract(table.fmt2Table());
+    default:
+      throw new IllegalArgumentException("unimplemented format " + table.format);
+    }
+  }
+
+  public static Map<Integer, List<Integer>> extract(InnerArrayFmt1 table) {
+    Map<Integer, List<Integer>> result = new HashMap<Integer, List<Integer>>();
+    int glyphId = table.getField(InnerArrayFmt1.START_GLYPH_INDEX);
+    for (NumRecord record : table) {
+      int classId = record.value;
+      if (!result.containsKey(classId)) {
+        result.put(classId, new ArrayList<Integer>());
+      }
+
+      result.get(classId).add(glyphId);
+      glyphId++;
+    }
+    return result;
+  }
+
+  public static List<Rule> extract(ChainSubRuleSet table,
+      Map<Integer, List<Integer>> backtrackClassDef,
+      int firstInputClass,
+      Map<Integer, List<Integer>> inputClassDef,
+      Map<Integer, List<Integer>> lookAheadClassDef,
+      List<List<Rule>> allLookupRules) {
+    List<Rule> result = new ArrayList<Rule>();
+    for (ChainSubRule chainSubRule : table) {
+      result.addAll(extract(chainSubRule,
+          backtrackClassDef,
+          firstInputClass,
+          inputClassDef,
+          lookAheadClassDef,
+          allLookupRules));
+    }
+    return result;
+  }
+
+  public static List<Rule> extract(ChainSubRule table,
+      Map<Integer, List<Integer>> backtrackClassDef,
+      int firstInputClass,
+      Map<Integer, List<Integer>> inputClassDef,
+      Map<Integer, List<Integer>> lookAheadClassDef,
+      List<List<Rule>> allLookupRules) {
+    List<List<Integer>> backtrackRows = extract(table.backtrackGlyphs, backtrackClassDef);
+    List<List<Integer>> inputRows = extract(firstInputClass, table.inputGlyphs, inputClassDef);
+    List<List<Integer>> lookAheadRows = extract(table.lookAheadGlyphs, lookAheadClassDef);
+
+    List<Rule> rulesSansSubst = Rule.permuteContext(backtrackRows, inputRows, lookAheadRows);
+    rulesSansSubst = applyChainingLookup(rulesSansSubst, table.lookupRecords, allLookupRules);
+    return rulesSansSubst;
+  }
+
+  public static List<List<Integer>> extract(
+      int firstInputClass, GlyphClassList list, Map<Integer, List<Integer>> classDef) {
+    List<List<Integer>> data = new ArrayList<List<Integer>>();
+    data.add(classDef.get(firstInputClass));
+    for (NumRecord record : list) {
+      data.add(classDef.get(record.value));
+    }
+    return Rule.permuteToRows(data);
+  }
+
+  public static List<List<Integer>> extract(
+      GlyphClassList list, Map<Integer, List<Integer>> classDef) {
+    List<List<Integer>> data = new ArrayList<List<Integer>>();
+    for (NumRecord record : list) {
+      data.add(classDef.get(record.value));
+    }
+    return Rule.permuteToRows(data);
+  }
+
   public static List<Rule> extract(InnerArraysFmt3 table, List<List<Rule>> allLookupRules) {
     List<Rule> rulesSansSubst = Rule.permuteContext(
         extract(table.backtrackGlyphs), extract(table.inputGlyphs), extract(table.lookAheadGlyphs));
-    for (SubstLookupRecord lookup : table.lookupRecords) {
+    rulesSansSubst = applyChainingLookup(rulesSansSubst, table.lookupRecords, allLookupRules);
+    return rulesSansSubst;
+  }
+
+  private static List<Rule> applyChainingLookup(
+      List<Rule> rulesSansSubst, SubstLookupRecordList lookups, List<List<Rule>> allLookupRules) {
+    for (SubstLookupRecord lookup : lookups) {
       int at = lookup.sequenceIndex;
       int lookupIndex = lookup.lookupListIndex;
       List<Rule> rulesToApply = allLookupRules.get(lookupIndex);
@@ -157,7 +276,7 @@ public class RuleExtractor {
       allRules.add(null);
     }
     for (int i = 0; i < table.subTableCount(); i++) {
-      LookupTableNew subTable = table.subTableAt(i);
+      LookupTable subTable = table.subTableAt(i);
       switch (subTable.lookupType()) {
       case GSUB_LIGATURE:
         allRules.set(i, extract(subTable));
@@ -167,22 +286,25 @@ public class RuleExtractor {
         break;
       case GSUB_MULTIPLE:
       case GSUB_ALTERNATE:
+        throw new IllegalArgumentException("LookupType is " + subTable.lookupType());
       }
     }
     for (int i = 0; i < table.subTableCount(); i++) {
-      LookupTableNew subTable = table.subTableAt(i);
+      LookupTable subTable = table.subTableAt(i);
       switch (subTable.lookupType()) {
       case GSUB_CHAINING_CONTEXTUAL:
         allRules.set(i, extract(subTable, allRules));
         break;
       case GSUB_CONTEXTUAL:
       case GSUB_EXTENSION:
+      case GSUB_REVERSE_CHAINING_CONTEXTUAL_SINGLE:
+        throw new IllegalArgumentException("LookupType is " + subTable.lookupType());
       }
     }
     return allRules;
   }
 
-  public static List<Rule> extract(LookupTableNew table) {
+  public static List<Rule> extract(LookupTable table) {
     List<Rule> allRules = new ArrayList<Rule>();
 
     for (int i = 0; i < table.subTableCount(); i++) {
@@ -193,8 +315,6 @@ public class RuleExtractor {
       case GSUB_SINGLE:
         allRules.addAll(extract((SingleSubst) table.subTableAt(i)));
         break;
-      case GSUB_MULTIPLE:
-      case GSUB_ALTERNATE:
       default:
         throw new IllegalArgumentException("LookupType is " + table.lookupType());
       }
@@ -202,7 +322,7 @@ public class RuleExtractor {
     return allRules;
   }
 
-  public static List<Rule> extract(LookupTableNew table, List<List<Rule>> allLookupRules) {
+  public static List<Rule> extract(LookupTable table, List<List<Rule>> allLookupRules) {
     List<Rule> allRules = new ArrayList<Rule>();
 
     for (int i = 0; i < table.subTableCount(); i++) {
@@ -210,8 +330,6 @@ public class RuleExtractor {
       case GSUB_CHAINING_CONTEXTUAL:
         allRules.addAll(extract((ChainContextSubst) table.subTableAt(i), allLookupRules));
         break;
-      case GSUB_CONTEXTUAL:
-      case GSUB_EXTENSION:
       default:
         throw new IllegalArgumentException("LookupType is " + table.lookupType());
       }

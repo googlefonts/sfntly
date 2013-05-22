@@ -9,7 +9,7 @@ import com.google.typography.font.sfntly.table.opentype.GsubLookupList.GsubLooku
 import com.google.typography.font.sfntly.table.opentype.GsubLookupSingle.Fmt1Builder;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupSingle.Fmt2Builder;
 import com.google.typography.font.sfntly.table.opentype.GsubLookupSingle.SingleSubTable;
-import com.google.typography.font.sfntly.table.opentype.LookupTable.LookupFlag;
+import com.google.typography.font.sfntly.table.opentype.LookupTableOld.LookupFlag;
 
 import org.junit.Test;
 

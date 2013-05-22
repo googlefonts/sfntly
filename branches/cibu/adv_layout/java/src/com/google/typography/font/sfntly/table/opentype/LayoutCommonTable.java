@@ -15,7 +15,7 @@ import java.util.TreeSet;
 /**
  * @author dougfelt@google.com (Doug Felt)
  */
-public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable {
+public abstract class LayoutCommonTable<T extends LookupTableOld> extends SubTable {
   private static int VERSION_OFFSET = 0;
   private static int SCRIPT_LIST_OFFSET = 4;
   private static int FEATURE_LIST_OFFSET = 6;
@@ -148,14 +148,14 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   }
 
   class LookupCache {
-    private final Map<Integer, LookupTableNew> map;
+    private final Map<Integer, LookupTable> map;
 
     private LookupCache() {
-      map = new HashMap<Integer, LookupTableNew>();
+      map = new HashMap<Integer, LookupTable>();
     }
 
-    public LookupTableNew get(int lookupIndex) {
-      LookupTableNew lookup;
+    public LookupTable get(int lookupIndex) {
+      LookupTable lookup;
       synchronized (this) {
         lookup = map.get(lookupIndex);
       }
@@ -170,12 +170,12 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       return lookup;
     }
 
-    private LookupTableNew createLookupTable(int lookupIndex) {
+    private LookupTable createLookupTable(int lookupIndex) {
       return lookupList.subTableAt(lookupIndex);
     }
   }
 
-  LookupTableNew getLookupTable(int lookupIndex) {
+  LookupTable getLookupTable(int lookupIndex) {
     return lookupCache.get(lookupIndex);
   }
 
@@ -289,7 +289,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     }
   }
 
-  public static abstract class Builder<T extends LookupTable>
+  public static abstract class Builder<T extends LookupTableOld>
       extends SubTable.Builder<LayoutCommonTable<T>> {
     private int serializedLength;
     private ScriptListTable.Builder serializedScriptListBuilder;
@@ -311,7 +311,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     protected abstract LookupListTable handleCreateLookupList(
         ReadableFontData data, boolean dataIsCanonical);
 
-    private static abstract class ObjectId<T extends LookupTable> {
+    private static abstract class ObjectId<T extends LookupTableOld> {
       protected Builder<T> builder;
 
       public abstract void delete();

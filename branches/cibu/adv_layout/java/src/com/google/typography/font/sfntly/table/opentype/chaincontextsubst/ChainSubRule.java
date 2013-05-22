@@ -3,14 +3,14 @@ package com.google.typography.font.sfntly.table.opentype.chaincontextsubst;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
-import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
+import com.google.typography.font.sfntly.table.opentype.component.GlyphClassList;
 import com.google.typography.font.sfntly.table.opentype.component.SubstLookupRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
 public class ChainSubRule extends SubTable {
-  public final NumRecordList backtrackGlyphs;
-  public final NumRecordList inputGlyphs;
-  public final NumRecordList lookAheadGlyphs;
+  public final GlyphClassList backtrackGlyphs;
+  public final GlyphClassList inputGlyphs;
+  public final GlyphClassList lookAheadGlyphs;
   public final SubstLookupRecordList lookupRecords;
 
   // //////////////
@@ -18,18 +18,18 @@ public class ChainSubRule extends SubTable {
 
   public ChainSubRule(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data);
-    backtrackGlyphs = new NumRecordList(data);
-    inputGlyphs = new NumRecordList(data, backtrackGlyphs.limit(), 0, 1);
-    lookAheadGlyphs = new NumRecordList(data, inputGlyphs.limit(), 0, 0);
+    backtrackGlyphs = new GlyphClassList(data);
+    inputGlyphs = new GlyphClassList(data, backtrackGlyphs.limit(), 0, 1);
+    lookAheadGlyphs = new GlyphClassList(data, inputGlyphs.limit(), 0, 0);
     lookupRecords = new SubstLookupRecordList(data, lookAheadGlyphs.limit(), 0);
   }
 
   public static class Builder extends VisibleBuilder<ChainSubRule> {
 
     protected boolean dataIsCanonical;
-    public NumRecordList backtrackGlyphsBuilder;
-    public NumRecordList inputGlyphsBuilder;
-    public NumRecordList lookAheadGlyphsBuilder;
+    public GlyphClassList backtrackGlyphsBuilder;
+    public GlyphClassList inputGlyphsBuilder;
+    public GlyphClassList lookAheadGlyphsBuilder;
     public SubstLookupRecordList lookupRecordsBuilder;
 
     // ///////////////
@@ -115,9 +115,9 @@ public class ChainSubRule extends SubTable {
     private void initFromData(ReadableFontData data) {
       if (backtrackGlyphsBuilder == null || inputGlyphsBuilder == null
           || lookAheadGlyphsBuilder == null || lookupRecordsBuilder == null) {
-        backtrackGlyphsBuilder = new NumRecordList(data);
-        inputGlyphsBuilder = new NumRecordList(data, backtrackGlyphsBuilder.limit(), 0, 0);
-        lookAheadGlyphsBuilder = new NumRecordList(data, inputGlyphsBuilder.limit(), 0, 0);
+        backtrackGlyphsBuilder = new GlyphClassList(data);
+        inputGlyphsBuilder = new GlyphClassList(data, backtrackGlyphsBuilder.limit(), 0, 0);
+        lookAheadGlyphsBuilder = new GlyphClassList(data, inputGlyphsBuilder.limit(), 0, 0);
         lookupRecordsBuilder = new SubstLookupRecordList(data, lookAheadGlyphsBuilder.limit(), 0);
       }
     }

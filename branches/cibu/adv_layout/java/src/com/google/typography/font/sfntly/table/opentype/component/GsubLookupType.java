@@ -1,6 +1,6 @@
 package com.google.typography.font.sfntly.table.opentype.component;
 
-import com.google.typography.font.sfntly.table.opentype.LookupTable.LookupType;
+import com.google.typography.font.sfntly.table.opentype.LookupTableOld.LookupType;
 
 public enum GsubLookupType implements LookupType {
   GSUB_SINGLE,
