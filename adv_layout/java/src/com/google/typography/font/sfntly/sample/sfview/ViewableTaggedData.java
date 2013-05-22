@@ -6,6 +6,7 @@ import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.opentype.TaggedData;
+import com.google.typography.font.sfntly.table.opentype.component.Rule;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -325,6 +326,47 @@ public class ViewableTaggedData {
         break;
       }
       return value;
+    }
+
+    @Override
+    public void dump(List<List<Rule>> rulesList) {
+
+      int i = 0;
+      for (List<Rule> rules : rulesList) {
+        System.out.println(
+            "------------------------------ " + (i++) + " --------------------------------");
+        for (Rule rule : rules) {
+          System.out.println(toString(rule));
+        }
+      }
+    }
+
+    String toString(Rule rule) {
+      StringBuilder sb = new StringBuilder();
+      if (rule.backtrack != null && rule.backtrack.size() > 0) {
+        sb.append(toString(rule.backtrack));
+        sb.append("} ");
+      }
+      sb.append(toString(rule.input));
+      if (rule.lookAhead != null && rule.lookAhead.size() > 0) {
+        sb.append("{ ");
+        sb.append(toString(rule.lookAhead));
+      }
+      sb.append("=> ");
+      sb.append(toString(rule.subst));
+      return sb.toString();
+    }
+
+    String toString(List<Integer> glyphIds) {
+      StringBuilder sb = new StringBuilder();
+      for (int glyphId : glyphIds) {
+        sb.append(glyphId);
+        sb.append("-");
+        sb.append(post.glyphName(glyphId));
+        sb.append(" ");
+
+      }
+      return sb.toString();
     }
   }
 

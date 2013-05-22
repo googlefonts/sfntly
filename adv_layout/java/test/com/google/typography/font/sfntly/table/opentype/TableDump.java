@@ -216,7 +216,7 @@ public class TableDump {
     }
     int numLangSystems = scriptTable.recordList().count();
     for (int i = 0; i < numLangSystems; ++i) {
-      format("%3d: %s ", i, Tag.stringValue(scriptTable.recordList().get(i).tag));
+      format("%3d: %s ", i, Tag.stringValue(scriptTable.recordList().get(i).sequenceIndex));
       langSysTable = scriptTable.subTableAt(i);
       in();
       dump(langSysTable);

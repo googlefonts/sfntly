@@ -35,6 +35,10 @@ public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
   // ////////////////
   // public methods
 
+  public int subTableCount() {
+    return recordList.count();
+  }
+
   public S subTableAt(int index) {
     NumRecord record = recordList.get(index);
     return subTableForRecord(record);

@@ -22,7 +22,7 @@ public final class SubstLookupRecordList extends RecordList<SubstLookupRecord> {
     Iterator<SubstLookupRecord> iterator = iterator();
     while (iterator.hasNext()) {
       SubstLookupRecord record = iterator.next();
-      if (record.tag == tag) {
+      if (record.sequenceIndex == tag) {
         return record;
       }
     }

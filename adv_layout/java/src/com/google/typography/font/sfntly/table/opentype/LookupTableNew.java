@@ -46,6 +46,10 @@ public class LookupTableNew extends OffsetRecordTable<SubstSubtable> {
     }
   }
 
+  public GsubLookupType lookupType() {
+    return GsubLookupType.forTypeNum(getField(LOOKUP_TYPE_INDEX));
+  }
+
   @Override
   public SubstSubtable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
     int lookupType = getField(LOOKUP_TYPE_INDEX);

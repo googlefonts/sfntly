@@ -21,6 +21,14 @@ public class HeaderFmt1 extends HeaderTable {
     coverage = new CoverageTable(data.slice(coverageOffset), 0, dataIsCanonical);
   }
 
+  public int getDelta() {
+    int delta = getField(DELTA_GLYPH_ID_INDEX);
+    if (delta > 0x7FFF) {
+      throw new IllegalArgumentException("negative delta unsupported");
+    }
+    return delta;
+  }
+
   @Override
   public int fieldCount() {
     return FIELD_COUNT;

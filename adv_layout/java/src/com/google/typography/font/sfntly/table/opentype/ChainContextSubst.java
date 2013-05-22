@@ -46,6 +46,33 @@ public class ChainContextSubst extends SubstSubtable implements Iterable<ChainSu
   // //////////////////////////////////
   // Methods redirected to the array
 
+  public ChainSubRuleSetArray fmt1Table() {
+    switch (format) {
+    case 1:
+      return ruleSets;
+    default:
+      throw new IllegalArgumentException("unexpected format table requested: " + format);
+    }
+  }
+
+  public ChainSubClassSetArray fmt2Table() {
+    switch (format) {
+    case 2:
+      return classSets;
+    default:
+      throw new IllegalArgumentException("unexpected format table requested: " + format);
+    }
+  }
+
+  public InnerArraysFmt3 fmt3Table() {
+    switch (format) {
+    case 3:
+      return fmt3Array;
+    default:
+      throw new IllegalArgumentException("unexpected format table requested: " + format);
+    }
+  }
+
   public NumRecordList recordList() {
     switch (format) {
     case 1:

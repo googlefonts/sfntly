@@ -32,7 +32,28 @@ public class SingleSubst extends SubstSubtable {
   // Methods specific to this class
 
   public CoverageTable coverage() {
-    return fmt1.coverage;
+    switch (format) {
+    case 1:
+      return fmt1.coverage;
+    case 2:
+      return fmt2.coverage;
+    default:
+      throw new IllegalArgumentException("unexpected format table requested: " + format);
+    }
+  }
+
+  public HeaderFmt1 fmt1Table() {
+    if (format == 1) {
+      return fmt1;
+    }
+    throw new IllegalArgumentException("unexpected format table requested: " + format);
+  }
+
+  public InnerArrayFmt2 fmt2Table() {
+    if (format == 2) {
+      return fmt2;
+    }
+    throw new IllegalArgumentException("unexpected format table requested: " + format);
   }
 
   // //////////////////////////////////
