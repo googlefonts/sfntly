@@ -5,7 +5,7 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 
 import java.util.Iterator;
 
-public final class NumRecordList extends RecordList<NumRecord> {
+public class NumRecordList extends RecordList<NumRecord> {
   public NumRecordList(WritableFontData data) {
     super(data);
   }

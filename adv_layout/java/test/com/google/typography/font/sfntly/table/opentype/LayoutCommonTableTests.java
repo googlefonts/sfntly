@@ -461,7 +461,7 @@ public class LayoutCommonTableTests extends TestCase {
     dumpBuilder(td, builder);
   }
 
-  private <T extends LookupTable> void dumpBuilder(TableDump td,
+  private <T extends LookupTableOld> void dumpBuilder(TableDump td,
       LayoutCommonTable.Builder<T> builder) {
     if (td.silenced()) {
       return;

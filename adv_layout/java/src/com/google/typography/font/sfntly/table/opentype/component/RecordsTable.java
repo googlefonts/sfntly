@@ -5,7 +5,9 @@ package com.google.typography.font.sfntly.table.opentype.component;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
-public abstract class RecordsTable<R extends Record> extends HeaderTable {
+import java.util.Iterator;
+
+public abstract class RecordsTable<R extends Record> extends HeaderTable implements Iterable<R> {
   public final RecordList<R> recordList;
 
   // ///////////////
@@ -18,6 +20,11 @@ public abstract class RecordsTable<R extends Record> extends HeaderTable {
 
   public RecordsTable(ReadableFontData data, boolean dataIsCanonical) {
     this(data, 0, dataIsCanonical);
+  }
+
+  @Override
+  public Iterator<R> iterator() {
+    return recordList.iterator();
   }
 
   // ////////////////////////////////////

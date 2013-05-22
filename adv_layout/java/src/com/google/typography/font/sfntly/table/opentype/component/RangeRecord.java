@@ -7,21 +7,21 @@ public final class RangeRecord implements Record {
   public static final int RECORD_SIZE = 6;
   public static final int START_OFFSET = 0;
   public static final int END_OFFSET = 2;
-  public static final int START_COVERAGE_INDEX_OFFSET = 4;
+  public static final int PROPERTY_OFFSET = 4;
   public final int start;
   public final int end;
-  public final int startCoverageIndex;
+  public final int property;
 
   public RangeRecord(ReadableFontData data, int base) {
     this.start = data.readUShort(base + START_OFFSET);
     this.end = data.readUShort(base + END_OFFSET);
-    this.startCoverageIndex = data.readUShort(base + START_COVERAGE_INDEX_OFFSET);
+    this.property = data.readUShort(base + PROPERTY_OFFSET);
   }
 
   public RangeRecord(int tag, int offset, int startCoverageIndex) {
     this.start = tag;
     this.end = offset;
-    this.startCoverageIndex = startCoverageIndex;
+    this.property = startCoverageIndex;
   }
 
   @Override

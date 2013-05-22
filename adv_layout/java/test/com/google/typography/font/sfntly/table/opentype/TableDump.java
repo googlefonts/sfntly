@@ -157,14 +157,14 @@ public class TableDump {
       println("null");
       return;
     }
-    if (obj instanceof LookupTableNew) {
-      dumpLookup((LookupTableNew) obj);
+    if (obj instanceof LookupTable) {
+      dumpLookup((LookupTable) obj);
       return;
     }
     println(obj);
   }
 
-  public void dumpLookup(LookupTableNew lookup) {
+  public void dumpLookup(LookupTable lookup) {
     if (silenced(lookup)) {
       return;
     }
@@ -290,7 +290,7 @@ public class TableDump {
     int numLookups = lookupList.recordList.count();
     println("Lookup List");
     for (int i = 0; i < numLookups; ++i) {
-      LookupTableNew subtable = lookupList.subTableAt(i);
+      LookupTable subtable = lookupList.subTableAt(i);
       GsubLookupType type = GsubLookupType.forTypeNum(subtable.header.lookupType);
       format("%3d: ", i);
       if (displayType(type)) {

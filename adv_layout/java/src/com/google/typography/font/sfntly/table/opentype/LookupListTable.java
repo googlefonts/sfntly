@@ -4,7 +4,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
-public class LookupListTable extends OffsetRecordTable<LookupTableNew> {
+public class LookupListTable extends OffsetRecordTable<LookupTable> {
   public static final int FIELD_COUNT = 0;
 
   public LookupListTable(ReadableFontData data, boolean dataIsCanonical) {
@@ -12,11 +12,11 @@ public class LookupListTable extends OffsetRecordTable<LookupTableNew> {
   }
 
   @Override
-  protected LookupTableNew readSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return new LookupTableNew(data, base, dataIsCanonical);
+  protected LookupTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+    return new LookupTable(data, base, dataIsCanonical);
   }
 
-  public static class Builder extends OffsetRecordTable.Builder<LookupListTable, LookupTableNew> {
+  public static class Builder extends OffsetRecordTable.Builder<LookupListTable, LookupTable> {
 
     @Override
     protected LookupListTable readTable(
@@ -25,19 +25,19 @@ public class LookupListTable extends OffsetRecordTable<LookupTableNew> {
     }
 
     @Override
-    protected VisibleBuilder<LookupTableNew> createSubTableBuilder() {
-      return new LookupTableNew.Builder();
+    protected VisibleBuilder<LookupTable> createSubTableBuilder() {
+      return new LookupTable.Builder();
     }
 
     @Override
-    protected VisibleBuilder<LookupTableNew> createSubTableBuilder(
+    protected VisibleBuilder<LookupTable> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
-      return new LookupTableNew.Builder(data, dataIsCanonical);
+      return new LookupTable.Builder(data, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<LookupTableNew> createSubTableBuilder(LookupTableNew subTable) {
-      return new LookupTableNew.Builder(subTable);
+    protected VisibleBuilder<LookupTable> createSubTableBuilder(LookupTable subTable) {
+      return new LookupTable.Builder(subTable);
     }
 
     @Override

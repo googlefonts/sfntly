@@ -37,6 +37,24 @@ public class ClassDefTable extends SubstSubtable {
     return array.recordList;
   }
 
+  public InnerArrayFmt1 fmt1Table() {
+    switch (format) {
+    case 1:
+      return (InnerArrayFmt1) array;
+    default:
+      throw new IllegalArgumentException("unexpected format table requested: " + format);
+    }
+  }
+
+  public RangeRecordTable fmt2Table() {
+    switch (format) {
+    case 2:
+      return (RangeRecordTable) array;
+    default:
+      throw new IllegalArgumentException("unexpected format table requested: " + format);
+    }
+  }
+
   // //////////////////////////////////
   // Builder
 
