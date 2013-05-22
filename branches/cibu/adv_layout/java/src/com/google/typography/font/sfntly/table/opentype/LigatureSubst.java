@@ -3,7 +3,6 @@ package com.google.typography.font.sfntly.table.opentype;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
-import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.InnerArrayFmt1;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.LigatureSet;
@@ -27,8 +26,8 @@ public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet
   // //////////////////////////////////
   // Methods redirected to the array
 
-  public NumRecordList recordList() {
-    return array.recordList;
+  public int subTableCount() {
+    return array.recordList.count();
   }
 
   public LigatureSet subTableAt(int index) {

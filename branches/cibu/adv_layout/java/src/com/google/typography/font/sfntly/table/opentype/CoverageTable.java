@@ -30,6 +30,24 @@ public class CoverageTable extends SubstSubtable {
   // ////////////////////////////////////////
   // Utility methods specific to this class
 
+  public NumRecordTable fmt1Table() {
+    switch (format) {
+    case 1:
+      return (NumRecordTable) array;
+    default:
+      throw new IllegalArgumentException("unexpected format table requested: " + format);
+    }
+  }
+
+  public RangeRecordTable fmt2Table() {
+    switch (format) {
+    case 2:
+      return (RangeRecordTable) array;
+    default:
+      throw new IllegalArgumentException("unexpected format table requested: " + format);
+    }
+  }
+
   public RecordList<?> records() {
     return array.recordList;
   }

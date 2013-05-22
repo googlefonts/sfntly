@@ -29,6 +29,7 @@ import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainS
 import com.google.typography.font.sfntly.table.opentype.classdef.InnerArrayFmt1;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.RangeRecordTable;
+import com.google.typography.font.sfntly.table.opentype.component.RuleExtractor;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.DoubleRecordTable;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRuleSet;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.Ligature;
@@ -203,6 +204,8 @@ public class OtTableTagger {
             tagTable(lookup);
           }
         }
+
+        td.dump(RuleExtractor.extract(table));
       }
     });
 
@@ -216,10 +219,6 @@ public class OtTableTagger {
         for (int i = 0; i < subTableCount; ++i) {
           td.tagRangeField(FieldType.OFFSET, null);
         }
-        // TODO(cibu): introduce this back.
-        // if (table.useMarkFilteringSet()) {
-        // td.tagRangeField(FieldType.SHORT, "mark filtering set");
-        // }
         for (int i = 0; i < subTableCount; ++i) {
           SubstSubtable subTable = table.subTableAt(i);
           tagTable(subTable);
@@ -236,7 +235,7 @@ public class OtTableTagger {
         tagTable(table.coverage());
         td.tagRangeField(FieldType.SHORT, "subtable count");
 
-        int subTableCount = table.recordList().count();
+        int subTableCount = table.subTableCount();
         for (int i = 0; i < subTableCount; ++i) {
           td.tagRangeField(FieldType.OFFSET, null);
         }

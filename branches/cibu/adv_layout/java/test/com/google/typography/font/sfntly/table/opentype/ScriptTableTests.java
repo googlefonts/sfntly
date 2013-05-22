@@ -66,7 +66,7 @@ public class ScriptTableTests {
   private static void assertFixedBadTable(ScriptTable table) {
     assertNotNull(table.defaultLangSysTable());
     assertEquals(1, table.recordList().count());
-    assertEquals(LANGSYS_JA, table.recordList().get(0).tag);
+    assertEquals(LANGSYS_JA, table.recordList().get(0).sequenceIndex);
     
     // The default table has one feature, as does the JA table.
     // Both have been fixed.

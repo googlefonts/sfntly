@@ -13,7 +13,7 @@ public final class RangeRecord implements Record {
   public final int startCoverageIndex;
 
   public RangeRecord(ReadableFontData data, int base) {
-    this.start = data.readULongAsInt(base + START_OFFSET);
+    this.start = data.readUShort(base + START_OFFSET);
     this.end = data.readUShort(base + END_OFFSET);
     this.startCoverageIndex = data.readUShort(base + START_COVERAGE_INDEX_OFFSET);
   }
