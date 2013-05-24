@@ -10,9 +10,9 @@ import com.google.typography.font.sfntly.table.opentype.LigatureSubst;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
 import com.google.typography.font.sfntly.table.opentype.LookupTable;
 import com.google.typography.font.sfntly.table.opentype.SingleSubst;
+import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubClassRule;
+import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubClassSet;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubClassSetArray;
-import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRule;
-import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSet;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSetArray;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.CoverageArray;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.InnerArraysFmt3;
@@ -176,7 +176,7 @@ public class RuleExtractor {
 
     List<Rule> result = new ArrayList<Rule>();
     int i = 0;
-    for (ChainSubRuleSet chainSubRuleSet : table) {
+    for (ChainSubClassSet chainSubRuleSet : table) {
 
       if (chainSubRuleSet != null) {
         result.addAll(extract(chainSubRuleSet,
@@ -217,14 +217,14 @@ public class RuleExtractor {
     return result;
   }
 
-  public static List<Rule> extract(ChainSubRuleSet table,
+  public static List<Rule> extract(ChainSubClassSet table,
       Map<Integer, GlyphGroup> backtrackClassDef,
       int firstInputClass,
       Map<Integer, GlyphGroup> inputClassDef,
       Map<Integer, GlyphGroup> lookAheadClassDef,
       List<List<Rule>> allLookupRules) {
     List<Rule> result = new ArrayList<Rule>();
-    for (ChainSubRule chainSubRule : table) {
+    for (ChainSubClassRule chainSubRule : table) {
       result.addAll(extract(chainSubRule,
           backtrackClassDef,
           firstInputClass,
@@ -235,7 +235,7 @@ public class RuleExtractor {
     return result;
   }
 
-  public static List<Rule> extract(ChainSubRule table,
+  public static List<Rule> extract(ChainSubClassRule table,
       Map<Integer, GlyphGroup> backtrackClassDef,
       int firstInputClass,
       Map<Integer, GlyphGroup> inputClassDef,

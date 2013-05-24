@@ -1,19 +1,20 @@
 package com.google.typography.font.sfntly.table.opentype.chaincontextsubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
-public class ChainSubRuleSet extends OffsetRecordTable<ChainSubRule> {
+public class ChainSubRuleSet extends ChainSubGenericRuleSet<ChainSubRule> {
   public ChainSubRuleSet(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
-  public static class Builder extends OffsetRecordTable.Builder<ChainSubRuleSet, ChainSubRule> {
+  @Override
+  protected ChainSubRule readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+    return new ChainSubRule(data, base, dataIsCanonical);
+  }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
-      super(data, dataIsCanonical);
-    }
+  public static class Builder
+      extends ChainSubGenericRuleSet.Builder<ChainSubRuleSet, ChainSubRule> {
 
     public Builder() {
       super();
@@ -21,6 +22,10 @@ public class ChainSubRuleSet extends OffsetRecordTable<ChainSubRule> {
 
     public Builder(ChainSubRuleSet table) {
       super(table);
+    }
+
+    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+      super(data, dataIsCanonical);
     }
 
     @Override
@@ -43,24 +48,5 @@ public class ChainSubRuleSet extends OffsetRecordTable<ChainSubRule> {
     protected VisibleBuilder<ChainSubRule> createSubTableBuilder(ChainSubRule subTable) {
       return new ChainSubRule.Builder(subTable);
     }
-
-    @Override
-    protected void initFields() {
-    }
-
-    @Override
-    public int fieldCount() {
-      return 0;
-    }
-  }
-
-  @Override
-  protected ChainSubRule readSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return new ChainSubRule(data, base, dataIsCanonical);
-  }
-
-  @Override
-  public int fieldCount() {
-    return 0;
   }
 }

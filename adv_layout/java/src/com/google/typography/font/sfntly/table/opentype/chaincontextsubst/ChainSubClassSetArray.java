@@ -6,7 +6,7 @@ import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
-public class ChainSubClassSetArray extends OffsetRecordTable<ChainSubRuleSet> {
+public class ChainSubClassSetArray extends OffsetRecordTable<ChainSubClassSet> {
   public static final int FIELD_COUNT = 4;
 
   public static final int COVERAGE_INDEX = 0;
@@ -36,12 +36,12 @@ public class ChainSubClassSetArray extends OffsetRecordTable<ChainSubRuleSet> {
   }
 
   @Override
-  public ChainSubRuleSet readSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return new ChainSubRuleSet(data, 0, dataIsCanonical);
+  public ChainSubClassSet readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+    return new ChainSubClassSet(data, 0, dataIsCanonical);
   }
 
   public static class Builder
-      extends OffsetRecordTable.Builder<ChainSubClassSetArray, ChainSubRuleSet> {
+      extends OffsetRecordTable.Builder<ChainSubClassSetArray, ChainSubClassSet> {
 
     public Builder() {
       super();
@@ -62,19 +62,19 @@ public class ChainSubClassSetArray extends OffsetRecordTable<ChainSubRuleSet> {
     }
 
     @Override
-    protected VisibleBuilder<ChainSubRuleSet> createSubTableBuilder() {
-      return new ChainSubRuleSet.Builder();
+    protected VisibleBuilder<ChainSubClassSet> createSubTableBuilder() {
+      return new ChainSubClassSet.Builder();
     }
 
     @Override
-    protected VisibleBuilder<ChainSubRuleSet> createSubTableBuilder(
+    protected VisibleBuilder<ChainSubClassSet> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
-      return new ChainSubRuleSet.Builder(data, dataIsCanonical);
+      return new ChainSubClassSet.Builder(data, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<ChainSubRuleSet> createSubTableBuilder(ChainSubRuleSet subTable) {
-      return new ChainSubRuleSet.Builder(subTable);
+    protected VisibleBuilder<ChainSubClassSet> createSubTableBuilder(ChainSubClassSet subTable) {
+      return new ChainSubClassSet.Builder(subTable);
     }
 
     @Override

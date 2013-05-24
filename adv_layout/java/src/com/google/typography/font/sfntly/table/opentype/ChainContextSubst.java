@@ -4,15 +4,12 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubClassSetArray;
-import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSet;
+import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubGenericRuleSet;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSetArray;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.InnerArraysFmt3;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
-import java.util.Iterator;
-
-public class ChainContextSubst extends SubstSubtable implements Iterable<ChainSubRuleSet> {
+public class ChainContextSubst extends SubstSubtable {
   private final ChainSubRuleSetArray ruleSets;
   private final ChainSubClassSetArray classSets;
   public final InnerArraysFmt3 fmt3Array;
@@ -84,7 +81,7 @@ public class ChainContextSubst extends SubstSubtable implements Iterable<ChainSu
     }
   }
 
-  public ChainSubRuleSet subTableAt(int index) {
+  public ChainSubGenericRuleSet<?> subTableAt(int index) {
     switch (format) {
     case 1:
       return ruleSets.subTableAt(index);
@@ -95,19 +92,8 @@ public class ChainContextSubst extends SubstSubtable implements Iterable<ChainSu
     }
   }
 
-  @Override
-  public Iterator<ChainSubRuleSet> iterator() {
-    switch (format) {
-    case 1:
-      return ruleSets.iterator();
-    case 2:
-      return classSets.iterator();
-    default:
-      return null;
-    }
-  }
-
-  protected ChainSubRuleSet createSubTable(ReadableFontData data, boolean dataIsCanonical) {
+  protected ChainSubGenericRuleSet<?> createSubTable(
+      ReadableFontData data, boolean dataIsCanonical) {
     switch (format) {
     case 1:
       return ruleSets.readSubTable(data, dataIsCanonical);
@@ -179,11 +165,6 @@ public class ChainContextSubst extends SubstSubtable implements Iterable<ChainSu
     public SubTable.Builder<? extends SubTable> builderForTag(int tag) {
       setModelChanged();
       return arrayBuilder.builderForTag(tag);
-    }
-
-    public VisibleBuilder<ChainSubRuleSet> addBuilder() {
-      setModelChanged();
-      return arrayBuilder.addBuilder();
     }
 
     public void removeBuilderForTag(int tag) {

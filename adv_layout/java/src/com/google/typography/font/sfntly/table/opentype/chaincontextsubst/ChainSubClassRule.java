@@ -2,17 +2,17 @@ package com.google.typography.font.sfntly.table.opentype.chaincontextsubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 
-public class ChainSubRule extends ChainSubGenericRule {
-  public ChainSubRule(ReadableFontData data, int base, boolean dataIsCanonical) {
+public class ChainSubClassRule extends ChainSubGenericRule {
+  public ChainSubClassRule(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
-  public static class Builder extends ChainSubGenericRule.Builder<ChainSubRule> {
+  public static class Builder extends ChainSubGenericRule.Builder<ChainSubClassRule> {
     public Builder() {
       super();
     }
 
-    public Builder(ChainSubRule table) {
+    public Builder(ChainSubClassRule table) {
       super(table);
     }
 
@@ -21,10 +21,9 @@ public class ChainSubRule extends ChainSubGenericRule {
     }
 
     @Override
-    public ChainSubRule subBuildTable(ReadableFontData data) {
-      return new ChainSubRule(data, 0, true);
+    public ChainSubClassRule subBuildTable(ReadableFontData data) {
+      return new ChainSubClassRule(data, 0, true);
     }
 
   }
-
 }
