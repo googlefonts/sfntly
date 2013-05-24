@@ -27,8 +27,9 @@ public class ExtensionSubst extends SubstSubtable {
     case GSUB_SINGLE:
       return new SingleSubst(data, 0, dataIsCanonical);
     case GSUB_MULTIPLE:
-    case GSUB_ALTERNATE:
       return new MultipleSubst(data, 0, dataIsCanonical);
+    case GSUB_ALTERNATE:
+      return new AlternateSubst(data, 0, dataIsCanonical);
     case GSUB_CONTEXTUAL:
       return new ContextSubst(data, 0, dataIsCanonical);
     case GSUB_CHAINING_CONTEXTUAL:

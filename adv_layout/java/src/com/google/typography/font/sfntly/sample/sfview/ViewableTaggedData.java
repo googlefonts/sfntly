@@ -6,7 +6,9 @@ import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.opentype.TaggedData;
+import com.google.typography.font.sfntly.table.opentype.component.GlyphGroup;
 import com.google.typography.font.sfntly.table.opentype.component.Rule;
+import com.google.typography.font.sfntly.table.opentype.component.RuleSegment;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,6 +19,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -303,7 +306,7 @@ public class ViewableTaggedData {
       case GLYPH:
         value = data.readUShort(pos);
         alt = String.valueOf(value);
-        label = ((label != null) ? label + ": " : "") + post.glyphName(value);
+        label = ((label != null) ? label + ": " : "glyph name: ") + post.glyphName(value);
         width = 2;
         break;
       default:
@@ -336,7 +339,7 @@ public class ViewableTaggedData {
         System.out.println(
             "------------------------------ " + (i++) + " --------------------------------");
 
-        for (Rule rule : rules.subList(0, Math.min(rules.size(), 30))) {
+        for (Rule rule : rules.subList(0, Math.min(rules.size(), 1000))) {
           System.out.println(toString(rule));
         }
       }
@@ -358,14 +361,23 @@ public class ViewableTaggedData {
       return sb.toString();
     }
 
-    String toString(List<Integer> glyphIds) {
+    String toString(RuleSegment context) {
+      StringBuilder sb = new StringBuilder();
+      for (GlyphGroup glyphGroup : context) {
+        sb.append(" [ ");
+        sb.append(toString(glyphGroup));
+        sb.append("] ");
+      }
+      return sb.toString();
+    }
+
+    String toString(Collection<Integer> glyphIds) {
       StringBuilder sb = new StringBuilder();
       for (int glyphId : glyphIds) {
         sb.append(glyphId);
         sb.append("-");
         sb.append(post.glyphName(glyphId));
         sb.append(" ");
-
       }
       return sb.toString();
     }

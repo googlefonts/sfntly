@@ -16,7 +16,6 @@ import com.google.typography.font.sfntly.table.opentype.LangSysTable;
 import com.google.typography.font.sfntly.table.opentype.LigatureSubst;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
 import com.google.typography.font.sfntly.table.opentype.LookupTable;
-import com.google.typography.font.sfntly.table.opentype.MultipleSubst;
 import com.google.typography.font.sfntly.table.opentype.NullTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTable;
@@ -28,6 +27,7 @@ import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainS
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSet;
 import com.google.typography.font.sfntly.table.opentype.classdef.InnerArrayFmt1;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordTable;
+import com.google.typography.font.sfntly.table.opentype.component.OneToManySubst;
 import com.google.typography.font.sfntly.table.opentype.component.RangeRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.RuleExtractor;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.DoubleRecordTable;
@@ -301,10 +301,10 @@ public class OtTableTagger {
       }
     });
 
-    register(new TagMethod(MultipleSubst.class) {
+    register(new TagMethod(OneToManySubst.class) {
       @Override
       public void tag(FontDataTable fdt) {
-        MultipleSubst table = (MultipleSubst) fdt;
+        OneToManySubst table = (OneToManySubst) fdt;
         td.tagRangeField(FieldType.SHORT, "subst format");
         td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
         tagTable(table.coverage());
@@ -551,10 +551,10 @@ public class OtTableTagger {
       public void tag(FontDataTable fdt) {
         ClassDefTable table = (ClassDefTable) fdt;
         td.tagRangeField(FieldType.SHORT, "format");
-        td.tagRangeField(FieldType.SHORT, "start glypyh");
         if (table.format == 1) {
           InnerArrayFmt1 tableFmt1 = (InnerArrayFmt1) table.array;
-          td.tagRangeField(FieldType.SHORT, "glyph count/class value array size");
+          td.tagRangeField(FieldType.SHORT, "start glyph");
+          td.tagRangeField(FieldType.SHORT, "glyph count");
           for (int i = 0; i < tableFmt1.recordList.count(); ++i) {
             td.tagRangeField(FieldType.SHORT, null);
           }
@@ -565,7 +565,7 @@ public class OtTableTagger {
           for (int i = 0; i < tableFmt2.recordList.count(); ++i) {
             td.tagRangeField(FieldType.SHORT, "start");
             td.tagRangeField(FieldType.SHORT, "end");
-            td.tagRangeField(FieldType.SHORT, "offset");
+            td.tagRangeField(FieldType.SHORT, "class");
           }
         }
       }
