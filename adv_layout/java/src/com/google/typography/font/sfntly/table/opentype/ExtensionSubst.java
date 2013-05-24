@@ -7,7 +7,7 @@ public class ExtensionSubst extends SubstSubtable {
   public static final int LOOKUP_TYPE_OFFSET = 0;
   public static final int LOOKUP_OFFSET_OFFSET = 2;
 
-  final int lookupType;
+  final GsubLookupType lookupType;
   final int lookupOffset;
 
   public ExtensionSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
@@ -15,13 +15,18 @@ public class ExtensionSubst extends SubstSubtable {
     if (format != 1) {
       throw new IllegalArgumentException("illegal extension format " + format);
     }
-    lookupType = data.readUShort(base + headerSize() + LOOKUP_TYPE_OFFSET);
+    lookupType = GsubLookupType.forTypeNum(
+        data.readUShort(base + headerSize() + LOOKUP_TYPE_OFFSET));
     lookupOffset = data.readULongAsInt(base + headerSize() + LOOKUP_OFFSET_OFFSET);
+  }
+
+  public GsubLookupType lookupType() {
+    return lookupType;
   }
 
   public SubstSubtable subTable() {
     ReadableFontData data = this.data.slice(lookupOffset);
-    switch (GsubLookupType.forTypeNum(lookupType)) {
+    switch (lookupType) {
     case GSUB_LIGATURE:
       return new LigatureSubst(data, 0, dataIsCanonical);
     case GSUB_SINGLE:

@@ -332,14 +332,12 @@ public class ViewableTaggedData {
     }
 
     @Override
-    public void dump(List<List<Rule>> rulesList) {
-
-      int i = 0;
-      for (List<Rule> rules : rulesList) {
+    public void dump(Map<Integer, List<Rule>> rulesList) {
+      for (int index : rulesList.keySet()) {
+        List<Rule> rules = rulesList.get(index);
         System.out.println(
-            "------------------------------ " + (i++) + " --------------------------------");
-
-        for (Rule rule : rules.subList(0, Math.min(rules.size(), 1000))) {
+            "------------------------------ " + index + " --------------------------------");
+        for (Rule rule : rules) {
           System.out.println(toString(rule));
         }
       }
