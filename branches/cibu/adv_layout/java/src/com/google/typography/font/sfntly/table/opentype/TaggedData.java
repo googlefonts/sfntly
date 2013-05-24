@@ -6,6 +6,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.Rule;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author dougfelt@google.com (Doug Felt)
@@ -63,5 +64,5 @@ public interface TaggedData {
     TAG, SHORT, SHORT_IGNORED, SHORT_IGNORED_FFFF, OFFSET, OFFSET_NONZERO, OFFSET32, GLYPH;
   }
 
-  void dump(List<List<Rule>> rules);
+  void dump(Map<Integer, List<Rule>> rules);
 }

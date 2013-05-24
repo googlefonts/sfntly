@@ -207,7 +207,6 @@ public class OtTableTagger {
             tagTable(lookup);
           }
         }
-
         td.dump(RuleExtractor.extract(table));
       }
     });
@@ -538,19 +537,19 @@ public class OtTableTagger {
         td.tagRangeField(FieldType.SHORT, "backtrack glyph class count");
         int glyphCount = table.backtrackGlyphs.count();
         for (int i = 0; i < glyphCount; ++i) {
-          td.tagRangeField(FieldType.SHORT, null);
+          td.tagRangeField(FieldType.SHORT, "class id");
         }
 
         td.tagRangeField(FieldType.SHORT, "input glyph class count");
         glyphCount = table.inputGlyphs.count();
         for (int i = 0; i < glyphCount; ++i) {
-          td.tagRangeField(FieldType.SHORT, null);
+          td.tagRangeField(FieldType.SHORT, "class id");
         }
 
         td.tagRangeField(FieldType.SHORT, "look ahead glyph class count");
         glyphCount = table.lookAheadGlyphs.count();
         for (int i = 0; i < glyphCount; ++i) {
-          td.tagRangeField(FieldType.SHORT, null);
+          td.tagRangeField(FieldType.SHORT, "class id");
         }
 
         td.tagRangeField(FieldType.SHORT, "subst lookup record count");
