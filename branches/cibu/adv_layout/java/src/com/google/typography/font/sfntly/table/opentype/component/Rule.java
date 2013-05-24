@@ -4,32 +4,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Rule {
-  public final List<Integer> backtrack;
-  public final List<Integer> input;
-  public final List<Integer> lookAhead;
-  public final List<Integer> subst;
+  public final RuleSegment backtrack;
+  public final GlyphList input;
+  public final RuleSegment lookAhead;
+  public final RuleSegment subst;
 
-  public Rule(
-      List<Integer> backtrack, List<Integer> input, List<Integer> lookAhead, List<Integer> subst) {
+  public Rule(RuleSegment backtrack, GlyphList input, RuleSegment lookAhead, RuleSegment subst) {
     this.backtrack = backtrack;
     this.input = input;
     this.lookAhead = lookAhead;
     this.subst = subst;
   }
 
-  public Rule(Rule other, List<Integer> subst) {
+  public Rule(Rule other, RuleSegment subst) {
     this.backtrack = other.backtrack;
     this.input = other.input;
     this.lookAhead = other.lookAhead;
     this.subst = subst;
   }
 
-  public List<Integer> apply(List<Integer> given, int at) {
+  public RuleSegment apply(RuleSegment srcGlyphIds, int at) {
+
     int i = at;
     if (backtrack != null) {
-      for (Integer b : backtrack) {
+      for (GlyphGroup b : backtrack) {
         i--;
-        if (i < 0 || i >= given.size() || !given.get(i).equals(b)) {
+        if (i < 0 || i >= srcGlyphIds.size() || !b.isIntersecting(srcGlyphIds.get(i))) {
           return null;
         }
       }
@@ -37,8 +37,8 @@ public class Rule {
 
     if (input != null) {
       i = at;
-      for (Integer in : input) {
-        if (i < 0 || i >= given.size() || !given.get(i).equals(in)) {
+      for (int in : input) {
+        if (i < 0 || i >= srcGlyphIds.size() || !srcGlyphIds.get(i).contains(in)) {
           return null;
         }
         i++;
@@ -47,24 +47,24 @@ public class Rule {
 
     if (lookAhead != null) {
       i = at + input.size();
-      for (Integer l : lookAhead) {
-        if (i < 0 || i >= given.size() || !given.get(i).equals(l)) {
+      for (GlyphGroup l : lookAhead) {
+        if (i < 0 || i >= srcGlyphIds.size() || !l.isIntersecting(srcGlyphIds.get(i))) {
           return null;
         }
         i++;
       }
     }
 
-    List<Integer> result = new ArrayList<Integer>();
-    result.addAll(given.subList(0, at));
+    RuleSegment result = new RuleSegment();
+    result.addAll(srcGlyphIds.subList(0, at));
     result.addAll(subst);
-    result.addAll(given.subList(at + input.size(), given.size()));
+    result.addAll(srcGlyphIds.subList(at + input.size(), srcGlyphIds.size()));
     return result;
   }
 
-  static List<Integer> apply(List<Rule> rules, List<Integer> given, int at) {
+  static RuleSegment apply(List<Rule> rules, RuleSegment given, int at) {
     for (Rule rule : rules) {
-      List<Integer> result = rule.apply(given, at);
+      RuleSegment result = rule.apply(given, at);
       if (result != null) {
         return result;
       }
@@ -75,7 +75,8 @@ public class Rule {
   static List<Rule> applyOnRuleSubsts(List<Rule> rulesToApply, List<Rule> targetRules, int at) {
     List<Rule> result = new ArrayList<Rule>();
     for (Rule targetRule : targetRules) {
-      List<Integer> newSubst = Rule.apply(rulesToApply, targetRule.subst, at);
+      RuleSegment newSubst = new RuleSegment();
+      newSubst.addAll(Rule.apply(rulesToApply, targetRule.subst, at));
       Rule newRule = new Rule(targetRule, newSubst);
       result.add(newRule);
     }
@@ -83,11 +84,10 @@ public class Rule {
   }
 
   static Rule prependToInput(int prefix, Rule other) {
-    List<Integer> newInput = new ArrayList<Integer>(other.input.size() + 1);
-    newInput.add(prefix);
-    newInput.addAll(other.input);
+    GlyphList input = new GlyphList(prefix);
+    input.addAll(other.input);
 
-    return new Rule(other.backtrack, newInput, other.lookAhead, other.subst);
+    return new Rule(other.backtrack, input, other.lookAhead, other.subst);
   }
 
   static List<Rule> prependToInput(int prefix, List<Rule> rules) {
@@ -100,11 +100,9 @@ public class Rule {
 
   static List<Rule> deltaRules(List<Integer> glyphIds, int delta) {
     List<Rule> result = new ArrayList<Rule>();
-    for (Integer glyphId : glyphIds) {
-      List<Integer> input = new ArrayList<Integer>();
-      input.add(glyphId);
-      List<Integer> subst = new ArrayList<Integer>();
-      subst.add(glyphId + delta);
+    for (int glyphId : glyphIds) {
+      GlyphList input = new GlyphList(glyphId);
+      RuleSegment subst = new RuleSegment(glyphId + delta);
       result.add(new Rule(null, input, null, subst));
     }
     return result;
@@ -114,28 +112,28 @@ public class Rule {
     if (inputs.size() != substs.size()) {
       throw new IllegalArgumentException("input - subst should have same count");
     }
+
     List<Rule> result = new ArrayList<Rule>();
     for (int i = 0; i < inputs.size(); i++) {
-      List<Integer> input = new ArrayList<Integer>();
-      input.add(inputs.get(i));
-      List<Integer> subst = new ArrayList<Integer>();
-      subst.add(substs.get(i));
+      GlyphList input = new GlyphList(inputs.get(i));
+      RuleSegment subst = new RuleSegment(substs.get(i));
       result.add(new Rule(null, input, null, subst));
     }
     return result;
   }
 
-  static List<List<Integer>> permuteToRows(List<List<Integer>> lists) {
-    List<List<Integer>> result = new ArrayList<List<Integer>>();
-    result.add(new ArrayList<Integer>());
+  static List<GlyphList> permuteToSegments(List<GlyphGroup> glyphGroups) {
+    List<GlyphList> result = new ArrayList<GlyphList>();
+    result.add(new GlyphList());
 
-    for (List<Integer> list : lists) {
-      List<List<Integer>> newResult = new ArrayList<List<Integer>>();
-      for (Integer glyphId : list) {
-        for (List<Integer> row : result) {
-          List<Integer> newRow = new ArrayList<Integer>(row);
-          newRow.add(glyphId);
-          newResult.add(newRow);
+    for (GlyphGroup glyphGroup : glyphGroups) {
+      List<GlyphList> newResult = new ArrayList<GlyphList>();
+      for (Integer glyphId : glyphGroup) {
+        for (GlyphList glyphList : result) {
+          GlyphList newGlyphList = new GlyphList();
+          newGlyphList.addAll(glyphList);
+          newGlyphList.add(glyphId);
+          newResult.add(newGlyphList);
         }
       }
       result = newResult;
@@ -144,25 +142,11 @@ public class Rule {
   }
 
   static List<Rule> permuteContext(
-      List<List<Integer>> backtracks, List<List<Integer>> inputs, List<List<Integer>> lookAheads) {
+      RuleSegment backtrack, List<GlyphList> inputs, RuleSegment lookAhead) {
     List<Rule> result = new ArrayList<Rule>();
-    backtracks = addNullIfEmpty(backtracks);
-    lookAheads = addNullIfEmpty(lookAheads);
-    for (List<Integer> backtrack : backtracks) {
-      for (List<Integer> input : inputs) {
-        for (List<Integer> lookAhead : lookAheads) {
-          result.add(new Rule(backtrack, input, lookAhead, input));
-        }
-      }
+    for (GlyphList input : inputs) {
+      result.add(new Rule(backtrack, input, lookAhead, new RuleSegment(input)));
     }
     return result;
-  }
-
-  private static List<List<Integer>> addNullIfEmpty(List<List<Integer>> rows) {
-    if (rows.size() == 0) {
-      rows = new ArrayList<List<Integer>>();
-      rows.add(null);
-    }
-    return rows;
   }
 }
