@@ -6,7 +6,7 @@ import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
-public class SubClassSetArray extends OffsetRecordTable<SubRuleSet> {
+public class SubClassSetArray extends OffsetRecordTable<SubClassSet> {
   public static final int FIELD_COUNT = 2;
 
   public static final int COVERAGE_INDEX = 0;
@@ -26,11 +26,11 @@ public class SubClassSetArray extends OffsetRecordTable<SubRuleSet> {
   }
 
   @Override
-  public SubRuleSet readSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return new SubRuleSet(data, 0, dataIsCanonical);
+  public SubClassSet readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+    return new SubClassSet(data, 0, dataIsCanonical);
   }
 
-  public static class Builder extends OffsetRecordTable.Builder<SubClassSetArray, SubRuleSet> {
+  public static class Builder extends OffsetRecordTable.Builder<SubClassSetArray, SubClassSet> {
 
     public Builder() {
       super();
@@ -50,19 +50,19 @@ public class SubClassSetArray extends OffsetRecordTable<SubRuleSet> {
     }
 
     @Override
-    protected VisibleBuilder<SubRuleSet> createSubTableBuilder() {
-      return new SubRuleSet.Builder();
+    protected VisibleBuilder<SubClassSet> createSubTableBuilder() {
+      return new SubClassSet.Builder();
     }
 
     @Override
-    protected VisibleBuilder<SubRuleSet> createSubTableBuilder(
+    protected VisibleBuilder<SubClassSet> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
-      return new SubRuleSet.Builder(data, dataIsCanonical);
+      return new SubClassSet.Builder(data, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<SubRuleSet> createSubTableBuilder(SubRuleSet subTable) {
-      return new SubRuleSet.Builder(subTable);
+    protected VisibleBuilder<SubClassSet> createSubTableBuilder(SubClassSet subTable) {
+      return new SubClassSet.Builder(subTable);
     }
 
     @Override

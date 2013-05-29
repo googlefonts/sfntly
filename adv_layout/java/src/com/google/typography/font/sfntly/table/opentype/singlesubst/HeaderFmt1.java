@@ -24,7 +24,8 @@ public class HeaderFmt1 extends HeaderTable {
   public int getDelta() {
     int delta = getField(DELTA_GLYPH_ID_INDEX);
     if (delta > 0x7FFF) {
-      throw new IllegalArgumentException("negative delta unsupported");
+      // Converting read unsigned int to signed short
+      return (short) delta;
     }
     return delta;
   }

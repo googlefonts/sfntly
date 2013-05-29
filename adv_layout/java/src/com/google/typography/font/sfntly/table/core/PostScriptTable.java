@@ -393,6 +393,8 @@ public final class PostScriptTable extends Table {
       glyphNameIndex = glyphNum;
     } else if (version() == VERSION_2) {
       glyphNameIndex = this.data.readUShort(Offset.glyphNameIndex.offset + 2 * glyphNum);
+    } else {
+      return null;
     }
     if (glyphNameIndex < NUM_STANDARD_NAMES) {
       return STANDARD_NAMES[glyphNameIndex];

@@ -24,6 +24,11 @@ public class SubRuleSetArray extends OffsetRecordTable<SubRuleSet> {
     return new SubRuleSet(data, 0, dataIsCanonical);
   }
 
+  @Override
+  public int fieldCount() {
+    return FIELD_COUNT;
+  }
+
   public static class Builder extends OffsetRecordTable.Builder<SubRuleSetArray, SubRuleSet> {
 
     public Builder() {
@@ -68,10 +73,5 @@ public class SubRuleSetArray extends OffsetRecordTable<SubRuleSet> {
     public int fieldCount() {
       return FIELD_COUNT;
     }
-  }
-
-  @Override
-  public int fieldCount() {
-    return FIELD_COUNT;
   }
 }

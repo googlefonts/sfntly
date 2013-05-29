@@ -1,19 +1,19 @@
 package com.google.typography.font.sfntly.table.opentype.contextsubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
-public class SubRuleSet extends OffsetRecordTable<DoubleRecordTable> {
+public class SubRuleSet extends SubGenericRuleSet<SubRule> {
   public SubRuleSet(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
-  public static class Builder extends OffsetRecordTable.Builder<SubRuleSet, DoubleRecordTable> {
+  @Override
+  protected SubRule readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+    return new SubRule(data, base, dataIsCanonical);
+  }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
-      super(data, dataIsCanonical);
-    }
+  public static class Builder extends SubGenericRuleSet.Builder<SubRuleSet, SubRule> {
 
     public Builder() {
       super();
@@ -23,44 +23,29 @@ public class SubRuleSet extends OffsetRecordTable<DoubleRecordTable> {
       super(table);
     }
 
+    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+      super(data, dataIsCanonical);
+    }
+
     @Override
     protected SubRuleSet readTable(ReadableFontData data, int base, boolean dataIsCanonical) {
       return new SubRuleSet(data, base, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<DoubleRecordTable> createSubTableBuilder() {
-      return new DoubleRecordTable.Builder();
+    protected VisibleBuilder<SubRule> createSubTableBuilder() {
+      return new SubRule.Builder();
     }
 
     @Override
-    protected VisibleBuilder<DoubleRecordTable> createSubTableBuilder(
+    protected VisibleBuilder<SubRule> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
-      return new DoubleRecordTable.Builder(data, 0, dataIsCanonical);
+      return new SubRule.Builder(data, 0, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<DoubleRecordTable> createSubTableBuilder(DoubleRecordTable subTable) {
-      return new DoubleRecordTable.Builder(subTable);
+    protected VisibleBuilder<SubRule> createSubTableBuilder(SubRule subTable) {
+      return new SubRule.Builder(subTable);
     }
-
-    @Override
-    protected void initFields() {
-    }
-
-    @Override
-    public int fieldCount() {
-      return 0;
-    }
-  }
-
-  @Override
-  protected DoubleRecordTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return new DoubleRecordTable(data, base, dataIsCanonical);
-  }
-
-  @Override
-  public int fieldCount() {
-    return 0;
   }
 }

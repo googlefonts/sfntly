@@ -266,7 +266,7 @@ public class ViewableTaggedData {
       case OFFSET_NONZERO:
         value = data.readUShort(pos);
         if (value == 0) {
-          alt = null;
+          alt = "NULL";
           width = 2;
           break;
         }
@@ -306,7 +306,13 @@ public class ViewableTaggedData {
       case GLYPH:
         value = data.readUShort(pos);
         alt = String.valueOf(value);
-        label = ((label != null) ? label + ": " : "glyph name: ") + post.glyphName(value);
+        String glyphName = post.glyphName(value);
+        if (glyphName != null) {
+          if (label == null) {
+            label = "glyph name";
+          }
+          label = label + ": " + glyphName;
+        }
         width = 2;
         break;
       default:
@@ -373,8 +379,12 @@ public class ViewableTaggedData {
       StringBuilder sb = new StringBuilder();
       for (int glyphId : glyphIds) {
         sb.append(glyphId);
-        sb.append("-");
-        sb.append(post.glyphName(glyphId));
+
+        String glyphName = post.glyphName(glyphId);
+        if (glyphName != null) {
+          sb.append("-");
+          sb.append(post.glyphName(glyphId));
+        }
         sb.append(" ");
       }
       return sb.toString();

@@ -1,11 +1,10 @@
-package com.google.typography.font.sfntly.table.opentype.chaincontextsubst;
+package com.google.typography.font.sfntly.table.opentype.contextsubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
 
-public abstract class ChainSubGenericRuleSet<T extends ChainSubGenericRule>
-    extends OffsetRecordTable<T> {
-  public ChainSubGenericRuleSet(ReadableFontData data, int base, boolean dataIsCanonical) {
+public abstract class SubGenericRuleSet<T extends DoubleRecordTable> extends OffsetRecordTable<T> {
+  public SubGenericRuleSet(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
@@ -14,8 +13,7 @@ public abstract class ChainSubGenericRuleSet<T extends ChainSubGenericRule>
     return 0;
   }
 
-  public static abstract class Builder<
-      T extends ChainSubGenericRuleSet<S>, S extends ChainSubGenericRule>
+  public abstract static class Builder<T extends SubGenericRuleSet<S>, S extends DoubleRecordTable>
       extends OffsetRecordTable.Builder<T, S> {
 
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
