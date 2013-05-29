@@ -4,6 +4,7 @@ package com.google.typography.font.sfntly.sample.sfview;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.FontDataTable;
+import com.google.typography.font.sfntly.table.opentype.AlternateSubst;
 import com.google.typography.font.sfntly.table.opentype.ChainContextSubst;
 import com.google.typography.font.sfntly.table.opentype.ClassDefTable;
 import com.google.typography.font.sfntly.table.opentype.ContextSubst;
@@ -16,6 +17,7 @@ import com.google.typography.font.sfntly.table.opentype.LangSysTable;
 import com.google.typography.font.sfntly.table.opentype.LigatureSubst;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
 import com.google.typography.font.sfntly.table.opentype.LookupTable;
+import com.google.typography.font.sfntly.table.opentype.MultipleSubst;
 import com.google.typography.font.sfntly.table.opentype.NullTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTable;
@@ -34,6 +36,10 @@ import com.google.typography.font.sfntly.table.opentype.component.OneToManySubst
 import com.google.typography.font.sfntly.table.opentype.component.RangeRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.RuleExtractor;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.DoubleRecordTable;
+import com.google.typography.font.sfntly.table.opentype.contextsubst.SubClassRule;
+import com.google.typography.font.sfntly.table.opentype.contextsubst.SubClassSet;
+import com.google.typography.font.sfntly.table.opentype.contextsubst.SubGenericRuleSet;
+import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRule;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRuleSet;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.Ligature;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.LigatureSet;
@@ -120,6 +126,14 @@ public class OtTableTagger {
     tagMethodRegistry.put(m.clzz, m);
   }
 
+  @SafeVarargs
+  private final void register(TagMethod m, Class<? extends FontDataTable>... clzzes) {
+    tagMethodRegistry.put(m.clzz, m);
+    for (Class<? extends FontDataTable> clzz : clzzes) {
+      tagMethodRegistry.put(clzz, m);
+    }
+  }
+
   void registerTagMethods() {
     register(new TagMethod(ScriptListTable.class) {
       @Override
@@ -199,7 +213,7 @@ public class OtTableTagger {
         LookupListTable table = (LookupListTable) fdt;
         int lookupCount = td.tagRangeField(FieldType.SHORT, "lookup count");
         for (int i = 0; i < lookupCount; ++i) {
-          td.tagRangeField(FieldType.OFFSET, null);
+          td.tagRangeField(FieldType.OFFSET, "index: " + i);
         }
         for (int i = 0; i < lookupCount; ++i) {
           LookupTable lookup = table.subTableAt(i);
@@ -303,7 +317,7 @@ public class OtTableTagger {
       }
     });
 
-    register(new TagMethod(OneToManySubst.class) {
+    register(new TagMethod(MultipleSubst.class) {
       @Override
       public void tag(FontDataTable fdt) {
         OneToManySubst table = (OneToManySubst) fdt;
@@ -322,7 +336,7 @@ public class OtTableTagger {
           tagTable(subTable);
         }
       }
-    });
+    }, AlternateSubst.class);
 
     register(new TagMethod(NumRecordTable.class) {
       @Override
@@ -350,10 +364,10 @@ public class OtTableTagger {
 
         int subTableCount = table.recordList().count();
         for (int i = 0; i < subTableCount; ++i) {
-          td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+          td.tagRangeField(FieldType.OFFSET_NONZERO, "for inital class: " + i);
         }
         for (int i = 0; i < subTableCount; ++i) {
-          SubRuleSet subTable = table.subTableAt(i);
+          SubGenericRuleSet<?> subTable = table.subTableAt(i);
           if (subTable != null) {
             tagTable(subTable);
           }
@@ -364,7 +378,7 @@ public class OtTableTagger {
     register(new TagMethod(SubRuleSet.class) {
       @Override
       public void tag(FontDataTable fdt) {
-        SubRuleSet table = (SubRuleSet) fdt;
+        SubGenericRuleSet<?> table = (SubGenericRuleSet<?>) fdt;
         td.tagRangeField(FieldType.SHORT, "sub rule count");
         int subTableCount = table.recordList.count();
         for (int i = 0; i < subTableCount; ++i) {
@@ -375,17 +389,35 @@ public class OtTableTagger {
           tagTable(subTable);
         }
       }
-    });
+    }, SubClassSet.class);
 
-    register(new TagMethod(DoubleRecordTable.class) {
+    register(new TagMethod(SubRule.class) {
       @Override
       public void tag(FontDataTable fdt) {
-        DoubleRecordTable table = (DoubleRecordTable) fdt;
+        SubRule table = (SubRule) fdt;
         td.tagRangeField(FieldType.SHORT, "input glyph count + 1");
         td.tagRangeField(FieldType.SHORT, "subst lookup record count");
         int glyphCount = table.inputGlyphs.count();
         for (int i = 0; i < glyphCount; ++i) {
           td.tagRangeField(FieldType.GLYPH, "glyph id");
+        }
+        int lookupCount = table.lookupRecords.count();
+        for (int i = 0; i < lookupCount; ++i) {
+          td.tagRangeField(FieldType.SHORT, "sequence index");
+          td.tagRangeField(FieldType.SHORT, "lookup list index");
+        }
+      }
+    });
+
+    register(new TagMethod(SubClassRule.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+        SubClassRule table = (SubClassRule) fdt;
+        td.tagRangeField(FieldType.SHORT, "input class count + 1");
+        td.tagRangeField(FieldType.SHORT, "subst lookup record count");
+        int glyphCount = table.inputGlyphs.count();
+        for (int i = 0; i < glyphCount; ++i) {
+          td.tagRangeField(FieldType.SHORT, "class id");
         }
         int lookupCount = table.lookupRecords.count();
         for (int i = 0; i < lookupCount; ++i) {

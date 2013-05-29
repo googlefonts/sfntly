@@ -5,13 +5,13 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.contextsubst.DoubleRecordTable;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubClassSetArray;
+import com.google.typography.font.sfntly.table.opentype.contextsubst.SubGenericRuleSet;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRuleSet;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRuleSetArray;
 
-import java.util.Iterator;
-
-public class ContextSubst extends SubstSubtable implements Iterable<SubRuleSet> {
+public class ContextSubst extends SubstSubtable {
   private final SubRuleSetArray ruleSets;
   private SubClassSetArray classSets;
 
@@ -37,20 +37,34 @@ public class ContextSubst extends SubstSubtable implements Iterable<SubRuleSet> 
   // //////////////////////////////////
   // Methods redirected to the array
 
+  public SubRuleSetArray fmt1Table() {
+    switch (format) {
+    case 1:
+      return ruleSets;
+    default:
+      throw new IllegalArgumentException("unexpected format table requested: " + format);
+    }
+  }
+
+  public SubClassSetArray fmt2Table() {
+    switch (format) {
+    case 2:
+      return classSets;
+    default:
+      throw new IllegalArgumentException("unexpected format table requested: " + format);
+    }
+  }
+
   public NumRecordList recordList() {
     return (format == 1) ? ruleSets.recordList : classSets.recordList;
   }
 
-  public SubRuleSet subTableAt(int index) {
+  public SubGenericRuleSet<? extends DoubleRecordTable> subTableAt(int index) {
     return (format == 1) ? ruleSets.subTableAt(index) : classSets.subTableAt(index);
   }
 
-  @Override
-  public Iterator<SubRuleSet> iterator() {
-    return (format == 1) ? ruleSets.iterator() : classSets.iterator();
-  }
-
-  protected SubRuleSet createSubTable(ReadableFontData data, boolean dataIsCanonical) {
+  protected SubGenericRuleSet<? extends DoubleRecordTable> createSubTable(
+      ReadableFontData data, boolean dataIsCanonical) {
     return (format == 1) ? ruleSets.readSubTable(data, dataIsCanonical)
         : classSets.readSubTable(data, dataIsCanonical);
   }

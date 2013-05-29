@@ -30,7 +30,9 @@ public class Rule {
       for (GlyphGroup b : backtrack) {
         i--;
         if (i < 0 || i >= srcGlyphIds.size() || !b.isIntersecting(srcGlyphIds.get(i))) {
-          return null;
+          if (!b.contains(-1)) {
+            return null;
+          }
         }
       }
     }
@@ -49,7 +51,9 @@ public class Rule {
       i = at + input.size();
       for (GlyphGroup l : lookAhead) {
         if (i < 0 || i >= srcGlyphIds.size() || !l.isIntersecting(srcGlyphIds.get(i))) {
-          return null;
+          if (!l.contains(-1)) {
+            return null;
+          }
         }
         i++;
       }

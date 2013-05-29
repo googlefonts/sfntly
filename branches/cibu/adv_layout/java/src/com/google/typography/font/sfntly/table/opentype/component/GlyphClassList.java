@@ -24,8 +24,11 @@ public class GlyphClassList extends NumRecordList {
     super(data, base, recordBaseOffset, countDecrement);
   }
 
+  public GlyphClassList(NumRecordList other) {
+    super(other);
+  }
+
   public static int sizeOfListOfCount(int count) {
     return RecordList.RECORD_BASE_DEFAULT + count * NumRecord.RECORD_SIZE;
   }
-
 }

@@ -36,6 +36,15 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
     }
   }
 
+  public RecordList(RecordList<T> other) {
+    this.readData = other.readData;
+    this.writeData = other.writeData;
+    this.base = other.base;
+    this.recordBase = other.recordBase;
+    this.count = other.count;
+    this.recordsToWrite = other.recordsToWrite;
+  }
+
   public RecordList(ReadableFontData data) {
     this(data, 0);
   }

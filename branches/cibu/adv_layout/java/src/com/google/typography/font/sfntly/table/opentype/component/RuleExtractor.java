@@ -9,15 +9,24 @@ import com.google.typography.font.sfntly.table.opentype.ExtensionSubst;
 import com.google.typography.font.sfntly.table.opentype.LigatureSubst;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
 import com.google.typography.font.sfntly.table.opentype.LookupTable;
+import com.google.typography.font.sfntly.table.opentype.MultipleSubst;
 import com.google.typography.font.sfntly.table.opentype.SingleSubst;
 import com.google.typography.font.sfntly.table.opentype.SubstSubtable;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubClassRule;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubClassSet;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubClassSetArray;
+import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRule;
+import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSet;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSetArray;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.CoverageArray;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.InnerArraysFmt3;
 import com.google.typography.font.sfntly.table.opentype.classdef.InnerArrayFmt1;
+import com.google.typography.font.sfntly.table.opentype.contextsubst.SubClassRule;
+import com.google.typography.font.sfntly.table.opentype.contextsubst.SubClassSet;
+import com.google.typography.font.sfntly.table.opentype.contextsubst.SubClassSetArray;
+import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRule;
+import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRuleSet;
+import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRuleSetArray;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.Ligature;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.LigatureSet;
 import com.google.typography.font.sfntly.table.opentype.singlesubst.HeaderFmt1;
@@ -122,6 +131,9 @@ public class RuleExtractor {
   private static List<Rule> extract(HeaderFmt1 fmt1Table) {
     List<Integer> coverage = extract(fmt1Table.coverage);
     int delta = fmt1Table.getDelta();
+    if (delta < 0) {
+      System.err.println("Got negative delta : " + delta);
+    }
     return Rule.deltaRules(coverage, delta);
   }
 
@@ -129,6 +141,24 @@ public class RuleExtractor {
     List<Integer> coverage = extract(fmt2Table.coverage);
     List<Integer> substs = extract((RecordsTable<NumRecord>) fmt2Table);
     return Rule.oneToOneRules(coverage, substs);
+  }
+
+  public static List<Rule> extract(MultipleSubst table) {
+    List<Rule> result = new ArrayList<Rule>();
+
+    GlyphList coverage = extract(table.coverage());
+    int i = 0;
+    for (NumRecordTable glyphIds : table) {
+      GlyphList input = new GlyphList(coverage.get(i));
+
+      GlyphList glyphList = extract(glyphIds);
+      RuleSegment subst = new RuleSegment(glyphList);
+
+      Rule rule = new Rule(null, input, null, subst);
+      result.add(rule);
+      i++;
+    }
+    return result;
   }
 
   public static List<Rule> extract(AlternateSubst table) {
@@ -150,15 +180,96 @@ public class RuleExtractor {
     return result;
   }
 
-  public static List<Rule> extract(ContextSubst table) {
-    throw new IllegalArgumentException("unimplemented extractor for ContextSubst");
+  public static List<Rule> extract(ContextSubst table, Map<Integer, List<Rule>> allLookupRules) {
+    switch (table.format) {
+    case 1:
+      return extract(table.fmt1Table(), allLookupRules);
+    case 2:
+      return extract(table.fmt2Table(), allLookupRules);
+    default:
+      throw new IllegalArgumentException("unimplemented format " + table.format);
+    }
+  }
+
+  public static List<Rule> extract(SubRuleSetArray table, Map<Integer, List<Rule>> allLookupRules) {
+    GlyphList coverage = extract(table.coverage);
+
+    List<Rule> result = new ArrayList<Rule>();
+    int i = 0;
+    for (SubRuleSet subRuleSet : table) {
+      List<Rule> subRules = extract(coverage.get(i), subRuleSet, allLookupRules);
+      result.addAll(subRules);
+      i++;
+    }
+    return result;
+  }
+
+  public static List<Rule> extract(
+      Integer firstGlyph, SubRuleSet table, Map<Integer, List<Rule>> allLookupRules) {
+    List<Rule> result = new ArrayList<Rule>();
+    for (SubRule subRule : table) {
+      result.addAll(extract(firstGlyph, subRule, allLookupRules));
+    }
+    return result;
+  }
+
+  public static List<Rule> extract(
+      Integer firstGlyph, SubRule table, Map<Integer, List<Rule>> allLookupRules) {
+    GlyphList inputRow = new GlyphList();
+    inputRow.add(firstGlyph);
+    for (NumRecord record : table.inputGlyphs) {
+      inputRow.add(record.value);
+    }
+
+    Rule ruleSansSubst = new Rule(null, inputRow, null, new RuleSegment(inputRow));
+    List<Rule> rulesSansSubst = new ArrayList<Rule>();
+    rulesSansSubst.add(ruleSansSubst);
+
+    rulesSansSubst = applyChainingLookup(rulesSansSubst, table.lookupRecords, allLookupRules);
+    return rulesSansSubst;
+  }
+
+  public static List<Rule> extract(
+      SubClassSetArray table, Map<Integer, List<Rule>> allLookupRules) {
+    GlyphList coverage = extract(table.coverage);
+    Map<Integer, GlyphGroup> classDef = extract(table.classDef);
+
+    List<Rule> result = new ArrayList<Rule>();
+    int i = 0;
+    for (SubClassSet subClassRuleSet : table) {
+      if (subClassRuleSet != null) {
+        List<Rule> subRules = extract(subClassRuleSet, i, classDef, allLookupRules);
+        result.addAll(subRules);
+      }
+      i++;
+    }
+    return result;
+  }
+
+  public static List<Rule> extract(SubClassSet table, int firstInputClass,
+      Map<Integer, GlyphGroup> inputClassDef, Map<Integer, List<Rule>> allLookupRules) {
+    List<Rule> result = new ArrayList<Rule>();
+    for (SubClassRule chainSubRule : table) {
+      List<Rule> subRules = extract(chainSubRule, firstInputClass, inputClassDef, allLookupRules);
+      result.addAll(subRules);
+    }
+    return result;
+  }
+
+  public static List<Rule> extract(SubClassRule table, int firstInputClass,
+      Map<Integer, GlyphGroup> inputClassDef, Map<Integer, List<Rule>> allLookupRules) {
+    List<GlyphList> inputRows = extract(firstInputClass, table.inputGlyphs(), inputClassDef);
+
+    List<Rule> rulesSansSubst = Rule.permuteContext(null, inputRows, null);
+    rulesSansSubst = applyChainingLookup(rulesSansSubst, table.lookupRecords, allLookupRules);
+    return rulesSansSubst;
   }
 
   public static List<Rule> extract(
       ChainContextSubst table, Map<Integer, List<Rule>> allLookupRules) {
     switch (table.format) {
     case 1:
-      return extract(table.fmt1Table());
+      return extract(table.fmt1Table(), allLookupRules);
     case 2:
       return extract(table.fmt2Table(), allLookupRules);
     case 3:
@@ -168,8 +279,54 @@ public class RuleExtractor {
     }
   }
 
-  public static List<Rule> extract(ChainSubRuleSetArray table) {
-    throw new IllegalArgumentException("unimplemented extractor for ChainSubRuleSetArray");
+  public static List<Rule> extract(
+      ChainSubRuleSetArray table, Map<Integer, List<Rule>> allLookupRules) {
+    GlyphList coverage = extract(table.coverage);
+
+    List<Rule> result = new ArrayList<Rule>();
+    int i = 0;
+    for (ChainSubRuleSet subRuleSet : table) {
+      List<Rule> subRules = extract(coverage.get(i), subRuleSet, allLookupRules);
+      result.addAll(subRules);
+      i++;
+    }
+    return result;
+  }
+
+  public static List<Rule> extract(
+      Integer firstGlyph, ChainSubRuleSet table, Map<Integer, List<Rule>> allLookupRules) {
+    List<Rule> result = new ArrayList<Rule>();
+    for (ChainSubRule subRule : table) {
+      result.addAll(extract(firstGlyph, subRule, allLookupRules));
+    }
+    return result;
+  }
+
+  public static List<Rule> extract(
+      Integer firstGlyph, ChainSubRule table, Map<Integer, List<Rule>> allLookupRules) {
+    GlyphList inputRow = new GlyphList();
+    inputRow.add(firstGlyph);
+    for (NumRecord record : table.inputGlyphs) {
+      inputRow.add(record.value);
+    }
+
+    RuleSegment backtrack = ruleSegmentFromGlyphs(table.backtrackGlyphs);
+    RuleSegment lookAhead = ruleSegmentFromGlyphs(table.lookAheadGlyphs);
+
+    Rule ruleSansSubst = new Rule(backtrack, inputRow, lookAhead, new RuleSegment(inputRow));
+    List<Rule> rulesSansSubst = new ArrayList<Rule>();
+    rulesSansSubst.add(ruleSansSubst);
+
+    rulesSansSubst = applyChainingLookup(rulesSansSubst, table.lookupRecords, allLookupRules);
+    return rulesSansSubst;
+  }
+
+  private static RuleSegment ruleSegmentFromGlyphs(NumRecordList records) {
+    RuleSegment segment = new RuleSegment();
+    for (NumRecord record : records) {
+      segment.add(new GlyphGroup(record.value));
+    }
+    return segment;
   }
 
   public static List<Rule> extract(
@@ -181,7 +338,6 @@ public class RuleExtractor {
     List<Rule> result = new ArrayList<Rule>();
     int i = 0;
     for (ChainSubClassSet chainSubRuleSet : table) {
-
       if (chainSubRuleSet != null) {
         result.addAll(extract(chainSubRuleSet,
             backtrackClassDef,
@@ -245,9 +401,9 @@ public class RuleExtractor {
       Map<Integer, GlyphGroup> inputClassDef,
       Map<Integer, GlyphGroup> lookAheadClassDef,
       Map<Integer, List<Rule>> allLookupRules) {
-    RuleSegment backtrack = extract(table.backtrackGlyphs, backtrackClassDef);
+    RuleSegment backtrack = ruleSegmentFromClasses(table.backtrackGlyphs, backtrackClassDef);
     List<GlyphList> inputRows = extract(firstInputClass, table.inputGlyphs, inputClassDef);
-    RuleSegment lookAhead = extract(table.lookAheadGlyphs, lookAheadClassDef);
+    RuleSegment lookAhead = ruleSegmentFromClasses(table.lookAheadGlyphs, lookAheadClassDef);
 
     List<Rule> rulesSansSubst = Rule.permuteContext(backtrack, inputRows, lookAhead);
     rulesSansSubst = applyChainingLookup(rulesSansSubst, table.lookupRecords, allLookupRules);
@@ -255,16 +411,24 @@ public class RuleExtractor {
   }
 
   public static List<GlyphList> extract(
-      int firstInputClass, GlyphClassList list, Map<Integer, GlyphGroup> classDef) {
+      int firstInputClass, NumRecordList list, Map<Integer, GlyphGroup> classDef) {
     List<GlyphGroup> data = new ArrayList<GlyphGroup>();
     data.add(classDef.get(firstInputClass));
     for (NumRecord record : list) {
-      data.add(classDef.get(record.value));
+      int classId = record.value;
+      GlyphGroup glyphs = classDef.get(classId);
+      if (glyphs == null) {
+        glyphs = new GlyphGroup(-1);
+        System.err.println(
+            "class id is " + classId + "; but no classes defined in Class Def " + classDef);
+      }
+      data.add(glyphs);
     }
     return Rule.permuteToSegments(data);
   }
 
-  public static RuleSegment extract(GlyphClassList list, Map<Integer, GlyphGroup> classDef) {
+  public static RuleSegment ruleSegmentFromClasses(
+      NumRecordList list, Map<Integer, GlyphGroup> classDef) {
     RuleSegment segment = new RuleSegment();
     for (NumRecord record : list) {
       segment.add(classDef.get(record.value));
@@ -353,6 +517,9 @@ public class RuleExtractor {
       case GSUB_ALTERNATE:
         rules = extract((AlternateSubst) entry.table);
         break;
+      case GSUB_MULTIPLE:
+        rules = extract((MultipleSubst) entry.table);
+        break;
       }
       if (rules != null) {
         allRules.get(entry.lookupListIndex).addAll(rules);
@@ -366,9 +533,19 @@ public class RuleExtractor {
       case GSUB_CHAINING_CONTEXTUAL:
         rules = extract((ChainContextSubst) entry.table, allRules);
         break;
+      case GSUB_CONTEXTUAL:
+        rules = extract((ContextSubst) entry.table, allRules);
+        break;
       }
       if (rules != null) {
         allRules.get(entry.lookupListIndex).addAll(rules);
+      }
+    }
+
+    for (LaterEntry entry : laterList) {
+      switch (entry.lookupType) {
+      case GSUB_REVERSE_CHAINING_CONTEXTUAL_SINGLE:
+        throw new IllegalArgumentException("unimplemented extractor for " + entry.lookupType);
       }
     }
     return allRules;
@@ -382,9 +559,5 @@ public class RuleExtractor {
       result.add(glyphGroup);
     }
     return result;
-  }
-
-  public static List<Rule> extract(ExtensionSubst table) {
-    throw new IllegalArgumentException("unimplemented extractor for ExtensionSubst");
   }
 }

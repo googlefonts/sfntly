@@ -24,7 +24,5 @@ public class ChainSubRule extends ChainSubGenericRule {
     public ChainSubRule subBuildTable(ReadableFontData data) {
       return new ChainSubRule(data, 0, true);
     }
-
   }
-
 }

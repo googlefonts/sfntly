@@ -26,6 +26,10 @@ public class NumRecordList extends RecordList<NumRecord> {
     super(data, base, recordBaseOffset, countDecrement);
   }
 
+  public NumRecordList(NumRecordList other) {
+    super(other);
+  }
+
   public static int sizeOfListOfCount(int count) {
     return RecordList.RECORD_BASE_DEFAULT + count * NumRecord.RECORD_SIZE;
   }

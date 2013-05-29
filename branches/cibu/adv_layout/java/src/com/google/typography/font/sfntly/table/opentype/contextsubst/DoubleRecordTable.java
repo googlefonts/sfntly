@@ -26,7 +26,7 @@ public class DoubleRecordTable extends SubTable {
     this(data, 0, dataIsCanonical);
   }
 
-  public static class Builder extends VisibleBuilder<DoubleRecordTable> {
+  public abstract static class Builder<T extends DoubleRecordTable> extends VisibleBuilder<T> {
 
     protected NumRecordList inputGlyphIdsBuilder;
     protected SubstLookupRecordList substLookupRecordsBuilder;
@@ -50,7 +50,7 @@ public class DoubleRecordTable extends SubTable {
       }
     }
 
-    public Builder(Builder other) {
+    public Builder(Builder<T> other) {
       super();
       inputGlyphIdsBuilder = other.inputGlyphIdsBuilder;
       substLookupRecordsBuilder = other.substLookupRecordsBuilder;
@@ -80,11 +80,6 @@ public class DoubleRecordTable extends SubTable {
       }
 
       return inputGlyphIdsBuilder.writeTo(newData) + substLookupRecordsBuilder.writeTo(newData);
-    }
-
-    @Override
-    public DoubleRecordTable subBuildTable(ReadableFontData data) {
-      return new DoubleRecordTable(data, 0, true);
     }
 
     @Override

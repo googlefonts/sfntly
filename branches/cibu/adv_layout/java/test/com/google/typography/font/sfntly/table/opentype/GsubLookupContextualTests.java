@@ -180,10 +180,10 @@ public class GsubLookupContextualTests extends TestCase {
     assertEquals(GsubLookupType.GSUB_CONTEXTUAL, subTable.lookupType());
     assertEquals(2, subTable.subRuleSetCount());
 
-    GsubLookupContextual.Fmt1.SubRuleSet ruleSet0 = subTable.subRuleSetAt(0);
+    SubGenericRuleSet.Fmt1.SubRuleSet ruleSet0 = subTable.subRuleSetAt(0);
     assertEquals(1, ruleSet0.ruleCount());
 
-    GsubLookupContextual.Fmt1.SubRuleSet.SubRule subRule0_0 = ruleSet0.subRuleAt(0);
+    SubGenericRuleSet.Fmt1.SubRuleSet.SubRule subRule0_0 = ruleSet0.subRuleAt(0);
     assertEquals(2, subRule0_0.glyphCount());
     assertEquals(glyf_dash, subRule0_0.inputGlyphIdAt(1));
 
@@ -191,10 +191,10 @@ public class GsubLookupContextualTests extends TestCase {
     assertEquals(0, subRule0_0.substitutionSequenceIndexAt(0));
     assertEquals(1, subRule0_0.substitutionLookupIndexAt(0));
 
-    GsubLookupContextual.Fmt1.SubRuleSet ruleSet1 = subTable.subRuleSetAt(1);
+    SubGenericRuleSet.Fmt1.SubRuleSet ruleSet1 = subTable.subRuleSetAt(1);
     assertEquals(1, ruleSet0.ruleCount());
 
-    GsubLookupContextual.Fmt1.SubRuleSet.SubRule subRule1_0 = ruleSet1.subRuleAt(0);
+    SubGenericRuleSet.Fmt1.SubRuleSet.SubRule subRule1_0 = ruleSet1.subRuleAt(0);
     assertEquals(2, subRule1_0.glyphCount());
     assertEquals(glyf_space, subRule1_0.inputGlyphIdAt(1));
 
@@ -291,10 +291,10 @@ public class GsubLookupContextualTests extends TestCase {
     assertEquals(GsubLookupType.GSUB_CONTEXTUAL, subTable.lookupType());
     assertEquals(1, subTable.subRuleSetCount());
 
-    GsubLookupContextual.Fmt1.SubRuleSet ruleSet0 = subTable.subRuleSetAt(0);
+    SubGenericRuleSet.Fmt1.SubRuleSet ruleSet0 = subTable.subRuleSetAt(0);
     assertEquals(1, ruleSet0.ruleCount());
 
-    GsubLookupContextual.Fmt1.SubRuleSet.SubRule subRule0_0 = ruleSet0.subRuleAt(0);
+    SubGenericRuleSet.Fmt1.SubRuleSet.SubRule subRule0_0 = ruleSet0.subRuleAt(0);
     assertEquals(2, subRule0_0.glyphCount());
     assertEquals(glyf_space, subRule0_0.inputGlyphIdAt(1));
 
