@@ -18,12 +18,13 @@ public class NumRecordList extends RecordList<NumRecord> {
     super(data, countDecrement);
   }
 
-  public NumRecordList(ReadableFontData data, int recordBaseOffset, int countDecrement) {
-    super(data, 0, recordBaseOffset, countDecrement);
+  public NumRecordList(ReadableFontData data, int countDecrement, int countOffset) {
+    super(data, countDecrement, countOffset);
   }
 
-  public NumRecordList(ReadableFontData data, int base, int recordBaseOffset, int countDecrement) {
-    super(data, base, recordBaseOffset, countDecrement);
+  public NumRecordList(
+      ReadableFontData data, int countDecrement, int countOffset, int valuesOffset) {
+    super(data, countDecrement, countOffset, valuesOffset);
   }
 
   public NumRecordList(NumRecordList other) {
@@ -31,7 +32,7 @@ public class NumRecordList extends RecordList<NumRecord> {
   }
 
   public static int sizeOfListOfCount(int count) {
-    return RecordList.RECORD_BASE_DEFAULT + count * NumRecord.RECORD_SIZE;
+    return RecordList.DATA_OFFSET + count * NumRecord.RECORD_SIZE;
   }
 
   public boolean contains(int value) {

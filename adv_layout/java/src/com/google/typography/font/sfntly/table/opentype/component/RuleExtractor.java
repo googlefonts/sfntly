@@ -33,7 +33,9 @@ import com.google.typography.font.sfntly.table.opentype.singlesubst.HeaderFmt1;
 import com.google.typography.font.sfntly.table.opentype.singlesubst.InnerArrayFmt2;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -57,8 +59,11 @@ public class RuleExtractor {
     case 1:
       return extract(table.fmt1Table());
     case 2:
+      RangeRecordTable array = table.fmt2Table();
+      Map<Integer, GlyphGroup> map = extract(array);
+      Collection<GlyphGroup> groups = map.values();
       GlyphList result = new GlyphList();
-      for (GlyphGroup glyphIds : extract(table.fmt2Table()).values()) {
+      for (GlyphGroup glyphIds : groups) {
         result.addAll(glyphIds);
       }
       return result;
@@ -76,7 +81,8 @@ public class RuleExtractor {
   }
 
   public static Map<Integer, GlyphGroup> extract(RangeRecordTable table) {
-    Map<Integer, GlyphGroup> result = new HashMap<Integer, GlyphGroup>();
+    // Order is important.
+    Map<Integer, GlyphGroup> result = new LinkedHashMap<Integer, GlyphGroup>();
     for (RangeRecord record : table.recordList) {
       if (!result.containsKey(record.property)) {
         result.put(record.property, new GlyphGroup());
@@ -249,8 +255,8 @@ public class RuleExtractor {
   public static List<Rule> extract(SubClassSet table, int firstInputClass,
       Map<Integer, GlyphGroup> inputClassDef, Map<Integer, List<Rule>> allLookupRules) {
     List<Rule> result = new ArrayList<Rule>();
-    for (SubClassRule chainSubRule : table) {
-      List<Rule> subRules = extract(chainSubRule, firstInputClass, inputClassDef, allLookupRules);
+    for (SubClassRule subRule : table) {
+      List<Rule> subRules = extract(subRule, firstInputClass, inputClassDef, allLookupRules);
       result.addAll(subRules);
     }
     return result;
@@ -457,7 +463,11 @@ public class RuleExtractor {
       int at = lookup.sequenceIndex;
       int lookupIndex = lookup.lookupListIndex;
       List<Rule> rulesToApply = allLookupRules.get(lookupIndex);
-      rulesSansSubst = Rule.applyOnRuleSubsts(rulesToApply, rulesSansSubst, at);
+      if (rulesToApply == null) {
+        throw new IllegalArgumentException(
+            "Out of bound lookup index for chaining lookup: " + lookupIndex);
+      }
+      rulesSansSubst = Rule.applyOnRuleSubsts(rulesSansSubst, at, rulesToApply);
     }
 
     List<Rule> result = new ArrayList<Rule>();

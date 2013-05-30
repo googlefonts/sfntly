@@ -18,8 +18,8 @@ public class DoubleRecordTable extends SubTable {
 
   public DoubleRecordTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data);
-    inputGlyphs = new NumRecordList(data, 2, 1);
-    lookupRecords = new SubstLookupRecordList(data, 2, inputGlyphs.limit());
+    inputGlyphs = new NumRecordList(data, 1, base, base + 4);
+    lookupRecords = new SubstLookupRecordList(data, base + 2, inputGlyphs.limit());
   }
 
   public DoubleRecordTable(ReadableFontData data, boolean dataIsCanonical) {
@@ -103,7 +103,7 @@ public class DoubleRecordTable extends SubTable {
 
     private void initFromData(ReadableFontData data) {
       if (inputGlyphIdsBuilder == null || substLookupRecordsBuilder == null) {
-        inputGlyphIdsBuilder = new NumRecordList(data, 2, 1);
+        inputGlyphIdsBuilder = new NumRecordList(data, 1, 0, 4);
         substLookupRecordsBuilder = new SubstLookupRecordList(
             data, 2, inputGlyphIdsBuilder.limit());
       }

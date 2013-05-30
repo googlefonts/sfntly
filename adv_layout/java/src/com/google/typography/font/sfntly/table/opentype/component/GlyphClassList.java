@@ -16,12 +16,9 @@ public class GlyphClassList extends NumRecordList {
     super(data, countDecrement);
   }
 
-  public GlyphClassList(ReadableFontData data, int recordBaseOffset, int countDecrement) {
-    super(data, 0, recordBaseOffset, countDecrement);
-  }
-
-  public GlyphClassList(ReadableFontData data, int base, int recordBaseOffset, int countDecrement) {
-    super(data, base, recordBaseOffset, countDecrement);
+  public GlyphClassList(
+      ReadableFontData data, int countDecrement, int countOffset, int valuesOffset) {
+    super(data, countDecrement, countOffset, valuesOffset);
   }
 
   public GlyphClassList(NumRecordList other) {
@@ -29,6 +26,6 @@ public class GlyphClassList extends NumRecordList {
   }
 
   public static int sizeOfListOfCount(int count) {
-    return RecordList.RECORD_BASE_DEFAULT + count * NumRecord.RECORD_SIZE;
+    return RecordList.DATA_OFFSET + count * NumRecord.RECORD_SIZE;
   }
 }

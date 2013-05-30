@@ -13,7 +13,7 @@ public final class RangeRecordList extends RecordList<RangeRecord> {
   }
 
   public static int sizeOfListOfCount(int count) {
-    return RecordList.RECORD_BASE_DEFAULT + count * RangeRecord.RECORD_SIZE;
+    return RecordList.DATA_OFFSET + count * RangeRecord.RECORD_SIZE;
   }
 
   @Override

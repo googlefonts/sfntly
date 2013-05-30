@@ -244,7 +244,7 @@ public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
     }
 
     private void initFromData(ReadableFontData data, int base) {
-      NumRecordList recordList = new NumRecordList(data, base + headerSize(), 0, 0);
+      NumRecordList recordList = new NumRecordList(data, 0, base + headerSize());
       initFromData(recordList);
     }
 

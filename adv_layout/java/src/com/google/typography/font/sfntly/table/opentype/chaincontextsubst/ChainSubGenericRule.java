@@ -19,9 +19,10 @@ public class ChainSubGenericRule extends SubTable {
   public ChainSubGenericRule(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data);
     backtrackGlyphs = new NumRecordList(data);
-    inputGlyphs = new NumRecordList(data, backtrackGlyphs.limit(), 0, 1);
-    lookAheadGlyphs = new NumRecordList(data, inputGlyphs.limit(), 0, 0);
-    lookupRecords = new SubstLookupRecordList(data, lookAheadGlyphs.limit(), 0);
+    inputGlyphs = new NumRecordList(data, 1, backtrackGlyphs.limit());
+    lookAheadGlyphs = new NumRecordList(data, 0, inputGlyphs.limit());
+    lookupRecords = new SubstLookupRecordList(
+        data, lookAheadGlyphs.limit(), lookAheadGlyphs.limit() + 2);
   }
 
   public abstract static class Builder<T extends ChainSubGenericRule> extends VisibleBuilder<T> {
@@ -111,9 +112,9 @@ public class ChainSubGenericRule extends SubTable {
       if (backtrackGlyphsBuilder == null || inputGlyphsBuilder == null
           || lookAheadGlyphsBuilder == null || lookupRecordsBuilder == null) {
         backtrackGlyphsBuilder = new NumRecordList(data);
-        inputGlyphsBuilder = new NumRecordList(data, backtrackGlyphsBuilder.limit(), 0, 0);
-        lookAheadGlyphsBuilder = new NumRecordList(data, inputGlyphsBuilder.limit(), 0, 0);
-        lookupRecordsBuilder = new SubstLookupRecordList(data, lookAheadGlyphsBuilder.limit(), 0);
+        inputGlyphsBuilder = new NumRecordList(data, 0, backtrackGlyphsBuilder.limit());
+        lookAheadGlyphsBuilder = new NumRecordList(data, 0, inputGlyphsBuilder.limit());
+        lookupRecordsBuilder = new SubstLookupRecordList(data, lookAheadGlyphsBuilder.limit());
       }
     }
 

@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 
 public abstract class RecordList<T extends Record> implements Iterable<T> {
   private static final int COUNT_OFFSET = 0;
-  public static final int RECORD_BASE_DEFAULT = 2;
+  public static final int DATA_OFFSET = 2;
   public final int base;
   public final int recordBase;
 
@@ -26,13 +26,14 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
    * RECORD_BASE_DEFAULT; if (writeData != null) {
    * writeData.writeUShort(COUNT_OFFSET, 0); } }
    */
-  public RecordList(ReadableFontData data, int base, int recordBaseOffset, int countDecrement) {
+  public RecordList(ReadableFontData data, int countDecrement, int countOffset, int valuesOffset) {
     this.readData = data;
     this.writeData = null;
-    this.base = base;
-    this.recordBase = base + RECORD_BASE_DEFAULT + recordBaseOffset;
+    this.base = countOffset;
+    this.recordBase = valuesOffset; // base + RECORD_BASE_DEFAULT +
+                                    // recordBaseOffset;
     if (readData != null) {
-      this.count = data.readUShort(base + COUNT_OFFSET) - countDecrement;
+      this.count = data.readUShort(countOffset + COUNT_OFFSET) - countDecrement;
     }
   }
 
@@ -50,7 +51,11 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
   }
 
   public RecordList(ReadableFontData data, int countDecrement) {
-    this(data, 0, 0, countDecrement);
+    this(data, countDecrement, 0, DATA_OFFSET);
+  }
+
+  public RecordList(ReadableFontData data, int countDecrement, int countOffset) {
+    this(data, countDecrement, countOffset, countOffset + DATA_OFFSET);
   }
 
   public int count() {
@@ -149,7 +154,7 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
     for (T record : recordsToWrite) {
       nextWritePos += record.writeTo(writeData, nextWritePos);
     }
-    return nextWritePos - recordBase + RECORD_BASE_DEFAULT; // bytes wrote
+    return nextWritePos - recordBase + DATA_OFFSET; // bytes wrote
   }
 
   private void copyFromRead() {
