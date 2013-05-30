@@ -103,11 +103,11 @@ public class RuleDump {
     StringBuilder sb = new StringBuilder();
     if (rule.backtrack != null && rule.backtrack.size() > 0) {
       sb.append(toString(rule.backtrack, post));
-      sb.append("} ");
+      sb.append(") ");
     }
     sb.append(toString(rule.input, post));
     if (rule.lookAhead != null && rule.lookAhead.size() > 0) {
-      sb.append("{ ");
+      sb.append("( ");
       sb.append(toString(rule.lookAhead, post));
     }
     sb.append("=> ");
@@ -118,9 +118,15 @@ public class RuleDump {
   static String toString(RuleSegment context, PostScriptTable post) {
     StringBuilder sb = new StringBuilder();
     for (GlyphGroup glyphGroup : context) {
-      sb.append(" [ ");
+      int glyphCount = glyphGroup.size();
+      if (glyphCount > 1) {
+        sb.append("{ ");
+      }
       sb.append(toString(glyphGroup, post));
-      sb.append("] ");
+      sb.append(" ");
+      if (glyphCount > 1) {
+        sb.append("} ");
+      }
     }
     return sb.toString();
   }
