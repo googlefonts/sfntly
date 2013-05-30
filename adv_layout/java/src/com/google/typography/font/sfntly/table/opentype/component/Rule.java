@@ -84,16 +84,14 @@ public class Rule {
           continue;
         }
         if (!b.isIntersecting(glyphs)) {
-          return null;
+          return glyphs;
         }
       }
     }
 
-    if (input != null) {
-      for (int in : input) {
-        if (!glyphs.contains(in)) {
-          return null;
-        }
+    for (int in : input) {
+      if (!glyphs.contains(in)) {
+        return glyphs;
       }
     }
 
@@ -103,7 +101,7 @@ public class Rule {
           continue;
         }
         if (!l.isIntersecting(glyphs)) {
-          return null;
+          return glyphs;
         }
       }
     }
@@ -115,22 +113,14 @@ public class Rule {
     return result;
   }
 
-  static GlyphGroup apply(List<Rule> rules, GlyphGroup given) {
-    for (Rule rule : rules) {
-      GlyphGroup result = rule.apply(given);
-      if (result != null) {
-        return result;
-      }
-    }
-    return given;
-  }
-
   public static GlyphGroup closure(Map<Integer, List<Rule>> lookupRules, GlyphGroup glyphs) {
     int prevSize = 0;
     while (glyphs.size() > prevSize) {
       prevSize = glyphs.size();
       for (List<Rule> rules : lookupRules.values()) {
-        glyphs = apply(rules, glyphs);
+        for (Rule rule : rules) {
+          glyphs = rule.apply(glyphs);
+        }
       }
     }
     return glyphs;

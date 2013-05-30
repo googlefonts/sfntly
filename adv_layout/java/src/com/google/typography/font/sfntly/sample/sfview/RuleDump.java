@@ -39,32 +39,36 @@ public class RuleDump {
     if (fonts == null) {
       throw new IllegalArgumentException("No font found");
     }
-    for (Font font : fonts) {
-      GSubTable gsub = font.getTable(Tag.GSUB);
-      if (gsub != null) {
-        CMapTable cmapTable = font.getTable(Tag.cmap);
 
-        GlyphGroup glyphGroup = new GlyphGroup();
+    Font font = fonts[0];
+    GSubTable gsub = font.getTable(Tag.GSUB);
+    if (gsub == null) {
+      throw new IllegalArgumentException("No GSUB Table found");
+    }
 
-        for (int code : codes) {
-          for (CMap cmap : cmapTable) {
-            int glyph = cmap.glyphId(code);
-            if (glyph != CMapTable.NOTDEF) {
-              glyphGroup.add(glyph);
-            }
-          }
+    LookupListTable lookupList = gsub.lookupList();
+    Map<Integer, List<Rule>> rules = RuleExtractor.extract(lookupList);
+    PostScriptTable post = font.getTable(Tag.post);
+    dump(rules, post);
+
+    System.out.println("Closure:");
+    CMapTable cmapTable = font.getTable(Tag.cmap);
+    GlyphGroup glyphGroup = glyphGroupForChars(codes, cmapTable);
+    System.out.println(toString(Rule.closure(rules, glyphGroup), post));
+  }
+
+  private static GlyphGroup glyphGroupForChars(List<Integer> codes, CMapTable cmapTable) {
+    GlyphGroup glyphGroup = new GlyphGroup();
+
+    for (int code : codes) {
+      for (CMap cmap : cmapTable) {
+        int glyph = cmap.glyphId(code);
+        if (glyph != CMapTable.NOTDEF) {
+          glyphGroup.add(glyph);
         }
-
-        LookupListTable lookupList = gsub.lookupList();
-        Map<Integer, List<Rule>> rules = RuleExtractor.extract(lookupList);
-        PostScriptTable post = font.getTable(Tag.post);
-        dump(rules, post);
-        System.out.println("Closure:");
-        System.out.println(toString(Rule.closure(rules, glyphGroup), post));
-      } else {
-        throw new IllegalArgumentException("No GSUB Table found");
       }
     }
+    return glyphGroup;
   }
 
   public static Font[] loadFont(File file) throws IOException {
