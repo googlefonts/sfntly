@@ -10,12 +10,16 @@ public final class SubstLookupRecordList extends RecordList<SubstLookupRecord> {
     super(data);
   }
 
-  public SubstLookupRecordList(ReadableFontData data, int base, int recordBaseOffset) {
-    super(data, base, recordBaseOffset, 0);
+  public SubstLookupRecordList(ReadableFontData data, int base) {
+    super(data, 0, base);
+  }
+
+  public SubstLookupRecordList(ReadableFontData data, int countOffset, int valuesOffset) {
+    super(data, 0, countOffset, valuesOffset);
   }
 
   public static int sizeOfListOfCount(int count) {
-    return RecordList.RECORD_BASE_DEFAULT + count * SubstLookupRecord.RECORD_SIZE;
+    return RecordList.DATA_OFFSET + count * SubstLookupRecord.RECORD_SIZE;
   }
 
   public SubstLookupRecord getRecordForTag(int tag) {

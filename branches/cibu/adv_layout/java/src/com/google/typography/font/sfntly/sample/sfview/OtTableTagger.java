@@ -34,7 +34,6 @@ import com.google.typography.font.sfntly.table.opentype.classdef.InnerArrayFmt1;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.OneToManySubst;
 import com.google.typography.font.sfntly.table.opentype.component.RangeRecordTable;
-import com.google.typography.font.sfntly.table.opentype.component.RuleExtractor;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.DoubleRecordTable;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubClassRule;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubClassSet;
@@ -221,7 +220,6 @@ public class OtTableTagger {
             tagTable(lookup);
           }
         }
-        td.dump(RuleExtractor.extract(table));
       }
     });
 

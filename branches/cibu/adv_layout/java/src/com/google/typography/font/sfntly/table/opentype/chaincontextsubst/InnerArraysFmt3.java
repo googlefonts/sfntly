@@ -18,16 +18,16 @@ public class InnerArraysFmt3 extends SubTable {
 
   public InnerArraysFmt3(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data);
-    NumRecordList records = new NumRecordList(data, base, 0, 0);
+    NumRecordList records = new NumRecordList(data, 0, base);
     backtrackGlyphs = new CoverageArray(records);
 
-    records = new NumRecordList(data, records.limit(), 0, 0);
+    records = new NumRecordList(data, 0, records.limit());
     inputGlyphs = new CoverageArray(records);
 
-    records = new NumRecordList(data, records.limit(), 0, 0);
+    records = new NumRecordList(data, 0, records.limit());
     lookAheadGlyphs = new CoverageArray(records);
 
-    lookupRecords = new SubstLookupRecordList(data, records.limit(), 0);
+    lookupRecords = new SubstLookupRecordList(data, records.limit());
   }
 
   public static class Builder extends VisibleBuilder<InnerArraysFmt3> {
@@ -138,16 +138,16 @@ public class InnerArraysFmt3 extends SubTable {
     private void initFromData(ReadableFontData data) {
       if (backtrackGlyphsBuilder == null || inputGlyphsBuilder == null
           || lookAheadGlyphsBuilder == null || lookupRecordsBuilder == null) {
-        NumRecordList records = new NumRecordList(data, 0, 0, 0);
+        NumRecordList records = new NumRecordList(data);
         backtrackGlyphsBuilder = new CoverageArray.Builder(records);
 
-        records = new NumRecordList(data, records.limit(), 0, 0);
+        records = new NumRecordList(data, 0, records.limit());
         inputGlyphsBuilder = new CoverageArray.Builder(records);
 
-        records = new NumRecordList(data, records.limit(), 0, 0);
+        records = new NumRecordList(data, 0, records.limit());
         lookAheadGlyphsBuilder = new CoverageArray.Builder(records);
 
-        lookupRecordsBuilder = new SubstLookupRecordList(data, records.limit(), 0);
+        lookupRecordsBuilder = new SubstLookupRecordList(data, records.limit());
       }
     }
 

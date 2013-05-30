@@ -2,6 +2,7 @@ package com.google.typography.font.sfntly.table.opentype.component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Rule {
   public final RuleSegment backtrack;
@@ -76,7 +77,66 @@ public class Rule {
     return given;
   }
 
-  static List<Rule> applyOnRuleSubsts(List<Rule> rulesToApply, List<Rule> targetRules, int at) {
+  public GlyphGroup apply(GlyphGroup glyphs) {
+    if (backtrack != null) {
+      for (GlyphGroup b : backtrack) {
+        if (b.contains(-1)) {
+          continue;
+        }
+        if (!b.isIntersecting(glyphs)) {
+          return null;
+        }
+      }
+    }
+
+    if (input != null) {
+      for (int in : input) {
+        if (!glyphs.contains(in)) {
+          return null;
+        }
+      }
+    }
+
+    if (lookAhead != null) {
+      for (GlyphGroup l : lookAhead) {
+        if (!l.contains(-1)) {
+          continue;
+        }
+        if (!l.isIntersecting(glyphs)) {
+          return null;
+        }
+      }
+    }
+
+    GlyphGroup result = new GlyphGroup(glyphs);
+    for (GlyphGroup glyphGroup : subst) {
+      result.addAll(glyphGroup);
+    }
+    return result;
+  }
+
+  static GlyphGroup apply(List<Rule> rules, GlyphGroup given) {
+    for (Rule rule : rules) {
+      GlyphGroup result = rule.apply(given);
+      if (result != null) {
+        return result;
+      }
+    }
+    return given;
+  }
+
+  public static GlyphGroup closure(Map<Integer, List<Rule>> lookupRules, GlyphGroup glyphs) {
+    int prevSize = 0;
+    while (glyphs.size() > prevSize) {
+      prevSize = glyphs.size();
+      for (List<Rule> rules : lookupRules.values()) {
+        glyphs = apply(rules, glyphs);
+      }
+    }
+    return glyphs;
+  }
+
+  static List<Rule> applyOnRuleSubsts(List<Rule> targetRules, int at, List<Rule> rulesToApply) {
     List<Rule> result = new ArrayList<Rule>();
     for (Rule targetRule : targetRules) {
       RuleSegment newSubst = new RuleSegment();

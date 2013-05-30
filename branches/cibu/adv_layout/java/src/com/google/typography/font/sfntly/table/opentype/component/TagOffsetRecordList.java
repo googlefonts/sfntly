@@ -15,7 +15,7 @@ public final class TagOffsetRecordList extends RecordList<TagOffsetRecord> {
   }
 
   public static int sizeOfListOfCount(int count) {
-    return RecordList.RECORD_BASE_DEFAULT + count * TagOffsetRecord.RECORD_SIZE;
+    return RecordList.DATA_OFFSET + count * TagOffsetRecord.RECORD_SIZE;
   }
 
   public TagOffsetRecord getRecordForTag(int tag) {
