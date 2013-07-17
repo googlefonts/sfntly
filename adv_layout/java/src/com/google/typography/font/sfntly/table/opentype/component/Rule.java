@@ -1,8 +1,21 @@
 package com.google.typography.font.sfntly.table.opentype.component;
 
+import com.google.typography.font.sfntly.Font;
+import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.table.core.CMap;
+import com.google.typography.font.sfntly.table.core.CMapTable;
+import com.google.typography.font.sfntly.table.core.PostScriptTable;
+import com.google.typography.font.sfntly.table.opentype.FeatureListTable;
+import com.google.typography.font.sfntly.table.opentype.FeatureTable;
+import com.google.typography.font.sfntly.table.opentype.GSubTable;
+import com.google.typography.font.sfntly.table.opentype.LookupListTable;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Rule {
   public final RuleSegment backtrack;
@@ -97,7 +110,7 @@ public class Rule {
 
     if (lookAhead != null) {
       for (GlyphGroup l : lookAhead) {
-        if (!l.contains(-1)) {
+        if (l.contains(-1)) {
           continue;
         }
         if (!l.isIntersecting(glyphs)) {
@@ -113,14 +126,12 @@ public class Rule {
     return result;
   }
 
-  public static GlyphGroup closure(Map<Integer, List<Rule>> lookupRules, GlyphGroup glyphs) {
+  public static GlyphGroup closure(List<Rule> lookupRules, GlyphGroup glyphs) {
     int prevSize = 0;
     while (glyphs.size() > prevSize) {
       prevSize = glyphs.size();
-      for (List<Rule> rules : lookupRules.values()) {
-        for (Rule rule : rules) {
-          glyphs = rule.apply(glyphs);
-        }
+      for (Rule rule : lookupRules) {
+        glyphs = rule.apply(glyphs);
       }
     }
     return glyphs;
@@ -202,5 +213,137 @@ public class Rule {
       result.add(new Rule(backtrack, input, lookAhead, new RuleSegment(input)));
     }
     return result;
+  }
+
+  public static List<Rule> featuredRules(
+      FeatureListTable featureList, Map<Integer, List<Rule>> ruleMap) {
+    Set<Integer> lookupIds = featuredLookups(featureList);
+    List<Rule> rules = new ArrayList<Rule>();
+    for (int lookupId : lookupIds) {
+      rules.addAll(ruleMap.get(lookupId));
+    }
+    return rules;
+  }
+
+  private static Set<Integer> featuredLookups(FeatureListTable featureList) {
+    Set<Integer> lookupIds = new HashSet<Integer>();
+    for (FeatureTable feature : featureList) {
+      for (NumRecord lookupIdRecord : feature) {
+        int lookupId = lookupIdRecord.value;
+        lookupIds.add(lookupId);
+      }
+    }
+    // System.out.println("Featured Lookups: " + lookupIds);
+    return lookupIds;
+  }
+
+  public static GlyphGroup charGlyphClosure(String txt, Font font) {
+    PostScriptTable post = font.getTable(Tag.post);
+    CMapTable cmapTable = font.getTable(Tag.cmap);
+    GlyphGroup glyphGroup = glyphGroupForText(txt, cmapTable);
+
+    List<Rule> featuredRules = featuredRules(font);
+    GlyphGroup ruleClosure = Rule.closure(featuredRules, glyphGroup);
+    System.out.println("Closure: " + toString(ruleClosure, post));
+    return ruleClosure;
+  }
+
+  public static List<Rule> featuredRules(Font font) {
+    GSubTable gsub = font.getTable(Tag.GSUB);
+    if (gsub == null) {
+      System.err.println("No GSUB Table found");
+      return null;
+    }
+
+    LookupListTable lookupList = gsub.lookupList();
+    FeatureListTable featureList = gsub.featureList();
+
+    Map<Integer, List<Rule>> ruleMap = RuleExtractor.extract(lookupList);
+    PostScriptTable post = font.getTable(Tag.post);
+    dump(ruleMap, post);
+
+    List<Rule> featuredRules = Rule.featuredRules(featureList, ruleMap);
+    return featuredRules;
+  }
+
+  public static GlyphGroup glyphGroupForText(String str, CMapTable cmapTable) {
+    GlyphGroup glyphGroup = new GlyphGroup();
+    List<Integer> codes = codepointsFromStr(str);
+    for (int code : codes) {
+      for (CMap cmap : cmapTable) {
+        int glyph = cmap.glyphId(code);
+        if (glyph != CMapTable.NOTDEF) {
+          glyphGroup.add(glyph);
+        }
+      }
+    }
+    return glyphGroup;
+  }
+
+  private static List<Integer> codepointsFromStr(String s) {
+    List<Integer> list = new ArrayList<Integer>();
+    for (int cp, i = 0; i < s.length(); i += Character.charCount(cp)) {
+      cp = s.codePointAt(i);
+      list.add(cp);
+    }
+    return list;
+  }
+
+  public static void dump(Map<Integer, List<Rule>> rulesList, PostScriptTable post) {
+    for (int index : rulesList.keySet()) {
+      List<Rule> rules = rulesList.get(index);
+      System.out.println(
+          "------------------------------ " + index + " --------------------------------");
+      for (Rule rule : rules) {
+        System.out.println(toString(rule, post));
+      }
+    }
+  }
+
+  static String toString(Rule rule, PostScriptTable post) {
+    StringBuilder sb = new StringBuilder();
+    if (rule.backtrack != null && rule.backtrack.size() > 0) {
+      sb.append(toString(rule.backtrack, post));
+      sb.append(") ");
+    }
+    sb.append(toString(rule.input, post));
+    if (rule.lookAhead != null && rule.lookAhead.size() > 0) {
+      sb.append("( ");
+      sb.append(toString(rule.lookAhead, post));
+    }
+    sb.append("=> ");
+    sb.append(toString(rule.subst, post));
+    return sb.toString();
+  }
+
+  static String toString(RuleSegment context, PostScriptTable post) {
+    StringBuilder sb = new StringBuilder();
+    for (GlyphGroup glyphGroup : context) {
+      int glyphCount = glyphGroup.size();
+      if (glyphCount > 1) {
+        sb.append("{ ");
+      }
+      sb.append(toString(glyphGroup, post));
+      sb.append(" ");
+      if (glyphCount > 1) {
+        sb.append("} ");
+      }
+    }
+    return sb.toString();
+  }
+
+  static String toString(Collection<Integer> glyphIds, PostScriptTable post) {
+    StringBuilder sb = new StringBuilder();
+    for (int glyphId : glyphIds) {
+      sb.append(glyphId);
+
+      String glyphName = (glyphId < 0) ? "(all)" : post.glyphName(glyphId);
+      if (glyphName != null) {
+        sb.append("-");
+        sb.append(glyphName);
+      }
+      sb.append(" ");
+    }
+    return sb.toString();
   }
 }

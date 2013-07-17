@@ -20,6 +20,12 @@ public class GlyphGroup extends LinkedHashSet<Integer> {
     super.addAll(glyphs);
   }
 
+  public GlyphGroup(int[] glyphs) {
+    for (int glyph : glyphs) {
+      super.add(glyph);
+    }
+  }
+
   public boolean isIntersecting(GlyphGroup other) {
     Set<Integer> intersection = new HashSet<Integer>(other);
     intersection.retainAll(this);
