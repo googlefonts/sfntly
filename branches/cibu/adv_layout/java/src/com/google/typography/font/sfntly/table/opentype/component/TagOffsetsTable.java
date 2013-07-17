@@ -30,6 +30,10 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
   // ////////////////
   // public methods
 
+  public int count() {
+    return recordList.count();
+  }
+
   public int tagAt(int index) {
     return recordList.get(index).tag;
   }

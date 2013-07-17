@@ -70,6 +70,7 @@ public enum ScriptTag {
   lydi("Lydian"),
   mlym("Malayalam"),
   mlm2("Malayalam v.2"),
+  mly2("Malayalam v.2 alt"),
   mand("Mandaic, Mandaean"),
   math("Mathematical Alphanumeric Symbols"),
   mtei("Meitei Mayek (Meithei, Meetei)"),
@@ -77,7 +78,9 @@ public enum ScriptTag {
   mero("Meroitic Hieroglyphs"),
   mong("Mongolian"),
   musc("Musical Symbols"),
+  musi("Musical Symbols Alt"),
   mymr("Myanmar"),
+  mym2("Myanmar v.2"),
   talu("New Tai Lue"),
   nko("N'Ko"),
   ogam("Ogham"),
@@ -120,24 +123,33 @@ public enum ScriptTag {
   ugar("Ugaritic Cuneiform"),
   vai("Vai"),
   yi("Yi");
-  
-  private ScriptTag(String name) {
+
+  private ScriptTag(String description) {
     String tag = name();
-    while(tag.length() < 4) {
+    while (tag.length() < 4) {
       tag = tag + ' ';
     }
     this.tag = Tag.intValue(tag);
-    this.name = name;
+    this.description = description;
   }
-  
+
   public int tag() {
     return tag;
   }
 
-  public String longName() {
-    return name;
+  public String description() {
+    return description;
   }
 
   private final int tag;
-  private final String name;
+  private final String description;
+
+  public static ScriptTag fromTag(int tag) {
+    for (ScriptTag script : ScriptTag.values()) {
+      if (script.tag == tag) {
+        return script;
+      }
+    }
+    throw new IllegalArgumentException(Tag.stringValue(tag));
+  }
 }

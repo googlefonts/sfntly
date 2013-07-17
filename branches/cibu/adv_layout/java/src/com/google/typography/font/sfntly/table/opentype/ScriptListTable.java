@@ -15,6 +15,10 @@ public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
     return new ScriptTable(data, 0, dataIsCanonical);
   }
 
+  public ScriptTag scriptAt(int index) {
+    return ScriptTag.fromTag(this.tagAt(index));
+  }
+
   public static class Builder extends TagOffsetsTable.Builder<ScriptListTable, ScriptTable> {
 
     @Override
