@@ -8,10 +8,14 @@ import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.opentype.FeatureListTable;
 import com.google.typography.font.sfntly.table.opentype.FeatureTable;
 import com.google.typography.font.sfntly.table.opentype.GSubTable;
+import com.google.typography.font.sfntly.table.opentype.LangSysTable;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
+import com.google.typography.font.sfntly.table.opentype.ScriptTable;
+import com.google.typography.font.sfntly.table.opentype.ScriptTag;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -215,28 +219,6 @@ public class Rule {
     return result;
   }
 
-  public static List<Rule> featuredRules(
-      FeatureListTable featureList, Map<Integer, List<Rule>> ruleMap) {
-    Set<Integer> lookupIds = featuredLookups(featureList);
-    List<Rule> rules = new ArrayList<Rule>();
-    for (int lookupId : lookupIds) {
-      rules.addAll(ruleMap.get(lookupId));
-    }
-    return rules;
-  }
-
-  private static Set<Integer> featuredLookups(FeatureListTable featureList) {
-    Set<Integer> lookupIds = new HashSet<Integer>();
-    for (FeatureTable feature : featureList) {
-      for (NumRecord lookupIdRecord : feature) {
-        int lookupId = lookupIdRecord.value;
-        lookupIds.add(lookupId);
-      }
-    }
-    // System.out.println("Featured Lookups: " + lookupIds);
-    return lookupIds;
-  }
-
   public static GlyphGroup charGlyphClosure(String txt, Font font) {
     PostScriptTable post = font.getTable(Tag.post);
     CMapTable cmapTable = font.getTable(Tag.cmap);
@@ -248,6 +230,22 @@ public class Rule {
     return ruleClosure;
   }
 
+  public static Map<ScriptTag, ScriptTag> laterVersion = new HashMap<ScriptTag, ScriptTag>();
+
+  static {
+    laterVersion.put(ScriptTag.beng, ScriptTag.bng2);
+    laterVersion.put(ScriptTag.deva, ScriptTag.dev2);
+    laterVersion.put(ScriptTag.gujr, ScriptTag.gjr2);
+    laterVersion.put(ScriptTag.guru, ScriptTag.gur2);
+    laterVersion.put(ScriptTag.knda, ScriptTag.knd2);
+    laterVersion.put(ScriptTag.mlym, ScriptTag.mlm2);
+    laterVersion.put(ScriptTag.mlym, ScriptTag.mly2);
+    laterVersion.put(ScriptTag.mymr, ScriptTag.mym2);
+    laterVersion.put(ScriptTag.orya, ScriptTag.ory2);
+    laterVersion.put(ScriptTag.taml, ScriptTag.tml2);
+    laterVersion.put(ScriptTag.telu, ScriptTag.tel2);
+  }
+
   public static List<Rule> featuredRules(Font font) {
     GSubTable gsub = font.getTable(Tag.GSUB);
     if (gsub == null) {
@@ -255,33 +253,90 @@ public class Rule {
       return null;
     }
 
-    LookupListTable lookupList = gsub.lookupList();
+    Set<Integer> features = new HashSet<Integer>();
+    Map<ScriptTag, ScriptTable> scripts = gsub.scriptList().map();
+
+    for (ScriptTag tag : scripts.keySet()) {
+      if (laterVersion.containsKey(tag) && scripts.containsKey(laterVersion.get(tag))) {
+        continue;
+      }
+
+      ScriptTable script = scripts.get(tag);
+      List<LangSysTable> langSyses = new ArrayList<LangSysTable>();
+      langSyses.add(script.defaultLangSysTable());
+      for (LangSysTable langSys : script) {
+        langSyses.add(langSys);
+      }
+
+      for (LangSysTable langSys : langSyses) {
+        if (langSys.hasRequiredFeature()) {
+          features.add(langSys.requiredFeature());
+        }
+        for (NumRecord feature : langSys) {
+          features.add(feature.value);
+        }
+      }
+    }
     FeatureListTable featureList = gsub.featureList();
 
+    Set<FeatureTable> featureTables = new HashSet<FeatureTable>();
+    for (int feature : features) {
+      featureTables.add(featureList.subTableAt(feature));
+    }
+
+    LookupListTable lookupList = gsub.lookupList();
     Map<Integer, List<Rule>> ruleMap = RuleExtractor.extract(lookupList);
     PostScriptTable post = font.getTable(Tag.post);
     dump(ruleMap, post);
 
-    List<Rule> featuredRules = Rule.featuredRules(featureList, ruleMap);
+    List<Rule> featuredRules = Rule.featuredRules(featureTables, ruleMap);
     return featuredRules;
+  }
+
+  public static List<Rule> featuredRules(
+      Set<FeatureTable> featureTables, Map<Integer, List<Rule>> ruleMap) {
+    Set<Integer> lookupIds = featuredLookups(featureTables);
+    List<Rule> rules = new ArrayList<Rule>();
+    for (int lookupId : lookupIds) {
+      rules.addAll(ruleMap.get(lookupId));
+    }
+    return rules;
+  }
+
+  private static Set<Integer> featuredLookups(Set<FeatureTable> featureTables) {
+    Set<Integer> lookupIds = new HashSet<Integer>();
+    for (FeatureTable feature : featureTables) {
+      for (NumRecord lookupIdRecord : feature) {
+        int lookupId = lookupIdRecord.value;
+        lookupIds.add(lookupId);
+      }
+    }
+    // System.out.println("Featured Lookups: " + lookupIds);
+    return lookupIds;
   }
 
   public static GlyphGroup glyphGroupForText(String str, CMapTable cmapTable) {
     GlyphGroup glyphGroup = new GlyphGroup();
-    List<Integer> codes = codepointsFromStr(str);
+    Set<Integer> codes = codepointsFromStr(str);
     for (int code : codes) {
       for (CMap cmap : cmapTable) {
-        int glyph = cmap.glyphId(code);
-        if (glyph != CMapTable.NOTDEF) {
-          glyphGroup.add(glyph);
+        if ((cmap.platformId() == 3 && cmap.encodingId() == 1) || // Unicode BMP
+            (
+            cmap.platformId() == 3 && cmap.encodingId() == 10) || // UCS2
+            (
+            cmap.platformId() == 0 && cmap.encodingId() == 5)) { // Variation
+          int glyph = cmap.glyphId(code);
+          if (glyph != CMapTable.NOTDEF) {
+            glyphGroup.add(glyph);
+          }
         }
       }
     }
     return glyphGroup;
   }
 
-  private static List<Integer> codepointsFromStr(String s) {
-    List<Integer> list = new ArrayList<Integer>();
+  private static Set<Integer> codepointsFromStr(String s) {
+    Set<Integer> list = new HashSet<Integer>();
     for (int cp, i = 0; i < s.length(); i += Character.charCount(cp)) {
       cp = s.codePointAt(i);
       list.add(cp);
