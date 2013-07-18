@@ -185,7 +185,7 @@ public class OtTableTagger {
         FeatureListTable table = (FeatureListTable) fdt;
         int featureCount = td.tagRangeField(FieldType.SHORT, "feature count");
         for (int i = 0; i < featureCount; ++i) {
-          td.tagRangeField(FieldType.TAG, null);
+          td.tagRangeField(FieldType.TAG, "index: " + i);
           td.tagRangeField(FieldType.OFFSET, null);
         }
         for (FeatureTable ft : table) {

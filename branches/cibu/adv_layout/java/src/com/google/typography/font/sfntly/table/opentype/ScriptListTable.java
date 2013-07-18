@@ -4,6 +4,9 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.TagOffsetsTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
 
   public ScriptListTable(ReadableFontData data, boolean dataIsCanonical) {
@@ -17,6 +20,14 @@ public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
 
   public ScriptTag scriptAt(int index) {
     return ScriptTag.fromTag(this.tagAt(index));
+  }
+
+  public Map<ScriptTag, ScriptTable> map() {
+    Map<ScriptTag, ScriptTable> map = new HashMap<ScriptTag, ScriptTable>();
+    for (int i = 0; i < count(); i++) {
+      map.put(scriptAt(i), subTableAt(i));
+    }
+    return map;
   }
 
   public static class Builder extends TagOffsetsTable.Builder<ScriptListTable, ScriptTable> {

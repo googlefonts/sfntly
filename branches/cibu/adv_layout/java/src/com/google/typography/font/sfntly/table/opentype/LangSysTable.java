@@ -26,6 +26,10 @@ public class LangSysTable extends RecordsTable<NumRecord> {
     return getField(REQ_FEATURE_INDEX_INDEX) != NO_REQ_FEATURE;
   }
 
+  public int requiredFeature() {
+    return getField(REQ_FEATURE_INDEX_INDEX);
+  }
+
   @Override
   protected RecordList<NumRecord> createRecordList(ReadableFontData data) {
     return new NumRecordList(data);

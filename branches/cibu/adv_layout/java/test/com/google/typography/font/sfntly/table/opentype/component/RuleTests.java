@@ -626,39 +626,35 @@ public class RuleTests {
       { "zza", "Arab" }, };
 
   @Test
-  public void fontLanguagePairs() throws IOException {
-    List<File> fonts = new ArrayList<File>();
-    getFontFiles(fonts, new File("/usr/local/google/home/cibu/sfntly/fonts"), "andlso.ttf", false);
+  public void allFonts() throws IOException {
+    List<File> fontFiles = new ArrayList<File>();
+    getFontFiles(
+        fontFiles, new File("/usr/local/google/home/cibu/sfntly/fonts"), "aparaj.ttf", false);
 
-    for (File font : fonts) {
-      System.out.println(font.getAbsolutePath());
-      assertClosure(font);
+    for (File fontFile : fontFiles) {
+      System.out.println(fontFile.getAbsolutePath());
+      assertClosureByFontFile(fontFile);
     }
   }
 
-  public static void getFontFiles(
-      List<File> fonts, File sDir, String startFrom, boolean foundStart) {
-    File[] faFiles = sDir.listFiles();
-    for (File file : faFiles) {
-      if (file.getName().endsWith(".ttf")) {
-        if (foundStart || startFrom.endsWith(file.getName())) {
-          foundStart = true;
-          fonts.add(file);
-        }
-      }
-      if (file.isDirectory()) {
-        getFontFiles(fonts, file, startFrom, foundStart);
-      }
+  @Test
+  public void fontWordPairs() throws IOException {
+    List<String> words = new ArrayList<String>();
+    words.add("اور");
+    String filename = "/usr/local/google/home/cibu/sfntly/fonts/windows7/arabtype.ttf";
+
+    File file = new File(filename);
+    Font font = getFont(file);
+    List<Rule> featuredRules = Rule.featuredRules(font);
+    if (featuredRules == null) {
+      return;
     }
+    CMapTable cmapTable = font.getTable(Tag.cmap);
+    assertClosureByWord(filename, cmapTable, featuredRules, words);
   }
 
-  private void assertClosure(File fontFile) throws IOException {
-    Font[] fonts = loadFont(fontFile);
-    if (fonts == null) {
-      throw new IllegalArgumentException("No font found");
-    }
-
-    Font font = fonts[0];
+  private void assertClosureByFontFile(File fontFile) throws IOException {
+    Font font = getFont(fontFile);
     List<Rule> featuredRules = Rule.featuredRules(font);
     if (featuredRules == null) {
       return;
@@ -673,29 +669,60 @@ public class RuleTests {
         continue;
       }
       System.out.println("   " + wordsFile);
-      Process proc = harfBuzzProc(fontFile.getAbsolutePath());
-      harfBuzzWrite(proc, words);
+      assertClosureByWord(fontFile.getAbsolutePath(), cmapTable, featuredRules, words);
+    }
+  }
 
-      List<GlyphGroup> expecteds = harfBuzzRead(proc);
-      proc.destroy();
+  private void assertClosureByWord(
+      String fontFileName, CMapTable cmapTable, List<Rule> featuredRules, List<String> words)
+      throws IOException {
 
-      if (words.size() != expecteds.size()) {
-        throw new IllegalStateException(
-            "word size=" + words.size() + " expecteds size=" + expecteds.size());
+    Process proc = harfBuzzProc(fontFileName);
+    harfBuzzWrite(proc, words);
+
+    List<GlyphGroup> expecteds = harfBuzzRead(proc);
+    proc.destroy();
+
+    if (words.size() != expecteds.size()) {
+      throw new IllegalStateException(
+          "word size=" + words.size() + " expecteds size=" + expecteds.size());
+    }
+    for (int i = 0; i < words.size(); i++) {
+      String word = words.get(i);
+      GlyphGroup expected = expecteds.get(i);
+
+      GlyphGroup glyphGroup = Rule.glyphGroupForText(word, cmapTable);
+      GlyphGroup closure = Rule.closure(featuredRules, glyphGroup);
+
+      if (expected.size() == 0 && closure.size() > 0) {
+        System.err.println("Skipped: " + word);
+      } else if (!expected.equals(closure)) {
+        System.err.println("Didn't match " + word + ", HB: " + expected + ", mine: " + closure);
+        Assert.assertEquals(word, expected, closure);
       }
-      for (int i = 0; i < words.size(); i++) {
-        String word = words.get(i);
-        GlyphGroup expected = expecteds.get(i);
+    }
+  }
 
-        GlyphGroup glyphGroup = Rule.glyphGroupForText(word, cmapTable);
-        GlyphGroup closure = Rule.closure(featuredRules, glyphGroup);
+  private Font getFont(File fontFile) throws IOException {
+    Font[] fonts = loadFont(fontFile);
+    if (fonts == null) {
+      throw new IllegalArgumentException("No font found");
+    }
+    return fonts[0];
+  }
 
-        if (expected.size() == 0) {
-          System.err.println("Skipped: " + word);
-        } else if (!expected.equals(closure)) {
-          System.err.println("Didn't match " + word + ", HB: " + expected + ", mine: " + closure);
-          Assert.assertEquals(word, expected, closure);
+  public static void getFontFiles(
+      List<File> fonts, File sDir, String startFrom, boolean foundStart) {
+    File[] faFiles = sDir.listFiles();
+    for (File file : faFiles) {
+      if (file.getName().endsWith(".ttf")) {
+        if (foundStart || startFrom.endsWith(file.getName())) {
+          foundStart = true;
+          fonts.add(file);
         }
+      }
+      if (file.isDirectory()) {
+        getFontFiles(fonts, file, startFrom, foundStart);
       }
     }
   }
