@@ -629,7 +629,7 @@ public class RuleTests {
   public void allFonts() throws IOException {
     List<File> fontFiles = new ArrayList<File>();
     getFontFiles(
-        fontFiles, new File("/usr/local/google/home/cibu/sfntly/fonts"), "aparaj.ttf", false);
+        fontFiles, new File("/usr/local/google/home/cibu/sfntly/fonts"), "calibri.ttf", false);
 
     for (File fontFile : fontFiles) {
       System.out.println(fontFile.getAbsolutePath());
@@ -639,18 +639,34 @@ public class RuleTests {
 
   @Test
   public void fontWordPairs() throws IOException {
-    List<String> words = new ArrayList<String>();
-    words.add("به");
-    String filename = "/usr/local/google/home/cibu/sfntly/fonts/windows7/arabtype.ttf";
+    assertFontWordPairs("h", "/usr/local/google/home/cibu/sfntly/fonts/windows7/calibri.ttf");
+    assertFontWordPairs("http", "/usr/local/google/home/cibu/sfntly/fonts/windows7/calibri.ttf");
+    assertFontWordPairs("align", "/usr/local/google/home/cibu/sfntly/fonts/windows7/calibri.ttf");
+    assertFontWordPairs(
+        "Потребител", "/usr/local/google/home/cibu/sfntly/fonts/windows7/calibri.ttf");
+    assertFontWordPairs("на", "/usr/local/google/home/cibu/sfntly/fonts/windows7/calibri.ttf");
+    assertFontWordPairs("به", "/usr/local/google/home/cibu/sfntly/fonts/windows7/arabtype.ttf");
+    assertFontWordPairs("اور​", "/usr/local/google/home/cibu/sfntly/fonts/windows7/arabtype.ttf");
+    assertFontWordPairs("ہے", "/usr/local/google/home/cibu/sfntly/fonts/windows7/andlso.ttf");
+    assertFontWordPairs("ללא", "/usr/local/google/home/cibu/sfntly/fonts/windows7/tahoma.ttf");
+    assertFontWordPairs(
+        "รัชกาลปัจจุบัน", "/usr/local/google/home/cibu/sfntly/fonts/windows7/tahoma.ttf");
+  }
 
-    File file = new File(filename);
+  public void assertFontWordPairs(String word, String fontFilename) throws IOException {
+    List<String> words = new ArrayList<String>();
+    words.add(word);
+    File file = new File(fontFilename);
     Font font = getFont(file);
     List<Rule> featuredRules = Rule.featuredRules(font);
+
+    Rule.dumpLookups(font);
+
     if (featuredRules == null) {
       return;
     }
     CMapTable cmapTable = font.getTable(Tag.cmap);
-    assertClosureByWord(filename, cmapTable, featuredRules, words);
+    assertClosureByWord(fontFilename, cmapTable, featuredRules, words);
   }
 
   private void assertClosureByFontFile(File fontFile) throws IOException {
@@ -842,7 +858,9 @@ public class RuleTests {
   public static Process harfBuzzProc(String fontName) throws IOException {
     String[] commands = {
         "/usr/local/google/home/cibu/harfbuzz/harfbuzz-0.9.19/util/hb-ot-shape-closure",
-        "--no-glyph-names", "--features=dlig,jalt", fontName };
+        "--no-glyph-names",
+        "--features=dlig,jalt,smcp,c2sc,ordn,sups,calt,case,ccmp,dnom,frac,lnum,locl,numr,onum,pnum,salt,sinf,ss01,ss02,ss03,ss04,subs,tnum",
+        fontName };
 
     ProcessBuilder pb = new ProcessBuilder(commands);
     Process proc = pb.start();
