@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class GlyphGroup extends LinkedHashSet<Integer> {
   private static final long serialVersionUID = 1L;
@@ -30,5 +31,10 @@ public class GlyphGroup extends LinkedHashSet<Integer> {
     Set<Integer> intersection = new HashSet<Integer>(other);
     intersection.retainAll(this);
     return !intersection.isEmpty();
+  }
+
+  @Override
+  public String toString() {
+    return new TreeSet<Integer>(this).toString();
   }
 }

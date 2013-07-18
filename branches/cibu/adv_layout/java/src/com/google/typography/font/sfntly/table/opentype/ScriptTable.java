@@ -5,6 +5,9 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.TagOffsetsTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ScriptTable extends TagOffsetsTable<LangSysTable> {
   public static final int FIELD_COUNT = 1;
 
@@ -24,6 +27,19 @@ public class ScriptTable extends TagOffsetsTable<LangSysTable> {
     ReadableFontData newData = data.slice(defaultLangSysOffset);
     LangSysTable langSysTable = new LangSysTable(newData, dataIsCanonical);
     return langSysTable;
+  }
+
+  public LanguageTag langSysAt(int index) {
+    return LanguageTag.fromTag(this.tagAt(index));
+  }
+
+  public Map<LanguageTag, LangSysTable> map() {
+    Map<LanguageTag, LangSysTable> map = new HashMap<LanguageTag, LangSysTable>();
+    map.put(LanguageTag.DFLT, defaultLangSysTable());
+    for (int i = 0; i < count(); i++) {
+      map.put(langSysAt(i), subTableAt(i));
+    }
+    return map;
   }
 
   @Override

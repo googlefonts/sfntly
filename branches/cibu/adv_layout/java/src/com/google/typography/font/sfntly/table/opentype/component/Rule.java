@@ -9,6 +9,7 @@ import com.google.typography.font.sfntly.table.opentype.FeatureListTable;
 import com.google.typography.font.sfntly.table.opentype.FeatureTable;
 import com.google.typography.font.sfntly.table.opentype.GSubTable;
 import com.google.typography.font.sfntly.table.opentype.LangSysTable;
+import com.google.typography.font.sfntly.table.opentype.LanguageTag;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTag;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 public class Rule {
@@ -246,7 +248,7 @@ public class Rule {
     laterVersion.put(ScriptTag.telu, ScriptTag.tel2);
   }
 
-  public static List<Rule> featuredRules(Font font) {
+  static List<Rule> featuredRules(Font font) {
     GSubTable gsub = font.getTable(Tag.GSUB);
     if (gsub == null) {
       System.err.println("No GSUB Table found");
@@ -256,19 +258,19 @@ public class Rule {
     Set<Integer> features = new HashSet<Integer>();
     Map<ScriptTag, ScriptTable> scripts = gsub.scriptList().map();
 
-    for (ScriptTag tag : scripts.keySet()) {
+    for (Entry<ScriptTag, ScriptTable> scriptEntry : scripts.entrySet()) {
+      ScriptTag tag = scriptEntry.getKey();
       if (laterVersion.containsKey(tag) && scripts.containsKey(laterVersion.get(tag))) {
         continue;
       }
 
-      ScriptTable script = scripts.get(tag);
-      List<LangSysTable> langSyses = new ArrayList<LangSysTable>();
-      langSyses.add(script.defaultLangSysTable());
-      for (LangSysTable langSys : script) {
-        langSyses.add(langSys);
-      }
-
-      for (LangSysTable langSys : langSyses) {
+      ScriptTable script = scriptEntry.getValue();
+      for (Entry<LanguageTag, LangSysTable> langEntry : script.map().entrySet()) {
+        LanguageTag langTag = langEntry.getKey();
+        if (!langTag.equals(LanguageTag.DFLT)) {
+          continue;
+        }
+        LangSysTable langSys = langEntry.getValue();
         if (langSys.hasRequiredFeature()) {
           features.add(langSys.requiredFeature());
         }
@@ -286,9 +288,6 @@ public class Rule {
 
     LookupListTable lookupList = gsub.lookupList();
     Map<Integer, List<Rule>> ruleMap = RuleExtractor.extract(lookupList);
-    PostScriptTable post = font.getTable(Tag.post);
-    dump(ruleMap, post);
-
     List<Rule> featuredRules = Rule.featuredRules(featureTables, ruleMap);
     return featuredRules;
   }
@@ -353,6 +352,13 @@ public class Rule {
         System.out.println(toString(rule, post));
       }
     }
+  }
+
+  static void dumpLookups(Font font) {
+    GSubTable gsub = font.getTable(Tag.GSUB);
+    Map<Integer, List<Rule>> ruleMap = RuleExtractor.extract(gsub.lookupList());
+    PostScriptTable post = font.getTable(Tag.post);
+    dump(ruleMap, post);
   }
 
   static String toString(Rule rule, PostScriptTable post) {
