@@ -640,7 +640,7 @@ public class RuleTests {
   @Test
   public void fontWordPairs() throws IOException {
     List<String> words = new ArrayList<String>();
-    words.add("اور");
+    words.add("به");
     String filename = "/usr/local/google/home/cibu/sfntly/fonts/windows7/arabtype.ttf";
 
     File file = new File(filename);
@@ -842,7 +842,7 @@ public class RuleTests {
   public static Process harfBuzzProc(String fontName) throws IOException {
     String[] commands = {
         "/usr/local/google/home/cibu/harfbuzz/harfbuzz-0.9.19/util/hb-ot-shape-closure",
-        "--no-glyph-names", "--features=dlig", fontName };
+        "--no-glyph-names", "--features=dlig,jalt", fontName };
 
     ProcessBuilder pb = new ProcessBuilder(commands);
     Process proc = pb.start();
