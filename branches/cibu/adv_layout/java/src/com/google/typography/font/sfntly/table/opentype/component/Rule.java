@@ -6,21 +6,17 @@ import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.opentype.FeatureListTable;
-import com.google.typography.font.sfntly.table.opentype.FeatureTable;
 import com.google.typography.font.sfntly.table.opentype.GSubTable;
 import com.google.typography.font.sfntly.table.opentype.LangSysTable;
-import com.google.typography.font.sfntly.table.opentype.LanguageTag;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTag;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 public class Rule {
@@ -232,22 +228,6 @@ public class Rule {
     return ruleClosure;
   }
 
-  public static Map<ScriptTag, ScriptTag> laterVersion = new HashMap<ScriptTag, ScriptTag>();
-
-  static {
-    laterVersion.put(ScriptTag.beng, ScriptTag.bng2);
-    laterVersion.put(ScriptTag.deva, ScriptTag.dev2);
-    laterVersion.put(ScriptTag.gujr, ScriptTag.gjr2);
-    laterVersion.put(ScriptTag.guru, ScriptTag.gur2);
-    laterVersion.put(ScriptTag.knda, ScriptTag.knd2);
-    laterVersion.put(ScriptTag.mlym, ScriptTag.mlm2);
-    laterVersion.put(ScriptTag.mlym, ScriptTag.mly2);
-    laterVersion.put(ScriptTag.mymr, ScriptTag.mym2);
-    laterVersion.put(ScriptTag.orya, ScriptTag.ory2);
-    laterVersion.put(ScriptTag.taml, ScriptTag.tml2);
-    laterVersion.put(ScriptTag.telu, ScriptTag.tel2);
-  }
-
   static List<Rule> featuredRules(Font font) {
     GSubTable gsub = font.getTable(Tag.GSUB);
     if (gsub == null) {
@@ -255,63 +235,39 @@ public class Rule {
       return null;
     }
 
-    Set<Integer> features = new HashSet<Integer>();
     Map<ScriptTag, ScriptTable> scripts = gsub.scriptList().map();
-
-    for (Entry<ScriptTag, ScriptTable> scriptEntry : scripts.entrySet()) {
-      ScriptTag tag = scriptEntry.getKey();
-      if (laterVersion.containsKey(tag) && scripts.containsKey(laterVersion.get(tag))) {
-        continue;
-      }
-
-      ScriptTable script = scriptEntry.getValue();
-      for (Entry<LanguageTag, LangSysTable> langEntry : script.map().entrySet()) {
-        LanguageTag langTag = langEntry.getKey();
-        if (!langTag.equals(LanguageTag.DFLT)) {
-          continue;
-        }
-        LangSysTable langSys = langEntry.getValue();
-        if (langSys.hasRequiredFeature()) {
-          features.add(langSys.requiredFeature());
-        }
-        for (NumRecord feature : langSys) {
-          features.add(feature.value);
-        }
-      }
-    }
     FeatureListTable featureList = gsub.featureList();
-
-    Set<FeatureTable> featureTables = new HashSet<FeatureTable>();
-    for (int feature : features) {
-      featureTables.add(featureList.subTableAt(feature));
-    }
-
     LookupListTable lookupList = gsub.lookupList();
     Map<Integer, List<Rule>> ruleMap = RuleExtractor.extract(lookupList);
-    List<Rule> featuredRules = Rule.featuredRules(featureTables, ruleMap);
+
+    Set<Integer> features = new HashSet<Integer>();
+    Set<Integer> lookupIds = new HashSet<Integer>();
+
+    for (ScriptTable script : scripts.values()) {
+      for (LangSysTable langSys : script.map().values()) {
+        // We are assuming if required feature exists, it will be in the list
+        // of features as well.
+        for (NumRecord feature : langSys) {
+          if (!features.contains(feature.value)) {
+            features.add(feature.value);
+            for (NumRecord lookup : featureList.subTableAt(feature.value)) {
+              lookupIds.add(lookup.value);
+            }
+          }
+        }
+      }
+    }
+    List<Rule> featuredRules = Rule.featuredRules(lookupIds, ruleMap);
     return featuredRules;
   }
 
-  public static List<Rule> featuredRules(
-      Set<FeatureTable> featureTables, Map<Integer, List<Rule>> ruleMap) {
-    Set<Integer> lookupIds = featuredLookups(featureTables);
+  private static List<Rule> featuredRules(
+      Set<Integer> lookupIds, Map<Integer, List<Rule>> ruleMap) {
     List<Rule> rules = new ArrayList<Rule>();
     for (int lookupId : lookupIds) {
       rules.addAll(ruleMap.get(lookupId));
     }
     return rules;
-  }
-
-  private static Set<Integer> featuredLookups(Set<FeatureTable> featureTables) {
-    Set<Integer> lookupIds = new HashSet<Integer>();
-    for (FeatureTable feature : featureTables) {
-      for (NumRecord lookupIdRecord : feature) {
-        int lookupId = lookupIdRecord.value;
-        lookupIds.add(lookupId);
-      }
-    }
-    // System.out.println("Featured Lookups: " + lookupIds);
-    return lookupIds;
   }
 
   public static GlyphGroup glyphGroupForText(String str, CMapTable cmapTable) {

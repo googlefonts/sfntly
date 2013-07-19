@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -629,7 +630,7 @@ public class RuleTests {
   public void allFonts() throws IOException {
     List<File> fontFiles = new ArrayList<File>();
     getFontFiles(
-        fontFiles, new File("/usr/local/google/home/cibu/sfntly/fonts"), "calibri.ttf", false);
+        fontFiles, new File("/usr/local/google/home/cibu/sfntly/fonts"), "UrdType.ttf", true);
 
     for (File fontFile : fontFiles) {
       System.out.println(fontFile.getAbsolutePath());
@@ -639,23 +640,20 @@ public class RuleTests {
 
   @Test
   public void fontWordPairs() throws IOException {
-    assertFontWordPairs("h", "/usr/local/google/home/cibu/sfntly/fonts/windows7/calibri.ttf");
-    assertFontWordPairs("http", "/usr/local/google/home/cibu/sfntly/fonts/windows7/calibri.ttf");
-    assertFontWordPairs("align", "/usr/local/google/home/cibu/sfntly/fonts/windows7/calibri.ttf");
+    assertFontWordPairs("/usr/local/google/home/cibu/sfntly/fonts/windows8/UrdType.ttf", "کے");
+    assertFontWordPairs("/usr/local/google/home/cibu/sfntly/fonts/windows7/kokila.ttf", "श्रेणी");
+    assertFontWordPairs("/usr/local/google/home/cibu/sfntly/fonts/windows7/msyi.ttf", "、");
+    assertFontWordPairs("/usr/local/google/home/cibu/sfntly/fonts/windows7/calibri.ttf", "http",
+        "align", "Потребител", "на");
     assertFontWordPairs(
-        "Потребител", "/usr/local/google/home/cibu/sfntly/fonts/windows7/calibri.ttf");
-    assertFontWordPairs("на", "/usr/local/google/home/cibu/sfntly/fonts/windows7/calibri.ttf");
-    assertFontWordPairs("به", "/usr/local/google/home/cibu/sfntly/fonts/windows7/arabtype.ttf");
-    assertFontWordPairs("اور​", "/usr/local/google/home/cibu/sfntly/fonts/windows7/arabtype.ttf");
-    assertFontWordPairs("ہے", "/usr/local/google/home/cibu/sfntly/fonts/windows7/andlso.ttf");
-    assertFontWordPairs("ללא", "/usr/local/google/home/cibu/sfntly/fonts/windows7/tahoma.ttf");
+        "/usr/local/google/home/cibu/sfntly/fonts/windows7/arabtype.ttf", "به", "اور​");
+    assertFontWordPairs("/usr/local/google/home/cibu/sfntly/fonts/windows7/andlso.ttf", "ہے");
     assertFontWordPairs(
-        "รัชกาลปัจจุบัน", "/usr/local/google/home/cibu/sfntly/fonts/windows7/tahoma.ttf");
+        "/usr/local/google/home/cibu/sfntly/fonts/windows7/tahoma.ttf", "ללא", "รัชกาลปัจจุบัน");
   }
 
-  public void assertFontWordPairs(String word, String fontFilename) throws IOException {
-    List<String> words = new ArrayList<String>();
-    words.add(word);
+  public void assertFontWordPairs(String fontFilename, String... wordArray) throws IOException {
+    List<String> words = Arrays.asList(wordArray);
     File file = new File(fontFilename);
     Font font = getFont(file);
     List<Rule> featuredRules = Rule.featuredRules(font);
@@ -846,7 +844,7 @@ public class RuleTests {
     while (scanner.hasNextLine()) {
       String[] fields = scanner.nextLine().split(" ");
       String word = fields[0];
-      if (count >= 100 || fields.length < 1) {
+      if (count >= 3000) {
         break;
       }
       words.add(word);
@@ -858,9 +856,7 @@ public class RuleTests {
   public static Process harfBuzzProc(String fontName) throws IOException {
     String[] commands = {
         "/usr/local/google/home/cibu/harfbuzz/harfbuzz-0.9.19/util/hb-ot-shape-closure",
-        "--no-glyph-names",
-        "--features=dlig,jalt,smcp,c2sc,ordn,sups,calt,case,ccmp,dnom,frac,lnum,locl,numr,onum,pnum,salt,sinf,ss01,ss02,ss03,ss04,subs,tnum",
-        fontName };
+        "--no-glyph-names", fontName };
 
     ProcessBuilder pb = new ProcessBuilder(commands);
     Process proc = pb.start();
@@ -868,12 +864,13 @@ public class RuleTests {
   }
 
   public static void harfBuzzWrite(Process proc, List<String> words) {
-    PrintWriter out = new PrintWriter(new OutputStreamWriter(proc.getOutputStream()));
+    PrintWriter out = new PrintWriter(new OutputStreamWriter(proc.getOutputStream()), true);
+    int i = 0;
     for (String word : words) {
       // System.out.println(word);
       out.println(word + "\n");
+      i++;
     }
-    out.flush();
     out.close();
   }
 
@@ -882,7 +879,7 @@ public class RuleTests {
     List<GlyphGroup> glyphSets = new ArrayList<GlyphGroup>();
     String out;
     while ((out = in.readLine()) != null) {
-      in.readLine();
+      in.skip(1);
       // System.out.println(out);
       GlyphGroup glyphSet = new GlyphGroup();
       if (out.length() > 0) {

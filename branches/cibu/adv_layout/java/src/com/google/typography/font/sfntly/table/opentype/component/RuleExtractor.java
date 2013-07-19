@@ -555,7 +555,9 @@ public class RuleExtractor {
     for (LaterEntry entry : laterList) {
       switch (entry.lookupType) {
       case GSUB_REVERSE_CHAINING_CONTEXTUAL_SINGLE:
-        throw new IllegalArgumentException("unimplemented extractor for " + entry.lookupType);
+        System.err.println("Inimplemented LookupType for rule extraction: " + entry.lookupType);
+      // throw new IllegalArgumentException("unimplemented extractor for " +
+      // entry.lookupType);
       }
     }
     return allRules;
