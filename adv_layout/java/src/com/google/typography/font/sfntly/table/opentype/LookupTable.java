@@ -53,7 +53,8 @@ public class LookupTable extends OffsetRecordTable<SubstSubtable> {
   @Override
   public SubstSubtable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
     int lookupType = getField(LOOKUP_TYPE_INDEX);
-    switch (GsubLookupType.forTypeNum(lookupType)) {
+    GsubLookupType gsubLookupType = GsubLookupType.forTypeNum(lookupType);
+    switch (gsubLookupType) {
     case GSUB_LIGATURE:
       return new LigatureSubst(data, base, dataIsCanonical);
     case GSUB_SINGLE:
@@ -69,7 +70,9 @@ public class LookupTable extends OffsetRecordTable<SubstSubtable> {
     case GSUB_EXTENSION:
       return new ExtensionSubst(data, base, dataIsCanonical);
     default:
-      throw new IllegalArgumentException("LookupType is " + lookupType);
+      System.err.println("Unimplemented LookupType: " + gsubLookupType);
+      return new NullTable(data, base, dataIsCanonical);
+    // throw new IllegalArgumentException("LookupType is " + lookupType);
     }
   }
 
