@@ -691,11 +691,7 @@ public class RuleTests {
       String fontFileName, CMapTable cmapTable, List<Rule> featuredRules, List<String> words)
       throws IOException {
 
-    Process proc = harfBuzzProc(fontFileName);
-    harfBuzzWrite(proc, words);
-
-    List<GlyphGroup> expecteds = harfBuzzRead(proc);
-    proc.destroy();
+    List<GlyphGroup> expecteds = harfBuzzResult(fontFileName, words);
 
     if (words.size() != expecteds.size()) {
       throw new IllegalStateException(
@@ -715,6 +711,63 @@ public class RuleTests {
         Assert.assertEquals(word, expected, closure);
       }
     }
+  }
+
+  private List<GlyphGroup> harfBuzzResult(String fontFileName, List<String> words)
+      throws IOException {
+    Process proc = harfBuzzProc(fontFileName);
+    List<GlyphGroup> expecteds = new ArrayList<GlyphGroup>();
+    for (int wroteCount = 0; wroteCount < words.size();) {
+      PrintWriter out = new PrintWriter(new OutputStreamWriter(proc.getOutputStream()), true);
+      wroteCount = harfBuzzWrite(out, words, wroteCount);
+      out.close();
+
+      BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+      harfBuzzRead(in, expecteds);
+      in.close();
+    }
+    proc.destroy();
+    return expecteds;
+  }
+
+  public static int harfBuzzWrite(PrintWriter out, List<String> words, int start) {
+    int i;
+    for (i = start; i < words.size() && i < start + 3000; i++) {
+      // System.out.println(word);
+      out.println(words.get(i) + "\n");
+    }
+    return i;
+  }
+
+  public static List<GlyphGroup> harfBuzzRead(BufferedReader in, List<GlyphGroup> glyphSets)
+      throws IOException {
+    String out;
+    int i = 0;
+    while ((out = in.readLine()) != null) {
+      in.skip(1);
+      // System.out.println(out);
+      GlyphGroup glyphSet = new GlyphGroup();
+      if (out.length() > 0) {
+        String[] tokens = out.split(" ");
+        for (String intStr : tokens) {
+          glyphSet.add(Integer.parseInt(intStr));
+        }
+      }
+      glyphSets.add(glyphSet);
+      i++;
+    }
+    return glyphSets;
+
+  }
+
+  public static Process harfBuzzProc(String fontName) throws IOException {
+    String[] commands = {
+        "/usr/local/google/home/cibu/harfbuzz/harfbuzz-0.9.19/util/hb-ot-shape-closure",
+        "--no-glyph-names", fontName };
+
+    ProcessBuilder pb = new ProcessBuilder(commands);
+    Process proc = pb.start();
+    return proc;
   }
 
   private Font getFont(File fontFile) throws IOException {
@@ -853,43 +906,4 @@ public class RuleTests {
     scanner.close();
   }
 
-  public static Process harfBuzzProc(String fontName) throws IOException {
-    String[] commands = {
-        "/usr/local/google/home/cibu/harfbuzz/harfbuzz-0.9.19/util/hb-ot-shape-closure",
-        "--no-glyph-names", fontName };
-
-    ProcessBuilder pb = new ProcessBuilder(commands);
-    Process proc = pb.start();
-    return proc;
-  }
-
-  public static void harfBuzzWrite(Process proc, List<String> words) {
-    PrintWriter out = new PrintWriter(new OutputStreamWriter(proc.getOutputStream()), true);
-    int i = 0;
-    for (String word : words) {
-      // System.out.println(word);
-      out.println(word + "\n");
-      i++;
-    }
-    out.close();
-  }
-
-  public static List<GlyphGroup> harfBuzzRead(Process proc) throws IOException {
-    BufferedReader in = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-    List<GlyphGroup> glyphSets = new ArrayList<GlyphGroup>();
-    String out;
-    while ((out = in.readLine()) != null) {
-      in.skip(1);
-      // System.out.println(out);
-      GlyphGroup glyphSet = new GlyphGroup();
-      if (out.length() > 0) {
-        String[] tokens = out.split(" ");
-        for (String intStr : tokens) {
-          glyphSet.add(Integer.parseInt(intStr));
-        }
-      }
-      glyphSets.add(glyphSet);
-    }
-    return glyphSets;
-  }
 }
