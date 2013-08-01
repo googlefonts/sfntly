@@ -14,6 +14,7 @@ import com.google.typography.font.sfntly.table.opentype.ScriptTag;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,180 @@ public class Rule {
     this.lookAhead = other.lookAhead;
     this.subst = subst;
   }
+
+  // Closure related
+
+  public static GlyphGroup charGlyphClosure(String txt, Font font) {
+    PostScriptTable post = font.getTable(Tag.post);
+    CMapTable cmapTable = font.getTable(Tag.cmap);
+    GlyphGroup glyphGroup = glyphGroupForText(txt, cmapTable);
+
+    List<Rule> featuredRules = featuredRules(font);
+    Map<Integer, List<Rule>> glyphRuleMap = createGlyphRuleMap(featuredRules);
+    GlyphGroup ruleClosure = closure(glyphRuleMap, glyphGroup);
+    System.out.println("Closure: " + toString(ruleClosure, post));
+    return ruleClosure;
+  }
+
+  static GlyphGroup closure(Map<Integer, List<Rule>> glyphRuleMap, GlyphGroup glyphs) {
+    int prevSize = 0;
+    while (glyphs.size() > prevSize) {
+      prevSize = glyphs.size();
+      for (Rule rule : rulesForGlyph(glyphRuleMap, glyphs)) {
+        rule.addMatchingTargetGlyphs(glyphs);
+      }
+    }
+    return glyphs;
+  }
+
+  public static List<GlyphList> permuteToSegments(List<GlyphGroup> glyphGroups) {
+    List<GlyphList> result = new ArrayList<>();
+    result.add(new GlyphList());
+
+    for (GlyphGroup glyphGroup : glyphGroups) {
+      List<GlyphList> newResult = new ArrayList<>();
+      for (Integer glyphId : glyphGroup) {
+        for (GlyphList glyphList : result) {
+          GlyphList newGlyphList = new GlyphList();
+          newGlyphList.addAll(glyphList);
+          newGlyphList.add(glyphId);
+          newResult.add(newGlyphList);
+        }
+      }
+      result = newResult;
+    }
+    return result;
+  }
+
+  private void addMatchingTargetGlyphs(GlyphGroup glyphs) {
+    if (!glyphs.containsAll(input)) {
+      return;
+    }
+
+    if (backtrack != null) {
+      for (GlyphGroup b : backtrack) {
+        if (b.contains(-1)) {
+          continue;
+        }
+        if (!b.isIntersecting(glyphs)) {
+          return;
+        }
+      }
+    }
+
+    if (lookAhead != null) {
+      for (GlyphGroup l : lookAhead) {
+        if (l.contains(-1)) {
+          continue;
+        }
+        if (!l.isIntersecting(glyphs)) {
+          return;
+        }
+      }
+    }
+
+    for (GlyphGroup glyphGroup : subst) {
+      glyphs.addAll(glyphGroup);
+    }
+  }
+
+  public static Map<Integer, List<Rule>> glyphRulesMap(Font font) {
+    List<Rule> featuredRules = Rule.featuredRules(font);
+    if (featuredRules == null) {
+      return null;
+    }
+    return createGlyphRuleMap(featuredRules);
+  }
+
+  private static Map<Integer, List<Rule>> createGlyphRuleMap(List<Rule> lookupRules) {
+    Map<Integer, List<Rule>> map = new HashMap<>();
+
+    for (Rule rule : lookupRules) {
+      for (int glyph : rule.input) {
+        if (!map.containsKey(glyph)) {
+          map.put(glyph, new ArrayList<Rule>());
+        }
+        map.get(glyph).add(rule);
+      }
+    }
+    return map;
+  }
+
+  private static Set<Rule> rulesForGlyph(Map<Integer, List<Rule>> glyphRuleMap, Set<Integer> glyphs) {
+    Set<Rule> set = new HashSet<>();
+    for(int glyph : glyphs) {
+      if (glyphRuleMap.containsKey(glyph)) {
+        set.addAll(glyphRuleMap.get(glyph));
+      }
+    }
+    return set;
+  }
+
+  private static List<Rule> featuredRules(
+      Set<Integer> lookupIds, Map<Integer, List<Rule>> ruleMap) {
+    List<Rule> rules = new ArrayList<>();
+    for (int lookupId : lookupIds) {
+      rules.addAll(ruleMap.get(lookupId));
+    }
+    return rules;
+  }
+
+  private static List<Rule> featuredRules(Font font) {
+    GSubTable gsub = font.getTable(Tag.GSUB);
+    if (gsub == null) {
+      return null;
+    }
+
+    Map<ScriptTag, ScriptTable> scripts = gsub.scriptList().map();
+    FeatureListTable featureList = gsub.featureList();
+    LookupListTable lookupList = gsub.lookupList();
+    Map<Integer, List<Rule>> ruleMap = RuleExtractor.extract(lookupList);
+
+    Set<Integer> features = new HashSet<>();
+    Set<Integer> lookupIds = new HashSet<>();
+
+    for (ScriptTable script : scripts.values()) {
+      for (LangSysTable langSys : script.map().values()) {
+        // We are assuming if required feature exists, it will be in the list
+        // of features as well.
+        for (NumRecord feature : langSys) {
+          if (!features.contains(feature.value)) {
+            features.add(feature.value);
+            for (NumRecord lookup : featureList.subTableAt(feature.value)) {
+              lookupIds.add(lookup.value);
+            }
+          }
+        }
+      }
+    }
+    List<Rule> featuredRules = Rule.featuredRules(lookupIds, ruleMap);
+    return featuredRules;
+  }
+
+
+  // Utility method for glyphs for text
+
+  public static GlyphGroup glyphGroupForText(String str, CMapTable cmapTable) {
+    GlyphGroup glyphGroup = new GlyphGroup();
+    Set<Integer> codes = codepointsFromStr(str);
+    for (int code : codes) {
+      for (CMap cmap : cmapTable) {
+        if (cmap.platformId() == 3 && cmap.encodingId() == 1 || // Unicode BMP
+            cmap.platformId() == 3 && cmap.encodingId() == 10 || // UCS2
+            cmap.platformId() == 0 && cmap.encodingId() == 5) { // Variation
+          int glyph = cmap.glyphId(code);
+          if (glyph != CMapTable.NOTDEF) {
+            glyphGroup.add(glyph);
+          }
+          // System.out.println("code: " + code + " glyph: " + glyph + " platform: " + cmap.platformId() + " encodingId: " + cmap.encodingId() + " format: " + cmap.format());
+
+        }
+      }
+    }
+    return glyphGroup;
+  }
+
+  // Rule manipulation
 
   public RuleSegment apply(RuleSegment srcGlyphIds, int at) {
 
@@ -92,58 +267,10 @@ public class Rule {
     return given;
   }
 
-  public GlyphGroup apply(GlyphGroup glyphs) {
-    if (backtrack != null) {
-      for (GlyphGroup b : backtrack) {
-        if (b.contains(-1)) {
-          continue;
-        }
-        if (!b.isIntersecting(glyphs)) {
-          return glyphs;
-        }
-      }
-    }
-
-    for (int in : input) {
-      if (!glyphs.contains(in)) {
-        return glyphs;
-      }
-    }
-
-    if (lookAhead != null) {
-      for (GlyphGroup l : lookAhead) {
-        if (l.contains(-1)) {
-          continue;
-        }
-        if (!l.isIntersecting(glyphs)) {
-          return glyphs;
-        }
-      }
-    }
-
-    GlyphGroup result = new GlyphGroup(glyphs);
-    for (GlyphGroup glyphGroup : subst) {
-      result.addAll(glyphGroup);
-    }
-    return result;
-  }
-
-  public static GlyphGroup closure(List<Rule> lookupRules, GlyphGroup glyphs) {
-    int prevSize = 0;
-    while (glyphs.size() > prevSize) {
-      prevSize = glyphs.size();
-      for (Rule rule : lookupRules) {
-        glyphs = rule.apply(glyphs);
-      }
-    }
-    return glyphs;
-  }
-
   static List<Rule> applyOnRuleSubsts(List<Rule> targetRules, int at, List<Rule> rulesToApply) {
-    List<Rule> result = new ArrayList<Rule>();
+    List<Rule> result = new ArrayList<>();
     for (Rule targetRule : targetRules) {
-      RuleSegment newSubst = new RuleSegment();
-      newSubst.addAll(Rule.apply(rulesToApply, targetRule.subst, at));
+      RuleSegment newSubst = apply(rulesToApply, targetRule.subst, at);
       Rule newRule = new Rule(targetRule, newSubst);
       result.add(newRule);
     }
@@ -158,7 +285,7 @@ public class Rule {
   }
 
   static List<Rule> prependToInput(int prefix, List<Rule> rules) {
-    List<Rule> result = new ArrayList<Rule>();
+    List<Rule> result = new ArrayList<>();
     for (Rule rule : rules) {
       result.add(prependToInput(prefix, rule));
     }
@@ -166,7 +293,7 @@ public class Rule {
   }
 
   static List<Rule> deltaRules(List<Integer> glyphIds, int delta) {
-    List<Rule> result = new ArrayList<Rule>();
+    List<Rule> result = new ArrayList<>();
     for (int glyphId : glyphIds) {
       GlyphList input = new GlyphList(glyphId);
       RuleSegment subst = new RuleSegment(glyphId + delta);
@@ -175,123 +302,37 @@ public class Rule {
     return result;
   }
 
-  static List<Rule> oneToOneRules(List<Integer> inputs, List<Integer> substs) {
+  static List<Rule> oneToOneRules(List<Integer> inputs, List<Integer> substs, RuleSegment backtrack, RuleSegment lookAhead) {
     if (inputs.size() != substs.size()) {
       throw new IllegalArgumentException("input - subst should have same count");
     }
 
-    List<Rule> result = new ArrayList<Rule>();
+    List<Rule> result = new ArrayList<>();
     for (int i = 0; i < inputs.size(); i++) {
       GlyphList input = new GlyphList(inputs.get(i));
       RuleSegment subst = new RuleSegment(substs.get(i));
-      result.add(new Rule(null, input, null, subst));
+      result.add(new Rule(backtrack, input, lookAhead, subst));
     }
     return result;
   }
 
-  static List<GlyphList> permuteToSegments(List<GlyphGroup> glyphGroups) {
-    List<GlyphList> result = new ArrayList<GlyphList>();
-    result.add(new GlyphList());
-
-    for (GlyphGroup glyphGroup : glyphGroups) {
-      List<GlyphList> newResult = new ArrayList<GlyphList>();
-      for (Integer glyphId : glyphGroup) {
-        for (GlyphList glyphList : result) {
-          GlyphList newGlyphList = new GlyphList();
-          newGlyphList.addAll(glyphList);
-          newGlyphList.add(glyphId);
-          newResult.add(newGlyphList);
-        }
-      }
-      result = newResult;
-    }
-    return result;
+  static List<Rule> oneToOneRules(List<Integer> inputs, List<Integer> substs) {
+    return oneToOneRules(inputs, substs, null, null);
   }
 
-  static List<Rule> permuteContext(
+  static List<Rule> addContextToInputs(
       RuleSegment backtrack, List<GlyphList> inputs, RuleSegment lookAhead) {
-    List<Rule> result = new ArrayList<Rule>();
+    List<Rule> result = new ArrayList<>();
     for (GlyphList input : inputs) {
       result.add(new Rule(backtrack, input, lookAhead, new RuleSegment(input)));
     }
     return result;
   }
 
-  public static GlyphGroup charGlyphClosure(String txt, Font font) {
-    PostScriptTable post = font.getTable(Tag.post);
-    CMapTable cmapTable = font.getTable(Tag.cmap);
-    GlyphGroup glyphGroup = glyphGroupForText(txt, cmapTable);
-
-    List<Rule> featuredRules = featuredRules(font);
-    GlyphGroup ruleClosure = Rule.closure(featuredRules, glyphGroup);
-    System.out.println("Closure: " + toString(ruleClosure, post));
-    return ruleClosure;
-  }
-
-  static List<Rule> featuredRules(Font font) {
-    GSubTable gsub = font.getTable(Tag.GSUB);
-    if (gsub == null) {
-      System.err.println("No GSUB Table found");
-      return null;
-    }
-
-    Map<ScriptTag, ScriptTable> scripts = gsub.scriptList().map();
-    FeatureListTable featureList = gsub.featureList();
-    LookupListTable lookupList = gsub.lookupList();
-    Map<Integer, List<Rule>> ruleMap = RuleExtractor.extract(lookupList);
-
-    Set<Integer> features = new HashSet<Integer>();
-    Set<Integer> lookupIds = new HashSet<Integer>();
-
-    for (ScriptTable script : scripts.values()) {
-      for (LangSysTable langSys : script.map().values()) {
-        // We are assuming if required feature exists, it will be in the list
-        // of features as well.
-        for (NumRecord feature : langSys) {
-          if (!features.contains(feature.value)) {
-            features.add(feature.value);
-            for (NumRecord lookup : featureList.subTableAt(feature.value)) {
-              lookupIds.add(lookup.value);
-            }
-          }
-        }
-      }
-    }
-    List<Rule> featuredRules = Rule.featuredRules(lookupIds, ruleMap);
-    return featuredRules;
-  }
-
-  private static List<Rule> featuredRules(
-      Set<Integer> lookupIds, Map<Integer, List<Rule>> ruleMap) {
-    List<Rule> rules = new ArrayList<Rule>();
-    for (int lookupId : lookupIds) {
-      rules.addAll(ruleMap.get(lookupId));
-    }
-    return rules;
-  }
-
-  public static GlyphGroup glyphGroupForText(String str, CMapTable cmapTable) {
-    GlyphGroup glyphGroup = new GlyphGroup();
-    Set<Integer> codes = codepointsFromStr(str);
-    for (int code : codes) {
-      for (CMap cmap : cmapTable) {
-        if ((cmap.platformId() == 3 && cmap.encodingId() == 1) || // Unicode BMP
-            (
-            cmap.platformId() == 3 && cmap.encodingId() == 10) || // UCS2
-            (
-            cmap.platformId() == 0 && cmap.encodingId() == 5)) { // Variation
-          int glyph = cmap.glyphId(code);
-          if (glyph != CMapTable.NOTDEF) {
-            glyphGroup.add(glyph);
-          }
-        }
-      }
-    }
-    return glyphGroup;
-  }
+  // Dump routines
 
   private static Set<Integer> codepointsFromStr(String s) {
-    Set<Integer> list = new HashSet<Integer>();
+    Set<Integer> list = new HashSet<>();
     for (int cp, i = 0; i < s.length(); i += Character.charCount(cp)) {
       cp = s.codePointAt(i);
       list.add(cp);
@@ -309,6 +350,7 @@ public class Rule {
       }
     }
   }
+
 
   static void dumpLookups(Font font) {
     GSubTable gsub = font.getTable(Tag.GSUB);
@@ -354,7 +396,7 @@ public class Rule {
     for (int glyphId : glyphIds) {
       sb.append(glyphId);
 
-      String glyphName = (glyphId < 0) ? "(all)" : post.glyphName(glyphId);
+      String glyphName = glyphId < 0 ? "(all)" : post.glyphName(glyphId);
       if (glyphName != null) {
         sb.append("-");
         sb.append(glyphName);

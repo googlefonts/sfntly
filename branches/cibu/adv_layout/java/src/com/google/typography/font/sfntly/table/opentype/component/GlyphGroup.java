@@ -1,9 +1,8 @@
 package com.google.typography.font.sfntly.table.opentype.component;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.TreeSet;
 
 public class GlyphGroup extends LinkedHashSet<Integer> {
@@ -28,9 +27,7 @@ public class GlyphGroup extends LinkedHashSet<Integer> {
   }
 
   public boolean isIntersecting(GlyphGroup other) {
-    Set<Integer> intersection = new HashSet<Integer>(other);
-    intersection.retainAll(this);
-    return !intersection.isEmpty();
+    return !Collections.disjoint(this, other);
   }
 
   @Override

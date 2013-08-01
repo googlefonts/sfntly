@@ -8,6 +8,10 @@ public class NumRecordTable extends RecordsTable<NumRecord> {
     super(data, base, dataIsCanonical);
   }
 
+  public NumRecordTable(NumRecordList records) {
+    super(records);
+  }
+
   @Override
   protected RecordList<NumRecord> createRecordList(ReadableFontData data) {
     return new NumRecordList(data);

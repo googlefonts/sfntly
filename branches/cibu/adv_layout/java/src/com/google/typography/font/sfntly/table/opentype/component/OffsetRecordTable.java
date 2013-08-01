@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
-    implements Iterable<S> {
+implements Iterable<S> {
   public final NumRecordList recordList;
 
   // ///////////////
@@ -88,8 +88,8 @@ public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
   }
 
   public abstract static class Builder<
-      T extends OffsetRecordTable<? extends SubTable>, S extends SubTable>
-      extends HeaderTable.Builder<T> {
+  T extends OffsetRecordTable<? extends SubTable>, S extends SubTable>
+  extends HeaderTable.Builder<T> {
 
     public List<VisibleBuilder<S>> builders;
     protected boolean dataIsCanonical;
@@ -165,6 +165,10 @@ public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
     public void removeBuilderForTag(int tag) {
       prepareToEdit();
       builders.remove(tag);
+    }
+
+    public int limit() {
+      return base + serializedLength;
     }
 
     // ////////////////////////////////////

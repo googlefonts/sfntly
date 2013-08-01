@@ -10,6 +10,7 @@ import com.google.typography.font.sfntly.table.opentype.LigatureSubst;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
 import com.google.typography.font.sfntly.table.opentype.LookupTable;
 import com.google.typography.font.sfntly.table.opentype.MultipleSubst;
+import com.google.typography.font.sfntly.table.opentype.ReverseChainSingleSubst;
 import com.google.typography.font.sfntly.table.opentype.SingleSubst;
 import com.google.typography.font.sfntly.table.opentype.SubstSubtable;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubClassRule;
@@ -137,9 +138,6 @@ public class RuleExtractor {
   private static List<Rule> extract(HeaderFmt1 fmt1Table) {
     List<Integer> coverage = extract(fmt1Table.coverage);
     int delta = fmt1Table.getDelta();
-    if (delta < 0) {
-      System.err.println("Got negative delta : " + delta);
-    }
     return Rule.deltaRules(coverage, delta);
   }
 
@@ -266,7 +264,7 @@ public class RuleExtractor {
       Map<Integer, GlyphGroup> inputClassDef, Map<Integer, List<Rule>> allLookupRules) {
     List<GlyphList> inputRows = extract(firstInputClass, table.inputGlyphs(), inputClassDef);
 
-    List<Rule> rulesSansSubst = Rule.permuteContext(null, inputRows, null);
+    List<Rule> rulesSansSubst = Rule.addContextToInputs(null, inputRows, null);
     rulesSansSubst = applyChainingLookup(rulesSansSubst, table.lookupRecords, allLookupRules);
     return rulesSansSubst;
   }
@@ -411,7 +409,7 @@ public class RuleExtractor {
     List<GlyphList> inputRows = extract(firstInputClass, table.inputGlyphs, inputClassDef);
     RuleSegment lookAhead = ruleSegmentFromClasses(table.lookAheadGlyphs, lookAheadClassDef);
 
-    List<Rule> rulesSansSubst = Rule.permuteContext(backtrack, inputRows, lookAhead);
+    List<Rule> rulesSansSubst = Rule.addContextToInputs(backtrack, inputRows, lookAhead);
     rulesSansSubst = applyChainingLookup(rulesSansSubst, table.lookupRecords, allLookupRules);
     return rulesSansSubst;
   }
@@ -451,10 +449,24 @@ public class RuleExtractor {
     RuleSegment lookAheadContext = new RuleSegment();
     lookAheadContext.addAll(extract(table.lookAheadGlyphs));
 
-    List<Rule> rulesWithBaseSubst = Rule.permuteContext(backtrackContext, inputs, lookAheadContext);
+    List<Rule> rulesWithBaseSubst = Rule.addContextToInputs(backtrackContext, inputs, lookAheadContext);
     List<Rule> result = applyChainingLookup(
         rulesWithBaseSubst, table.lookupRecords, allLookupRules);
     return result;
+  }
+
+  private static List<Rule> extract(ReverseChainSingleSubst table) {
+    List<Integer> coverage = extract(table.coverage);
+
+    RuleSegment backtrackContext = new RuleSegment();
+    backtrackContext.addAll(extract(table.backtrackGlyphs));
+
+    RuleSegment lookAheadContext = new RuleSegment();
+    lookAheadContext.addAll(extract(table.lookAheadGlyphs));
+
+    List<Integer> substs = extract(table.substitutes);
+
+    return Rule.oneToOneRules(coverage, substs, backtrackContext, lookAheadContext);
   }
 
   private static List<Rule> applyChainingLookup(List<Rule> rulesSansSubst,
@@ -530,6 +542,9 @@ public class RuleExtractor {
       case GSUB_MULTIPLE:
         rules = extract((MultipleSubst) entry.table);
         break;
+      case GSUB_REVERSE_CHAINING_CONTEXTUAL_SINGLE:
+        rules = extract((ReverseChainSingleSubst) entry.table);
+        break;
       }
       if (rules != null) {
         allRules.get(entry.lookupListIndex).addAll(rules);
@@ -549,15 +564,6 @@ public class RuleExtractor {
       }
       if (rules != null) {
         allRules.get(entry.lookupListIndex).addAll(rules);
-      }
-    }
-
-    for (LaterEntry entry : laterList) {
-      switch (entry.lookupType) {
-      case GSUB_REVERSE_CHAINING_CONTEXTUAL_SINGLE:
-        System.err.println("Inimplemented LookupType for rule extraction: " + entry.lookupType);
-      // throw new IllegalArgumentException("unimplemented extractor for " +
-      // entry.lookupType);
       }
     }
     return allRules;

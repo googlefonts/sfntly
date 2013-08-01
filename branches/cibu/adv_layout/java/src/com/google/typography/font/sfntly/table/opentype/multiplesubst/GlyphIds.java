@@ -19,6 +19,16 @@ public class GlyphIds extends OffsetRecordTable<NumRecordTable> {
     coverage = new CoverageTable(data.slice(coverageOffset), 0, dataIsCanonical);
   }
 
+  @Override
+  public int fieldCount() {
+    return FIELD_COUNT;
+  }
+
+  @Override
+  public NumRecordTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+    return new NumRecordTable(data, 0, dataIsCanonical);
+  }
+
   public static class Builder extends OffsetRecordTable.Builder<GlyphIds, NumRecordTable> {
 
     public Builder() {
@@ -63,15 +73,5 @@ public class GlyphIds extends OffsetRecordTable<NumRecordTable> {
     protected VisibleBuilder<NumRecordTable> createSubTableBuilder(NumRecordTable subTable) {
       return new NumRecordTable.Builder(subTable);
     }
-  }
-
-  @Override
-  public int fieldCount() {
-    return FIELD_COUNT;
-  }
-
-  @Override
-  public NumRecordTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return new NumRecordTable(data, 0, dataIsCanonical);
   }
 }

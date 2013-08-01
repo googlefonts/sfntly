@@ -22,6 +22,11 @@ public abstract class RecordsTable<R extends Record> extends HeaderTable impleme
     this(data, 0, dataIsCanonical);
   }
 
+  public RecordsTable(RecordList<R> records) {
+    super(records.readData, records.base, false);
+    recordList = records;
+  }
+
   @Override
   public Iterator<R> iterator() {
     return recordList.iterator();
@@ -36,7 +41,7 @@ public abstract class RecordsTable<R extends Record> extends HeaderTable impleme
   // builder
 
   public abstract static class Builder<T extends HeaderTable, R extends Record>
-      extends HeaderTable.Builder<T> {
+  extends HeaderTable.Builder<T> {
 
     protected RecordList<R> records;
     protected int serializedLength;
