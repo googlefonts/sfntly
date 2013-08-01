@@ -19,6 +19,7 @@ import com.google.typography.font.sfntly.table.opentype.LookupListTable;
 import com.google.typography.font.sfntly.table.opentype.LookupTable;
 import com.google.typography.font.sfntly.table.opentype.MultipleSubst;
 import com.google.typography.font.sfntly.table.opentype.NullTable;
+import com.google.typography.font.sfntly.table.opentype.ReverseChainSingleSubst;
 import com.google.typography.font.sfntly.table.opentype.ScriptListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTable;
 import com.google.typography.font.sfntly.table.opentype.SingleSubst;
@@ -603,6 +604,41 @@ public class OtTableTagger {
       }
     });
 
+    register(new TagMethod(ReverseChainSingleSubst.class) {
+      @Override
+      public void tag(FontDataTable fdt) {
+        ReverseChainSingleSubst table = (ReverseChainSingleSubst) fdt;
+        td.tagRangeField(FieldType.SHORT, "subst format");
+        td.tagRangeField(FieldType.OFFSET_NONZERO, "input coverage offset");
+        tagTable(table.coverage);
+
+        td.tagRangeField(FieldType.SHORT, "backtrack glyphs coverages count");
+        int subTableCount = table.backtrackGlyphs.recordList.count();
+        for (int i = 0; i < subTableCount; ++i) {
+          td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+          CoverageTable subTable = table.backtrackGlyphs.subTableAt(i);
+          if (subTable != null) {
+            tagTable(subTable);
+          }
+        }
+
+        td.tagRangeField(FieldType.SHORT, "lookahead glyphs coverages count");
+        subTableCount = table.lookAheadGlyphs.recordList.count();
+        for (int i = 0; i < subTableCount; ++i) {
+          td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+          CoverageTable subTable = table.lookAheadGlyphs.subTableAt(i);
+          if (subTable != null) {
+            tagTable(subTable);
+          }
+        }
+
+        td.tagRangeField(FieldType.SHORT, "subst glyph count");
+        for (int i = 0; i < table.substitutes.recordList.count(); ++i) {
+          td.tagRangeField(FieldType.GLYPH, null);
+        }
+      }
+    });
+
     register(new TagMethod(CoverageTable.class) {
       @Override
       public void tag(FontDataTable fdt) {
@@ -660,15 +696,15 @@ public class OtTableTagger {
   }
 
   private static final Comparator<Class<? extends FontDataTable>> CLASS_NAME_COMPARATOR =
-    new Comparator<Class<? extends FontDataTable>>() {
+      new Comparator<Class<? extends FontDataTable>>() {
     @Override
     public int compare(Class<? extends FontDataTable> o1, Class<? extends FontDataTable> o2) {
       return o1.getName().compareTo(o2.getName());
     }
-    };
+  };
 
   private static Set<Class<? extends FontDataTable>>
-      missedClasses = new TreeSet<Class<? extends FontDataTable>>(CLASS_NAME_COMPARATOR);
+  missedClasses = new TreeSet<Class<? extends FontDataTable>>(CLASS_NAME_COMPARATOR);
 
   private TagMethod getTagMethod(FontDataTable table) {
     Class<? extends FontDataTable> clzz = table.getClass();

@@ -39,6 +39,8 @@ public class ExtensionSubst extends SubstSubtable {
       return new ContextSubst(data, 0, dataIsCanonical);
     case GSUB_CHAINING_CONTEXTUAL:
       return new ChainContextSubst(data, 0, dataIsCanonical);
+    case GSUB_REVERSE_CHAINING_CONTEXTUAL_SINGLE:
+      return new ReverseChainSingleSubst(data, 0, dataIsCanonical);
     default:
       throw new IllegalArgumentException("LookupType is " + lookupType);
     }

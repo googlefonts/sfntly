@@ -69,10 +69,12 @@ public class LookupTable extends OffsetRecordTable<SubstSubtable> {
       return new ChainContextSubst(data, base, dataIsCanonical);
     case GSUB_EXTENSION:
       return new ExtensionSubst(data, base, dataIsCanonical);
+    case GSUB_REVERSE_CHAINING_CONTEXTUAL_SINGLE:
+      return new ReverseChainSingleSubst(data, base, dataIsCanonical);
     default:
       System.err.println("Unimplemented LookupType: " + gsubLookupType);
       return new NullTable(data, base, dataIsCanonical);
-    // throw new IllegalArgumentException("LookupType is " + lookupType);
+      // throw new IllegalArgumentException("LookupType is " + lookupType);
     }
   }
 

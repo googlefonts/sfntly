@@ -135,8 +135,8 @@ public class ViewableTaggedData {
       metrics.zero();
     }
     DrawContext context = new DrawContext(style, metrics, null, 0, 0);
-
     context.measureLineHeight();
+
     for (Marker m : markers) {
       m.draw(context);
     }
@@ -266,7 +266,7 @@ public class ViewableTaggedData {
           width = 2;
           break;
         }
-      // fall through
+        // fall through
       case OFFSET:
         value = data.readUShort(pos);
         alt = String.format("#%04x", base + value);
@@ -340,7 +340,7 @@ public class ViewableTaggedData {
     private final Graphics g; // if null, we are measuring
     private FontRenderContext frc; // used when measuring
     private final int x; // current position of 'position' column (margin is to
-                         // left)
+    // left)
     private int y; // current base of line
     private int lc; // line count
     private int rangeDepth;
@@ -417,15 +417,15 @@ public class ViewableTaggedData {
     }
 
     private static final Color[] REF_COLORS = { Color.BLUE,
-        Color.RED,
-        Color.BLACK,
-        Color.GREEN,
-        Color.LIGHT_GRAY,
-        Color.PINK,
-        Color.CYAN,
-        Color.DARK_GRAY,
-        Color.MAGENTA,
-        Color.ORANGE };
+      Color.RED,
+      Color.BLACK,
+      Color.GREEN,
+      Color.LIGHT_GRAY,
+      Color.PINK,
+      Color.CYAN,
+      Color.DARK_GRAY,
+      Color.MAGENTA,
+      Color.ORANGE };
 
     private Color colorForM(int m) {
       return REF_COLORS[m % REF_COLORS.length];
@@ -455,6 +455,7 @@ public class ViewableTaggedData {
       mx += metrics.marginWidth;
 
       g.setColor(colorForM(m));
+      // Debug: g.drawString(ref.sourcePosition + " => " + ref.targetPosition, 0, srcy);
       g.drawLine(srcx, srcy, mx, srcy);
       g.drawLine(mx, srcy, mx, trgy);
       g.drawLine(mx, trgy, trgx, trgy);
@@ -530,7 +531,7 @@ public class ViewableTaggedData {
       x += metrics.positionWidth;
 
       if (width > 0) {
-        s = String.format("%0" + (width * 2) + "x", value);
+        s = String.format("%0" + width * 2 + "x", value);
         if (measuring()) {
           metrics.dataWidth = updateWidth(s, style.dataFont, metrics.dataWidth);
         } else {
@@ -637,11 +638,13 @@ public class ViewableTaggedData {
   static class WidthUsageRecord {
     final Map<Integer, Integer> widthUsage = new HashMap<Integer, Integer>();
     private int width;
+    private int src;
     static private final WidthUsageRecord EMPTY = new WidthUsageRecord();
 
-    public static WidthUsageRecord copyWithWidthAdded(WidthUsageRecord other, int width) {
+    public static WidthUsageRecord copyWithWidthAdded(WidthUsageRecord other, int width, int src) {
       WidthUsageRecord current = new WidthUsageRecord();
       current.width = width;
+      current.src = src;
 
       current.widthUsage.putAll(other.widthUsage);
       int count = 0;
@@ -666,9 +669,13 @@ public class ViewableTaggedData {
       return width;
     }
 
+    public int src() {
+      return src;
+    }
+
     @Override
     public String toString() {
-      return "{" + widthUsage.toString() + ", " + width + "}";
+      return "{width=" + width + " src=" + src + widthUsage.toString() + "}";
     }
   }
 
@@ -683,22 +690,30 @@ public class ViewableTaggedData {
     public int add(Reference ref) {
       int src = ref.sourcePosition;
       int trg = ref.targetPosition;
-
+      WidthUsageRecord match = null;
       if (tgt2widthUsage.containsKey(trg)) {
-        return tgt2widthUsage.get(trg).width();
+        match = tgt2widthUsage.get(trg);
+        if (match.src() <= src) {
+          return match.width();
+        }
+        // Now there is a previous entry with same target position but higher source position value.
       }
 
       Entry<Integer, WidthUsageRecord> entry = tgt2widthUsage.floorEntry(src);
-      WidthUsageRecord srcWidthUsage = (entry != null) ? entry.getValue() : WidthUsageRecord.EMPTY;
+      WidthUsageRecord srcWidthUsage = entry != null ? entry.getValue() : WidthUsageRecord.EMPTY;
 
-      entry = tgt2widthUsage.lastEntry();
-      WidthUsageRecord lastWidthUsage = (entry != null) ? entry.getValue() : WidthUsageRecord.EMPTY;
+      // If there is a match and we haven't returned means there is already shorter range with
+      // same target has been encountered. So ignore that entry and check for the penultimate target.
+      // It is ok to overlap with the matched range.
+      // Remember we are always going in the increasing order of target position.
+      entry = match != null ? tgt2widthUsage.floorEntry(trg - 1) : tgt2widthUsage.lastEntry();
+      WidthUsageRecord lastWidthUsage = entry != null ? entry.getValue() : WidthUsageRecord.EMPTY;
 
       int width = srcWidthUsage.lowestEquality(lastWidthUsage);
       if (width > MAX_WIDTH) {
         width = MAX_WIDTH;
       }
-      WidthUsageRecord trgWidthUsage = WidthUsageRecord.copyWithWidthAdded(lastWidthUsage, width);
+      WidthUsageRecord trgWidthUsage = WidthUsageRecord.copyWithWidthAdded(lastWidthUsage, width, src);
 
       tgt2widthUsage.put(trg, trgWidthUsage);
       return width;
@@ -732,7 +747,7 @@ public class ViewableTaggedData {
     }
 
     static final Object[] classOrder = { RangeEnd.class, RangeStart.class, ReferenceTarget.class,
-        Field.class, ReferenceSource.class };
+      Field.class, ReferenceSource.class };
 
     static int classOrder(Class<? extends Marker> clzz) {
       for (int i = 0; i < classOrder.length; ++i) {

@@ -1,8 +1,8 @@
 package com.google.typography.font.sfntly.table.opentype.component;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
-public class RuleSegment extends ArrayList<GlyphGroup> {
+public class RuleSegment extends LinkedList<GlyphGroup> {
   private static final long serialVersionUID = 4563803321401665616L;
 
   public RuleSegment() {
