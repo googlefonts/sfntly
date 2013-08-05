@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -117,7 +118,7 @@ public class RuleExtractor {
 
     int glyphId = table.getField(Ligature.LIG_GLYPH_INDEX);
     RuleSegment subst = new RuleSegment(glyphId);
-    GlyphList input = new GlyphList();
+    RuleSegment input = new RuleSegment();
     for (NumRecord record : table.recordList) {
       input.add(record.value);
     }
@@ -153,7 +154,7 @@ public class RuleExtractor {
     GlyphList coverage = extract(table.coverage());
     int i = 0;
     for (NumRecordTable glyphIds : table) {
-      GlyphList input = new GlyphList(coverage.get(i));
+      RuleSegment input = new RuleSegment(coverage.get(i));
 
       GlyphList glyphList = extract(glyphIds);
       RuleSegment subst = new RuleSegment(glyphList);
@@ -171,7 +172,7 @@ public class RuleExtractor {
     GlyphList coverage = extract(table.coverage());
     int i = 0;
     for (NumRecordTable glyphIds : table) {
-      GlyphList input = new GlyphList(coverage.get(i));
+      RuleSegment input = new RuleSegment(coverage.get(i));
 
       GlyphList glyphList = extract(glyphIds);
       GlyphGroup glyphGroup = new GlyphGroup(glyphList);
@@ -219,18 +220,13 @@ public class RuleExtractor {
 
   public static List<Rule> extract(
       Integer firstGlyph, SubRule table, Map<Integer, List<Rule>> allLookupRules) {
-    GlyphList inputRow = new GlyphList();
-    inputRow.add(firstGlyph);
+    RuleSegment inputRow = new RuleSegment(firstGlyph);
     for (NumRecord record : table.inputGlyphs) {
       inputRow.add(record.value);
     }
 
-    Rule ruleSansSubst = new Rule(null, inputRow, null, new RuleSegment(inputRow));
-    List<Rule> rulesSansSubst = new ArrayList<Rule>();
-    rulesSansSubst.add(ruleSansSubst);
-
-    rulesSansSubst = applyChainingLookup(rulesSansSubst, table.lookupRecords, allLookupRules);
-    return rulesSansSubst;
+    Rule ruleSansSubst = new Rule(null, inputRow, null, null);
+    return applyChainingLookup(ruleSansSubst, table.lookupRecords, allLookupRules);
   }
 
   public static List<Rule> extract(
@@ -262,11 +258,10 @@ public class RuleExtractor {
 
   public static List<Rule> extract(SubClassRule table, int firstInputClass,
       Map<Integer, GlyphGroup> inputClassDef, Map<Integer, List<Rule>> allLookupRules) {
-    List<GlyphList> inputRows = extract(firstInputClass, table.inputGlyphs(), inputClassDef);
+    RuleSegment input = extract(firstInputClass, table.inputGlyphs(), inputClassDef);
 
-    List<Rule> rulesSansSubst = Rule.addContextToInputs(null, inputRows, null);
-    rulesSansSubst = applyChainingLookup(rulesSansSubst, table.lookupRecords, allLookupRules);
-    return rulesSansSubst;
+    Rule ruleSansSubst = new Rule(null, input, null, null);
+    return applyChainingLookup(ruleSansSubst, table.lookupRecords, allLookupRules);
   }
 
   public static List<Rule> extract(
@@ -308,8 +303,7 @@ public class RuleExtractor {
 
   public static List<Rule> extract(
       Integer firstGlyph, ChainSubRule table, Map<Integer, List<Rule>> allLookupRules) {
-    GlyphList inputRow = new GlyphList();
-    inputRow.add(firstGlyph);
+    RuleSegment inputRow = new RuleSegment(firstGlyph);
     for (NumRecord record : table.inputGlyphs) {
       inputRow.add(record.value);
     }
@@ -317,12 +311,8 @@ public class RuleExtractor {
     RuleSegment backtrack = ruleSegmentFromGlyphs(table.backtrackGlyphs);
     RuleSegment lookAhead = ruleSegmentFromGlyphs(table.lookAheadGlyphs);
 
-    Rule ruleSansSubst = new Rule(backtrack, inputRow, lookAhead, new RuleSegment(inputRow));
-    List<Rule> rulesSansSubst = new ArrayList<Rule>();
-    rulesSansSubst.add(ruleSansSubst);
-
-    rulesSansSubst = applyChainingLookup(rulesSansSubst, table.lookupRecords, allLookupRules);
-    return rulesSansSubst;
+    Rule ruleSansSubst = new Rule(backtrack, inputRow, lookAhead, null);
+    return applyChainingLookup(ruleSansSubst, table.lookupRecords, allLookupRules);
   }
 
   private static RuleSegment ruleSegmentFromGlyphs(NumRecordList records) {
@@ -406,18 +396,16 @@ public class RuleExtractor {
       Map<Integer, GlyphGroup> lookAheadClassDef,
       Map<Integer, List<Rule>> allLookupRules) {
     RuleSegment backtrack = ruleSegmentFromClasses(table.backtrackGlyphs, backtrackClassDef);
-    List<GlyphList> inputRows = extract(firstInputClass, table.inputGlyphs, inputClassDef);
+    RuleSegment inputRow = extract(firstInputClass, table.inputGlyphs, inputClassDef);
     RuleSegment lookAhead = ruleSegmentFromClasses(table.lookAheadGlyphs, lookAheadClassDef);
 
-    List<Rule> rulesSansSubst = Rule.addContextToInputs(backtrack, inputRows, lookAhead);
-    rulesSansSubst = applyChainingLookup(rulesSansSubst, table.lookupRecords, allLookupRules);
-    return rulesSansSubst;
+    Rule ruleSansSubst = new Rule(backtrack, inputRow, lookAhead, null);
+    return applyChainingLookup(ruleSansSubst, table.lookupRecords, allLookupRules);
   }
 
-  public static List<GlyphList> extract(
+  public static RuleSegment extract(
       int firstInputClass, NumRecordList list, Map<Integer, GlyphGroup> classDef) {
-    List<GlyphGroup> data = new ArrayList<GlyphGroup>();
-    data.add(classDef.get(firstInputClass));
+    RuleSegment input = new RuleSegment(classDef.get(firstInputClass));
     for (NumRecord record : list) {
       int classId = record.value;
       GlyphGroup glyphs = classDef.get(classId);
@@ -426,9 +414,9 @@ public class RuleExtractor {
         System.err.println(
             "class id is " + classId + "; but no classes defined in Class Def " + classDef);
       }
-      data.add(glyphs);
+      input.add(glyphs);
     }
-    return Rule.permuteToSegments(data);
+    return input;
   }
 
   public static RuleSegment ruleSegmentFromClasses(
@@ -441,17 +429,13 @@ public class RuleExtractor {
   }
 
   public static List<Rule> extract(InnerArraysFmt3 table, Map<Integer, List<Rule>> allLookupRules) {
-    RuleSegment backtrackContext = new RuleSegment();
-    backtrackContext.addAll(extract(table.backtrackGlyphs));
+    RuleSegment backtrackContext = extract(table.backtrackGlyphs);
+    RuleSegment input = extract(table.inputGlyphs);
+    RuleSegment lookAheadContext = extract(table.lookAheadGlyphs);
 
-    List<GlyphList> inputs = Rule.permuteToSegments(extract(table.inputGlyphs));
-
-    RuleSegment lookAheadContext = new RuleSegment();
-    lookAheadContext.addAll(extract(table.lookAheadGlyphs));
-
-    List<Rule> rulesWithBaseSubst = Rule.addContextToInputs(backtrackContext, inputs, lookAheadContext);
+    Rule ruleSansSubst = new Rule(backtrackContext, input, lookAheadContext, null);
     List<Rule> result = applyChainingLookup(
-        rulesWithBaseSubst, table.lookupRecords, allLookupRules);
+        ruleSansSubst, table.lookupRecords, allLookupRules);
     return result;
   }
 
@@ -466,11 +450,14 @@ public class RuleExtractor {
 
     List<Integer> substs = extract(table.substitutes);
 
-    return Rule.oneToOneRules(coverage, substs, backtrackContext, lookAheadContext);
+    return Rule.oneToOneRules(backtrackContext, coverage, lookAheadContext, substs);
   }
 
-  private static List<Rule> applyChainingLookup(List<Rule> rulesSansSubst,
+  private static List<Rule> applyChainingLookup(Rule ruleSansSubst,
       SubstLookupRecordList lookups, Map<Integer, List<Rule>> allLookupRules) {
+
+    List<Rule> targetRules = new LinkedList<Rule>();
+    targetRules.add(ruleSansSubst);
     for (SubstLookupRecord lookup : lookups) {
       int at = lookup.sequenceIndex;
       int lookupIndex = lookup.lookupListIndex;
@@ -479,12 +466,12 @@ public class RuleExtractor {
         throw new IllegalArgumentException(
             "Out of bound lookup index for chaining lookup: " + lookupIndex);
       }
-      rulesSansSubst = Rule.applyOnRuleSubsts(rulesSansSubst, at, rulesToApply);
+      targetRules = Rule.applyOnRuleSubsts(targetRules, at, rulesToApply);
     }
 
     List<Rule> result = new ArrayList<Rule>();
-    for (Rule rule : rulesSansSubst) {
-      if (!rule.subst.match(rule.input)) {
+    for (Rule rule : targetRules) {
+      if (rule.subst != null) {
         result.add(rule);
       }
     }
@@ -569,8 +556,8 @@ public class RuleExtractor {
     return allRules;
   }
 
-  public static List<GlyphGroup> extract(CoverageArray table) {
-    List<GlyphGroup> result = new ArrayList<GlyphGroup>();
+  public static RuleSegment extract(CoverageArray table) {
+    RuleSegment result = new RuleSegment();
     for (CoverageTable coverage : table) {
       GlyphGroup glyphGroup = new GlyphGroup();
       glyphGroup.addAll(extract(coverage));

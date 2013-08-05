@@ -25,7 +25,14 @@ public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
   public Map<ScriptTag, ScriptTable> map() {
     Map<ScriptTag, ScriptTable> map = new HashMap<ScriptTag, ScriptTable>();
     for (int i = 0; i < count(); i++) {
-      map.put(scriptAt(i), subTableAt(i));
+      ScriptTag script;
+      try {
+        script = scriptAt(i);
+      } catch (IllegalArgumentException e) {
+        System.err.println("Invalid Script tag found: " + e);
+        continue;
+      }
+      map.put(script, subTableAt(i));
     }
     return map;
   }
