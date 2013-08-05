@@ -40,7 +40,14 @@ public class ScriptTable extends TagOffsetsTable<LangSysTable> {
       map.put(LanguageTag.DFLT, defaultLangSys);
     }
     for (int i = 0; i < count(); i++) {
-      map.put(langSysAt(i), subTableAt(i));
+      LanguageTag lang;
+      try {
+        lang = langSysAt(i);
+      } catch (IllegalArgumentException e) {
+        System.err.println("Invalid LangSys tag found: " + e);
+        continue;
+      }
+      map.put(lang, subTableAt(i));
     }
     return map;
   }
