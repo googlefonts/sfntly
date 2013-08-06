@@ -1,5 +1,6 @@
 package com.google.typography.font.sfntly.table.opentype.component;
 
+import java.util.Collection;
 import java.util.LinkedList;
 
 public class RuleSegment extends LinkedList<GlyphGroup> {
@@ -10,24 +11,34 @@ public class RuleSegment extends LinkedList<GlyphGroup> {
   }
 
   public RuleSegment(GlyphGroup glyphGroup) {
-    super.add(glyphGroup);
+    addInternal(glyphGroup);
   }
 
   public RuleSegment(int glyph) {
     GlyphGroup glyphGroup = new GlyphGroup(glyph);
-    super.add(glyphGroup);
+    addInternal(glyphGroup);
   }
 
   public RuleSegment(GlyphList glyphs) {
     for (int glyph : glyphs) {
       GlyphGroup glyphGroup = new GlyphGroup(glyph);
-      super.add(glyphGroup);
+      addInternal(glyphGroup);
     }
   }
 
   public boolean add(int glyph) {
     GlyphGroup glyphGroup = new GlyphGroup(glyph);
-    return super.add(glyphGroup);
+    return addInternal(glyphGroup);
+  }
+
+  @Override
+  public boolean addAll(Collection<? extends GlyphGroup> glyphGroups) {
+    for(GlyphGroup glyphGroup : glyphGroups) {
+      if (glyphGroup == null) {
+        throw new IllegalArgumentException("Null GlyphGroup not allowed");
+      }
+    }
+    return super.addAll(glyphGroups);
   }
 
   public boolean match(GlyphList glyphs) {
@@ -43,5 +54,12 @@ public class RuleSegment extends LinkedList<GlyphGroup> {
       i++;
     }
     return true;
+  }
+
+  private boolean addInternal(GlyphGroup glyphGroup) {
+    if (glyphGroup == null) {
+      throw new IllegalArgumentException("Null GlyphGroup not allowed");
+    }
+    return super.add(glyphGroup);
   }
 }

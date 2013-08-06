@@ -29,7 +29,7 @@ public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
       try {
         script = scriptAt(i);
       } catch (IllegalArgumentException e) {
-        System.err.println("Invalid Script tag found: " + e);
+        System.err.println("Invalid Script tag found: " + e.getMessage());
         continue;
       }
       map.put(script, subTableAt(i));

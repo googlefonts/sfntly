@@ -13,9 +13,9 @@ import com.google.typography.font.sfntly.table.opentype.ScriptListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,14 +47,14 @@ public class Rule {
     CMapTable cmapTable = font.getTable(Tag.cmap);
     GlyphGroup glyphGroup = glyphGroupForText(txt, cmapTable);
 
-    List<Rule> featuredRules = featuredRules(font);
-    Map<Integer, List<Rule>> glyphRuleMap = createGlyphRuleMap(featuredRules);
+    Set<Rule> featuredRules = featuredRules(font);
+    Map<Integer, Set<Rule>> glyphRuleMap = createGlyphRuleMap(featuredRules);
     GlyphGroup ruleClosure = closure(glyphRuleMap, glyphGroup);
     System.out.println("Closure: " + toString(ruleClosure, post));
     return ruleClosure;
   }
 
-  static GlyphGroup closure(Map<Integer, List<Rule>> glyphRuleMap, GlyphGroup glyphs) {
+  static GlyphGroup closure(Map<Integer, Set<Rule>> glyphRuleMap, GlyphGroup glyphs) {
     int prevSize = 0;
     while (glyphs.size() > prevSize) {
       prevSize = glyphs.size();
@@ -71,10 +71,7 @@ public class Rule {
         continue;
       }
       for (GlyphGroup g : seg) {
-        if (g.contains(-1)) {
-          continue;
-        }
-        if (!g.isIntersecting(glyphs)) {
+        if (!g.intersects(glyphs)) {
           return;
         }
       }
@@ -85,31 +82,29 @@ public class Rule {
     }
   }
 
-  public static Map<Integer, List<Rule>> glyphRulesMap(Font font) {
-    List<Rule> featuredRules = Rule.featuredRules(font);
+  public static Map<Integer, Set<Rule>> glyphRulesMap(Font font) {
+    Set<Rule> featuredRules = Rule.featuredRules(font);
     if (featuredRules == null) {
       return null;
     }
     return createGlyphRuleMap(featuredRules);
   }
 
-  private static Map<Integer, List<Rule>> createGlyphRuleMap(List<Rule> lookupRules) {
-    Map<Integer, List<Rule>> map = new HashMap<>();
+  private static Map<Integer, Set<Rule>> createGlyphRuleMap(Set<Rule> lookupRules) {
+    Map<Integer, Set<Rule>> map = new HashMap<>();
 
     for (Rule rule : lookupRules) {
-      for (GlyphGroup glyphGroup : rule.input) {
-        for (int glyph : glyphGroup) {
-          if (!map.containsKey(glyph)) {
-            map.put(glyph, new ArrayList<Rule>());
-          }
-          map.get(glyph).add(rule);
+      for (int glyph : rule.input.get(0)) {
+        if (!map.containsKey(glyph)) {
+          map.put(glyph, new HashSet<Rule>());
         }
+        map.get(glyph).add(rule);
       }
     }
     return map;
   }
 
-  private static Set<Rule> rulesForGlyph(Map<Integer, List<Rule>> glyphRuleMap, Set<Integer> glyphs) {
+  private static Set<Rule> rulesForGlyph(Map<Integer, Set<Rule>> glyphRuleMap, GlyphGroup glyphs) {
     Set<Rule> set = new HashSet<>();
     for(int glyph : glyphs) {
       if (glyphRuleMap.containsKey(glyph)) {
@@ -119,16 +114,21 @@ public class Rule {
     return set;
   }
 
-  private static List<Rule> featuredRules(
-      Set<Integer> lookupIds, Map<Integer, List<Rule>> ruleMap) {
-    List<Rule> rules = new ArrayList<>();
+  private static Set<Rule> featuredRules(
+      Set<Integer> lookupIds, Map<Integer, Set<Rule>> ruleMap) {
+    Set<Rule> rules = new LinkedHashSet<>();
     for (int lookupId : lookupIds) {
-      rules.addAll(ruleMap.get(lookupId));
+      Set<Rule> ruleForLookup = ruleMap.get(lookupId);
+      if (ruleForLookup == null) {
+        System.err.printf("Lookup ID %d is used in features but not defined.\n", lookupId);
+        continue;
+      }
+      rules.addAll(ruleForLookup);
     }
     return rules;
   }
 
-  private static List<Rule> featuredRules(Font font) {
+  private static Set<Rule> featuredRules(Font font) {
     GSubTable gsub = font.getTable(Tag.GSUB);
     if (gsub == null) {
       return null;
@@ -137,7 +137,7 @@ public class Rule {
     ScriptListTable scripts = gsub.scriptList();
     FeatureListTable featureList = gsub.featureList();
     LookupListTable lookupList = gsub.lookupList();
-    Map<Integer, List<Rule>> ruleMap = RuleExtractor.extract(lookupList);
+    Map<Integer, Set<Rule>> ruleMap = RuleExtractor.extract(lookupList);
 
     Set<Integer> features = new HashSet<>();
     Set<Integer> lookupIds = new HashSet<>();
@@ -156,7 +156,7 @@ public class Rule {
         }
       }
     }
-    List<Rule> featuredRules = Rule.featuredRules(lookupIds, ruleMap);
+    Set<Rule> featuredRules = Rule.featuredRules(lookupIds, ruleMap);
     return featuredRules;
   }
 
@@ -216,10 +216,7 @@ public class Rule {
 
     int i = at;
     for (GlyphGroup g : input)  {
-      if (g.contains(-1)) {
-        continue;
-      }
-      if (!g.isIntersecting(srcGlyphIds.get(i))) {
+      if (!g.intersects(srcGlyphIds.get(i))) {
         return false;
       }
       i++;
@@ -228,10 +225,7 @@ public class Rule {
     if (backtrack != null) {
       i = at - 1;
       for (GlyphGroup g : backtrack) {
-        if (g.contains(-1)) {
-          continue;
-        }
-        if (!g.isIntersecting(srcGlyphIds.get(i))) {
+        if (!g.intersects(srcGlyphIds.get(i))) {
           return false;
         }
         i--;
@@ -241,10 +235,7 @@ public class Rule {
     if (lookAhead != null) {
       i = at + input.size();
       for (GlyphGroup g : lookAhead) {
-        if (g.contains(-1)) {
-          continue;
-        }
-        if (!g.isIntersecting(srcGlyphIds.get(i))) {
+        if (!g.intersects(srcGlyphIds.get(i))) {
           return false;
         }
         i++;
@@ -253,14 +244,14 @@ public class Rule {
     return true;
   }
 
-  static RuleSegment apply(List<Rule> rules, RuleSegment given, int at) {
+  static RuleSegment apply(Set<Rule> rules, RuleSegment given, int at) {
     for (Rule rule : rules) {
       RuleSegment result = rule.apply(given, at);
       if (result != null) {
         return result;
       }
     }
-    return given;
+    return null;
   }
 
   static Rule applyOnNoSubstRule(Rule ruleToApply, Rule targetRule, int at) {
@@ -269,29 +260,40 @@ public class Rule {
       return null;
     }
 
-    RuleSegment newBacktrack = new RuleSegment();
-    if (targetRule.backtrack != null) {
-      newBacktrack.addAll(targetRule.backtrack);
+    RuleSegment newBacktrack = targetRule.backtrack;
+    if (0 < at) {
+      newBacktrack = new RuleSegment();
+      if (targetRule.backtrack != null) {
+        newBacktrack.addAll(targetRule.backtrack);
+      }
+      newBacktrack.addAll(targetRule.input.subList(0, at));
     }
-    newBacktrack.addAll(targetRule.input.subList(0, at));
 
-    RuleSegment newLookAhead = new RuleSegment();
-    newLookAhead.addAll(targetRule.input.subList(at + ruleToApply.input.size(), targetRule.input.size()));
-    if (targetRule.lookAhead != null) {
-      newLookAhead.addAll(targetRule.lookAhead);
+    int remainingTargetInputBegin = at + ruleToApply.input.size();
+    int targetInputEnd = targetRule.input.size();
+
+    RuleSegment newLookAhead = targetRule.lookAhead;
+    if (remainingTargetInputBegin < targetInputEnd) {
+      newLookAhead = new RuleSegment();
+      if (targetRule.lookAhead != null) {
+        newLookAhead.addAll(targetRule.lookAhead);
+      }
+      newLookAhead.addAll(targetRule.input.subList(remainingTargetInputBegin, targetInputEnd));
     }
 
     return new Rule(newBacktrack, ruleToApply.input, newLookAhead, ruleToApply.subst);
 
   }
 
-  static List<Rule> applyOnRuleSubsts(List<Rule> targetRules, int at, List<Rule> rulesToApply) {
-    List<Rule> result = new ArrayList<>();
+  static Set<Rule> applyOnRuleSubsts(Set<Rule> targetRules, int at, Set<Rule> rulesToApply) {
+    Set<Rule> result = new LinkedHashSet<>();
     for (Rule targetRule : targetRules) {
       if (targetRule.subst != null) {
         RuleSegment newSubst = apply(rulesToApply, targetRule.subst, at);
-        Rule newRule = new Rule(targetRule, newSubst);
-        result.add(newRule);
+        if (newSubst != null) {
+          Rule newRule = new Rule(targetRule, newSubst);
+          result.add(newRule);
+        }
       } else {
         for (Rule ruleToApply : rulesToApply) {
           Rule newRule = applyOnNoSubstRule(ruleToApply, targetRule, at);
@@ -368,9 +370,9 @@ public class Rule {
     return list;
   }
 
-  public static void dumpRuleMap(Map<Integer, List<Rule>> rulesList, PostScriptTable post) {
+  public static void dumpRuleMap(Map<Integer, Set<Rule>> rulesList, PostScriptTable post) {
     for (int index : rulesList.keySet()) {
-      List<Rule> rules = rulesList.get(index);
+      Set<Rule> rules = rulesList.get(index);
       System.out.println(
           "------------------------------ " + index + " --------------------------------");
       for (Rule rule : rules) {
@@ -382,7 +384,7 @@ public class Rule {
 
   static void dumpLookups(Font font) {
     GSubTable gsub = font.getTable(Tag.GSUB);
-    Map<Integer, List<Rule>> ruleMap = RuleExtractor.extract(gsub.lookupList());
+    Map<Integer, Set<Rule>> ruleMap = RuleExtractor.extract(gsub.lookupList());
     PostScriptTable post = font.getTable(Tag.post);
     dumpRuleMap(ruleMap, post);
   }
@@ -419,7 +421,7 @@ public class Rule {
     return sb.toString();
   }
 
-  static String toString(Collection<Integer> glyphIds, PostScriptTable post) {
+  static String toString(GlyphGroup glyphIds, PostScriptTable post) {
     StringBuilder sb = new StringBuilder();
     for (int glyphId : glyphIds) {
       sb.append(glyphId);
