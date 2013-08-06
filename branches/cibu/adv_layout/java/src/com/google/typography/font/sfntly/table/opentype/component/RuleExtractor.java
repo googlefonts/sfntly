@@ -410,10 +410,9 @@ public class RuleExtractor {
     for (NumRecord record : list) {
       int classId = record.value;
       GlyphGroup glyphs = classDef.get(classId);
-      if (glyphs == null) {
-        glyphs = new GlyphGroup();
-        System.err.println(
-            "class id is " + classId + "; but no classes defined in Class Def " + classDef);
+      if (glyphs == null && classId == 0) {
+        // Any glyph.
+        glyphs = new GlyphGroup(); // Empty representing any glyph.
       }
       input.add(glyphs);
     }
@@ -428,7 +427,7 @@ public class RuleExtractor {
       GlyphGroup glyphs = classDef.get(classId);
       if (glyphs == null && classId == 0) {
         // Any glyph.
-        glyphs = new GlyphGroup(); // Representing any glyph.
+        glyphs = new GlyphGroup(); // Empty representing any glyph.
       }
       segment.add(glyphs);
     }
