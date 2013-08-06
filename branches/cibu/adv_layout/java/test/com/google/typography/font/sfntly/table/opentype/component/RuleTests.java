@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * Comparison data is generated from Harfbuzz by running:
@@ -29,7 +30,7 @@ public class RuleTests {
       "/usr/local/google/home/cibu/sfntly/adv_layout/data/testdata/wiki_words_hb_closure";
   private static final int TEST_COUNT = 10;
 
-  private static final String DEBUG_SPECIFIC_FONT = "behdad/NastaleeqAsc.ttf"; //  behdad/amiri-regular.ttf windows8/UrdType.ttf
+  private static final String DEBUG_SPECIFIC_FONT = ""; //  behdad/amiri-regular.ttf windows8/UrdType.ttf
 
   private static final Map<String, List<String>> LANG_WORDS_MAP = langWordsMap();
 
@@ -48,7 +49,7 @@ public class RuleTests {
         System.out.println(name);
       }
 
-      Map<Integer, List<Rule>> glyphRulesMap = Rule.glyphRulesMap(font);
+      Map<Integer, Set<Rule>> glyphRulesMap = Rule.glyphRulesMap(font);
       if (glyphRulesMap == null) {
         System.err.println("No GSUB");
         continue;
@@ -76,20 +77,20 @@ public class RuleTests {
 
   @Test
   public void aFont() throws IOException {
-    Font font = FontLoader.getFont(new File("/usr/local/google/home/cibu/sfntly/fonts/windows7/andlso.ttf"));
+    Font font = FontLoader.getFont(new File("/usr/local/google/home/cibu/sfntly/fonts/behdad/amiri-regular.ttf"));
     CMapTable cmap = font.getTable(Tag.cmap);
     PostScriptTable post = font.getTable(Tag.post);
-    Map<Integer, List<Rule>> glyphRulesMap = Rule.glyphRulesMap(font);
-    GlyphGroup glyphGroup = Rule.glyphGroupForText("ف", cmap);
+    Map<Integer, Set<Rule>> glyphRulesMap = Rule.glyphRulesMap(font);
+    GlyphGroup glyphGroup = Rule.glyphGroupForText("ل", cmap);
     GlyphGroup closure = Rule.closure(glyphRulesMap, glyphGroup);
 
     Rule.dumpLookups(font);
-    //Rule.dumpRuleMap(glyphRulesMap, post);
+    Rule.dumpRuleMap(glyphRulesMap, post);
     System.err.println(closure);
   }
 
   private static void assertClosure(
-      CMapTable cmap, Map<Integer, List<Rule>> glyphRulesMap,
+      CMapTable cmap, Map<Integer, Set<Rule>> glyphRulesMap,
       List<String> words, List<GlyphGroup> expecteds) {
     if (words.size() < TEST_COUNT || words.size() < expecteds.size()) {
       throw new IllegalStateException(

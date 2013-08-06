@@ -20,8 +20,12 @@ public class TestLanguagesForFonts {
     try (PrintWriter writer = new PrintWriter(OUTPUT_FILE)) {
       for (File fontFile : fontFiles) {
         writer.print(fontFile.getPath());
-        for (String lang : fontLanguages.get(FontLoader.getFont(fontFile))) {
-          writer.print(" " + lang);
+        List<String> langs = fontLanguages.get(FontLoader.getFont(fontFile));
+        if (langs.isEmpty()) {
+          langs.add("en");
+        }
+        for (String lang : langs) {
+          writer.print("," + lang);
         }
         writer.println();
       }

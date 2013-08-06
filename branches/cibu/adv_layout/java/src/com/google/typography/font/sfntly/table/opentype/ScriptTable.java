@@ -44,7 +44,7 @@ public class ScriptTable extends TagOffsetsTable<LangSysTable> {
       try {
         lang = langSysAt(i);
       } catch (IllegalArgumentException e) {
-        System.err.println("Invalid LangSys tag found: " + e);
+        System.err.println("Invalid LangSys tag found: " + e.getMessage());
         continue;
       }
       map.put(lang, subTableAt(i));
