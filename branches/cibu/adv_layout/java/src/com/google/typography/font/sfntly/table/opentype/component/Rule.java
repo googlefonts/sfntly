@@ -185,78 +185,43 @@ public class Rule {
 
   // Rule operation
 
-  public RuleSegment apply(RuleSegment srcGlyphIds, int at) {
-    if (!match(srcGlyphIds, at)) {
+  public Rule applyRuleOnRuleWithSubst(Rule targetRule, int at) {
+    if (!targetRule.match(this, at)) {
       return null;
     }
 
-    RuleSegment result = new RuleSegment();
-    result.addAll(srcGlyphIds.subList(0, at));
-    result.addAll(subst);
-    result.addAll(srcGlyphIds.subList(at + input.size(), srcGlyphIds.size()));
-    return result;
-  }
+    if (at < targetRule.subst.size() && at + input.size() <=  targetRule.subst.size()) {
+      RuleSegment newSubst = new RuleSegment();
+      newSubst.addAll(targetRule.subst.subList(0, at));
+      newSubst.addAll(subst);
+      newSubst.addAll(targetRule.subst.subList(at + input.size(), targetRule.subst.size()));
 
-  private boolean match(RuleSegment srcGlyphIds, int at) {
-    if (at < 0 || at >= srcGlyphIds.size()) {
-      return false;
+      Rule newTargetRule = new Rule(targetRule, newSubst);
+      return newTargetRule;
     }
 
-    if (srcGlyphIds.size() - at < input.size()) {
-      return false;
+    if (at == targetRule.subst.size()) {
+      RuleSegment newInput = new RuleSegment();
+      newInput.addAll(targetRule.input);
+      newInput.addAll(input);
+
+      RuleSegment newLookAhead = new RuleSegment();
+      newLookAhead.addAll(targetRule.lookAhead.subList(input.size(), targetRule.lookAhead.size()));
+
+      RuleSegment newSubst = new RuleSegment();
+      newSubst.addAll(targetRule.subst);
+      newSubst.addAll(subst);
+
+      Rule newTargetRule = new Rule(targetRule.backtrack, newInput, newLookAhead, newSubst);
+      return newTargetRule;
     }
 
-    if (backtrack != null && at < backtrack.size()) {
-      return false;
-    }
-
-    if (lookAhead != null && srcGlyphIds.size() - at < input.size() + lookAhead.size()) {
-      return false;
-    }
-
-    int i = at;
-    for (GlyphGroup g : input)  {
-      if (!g.intersects(srcGlyphIds.get(i))) {
-        return false;
-      }
-      i++;
-    }
-
-    if (backtrack != null) {
-      i = at - 1;
-      for (GlyphGroup g : backtrack) {
-        if (!g.intersects(srcGlyphIds.get(i))) {
-          return false;
-        }
-        i--;
-      }
-    }
-
-    if (lookAhead != null) {
-      i = at + input.size();
-      for (GlyphGroup g : lookAhead) {
-        if (!g.intersects(srcGlyphIds.get(i))) {
-          return false;
-        }
-        i++;
-      }
-    }
-    return true;
-  }
-
-  static RuleSegment apply(Set<Rule> rules, RuleSegment given, int at) {
-    for (Rule rule : rules) {
-      RuleSegment result = rule.apply(given, at);
-      if (result != null) {
-        return result;
-      }
-    }
     return null;
   }
 
-  static Rule applyOnNoSubstRule(Rule ruleToApply, Rule targetRule, int at) {
+  static Rule applyRuleOnRuleWithoutSubst(Rule ruleToApply, Rule targetRule, int at) {
 
-    if (!ruleToApply.match(targetRule.input, at)) {
+    if (!targetRule.match(ruleToApply, at)) {
       return null;
     }
 
@@ -275,36 +240,90 @@ public class Rule {
     RuleSegment newLookAhead = targetRule.lookAhead;
     if (remainingTargetInputBegin < targetInputEnd) {
       newLookAhead = new RuleSegment();
+      newLookAhead.addAll(targetRule.input.subList(remainingTargetInputBegin, targetInputEnd));
       if (targetRule.lookAhead != null) {
         newLookAhead.addAll(targetRule.lookAhead);
       }
-      newLookAhead.addAll(targetRule.input.subList(remainingTargetInputBegin, targetInputEnd));
     }
 
     return new Rule(newBacktrack, ruleToApply.input, newLookAhead, ruleToApply.subst);
-
   }
 
-  static Set<Rule> applyOnRuleSubsts(Set<Rule> targetRules, int at, Set<Rule> rulesToApply) {
+  static void applyRulesOnRuleWithSubst(Set<Rule> rulesToApply, Rule targetRule, int at, Set<Rule> accumulateTo) {
+    for (Rule ruleToApply : rulesToApply) {
+      Rule newRule = ruleToApply.applyRuleOnRuleWithSubst(targetRule, at);
+      if (newRule != null) {
+        accumulateTo.add(newRule);
+      }
+    }
+  }
+
+  static void applyRulesOnRuleWithoutSubst(Set<Rule> rulesToApply, Rule targetRule, int at, Set<Rule> accumulateTo) {
+    for (Rule ruleToApply : rulesToApply) {
+      Rule newRule = applyRuleOnRuleWithoutSubst(ruleToApply, targetRule, at);
+      if (newRule != null) {
+        accumulateTo.add(newRule);
+      }
+    }
+  }
+
+  static Set<Rule> applyRulesOnRules(Set<Rule> rulesToApply, Set<Rule> targetRules, int at) {
     Set<Rule> result = new LinkedHashSet<>();
     for (Rule targetRule : targetRules) {
       if (targetRule.subst != null) {
-        RuleSegment newSubst = apply(rulesToApply, targetRule.subst, at);
-        if (newSubst != null) {
-          Rule newRule = new Rule(targetRule, newSubst);
-          result.add(newRule);
-        }
+        applyRulesOnRuleWithSubst(rulesToApply, targetRule, at, result);
       } else {
-        for (Rule ruleToApply : rulesToApply) {
-          Rule newRule = applyOnNoSubstRule(ruleToApply, targetRule, at);
-          if (newRule != null) {
-            result.add(newRule);
-          }
-        }
-        result.add(targetRule);
+        applyRulesOnRuleWithoutSubst(rulesToApply, targetRule, at, result);
       }
     }
     return result;
+  }
+
+  private boolean match(Rule other, int at) {
+    if (at < 0) {
+      throw new IllegalStateException();
+    }
+
+    RuleSegment thisAllSegments = new RuleSegment();
+    if (backtrack != null) {
+      thisAllSegments.addAll(backtrack);
+    }
+    thisAllSegments.addAll(input);
+    if (lookAhead != null) {
+      thisAllSegments.addAll(lookAhead);
+    }
+
+    RuleSegment otherAllSegments = new RuleSegment();
+    if (other.backtrack != null) {
+      otherAllSegments.addAll(other.backtrack);
+    }
+    otherAllSegments.addAll(other.input);
+    if (other.lookAhead != null) {
+      otherAllSegments.addAll(other.lookAhead);
+    }
+
+    int backtrackSize = backtrack != null ? backtrack.size() : 0;
+    int otherBacktrackSize = other.backtrack != null ? other.backtrack.size() : 0;
+    int initialPos = backtrackSize - otherBacktrackSize + at;
+
+    if (initialPos < 0) {
+      return false;
+    }
+
+    if (thisAllSegments.size() - initialPos < otherAllSegments.size()) {
+      return false;
+    }
+
+    for(int i = 0; i < otherAllSegments.size(); i++) {
+      GlyphGroup thisGlyphs = thisAllSegments.get(i + initialPos);
+      GlyphGroup otherGlyphs = otherAllSegments.get(i);
+
+      if (!thisGlyphs.intersects(otherGlyphs)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   static Rule prependToInput(int prefix, Rule other) {
@@ -387,6 +406,23 @@ public class Rule {
     Map<Integer, Set<Rule>> ruleMap = RuleExtractor.extract(gsub.lookupList());
     PostScriptTable post = font.getTable(Tag.post);
     dumpRuleMap(ruleMap, post);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    if (backtrack != null && backtrack.size() > 0) {
+      sb.append(backtrack.toString());
+      sb.append("> ");
+    }
+    sb.append(input.toString());
+    if (lookAhead != null && lookAhead.size() > 0) {
+      sb.append("< ");
+      sb.append(lookAhead.toString());
+    }
+    sb.append(" => ");
+    sb.append(subst.toString());
+    return sb.toString();
   }
 
   static String toString(Rule rule, PostScriptTable post) {
