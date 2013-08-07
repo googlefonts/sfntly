@@ -472,7 +472,7 @@ public class RuleExtractor {
         throw new IllegalArgumentException(
             "Out of bound lookup index for chaining lookup: " + lookupIndex);
       }
-      targetRules = Rule.applyOnRuleSubsts(targetRules, at, rulesToApply);
+      targetRules = Rule.applyRulesOnRules(rulesToApply, targetRules, at);
     }
 
     Set<Rule> result = new LinkedHashSet<Rule>();
