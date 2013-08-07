@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class TestLanguagesForFonts {
 
@@ -20,7 +21,7 @@ public class TestLanguagesForFonts {
     try (PrintWriter writer = new PrintWriter(OUTPUT_FILE)) {
       for (File fontFile : fontFiles) {
         writer.print(fontFile.getPath());
-        List<String> langs = fontLanguages.get(FontLoader.getFont(fontFile));
+        Set<String> langs = fontLanguages.get(FontLoader.getFont(fontFile));
         if (langs.isEmpty()) {
           langs.add("en");
         }

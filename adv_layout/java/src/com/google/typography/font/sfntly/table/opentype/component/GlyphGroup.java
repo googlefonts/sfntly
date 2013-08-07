@@ -9,6 +9,8 @@ import java.util.List;
 public class GlyphGroup extends BitSet implements Iterable<Integer> {
   private static final long serialVersionUID = 1L;
 
+  public static final GlyphGroup ANY = new GlyphGroup();
+
   public GlyphGroup() {
     super();
   }

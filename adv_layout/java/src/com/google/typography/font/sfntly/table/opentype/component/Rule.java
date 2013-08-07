@@ -41,7 +41,6 @@ public class Rule {
   }
 
   // Closure related
-
   public static GlyphGroup charGlyphClosure(String txt, Font font) {
     PostScriptTable post = font.getTable(Tag.post);
     CMapTable cmapTable = font.getTable(Tag.cmap);
@@ -54,7 +53,7 @@ public class Rule {
     return ruleClosure;
   }
 
-  static GlyphGroup closure(Map<Integer, Set<Rule>> glyphRuleMap, GlyphGroup glyphs) {
+  public static GlyphGroup closure(Map<Integer, Set<Rule>> glyphRuleMap, GlyphGroup glyphs) {
     int prevSize = 0;
     while (glyphs.size() > prevSize) {
       prevSize = glyphs.size();
@@ -71,6 +70,10 @@ public class Rule {
         continue;
       }
       for (GlyphGroup g : seg) {
+        if (g.equals(GlyphGroup.ANY)) {
+          continue;
+        }
+
         if (!g.intersects(glyphs)) {
           return;
         }
@@ -401,7 +404,7 @@ public class Rule {
   }
 
 
-  static void dumpLookups(Font font) {
+  public static void dumpLookups(Font font) {
     GSubTable gsub = font.getTable(Tag.GSUB);
     Map<Integer, Set<Rule>> ruleMap = RuleExtractor.extract(gsub.lookupList());
     PostScriptTable post = font.getTable(Tag.post);
@@ -444,6 +447,9 @@ public class Rule {
   static String toString(RuleSegment context, PostScriptTable post) {
     StringBuilder sb = new StringBuilder();
     for (GlyphGroup glyphGroup : context) {
+      if (glyphGroup.equals(GlyphGroup.ANY)) {
+        sb.append("ANY");
+      }
       int glyphCount = glyphGroup.size();
       if (glyphCount > 1) {
         sb.append("{ ");
