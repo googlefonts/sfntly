@@ -9,7 +9,7 @@ import java.util.List;
 public class GlyphGroup extends BitSet implements Iterable<Integer> {
   private static final long serialVersionUID = 1L;
 
-  public static final GlyphGroup ANY = new GlyphGroup();
+  private boolean inverse = false;
 
   public GlyphGroup() {
     super();
@@ -23,6 +23,15 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
     for (int glyph : glyphs) {
       super.set(glyph);
     }
+  }
+
+  public static GlyphGroup inverseGlyphGroup(Collection<GlyphGroup> glyphGroups) {
+    GlyphGroup result = new GlyphGroup();
+    for(GlyphGroup glyphGroup : glyphGroups) {
+      result.or(glyphGroup);
+    }
+    result.inverse = true;
+    return result;
   }
 
   public GlyphGroup(int[] glyphs) {
@@ -52,8 +61,35 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
     }
   }
 
+  GlyphGroup intersection(GlyphGroup other) {
+    GlyphGroup intersection = new GlyphGroup();
+    if (this.inverse && !other.inverse) {
+      intersection.or(other);
+      intersection.andNot(this);
+    } else if (other.inverse && !this.inverse) {
+      intersection.or(this);
+      intersection.andNot(other);
+    } else if (other.inverse && this.inverse) {
+      intersection.inverse = true;
+      intersection.or(this);
+      intersection.or(other);
+    } else {
+      intersection.or(this);
+      intersection.and(other);
+    }
+    return intersection;
+  }
+
   public boolean contains(int glyph) {
-    return this.get(glyph);
+    return get(glyph) ^ inverse;
+  }
+
+  public boolean intersects(GlyphGroup other) {
+    return !intersection(other).isEmpty();
+  }
+
+  public boolean isInverse() {
+    return inverse;
   }
 
   @Override
@@ -81,5 +117,25 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
         throw new UnsupportedOperationException();
       }
     };
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    if (this.inverse) {
+      sb.append("not-");
+    }
+    int glyphCount = this.size();
+    if (glyphCount > 1) {
+      sb.append("{");
+    }
+    for (int glyphId : this) {
+      sb.append(glyphId);
+      sb.append(" ");
+    }
+    if (glyphCount > 1) {
+      sb.append("}");
+    }
+    return sb.toString();
   }
 }

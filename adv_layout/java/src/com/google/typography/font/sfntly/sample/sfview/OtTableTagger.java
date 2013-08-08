@@ -525,7 +525,7 @@ public class OtTableTagger {
         }
 
         td.tagRangeField(FieldType.SHORT, "input glyph count");
-        glyphCount = table.inputGlyphs.count();
+        glyphCount = table.inputClasses.count();
         for (int i = 0; i < glyphCount; ++i) {
           td.tagRangeField(FieldType.GLYPH, null);
         }
@@ -572,7 +572,7 @@ public class OtTableTagger {
         }
 
         td.tagRangeField(FieldType.SHORT, "input glyph class count");
-        glyphCount = table.inputGlyphs.count();
+        glyphCount = table.inputClasses.count();
         for (int i = 0; i < glyphCount; ++i) {
           td.tagRangeField(FieldType.SHORT, "class id");
         }

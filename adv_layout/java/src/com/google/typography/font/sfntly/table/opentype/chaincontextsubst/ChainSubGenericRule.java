@@ -9,7 +9,7 @@ import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder
 
 public class ChainSubGenericRule extends SubTable {
   public final NumRecordList backtrackGlyphs;
-  public final NumRecordList inputGlyphs;
+  public final NumRecordList inputClasses;
   public final NumRecordList lookAheadGlyphs;
   public final SubstLookupRecordList lookupRecords;
 
@@ -19,8 +19,8 @@ public class ChainSubGenericRule extends SubTable {
   public ChainSubGenericRule(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data);
     backtrackGlyphs = new NumRecordList(data);
-    inputGlyphs = new NumRecordList(data, 1, backtrackGlyphs.limit());
-    lookAheadGlyphs = new NumRecordList(data, 0, inputGlyphs.limit());
+    inputClasses = new NumRecordList(data, 1, backtrackGlyphs.limit());
+    lookAheadGlyphs = new NumRecordList(data, 0, inputClasses.limit());
     lookupRecords = new SubstLookupRecordList(
         data, lookAheadGlyphs.limit(), lookAheadGlyphs.limit() + 2);
   }
