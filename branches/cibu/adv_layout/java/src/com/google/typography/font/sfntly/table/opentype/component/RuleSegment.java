@@ -62,4 +62,13 @@ public class RuleSegment extends LinkedList<GlyphGroup> {
     }
     return super.add(glyphGroup);
   }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    for (GlyphGroup glyphGroup : this) {
+      sb.append(glyphGroup.toString());
+    }
+    return sb.toString();
+  }
 }

@@ -8,7 +8,7 @@ public class SubClassRule extends DoubleRecordTable {
     super(data, base, dataIsCanonical);
   }
 
-  public GlyphClassList inputGlyphs() {
+  public GlyphClassList inputClasses() {
     return new GlyphClassList(inputGlyphs);
   }
 

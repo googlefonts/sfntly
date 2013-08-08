@@ -45,8 +45,8 @@ import java.util.TreeMap;
 
 public class RuleExtractor {
 
-  public static List<Rule> extract(LigatureSubst table) {
-    List<Rule> allRules = new ArrayList<Rule>();
+  public static Set<Rule> extract(LigatureSubst table) {
+    Set<Rule> allRules = new LinkedHashSet<Rule>();
     List<Integer> prefixChars = extract(table.coverage());
 
     for (int i = 0; i < table.subTableCount(); i++) {
@@ -126,7 +126,7 @@ public class RuleExtractor {
     return new Rule(null, input, null, subst);
   }
 
-  public static List<Rule> extract(SingleSubst table) {
+  public static Set<Rule> extract(SingleSubst table) {
     switch (table.format) {
     case 1:
       return extract(table.fmt1Table());
@@ -137,20 +137,20 @@ public class RuleExtractor {
     }
   }
 
-  private static List<Rule> extract(HeaderFmt1 fmt1Table) {
+  private static Set<Rule> extract(HeaderFmt1 fmt1Table) {
     List<Integer> coverage = extract(fmt1Table.coverage);
     int delta = fmt1Table.getDelta();
     return Rule.deltaRules(coverage, delta);
   }
 
-  private static List<Rule> extract(InnerArrayFmt2 fmt2Table) {
+  private static Set<Rule> extract(InnerArrayFmt2 fmt2Table) {
     List<Integer> coverage = extract(fmt2Table.coverage);
     List<Integer> substs = extract((RecordsTable<NumRecord>) fmt2Table);
     return Rule.oneToOneRules(coverage, substs);
   }
 
-  public static List<Rule> extract(MultipleSubst table) {
-    List<Rule> result = new ArrayList<Rule>();
+  public static Set<Rule> extract(MultipleSubst table) {
+    Set<Rule> result = new LinkedHashSet<Rule>();
 
     GlyphList coverage = extract(table.coverage());
     int i = 0;
@@ -167,8 +167,8 @@ public class RuleExtractor {
     return result;
   }
 
-  public static List<Rule> extract(AlternateSubst table) {
-    List<Rule> result = new ArrayList<Rule>();
+  public static Set<Rule> extract(AlternateSubst table) {
+    Set<Rule> result = new LinkedHashSet<Rule>();
 
     GlyphList coverage = extract(table.coverage());
     int i = 0;
@@ -186,24 +186,24 @@ public class RuleExtractor {
     return result;
   }
 
-  public static Set<Rule> extract(ContextSubst table, Map<Integer, Set<Rule>> allLookupRules) {
+  public static Set<Rule> extract(ContextSubst table, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
     switch (table.format) {
     case 1:
-      return extract(table.fmt1Table(), allLookupRules);
+      return extract(table.fmt1Table(), lookupListTable, allLookupRules);
     case 2:
-      return extract(table.fmt2Table(), allLookupRules);
+      return extract(table.fmt2Table(), lookupListTable, allLookupRules);
     default:
       throw new IllegalArgumentException("unimplemented format " + table.format);
     }
   }
 
-  public static Set<Rule> extract(SubRuleSetArray table, Map<Integer, Set<Rule>> allLookupRules) {
+  public static Set<Rule> extract(SubRuleSetArray table, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
     GlyphList coverage = extract(table.coverage);
 
     Set<Rule> result = new LinkedHashSet<Rule>();
     int i = 0;
     for (SubRuleSet subRuleSet : table) {
-      Set<Rule> subRules = extract(coverage.get(i), subRuleSet, allLookupRules);
+      Set<Rule> subRules = extract(coverage.get(i), subRuleSet, lookupListTable, allLookupRules);
       result.addAll(subRules);
       i++;
     }
@@ -211,27 +211,31 @@ public class RuleExtractor {
   }
 
   public static Set<Rule> extract(
-      Integer firstGlyph, SubRuleSet table, Map<Integer, Set<Rule>> allLookupRules) {
+      Integer firstGlyph, SubRuleSet table, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
     Set<Rule> result = new LinkedHashSet<Rule>();
     for (SubRule subRule : table) {
-      result.addAll(extract(firstGlyph, subRule, allLookupRules));
+      Set<Rule> subrules = extract(firstGlyph, subRule, lookupListTable, allLookupRules);
+      if (subrules == null) {
+        return null;
+      }
+      result.addAll(subrules);
     }
     return result;
   }
 
   public static Set<Rule> extract(
-      Integer firstGlyph, SubRule table, Map<Integer, Set<Rule>> allLookupRules) {
+      Integer firstGlyph, SubRule table, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
     RuleSegment inputRow = new RuleSegment(firstGlyph);
     for (NumRecord record : table.inputGlyphs) {
       inputRow.add(record.value);
     }
 
     Rule ruleSansSubst = new Rule(null, inputRow, null, null);
-    return applyChainingLookup(ruleSansSubst, table.lookupRecords, allLookupRules);
+    return applyChainingLookup(ruleSansSubst, table.lookupRecords, lookupListTable, allLookupRules);
   }
 
   public static Set<Rule> extract(
-      SubClassSetArray table, Map<Integer, Set<Rule>> allLookupRules) {
+      SubClassSetArray table, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
     GlyphList coverage = extract(table.coverage);
     Map<Integer, GlyphGroup> classDef = extract(table.classDef);
 
@@ -239,7 +243,7 @@ public class RuleExtractor {
     int i = 0;
     for (SubClassSet subClassRuleSet : table) {
       if (subClassRuleSet != null) {
-        Set<Rule> subRules = extract(subClassRuleSet, i, classDef, allLookupRules);
+        Set<Rule> subRules = extract(subClassRuleSet, i, classDef, lookupListTable, allLookupRules);
         result.addAll(subRules);
       }
       i++;
@@ -248,45 +252,45 @@ public class RuleExtractor {
   }
 
   public static Set<Rule> extract(SubClassSet table, int firstInputClass,
-      Map<Integer, GlyphGroup> inputClassDef, Map<Integer, Set<Rule>> allLookupRules) {
+      Map<Integer, GlyphGroup> inputClassDef, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
     Set<Rule> result = new LinkedHashSet<Rule>();
     for (SubClassRule subRule : table) {
-      Set<Rule> subRules = extract(subRule, firstInputClass, inputClassDef, allLookupRules);
+      Set<Rule> subRules = extract(subRule, firstInputClass, inputClassDef, lookupListTable, allLookupRules);
       result.addAll(subRules);
     }
     return result;
   }
 
   public static Set<Rule> extract(SubClassRule table, int firstInputClass,
-      Map<Integer, GlyphGroup> inputClassDef, Map<Integer, Set<Rule>> allLookupRules) {
-    RuleSegment input = extract(firstInputClass, table.inputGlyphs(), inputClassDef);
+      Map<Integer, GlyphGroup> inputClassDef, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
+    RuleSegment input = extract(firstInputClass, table.inputClasses(), inputClassDef);
 
     Rule ruleSansSubst = new Rule(null, input, null, null);
-    return applyChainingLookup(ruleSansSubst, table.lookupRecords, allLookupRules);
+    return applyChainingLookup(ruleSansSubst, table.lookupRecords, lookupListTable, allLookupRules);
   }
 
   public static Set<Rule> extract(
-      ChainContextSubst table, Map<Integer, Set<Rule>> allLookupRules) {
+      ChainContextSubst table, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
     switch (table.format) {
     case 1:
-      return extract(table.fmt1Table(), allLookupRules);
+      return extract(table.fmt1Table(), lookupListTable, allLookupRules);
     case 2:
-      return extract(table.fmt2Table(), allLookupRules);
+      return extract(table.fmt2Table(), lookupListTable, allLookupRules);
     case 3:
-      return extract(table.fmt3Table(), allLookupRules);
+      return extract(table.fmt3Table(), lookupListTable, allLookupRules);
     default:
       throw new IllegalArgumentException("unimplemented format " + table.format);
     }
   }
 
   public static Set<Rule> extract(
-      ChainSubRuleSetArray table, Map<Integer, Set<Rule>> allLookupRules) {
+      ChainSubRuleSetArray table, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
     GlyphList coverage = extract(table.coverage);
 
     Set<Rule> result = new LinkedHashSet<Rule>();
     int i = 0;
     for (ChainSubRuleSet subRuleSet : table) {
-      Set<Rule> subRules = extract(coverage.get(i), subRuleSet, allLookupRules);
+      Set<Rule> subRules = extract(coverage.get(i), subRuleSet, lookupListTable, allLookupRules);
       result.addAll(subRules);
       i++;
     }
@@ -294,18 +298,18 @@ public class RuleExtractor {
   }
 
   public static Set<Rule> extract(
-      Integer firstGlyph, ChainSubRuleSet table, Map<Integer, Set<Rule>> allLookupRules) {
+      Integer firstGlyph, ChainSubRuleSet table, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
     Set<Rule> result = new LinkedHashSet<Rule>();
     for (ChainSubRule subRule : table) {
-      result.addAll(extract(firstGlyph, subRule, allLookupRules));
+      result.addAll(extract(firstGlyph, subRule, lookupListTable, allLookupRules));
     }
     return result;
   }
 
   public static Set<Rule> extract(
-      Integer firstGlyph, ChainSubRule table, Map<Integer, Set<Rule>> allLookupRules) {
+      Integer firstGlyph, ChainSubRule table, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
     RuleSegment inputRow = new RuleSegment(firstGlyph);
-    for (NumRecord record : table.inputGlyphs) {
+    for (NumRecord record : table.inputClasses) {
       inputRow.add(record.value);
     }
 
@@ -313,7 +317,7 @@ public class RuleExtractor {
     RuleSegment lookAhead = ruleSegmentFromGlyphs(table.lookAheadGlyphs);
 
     Rule ruleSansSubst = new Rule(backtrack, inputRow, lookAhead, null);
-    return applyChainingLookup(ruleSansSubst, table.lookupRecords, allLookupRules);
+    return applyChainingLookup(ruleSansSubst, table.lookupRecords, lookupListTable, allLookupRules);
   }
 
   private static RuleSegment ruleSegmentFromGlyphs(NumRecordList records) {
@@ -325,7 +329,7 @@ public class RuleExtractor {
   }
 
   public static Set<Rule> extract(
-      ChainSubClassSetArray table, Map<Integer, Set<Rule>> allLookupRules) {
+      ChainSubClassSetArray table, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
     Map<Integer, GlyphGroup> backtrackClassDef = extract(table.backtrackClassDef);
     Map<Integer, GlyphGroup> inputClassDef = extract(table.inputClassDef);
     Map<Integer, GlyphGroup> lookAheadClassDef = extract(table.lookAheadClassDef);
@@ -339,6 +343,7 @@ public class RuleExtractor {
             i,
             inputClassDef,
             lookAheadClassDef,
+            lookupListTable,
             allLookupRules));
       }
       i++;
@@ -377,6 +382,7 @@ public class RuleExtractor {
       int firstInputClass,
       Map<Integer, GlyphGroup> inputClassDef,
       Map<Integer, GlyphGroup> lookAheadClassDef,
+      LookupListTable lookupListTable,
       Map<Integer, Set<Rule>> allLookupRules) {
     List<Rule> result = new ArrayList<Rule>();
     for (ChainSubClassRule chainSubRule : table) {
@@ -385,6 +391,7 @@ public class RuleExtractor {
           firstInputClass,
           inputClassDef,
           lookAheadClassDef,
+          lookupListTable,
           allLookupRules));
     }
     return result;
@@ -395,24 +402,25 @@ public class RuleExtractor {
       int firstInputClass,
       Map<Integer, GlyphGroup> inputClassDef,
       Map<Integer, GlyphGroup> lookAheadClassDef,
+      LookupListTable lookupListTable,
       Map<Integer, Set<Rule>> allLookupRules) {
     RuleSegment backtrack = ruleSegmentFromClasses(table.backtrackGlyphs, backtrackClassDef);
-    RuleSegment inputRow = extract(firstInputClass, table.inputGlyphs, inputClassDef);
+    RuleSegment inputRow = extract(firstInputClass, table.inputClasses, inputClassDef);
     RuleSegment lookAhead = ruleSegmentFromClasses(table.lookAheadGlyphs, lookAheadClassDef);
 
     Rule ruleSansSubst = new Rule(backtrack, inputRow, lookAhead, null);
-    return applyChainingLookup(ruleSansSubst, table.lookupRecords, allLookupRules);
+    return applyChainingLookup(ruleSansSubst, table.lookupRecords, lookupListTable, allLookupRules);
   }
 
   public static RuleSegment extract(
-      int firstInputClass, NumRecordList list, Map<Integer, GlyphGroup> classDef) {
+      int firstInputClass, NumRecordList inputClasses, Map<Integer, GlyphGroup> classDef) {
     RuleSegment input = new RuleSegment(classDef.get(firstInputClass));
-    for (NumRecord record : list) {
-      int classId = record.value;
+    for (NumRecord inputClass : inputClasses) {
+      int classId = inputClass.value;
       GlyphGroup glyphs = classDef.get(classId);
       if (glyphs == null && classId == 0) {
-        // Any glyph.
-        glyphs = new GlyphGroup(); // Empty representing any glyph.
+        // Any glyph not mentioned in the classes
+        glyphs = GlyphGroup.inverseGlyphGroup(classDef.values());
       }
       input.add(glyphs);
     }
@@ -420,32 +428,32 @@ public class RuleExtractor {
   }
 
   public static RuleSegment ruleSegmentFromClasses(
-      NumRecordList list, Map<Integer, GlyphGroup> classDef) {
+      NumRecordList classes, Map<Integer, GlyphGroup> classDef) {
     RuleSegment segment = new RuleSegment();
-    for (NumRecord record : list) {
-      int classId = record.value;
+    for (NumRecord classRecord : classes) {
+      int classId = classRecord.value;
       GlyphGroup glyphs = classDef.get(classId);
       if (glyphs == null && classId == 0) {
-        // Any glyph.
-        glyphs = new GlyphGroup(); // Empty representing any glyph.
+        // Any glyph not mentioned in the classes
+        glyphs = GlyphGroup.inverseGlyphGroup(classDef.values());
       }
       segment.add(glyphs);
     }
     return segment;
   }
 
-  public static Set<Rule> extract(InnerArraysFmt3 table, Map<Integer, Set<Rule>> allLookupRules) {
+  public static Set<Rule> extract(InnerArraysFmt3 table, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
     RuleSegment backtrackContext = extract(table.backtrackGlyphs);
     RuleSegment input = extract(table.inputGlyphs);
     RuleSegment lookAheadContext = extract(table.lookAheadGlyphs);
 
     Rule ruleSansSubst = new Rule(backtrackContext, input, lookAheadContext, null);
     Set<Rule> result = applyChainingLookup(
-        ruleSansSubst, table.lookupRecords, allLookupRules);
+        ruleSansSubst, table.lookupRecords, lookupListTable, allLookupRules);
     return result;
   }
 
-  private static List<Rule> extract(ReverseChainSingleSubst table) {
+  private static Set<Rule> extract(ReverseChainSingleSubst table) {
     List<Integer> coverage = extract(table.coverage);
 
     RuleSegment backtrackContext = new RuleSegment();
@@ -460,19 +468,20 @@ public class RuleExtractor {
   }
 
   private static Set<Rule> applyChainingLookup(Rule ruleSansSubst,
-      SubstLookupRecordList lookups, Map<Integer, Set<Rule>> allLookupRules) {
+      SubstLookupRecordList lookups, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
 
     Set<Rule> targetRules = new LinkedHashSet<Rule>();
     targetRules.add(ruleSansSubst);
     for (SubstLookupRecord lookup : lookups) {
       int at = lookup.sequenceIndex;
       int lookupIndex = lookup.lookupListIndex;
-      Set<Rule> rulesToApply = allLookupRules.get(lookupIndex);
+      Set<Rule> rulesToApply = extract(lookupListTable, allLookupRules, lookupIndex);
       if (rulesToApply == null) {
         throw new IllegalArgumentException(
             "Out of bound lookup index for chaining lookup: " + lookupIndex);
       }
-      targetRules = Rule.applyRulesOnRules(rulesToApply, targetRules, at);
+      Set<Rule> newRules = Rule.applyRulesOnRules(rulesToApply, targetRules, at);
+      targetRules.addAll(newRules);
     }
 
     Set<Rule> result = new LinkedHashSet<Rule>();
@@ -498,68 +507,69 @@ public class RuleExtractor {
   }
 
   public static Map<Integer, Set<Rule>> extract(LookupListTable table) {
-    Map<Integer, Set<Rule>> allRules = new TreeMap<Integer, Set<Rule>>();
-    List<LaterEntry> laterList = new ArrayList<LaterEntry>();
-
+    Map<Integer, Set<Rule>> allRules = new TreeMap<>();
     for (int i = 0; i < table.subTableCount(); i++) {
-      LookupTable lookupTable = table.subTableAt(i);
-      GsubLookupType lookupType = lookupTable.lookupType();
-      for (SubstSubtable substSubtable : lookupTable) {
-        LaterEntry laterEntry;
-        if (lookupType == GsubLookupType.GSUB_EXTENSION) {
-          ExtensionSubst extensionSubst = (ExtensionSubst) substSubtable;
-          SubstSubtable exSubstSubtable = extensionSubst.subTable();
-          GsubLookupType exLookupType = extensionSubst.lookupType();
-          laterEntry = new LaterEntry(i, exLookupType, exSubstSubtable);
-        } else {
-          laterEntry = new LaterEntry(i, lookupType, substSubtable);
-        }
-        laterList.add(laterEntry);
-      }
-      allRules.put(i, new LinkedHashSet<Rule>());
-    }
-
-    for (LaterEntry entry : laterList) {
-      List<Rule> rules = null;
-
-      switch (entry.lookupType) {
-      case GSUB_LIGATURE:
-        rules = extract((LigatureSubst) entry.table);
-        break;
-      case GSUB_SINGLE:
-        rules = extract((SingleSubst) entry.table);
-        break;
-      case GSUB_ALTERNATE:
-        rules = extract((AlternateSubst) entry.table);
-        break;
-      case GSUB_MULTIPLE:
-        rules = extract((MultipleSubst) entry.table);
-        break;
-      case GSUB_REVERSE_CHAINING_CONTEXTUAL_SINGLE:
-        rules = extract((ReverseChainSingleSubst) entry.table);
-        break;
-      }
-      if (rules != null) {
-        allRules.get(entry.lookupListIndex).addAll(rules);
-      }
-    }
-
-    for (LaterEntry entry : laterList) {
-      Set<Rule> rules = null;
-
-      switch (entry.lookupType) {
-      case GSUB_CHAINING_CONTEXTUAL:
-        rules = extract((ChainContextSubst) entry.table, allRules);
-        break;
-      case GSUB_CONTEXTUAL:
-        rules = extract((ContextSubst) entry.table, allRules);
-        break;
-      }
-      if (rules != null) {
-        allRules.get(entry.lookupListIndex).addAll(rules);
-      }
+      extract(table, allRules, i);
     }
     return allRules;
+  }
+
+  public static Set<Rule> extract(LookupListTable lookupListTable, Map<Integer, Set<Rule>> allRules, int i) {
+    if (allRules.containsKey(i)) {
+      return allRules.get(i);
+    }
+
+    Set<Rule> rules = new LinkedHashSet<>();
+
+    LookupTable lookupTable = lookupListTable.subTableAt(i);
+    GsubLookupType lookupType = lookupTable.lookupType();
+    for (SubstSubtable substSubtable : lookupTable) {
+      GsubLookupType subTableLookupType = lookupType;
+
+      if (lookupType == GsubLookupType.GSUB_EXTENSION) {
+        ExtensionSubst extensionSubst = (ExtensionSubst) substSubtable;
+        substSubtable = extensionSubst.subTable();
+        subTableLookupType = extensionSubst.lookupType();
+      }
+
+      Set<Rule> subrules = null;
+
+      switch (subTableLookupType) {
+      case GSUB_LIGATURE:
+        subrules = extract((LigatureSubst) substSubtable);
+        break;
+      case GSUB_SINGLE:
+        subrules = extract((SingleSubst) substSubtable);
+        break;
+      case GSUB_ALTERNATE:
+        subrules = extract((AlternateSubst) substSubtable);
+        break;
+      case GSUB_MULTIPLE:
+        subrules = extract((MultipleSubst) substSubtable);
+        break;
+      case GSUB_REVERSE_CHAINING_CONTEXTUAL_SINGLE:
+        subrules = extract((ReverseChainSingleSubst) substSubtable);
+        break;
+      case GSUB_CHAINING_CONTEXTUAL:
+        subrules = extract((ChainContextSubst) substSubtable, lookupListTable, allRules);
+        break;
+      case GSUB_CONTEXTUAL:
+        subrules = extract((ContextSubst) substSubtable, lookupListTable, allRules);
+        break;
+      default:
+        throw new IllegalStateException();
+      }
+      if (subrules == null) {
+        throw new IllegalStateException();
+      }
+      rules.addAll(subrules);
+    }
+
+    if (rules.size() == 0) {
+      System.err.println("There are no rules in lookup " + i);
+    }
+    allRules.put(i, rules);
+    return rules;
   }
 
   public static RuleSegment extract(CoverageArray table) {
