@@ -127,14 +127,14 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
     }
     int glyphCount = this.size();
     if (glyphCount > 1) {
-      sb.append("{");
+      sb.append("[ ");
     }
     for (int glyphId : this) {
       sb.append(glyphId);
       sb.append(" ");
     }
     if (glyphCount > 1) {
-      sb.append("}");
+      sb.append("] ");
     }
     return sb.toString();
   }
