@@ -30,10 +30,10 @@ public class RuleTests {
       "/usr/local/google/home/cibu/sfntly/adv_layout/data/testdata/wiki_words";
   private static final String HB_CLOSURE_DIR =
       "/usr/local/google/home/cibu/sfntly/adv_layout/data/testdata/wiki_words_hb_closure";
+  private static final String LOOKUP_DUMP_FILE =
+      "/tmp/lookup_dump.txt";
   private static final int TEST_COUNT = 4000;
-
-  private static final String DEBUG_SPECIFIC_FONT = "noto/NotoSansDevanagari-Bold.ttf";
-
+  private static final String DEBUG_SPECIFIC_FONT = "";
   private static final Map<String, List<String>> LANG_WORDS_MAP = langWordsMap();
 
   @Test
@@ -47,9 +47,8 @@ public class RuleTests {
           continue;
         }
         Rule.dumpLookups(font);
-      } else {
-        System.out.println(name);
       }
+      System.out.println(name);
 
       Map<Integer, Set<Rule>> glyphRulesMap = Rule.glyphRulesMap(font);
       if (glyphRulesMap == null) {
@@ -79,15 +78,13 @@ public class RuleTests {
 
   @Test
   public void aFont() throws IOException {
-    Font font = FontLoader.getFont(new File("/usr/local/google/home/cibu/sfntly/fonts/noto/NotoSansDevanagari-Bold.ttf"));
+    Font font = FontLoader.getFont(new File("/usr/local/google/home/cibu/sfntly/fonts/windows7/andlso.ttf"));
     CMapTable cmap = font.getTable(Tag.cmap);
     PostScriptTable post = font.getTable(Tag.post);
     Map<Integer, Set<Rule>> glyphRulesMap = Rule.glyphRulesMap(font);
-    GlyphGroup glyphGroup = Rule.glyphGroupForText("ि", cmap); // 'ि' "ट्र"
+    GlyphGroup glyphGroup = Rule.glyphGroupForText("ی", cmap); // 'ि' "ट्र"
     GlyphGroup closure = Rule.closure(glyphRulesMap, glyphGroup);
-
     Rule.dumpLookups(font);
-    // Rule.dumpRuleMap(glyphRulesMap, post);
     System.err.println(closure);
   }
 

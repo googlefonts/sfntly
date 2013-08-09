@@ -443,39 +443,6 @@ public class Rule {
     dumpRuleMap(ruleMap, post);
   }
 
-  @Override
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
-    if (backtrack != null && backtrack.size() > 0) {
-      sb.append(backtrack.toString());
-      sb.append(">> ");
-    }
-    sb.append(input.toString());
-    if (lookAhead != null && lookAhead.size() > 0) {
-      sb.append("<< ");
-      sb.append(lookAhead.toString());
-    }
-    sb.append("=> ");
-    sb.append(subst.toString());
-    return sb.toString();
-  }
-
-  static String toString(Rule rule, PostScriptTable post) {
-    StringBuilder sb = new StringBuilder();
-    if (rule.backtrack != null && rule.backtrack.size() > 0) {
-      sb.append(toString(rule.backtrack, post));
-      sb.append(">> ");
-    }
-    sb.append(toString(rule.input, post));
-    if (rule.lookAhead != null && rule.lookAhead.size() > 0) {
-      sb.append("<< ");
-      sb.append(toString(rule.lookAhead, post));
-    }
-    sb.append("=> ");
-    sb.append(toString(rule.subst, post));
-    return sb.toString();
-  }
-
   static String toString(RuleSegment context, PostScriptTable post) {
     StringBuilder sb = new StringBuilder();
     for (GlyphGroup glyphGroup : context) {
@@ -492,7 +459,7 @@ public class Rule {
     }
     int glyphCount = glyphIds.size();
     if (glyphCount > 1) {
-      sb.append("{");
+      sb.append("[ ");
     }
     for (int glyphId : glyphIds) {
       sb.append(glyphId);
@@ -505,8 +472,75 @@ public class Rule {
       sb.append(" ");
     }
     if (glyphCount > 1) {
-      sb.append("}");
+      sb.append("] ");
     }
     return sb.toString();
   }
+
+  static String toString(Rule rule, PostScriptTable post) {
+    StringBuilder sb = new StringBuilder();
+    if (rule.backtrack != null && rule.backtrack.size() > 0) {
+      sb.append(toString(rule.backtrack, post));
+      sb.append("} ");
+    }
+    sb.append(toString(rule.input, post));
+    if (rule.lookAhead != null && rule.lookAhead.size() > 0) {
+      sb.append("{ ");
+      sb.append(toString(rule.lookAhead, post));
+    }
+    sb.append("=> ");
+    sb.append(toString(rule.subst, post));
+    return sb.toString();
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    if (backtrack != null && backtrack.size() > 0) {
+      sb.append(backtrack.toString());
+      sb.append("} ");
+    }
+    sb.append(input.toString());
+    if (lookAhead != null && lookAhead.size() > 0) {
+      sb.append("{ ");
+      sb.append(lookAhead.toString());
+    }
+    sb.append("=> ");
+    sb.append(subst.toString());
+    return sb.toString();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof Rule)) {
+      return false;
+    }
+    Rule that = (Rule) o;
+    RuleSegment[] these = new RuleSegment[] {backtrack, input, lookAhead};
+    RuleSegment[] those = new RuleSegment[] {that.backtrack, that.input, that.lookAhead};
+    for (int i = 0; i < 3; i++) {
+      RuleSegment thisSeg = these[i];
+      RuleSegment otherSeg = those[i];
+      if (thisSeg != null) {
+        if (!thisSeg.equals(otherSeg)) {
+          return false;
+        }
+      } else if (otherSeg != null){
+        return false;
+      }
+    }
+    return true;
+  }
+
+  //  @Override
+  //  public int hashCode() {
+  //    int hashCode = 1;
+  //    for (RuleSegment e : new RuleSegment[] {backtrack, input, lookAhead}) {
+  //      hashCode = 19*hashCode + (e==null ? 0 : e.hashCode());
+  //    }
+  //    return hashCode;
+  //  }
 }
