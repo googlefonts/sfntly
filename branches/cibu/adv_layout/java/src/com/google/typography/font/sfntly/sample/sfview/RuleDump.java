@@ -29,11 +29,14 @@ public class RuleDump {
   public static Font[] loadFont(File file) throws IOException {
     FontFactory fontFactory = FontFactory.getInstance();
     fontFactory.fingerprintFont(true);
-    try (FileInputStream is = new FileInputStream(file)) {
+    FileInputStream is = new FileInputStream(file);
+    try {
       return fontFactory.loadFonts(is);
     } catch (FileNotFoundException e) {
       System.err.println("Could not load the font: " + file.getName());
       return null;
+    } finally {
+      is.close();
     }
   }
 }

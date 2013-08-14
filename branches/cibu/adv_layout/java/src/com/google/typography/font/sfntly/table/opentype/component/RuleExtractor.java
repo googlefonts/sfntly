@@ -507,7 +507,7 @@ public class RuleExtractor {
   }
 
   public static Map<Integer, Set<Rule>> extract(LookupListTable table) {
-    Map<Integer, Set<Rule>> allRules = new TreeMap<>();
+    Map<Integer, Set<Rule>> allRules = new TreeMap<Integer, Set<Rule>>();
     for (int i = 0; i < table.subTableCount(); i++) {
       extract(table, allRules, i);
     }
@@ -519,7 +519,7 @@ public class RuleExtractor {
       return allRules.get(i);
     }
 
-    Set<Rule> rules = new LinkedHashSet<>();
+    Set<Rule> rules = new LinkedHashSet<Rule>();
 
     LookupTable lookupTable = lookupListTable.subTableAt(i);
     GsubLookupType lookupType = lookupTable.lookupType();

@@ -30,8 +30,6 @@ public class RuleTests {
       "/usr/local/google/home/cibu/sfntly/adv_layout/data/testdata/wiki_words";
   private static final String HB_CLOSURE_DIR =
       "/usr/local/google/home/cibu/sfntly/adv_layout/data/testdata/wiki_words_hb_closure";
-  private static final String LOOKUP_DUMP_FILE =
-      "/tmp/lookup_dump.txt";
   private static final int TEST_COUNT = 4000;
   private static final String DEBUG_SPECIFIC_FONT = "";
   private static final Map<String, List<String>> LANG_WORDS_MAP = langWordsMap();
@@ -108,7 +106,7 @@ public class RuleTests {
   }
 
   private static Map<String, List<String>> langWordsMap() {
-    Map<String, List<String>> langWordsMap = new HashMap<>();
+    Map<String, List<String>> langWordsMap = new HashMap<String, List<String>>();
     for (File wordsFile : new File(WORDS_DIR).listFiles()) {
       String lang = wordsFile.getName();
       if (lang.startsWith(".")) {
@@ -120,7 +118,7 @@ public class RuleTests {
   }
 
   private static List<GlyphGroup> hbClosure(File file) {
-    List<GlyphGroup> glyphGroups = new ArrayList<>();
+    List<GlyphGroup> glyphGroups = new ArrayList<GlyphGroup>();
     for (String line : linesFromFile(file)) {
       GlyphGroup glyphGroup = new GlyphGroup();
       if (line.length() > 0) {
@@ -134,14 +132,18 @@ public class RuleTests {
   }
 
   private static List<String> linesFromFile(File file) {
-    List<String> lines = new ArrayList<>();
-    try (Scanner scanner = new Scanner(file)) {
-      while (scanner.hasNextLine() && lines.size() < TEST_COUNT) {
-        lines.add(scanner.nextLine());
-      }
+    List<String> lines = new ArrayList<String>();
+    Scanner scanner;
+    try {
+      scanner = new Scanner(file);
     } catch (FileNotFoundException e) {
       System.err.println("File not found: " + file);
+      return lines;
     }
+    while (scanner.hasNextLine() && lines.size() < TEST_COUNT) {
+      lines.add(scanner.nextLine());
+    }
+    scanner.close();
     return lines;
   }
 }

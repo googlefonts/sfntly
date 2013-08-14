@@ -17,25 +17,23 @@ public class TestLanguagesForFonts {
 
   public static void main(String[] args) throws IOException {
     List<File> fontFiles = FontLoader.getFontFiles(FONTS_ROOT);
-
-    try (PrintWriter writer = new PrintWriter(OUTPUT_FILE)) {
-      for (File fontFile : fontFiles) {
-        writer.print(fontFile.getPath());
-        Set<String> langs = fontLanguages.get(FontLoader.getFont(fontFile));
-        if (langs.isEmpty()) {
-          langs.add("en");
-        }
-        for (String lang : langs) {
-          writer.print("," + lang);
-        }
-        writer.println();
+    PrintWriter writer = new PrintWriter(OUTPUT_FILE);
+    for (File fontFile : fontFiles) {
+      writer.print(fontFile.getPath());
+      Set<String> langs = fontLanguages.get(FontLoader.getFont(fontFile));
+      if (langs.isEmpty()) {
+        langs.add("en");
       }
-      writer.close();
+      for (String lang : langs) {
+        writer.print("," + lang);
+      }
+      writer.println();
     }
+    writer.close();
   }
 
   private static List<String> availableLangs(String wordsDir) {
-    List<String> langs = new ArrayList<>();
+    List<String> langs = new ArrayList<String>();
     File[] wordFiles = new File(wordsDir).listFiles();
     for (File file : wordFiles) {
       String lang = file.getName();
