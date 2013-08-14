@@ -90,7 +90,7 @@ public class Rule {
   }
 
   private static Map<Integer, Set<Rule>> createGlyphRuleMap(Set<Rule> lookupRules) {
-    Map<Integer, Set<Rule>> map = new HashMap<>();
+    Map<Integer, Set<Rule>> map = new HashMap<Integer, Set<Rule>>();
 
     for (Rule rule : lookupRules) {
       for (int glyph : rule.input.get(0)) {
@@ -104,7 +104,7 @@ public class Rule {
   }
 
   private static Set<Rule> rulesForGlyph(Map<Integer, Set<Rule>> glyphRuleMap, GlyphGroup glyphs) {
-    Set<Rule> set = new HashSet<>();
+    Set<Rule> set = new HashSet<Rule>();
     for(int glyph : glyphs) {
       if (glyphRuleMap.containsKey(glyph)) {
         set.addAll(glyphRuleMap.get(glyph));
@@ -115,7 +115,7 @@ public class Rule {
 
   private static Set<Rule> featuredRules(
       Set<Integer> lookupIds, Map<Integer, Set<Rule>> ruleMap) {
-    Set<Rule> rules = new LinkedHashSet<>();
+    Set<Rule> rules = new LinkedHashSet<Rule>();
     for (int lookupId : lookupIds) {
       Set<Rule> ruleForLookup = ruleMap.get(lookupId);
       if (ruleForLookup == null) {
@@ -138,8 +138,8 @@ public class Rule {
     LookupListTable lookupList = gsub.lookupList();
     Map<Integer, Set<Rule>> ruleMap = RuleExtractor.extract(lookupList);
 
-    Set<Integer> features = new HashSet<>();
-    Set<Integer> lookupIds = new HashSet<>();
+    Set<Integer> features = new HashSet<Integer>();
+    Set<Integer> lookupIds = new HashSet<Integer>();
 
     for (ScriptTable script : scripts.map().values()) {
       for (LangSysTable langSys : script.map().values()) {
@@ -297,7 +297,7 @@ public class Rule {
   }
 
   static Set<Rule> applyRulesOnRules(Set<Rule> rulesToApply, Set<Rule> targetRules, int at) {
-    Set<Rule> result = new LinkedHashSet<>();
+    Set<Rule> result = new LinkedHashSet<Rule>();
     for (Rule targetRule : targetRules) {
       if (targetRule.subst != null) {
         applyRulesOnRuleWithSubst(rulesToApply, targetRule, at, result);
@@ -369,7 +369,7 @@ public class Rule {
   }
 
   static List<Rule> prependToInput(int prefix, List<Rule> rules) {
-    List<Rule> result = new ArrayList<>();
+    List<Rule> result = new ArrayList<Rule>();
     for (Rule rule : rules) {
       result.add(prependToInput(prefix, rule));
     }
@@ -377,7 +377,7 @@ public class Rule {
   }
 
   static Set<Rule> deltaRules(List<Integer> glyphIds, int delta) {
-    Set<Rule> result = new LinkedHashSet<>();
+    Set<Rule> result = new LinkedHashSet<Rule>();
     for (int glyphId : glyphIds) {
       RuleSegment input = new RuleSegment(glyphId);
       RuleSegment subst = new RuleSegment(glyphId + delta);
@@ -391,7 +391,7 @@ public class Rule {
       throw new IllegalArgumentException("input - subst should have same count");
     }
 
-    Set<Rule> result = new LinkedHashSet<>();
+    Set<Rule> result = new LinkedHashSet<Rule>();
     for (int i = 0; i < inputs.size(); i++) {
       RuleSegment input = new RuleSegment(inputs.get(i));
       RuleSegment subst = new RuleSegment(substs.get(i));
@@ -406,7 +406,7 @@ public class Rule {
 
   static List<Rule> addContextToInputs(
       RuleSegment backtrack, List<RuleSegment> inputs, RuleSegment lookAhead) {
-    List<Rule> result = new ArrayList<>();
+    List<Rule> result = new ArrayList<Rule>();
     for (RuleSegment input : inputs) {
       result.add(new Rule(backtrack, input, lookAhead, null));
     }
@@ -416,7 +416,7 @@ public class Rule {
   // Dump routines
 
   private static Set<Integer> codepointsFromStr(String s) {
-    Set<Integer> list = new HashSet<>();
+    Set<Integer> list = new HashSet<Integer>();
     for (int cp, i = 0; i < s.length(); i += Character.charCount(cp)) {
       cp = s.codePointAt(i);
       list.add(cp);
@@ -535,11 +535,13 @@ public class Rule {
     return true;
   }
 
+  // No clue why this hashCode does not work.
+  //
   //  @Override
   //  public int hashCode() {
   //    int hashCode = 1;
   //    for (RuleSegment e : new RuleSegment[] {backtrack, input, lookAhead}) {
-  //      hashCode = 19*hashCode + (e==null ? 0 : e.hashCode());
+  //      hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
   //    }
   //    return hashCode;
   //  }

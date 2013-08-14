@@ -604,8 +604,8 @@ public class FontLanguages {
     { "zun", "Latn" },
     { "zza", "Arab" }, };
 
-  public static Map<String, ScriptTag> fontSpecificScript = new HashMap<>();
-  public Map<ScriptTag, Set<String>> scriptLangMap = new HashMap<>();
+  public static Map<String, ScriptTag> fontSpecificScript = new HashMap<String, ScriptTag>();
+  public Map<ScriptTag, Set<String>> scriptLangMap = new HashMap<ScriptTag, Set<String>>();
   static {
     fontSpecificScript.put("laoo", ScriptTag.lao);
     fontSpecificScript.put("yiii", ScriptTag.yi);
@@ -661,7 +661,7 @@ public class FontLanguages {
   }
 
   public Set<String> get(Font font) {
-    Set<String> langs = new HashSet<>();
+    Set<String> langs = new HashSet<String>();
     GSubTable gsub = font.getTable(Tag.GSUB);
     if (gsub == null) {
       return langs;
