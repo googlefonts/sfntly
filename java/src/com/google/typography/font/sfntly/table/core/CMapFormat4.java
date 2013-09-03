@@ -58,8 +58,12 @@ public final class CMapFormat4 extends CMap {
     if (idRangeOffset == 0) {
       return (character + this.idDelta(segment)) % 65536;
     }
-    return this.data.readUShort(
+    int gid = this.data.readUShort(
         idRangeOffset + this.idRangeOffsetLocation(segment) + 2 * (character - startCode));
+    if (gid != 0) {
+      gid = (gid +  this.idDelta(segment)) % 65536;
+    }
+    return gid;
   }
 
   /**
