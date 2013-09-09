@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -470,7 +471,7 @@ public class RuleExtractor {
   private static Set<Rule> applyChainingLookup(Rule ruleSansSubst,
       SubstLookupRecordList lookups, LookupListTable lookupListTable, Map<Integer, Set<Rule>> allLookupRules) {
 
-    Set<Rule> targetRules = new LinkedHashSet<Rule>();
+    LinkedList<Rule> targetRules = new LinkedList<Rule>();
     targetRules.add(ruleSansSubst);
     for (SubstLookupRecord lookup : lookups) {
       int at = lookup.sequenceIndex;
@@ -480,17 +481,21 @@ public class RuleExtractor {
         throw new IllegalArgumentException(
             "Out of bound lookup index for chaining lookup: " + lookupIndex);
       }
-      Set<Rule> newRules = Rule.applyRulesOnRules(rulesToApply, targetRules, at);
-      targetRules.addAll(newRules);
+      LinkedList<Rule> newRules = Rule.applyRulesOnRules(rulesToApply, targetRules, at);
+
+      LinkedList<Rule> result = new LinkedList<Rule>();
+      result.addAll(newRules);
+      result.addAll(targetRules);
+      targetRules = result;
     }
 
     Set<Rule> result = new LinkedHashSet<Rule>();
     for (Rule rule : targetRules) {
-      if (rule.subst != null) {
-        result.add(rule);
+      if (rule.subst == null) {
+        continue;
       }
+      result.add(rule);
     }
-
     return result;
   }
 
