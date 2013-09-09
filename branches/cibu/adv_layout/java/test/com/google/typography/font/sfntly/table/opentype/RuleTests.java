@@ -76,11 +76,11 @@ public class RuleTests {
 
   @Test
   public void aFont() throws IOException {
-    Font font = FontLoader.getFont(new File("/usr/local/google/home/cibu/sfntly/fonts/windows7/andlso.ttf"));
+    Font font = FontLoader.getFont(new File("/usr/local/google/home/cibu/sfntly/fonts/noto/NotoSansBengali-Regular.ttf"));
     CMapTable cmap = font.getTable(Tag.cmap);
     PostScriptTable post = font.getTable(Tag.post);
     Map<Integer, Set<Rule>> glyphRulesMap = Rule.glyphRulesMap(font);
-    GlyphGroup glyphGroup = Rule.glyphGroupForText("ی", cmap); // 'ि' "ट्र"
+    GlyphGroup glyphGroup = Rule.glyphGroupForText("য্রী", cmap);
     GlyphGroup closure = Rule.closure(glyphRulesMap, glyphGroup);
     Rule.dumpLookups(font);
     System.err.println(closure);

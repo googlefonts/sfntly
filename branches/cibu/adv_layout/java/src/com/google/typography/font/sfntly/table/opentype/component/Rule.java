@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,12 +26,14 @@ public class Rule {
   public final RuleSegment input;
   public final RuleSegment lookAhead;
   public final RuleSegment subst;
+  public final int hashCode;
 
   public Rule(RuleSegment backtrack, RuleSegment input, RuleSegment lookAhead, RuleSegment subst) {
     this.backtrack = backtrack;
     this.input = input;
     this.lookAhead = lookAhead;
     this.subst = subst;
+    this.hashCode = getHashCode();
   }
 
   public Rule(Rule other, RuleSegment subst) {
@@ -38,6 +41,7 @@ public class Rule {
     this.input = other.input;
     this.lookAhead = other.lookAhead;
     this.subst = subst;
+    this.hashCode = getHashCode();
   }
 
   // Closure related
@@ -127,7 +131,7 @@ public class Rule {
     return rules;
   }
 
-  private static Set<Rule> featuredRules(Font font) {
+  public static Set<Integer> featuredLookups(Font font) {
     GSubTable gsub = font.getTable(Tag.GSUB);
     if (gsub == null) {
       return null;
@@ -155,10 +159,21 @@ public class Rule {
         }
       }
     }
+    return lookupIds;
+  }
+
+  private static Set<Rule> featuredRules(Font font) {
+    GSubTable gsub = font.getTable(Tag.GSUB);
+    if (gsub == null) {
+      return null;
+    }
+
+    LookupListTable lookupList = gsub.lookupList();
+    Map<Integer, Set<Rule>> ruleMap = RuleExtractor.extract(lookupList);
+    Set<Integer> lookupIds = featuredLookups(font);
     Set<Rule> featuredRules = Rule.featuredRules(lookupIds, ruleMap);
     return featuredRules;
   }
-
 
   // Utility method for glyphs for text
 
@@ -184,7 +199,7 @@ public class Rule {
 
   // Rule operation
 
-  public void applyRuleOnRuleWithSubst(Rule targetRule, int at, Set<Rule> accumulateTo) {
+  public void applyRuleOnRuleWithSubst(Rule targetRule, int at, LinkedList<Rule> accumulateTo) {
     RuleSegment matchSegment = targetRule.match(this, at);
     if (matchSegment == null) {
       return;
@@ -281,13 +296,13 @@ public class Rule {
     return new Rule(newBacktrack, ruleToApply.input, newLookAhead, ruleToApply.subst);
   }
 
-  static void applyRulesOnRuleWithSubst(Set<Rule> rulesToApply, Rule targetRule, int at, Set<Rule> accumulateTo) {
+  static void applyRulesOnRuleWithSubst(Set<Rule> rulesToApply, Rule targetRule, int at, LinkedList<Rule> accumulateTo) {
     for (Rule ruleToApply : rulesToApply) {
       ruleToApply.applyRuleOnRuleWithSubst(targetRule, at, accumulateTo);
     }
   }
 
-  static void applyRulesOnRuleWithoutSubst(Set<Rule> rulesToApply, Rule targetRule, int at, Set<Rule> accumulateTo) {
+  static void applyRulesOnRuleWithoutSubst(Set<Rule> rulesToApply, Rule targetRule, int at, LinkedList<Rule> accumulateTo) {
     for (Rule ruleToApply : rulesToApply) {
       Rule newRule = applyRuleOnRuleWithoutSubst(ruleToApply, targetRule, at);
       if (newRule != null) {
@@ -296,8 +311,8 @@ public class Rule {
     }
   }
 
-  static Set<Rule> applyRulesOnRules(Set<Rule> rulesToApply, Set<Rule> targetRules, int at) {
-    Set<Rule> result = new LinkedHashSet<Rule>();
+  static LinkedList<Rule> applyRulesOnRules(Set<Rule> rulesToApply, List<Rule> targetRules, int at) {
+    LinkedList<Rule> result = new LinkedList<Rule>();
     for (Rule targetRule : targetRules) {
       if (targetRule.subst != null) {
         applyRulesOnRuleWithSubst(rulesToApply, targetRule, at, result);
@@ -441,6 +456,7 @@ public class Rule {
     Map<Integer, Set<Rule>> ruleMap = RuleExtractor.extract(gsub.lookupList());
     PostScriptTable post = font.getTable(Tag.post);
     dumpRuleMap(ruleMap, post);
+    System.out.println("\nFeatured Lookup IDs: " + Rule.featuredLookups(font));
   }
 
   static String toString(RuleSegment context, PostScriptTable post) {
@@ -518,12 +534,15 @@ public class Rule {
     if (!(o instanceof Rule)) {
       return false;
     }
-    Rule that = (Rule) o;
-    RuleSegment[] these = new RuleSegment[] {backtrack, input, lookAhead};
-    RuleSegment[] those = new RuleSegment[] {that.backtrack, that.input, that.lookAhead};
-    for (int i = 0; i < 3; i++) {
+    Rule other = (Rule) o;
+    if (hashCode != other.hashCode) {
+      return false;
+    }
+    RuleSegment[] these = new RuleSegment[] {input, subst, backtrack, lookAhead};
+    RuleSegment[] others = new RuleSegment[] {other.input, other.subst, other.backtrack, other.lookAhead};
+    for (int i = 0; i < these.length; i++) {
       RuleSegment thisSeg = these[i];
-      RuleSegment otherSeg = those[i];
+      RuleSegment otherSeg = others[i];
       if (thisSeg != null) {
         if (!thisSeg.equals(otherSeg)) {
           return false;
@@ -535,14 +554,16 @@ public class Rule {
     return true;
   }
 
-  // No clue why this hashCode does not work.
-  //
-  //  @Override
-  //  public int hashCode() {
-  //    int hashCode = 1;
-  //    for (RuleSegment e : new RuleSegment[] {backtrack, input, lookAhead}) {
-  //      hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
-  //    }
-  //    return hashCode;
-  //  }
+  @Override
+  public int hashCode() {
+    return hashCode;
+  }
+
+  public int getHashCode() {
+    int hashCode = 1;
+    for (RuleSegment e : new RuleSegment[] {input, subst, backtrack, lookAhead}) {
+      hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
+    }
+    return hashCode;
+  }
 }
