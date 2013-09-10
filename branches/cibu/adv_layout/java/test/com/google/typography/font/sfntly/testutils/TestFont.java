@@ -32,7 +32,6 @@ public class TestFont {
   private static final String TESTDATA_PATH = "../data/testdata/";
 
   public enum TestFontNames {
-    ANJALINEWLIPI("AnjaliNewLipi.ttf"),
     DROIDSANS("DroidSans-Regular.ttf"),
     OPENSANS("OpenSans-Regular.ttf");
 
