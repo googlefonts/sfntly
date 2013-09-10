@@ -1,7 +1,5 @@
 package com.google.typography.font.sfntly.table.opentype.component;
 
-import com.google.typography.font.sfntly.table.opentype.LookupTableOld.LookupType;
-
 public enum GsubLookupType implements LookupType {
   GSUB_SINGLE,
   GSUB_MULTIPLE,
@@ -12,6 +10,7 @@ public enum GsubLookupType implements LookupType {
   GSUB_EXTENSION,
   GSUB_REVERSE_CHAINING_CONTEXTUAL_SINGLE;
 
+  @Override
   public int typeNum() {
     return ordinal() + 1;
   }

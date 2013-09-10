@@ -3,7 +3,7 @@
 package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.table.opentype.LookupTableOld.LookupType;
+import com.google.typography.font.sfntly.table.opentype.component.LookupType;
 
 public abstract class LookupSubTable extends OTSubTable {
 

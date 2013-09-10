@@ -87,6 +87,10 @@ public class LookupTable extends OffsetRecordTable<SubstSubtable> {
     return FIELD_COUNT;
   }
 
+  public Builder builder() {
+    return new Builder();
+  }
+
   public static class Builder extends OffsetRecordTable.Builder<LookupTable, SubstSubtable> {
     public Builder() {
       super();
