@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * A PostScript table.
- *
+ * A PostScript table. 
+ * 
  * @author Stuart Gill
  */
 public final class PostScriptTable extends Table {
@@ -68,9 +68,10 @@ public final class PostScriptTable extends Table {
     }
   }
 
-  private final AtomicReference<List<String>> names = new AtomicReference<List<String>>();
+  private AtomicReference<List<String>> names = new AtomicReference<List<String>>();
 
-  private static final String[] STANDARD_NAMES = { ".notdef",
+  private static final String[] STANDARD_NAMES = { 
+    ".notdef",
     ".null",
     "nonmarkingreturn",
     "space",
@@ -327,7 +328,8 @@ public final class PostScriptTable extends Table {
     "cacute",
     "Ccaron",
     "ccaron",
-    "dcroat" };
+    "dcroat"
+  };
 
   private PostScriptTable(Header header, ReadableFontData data) {
     super(header, data);
@@ -380,7 +382,7 @@ public final class PostScriptTable extends Table {
       return -1;
     }
   }
-
+  
   public String glyphName(int glyphNum) {
     int numberOfGlyphs = numberOfGlyphs();
     if (numberOfGlyphs > 0 && (glyphNum < 0 || glyphNum >= numberOfGlyphs)) {

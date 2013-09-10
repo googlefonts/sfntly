@@ -9,7 +9,6 @@ public final class NullTable extends SubstSubtable {
 
   public NullTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
-    dumpData();
   }
 
   public NullTable(ReadableFontData data) {
