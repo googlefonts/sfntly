@@ -167,7 +167,7 @@ public class Table extends FontDataTable {
     protected void notifyPostTableBuild(T table) {
       if (this.modelChanged() || this.dataChanged()) {
         Header header = new Header(this.header().tag(), table.dataLength());
-        ((Table)table).header = header;
+        ((Table) table).header = header;
       }
     }
 
@@ -227,8 +227,8 @@ public class Table extends FontDataTable {
         // break;
         // } else if (tag == GPOS) {
         // break;
-       } else if (tag == Tag.GSUB) {
-         return GSubTable.Builder.createBuilder(header, tableData);
+      } else if (tag == Tag.GSUB) {
+        return GSubTable.Builder.createBuilder(header, tableData);
         // break;
         // } else if (tag == JSTF) {
         // break;
@@ -236,8 +236,8 @@ public class Table extends FontDataTable {
         // break;
         // } else if (tag == gasp) {
         // break;
-       } else if (tag == Tag.hdmx) {
-         return HorizontalDeviceMetricsTable.Builder.createBuilder(header, tableData);
+      } else if (tag == Tag.hdmx) {
+        return HorizontalDeviceMetricsTable.Builder.createBuilder(header, tableData);
         // break;
         // } else if (tag == kern) {
         // break;
