@@ -39,10 +39,9 @@ public abstract class SubTable extends FontDataTable {
   /**
    * Constructor.
    *
-   * @param data
-   *          the data representing the subtable
-   * @param masterData
-   *          the data representing the full table containing this subtable
+   * @param data the data representing the subtable
+   * @param masterData the data representing the full table containing this
+   *        subtable
    */
   protected SubTable(ReadableFontData data, ReadableFontData masterData) {
     super(data);
@@ -52,8 +51,7 @@ public abstract class SubTable extends FontDataTable {
   /**
    * Constructor.
    *
-   * @param data
-   *          the data representing the subtable
+   * @param data the data representing the subtable
    */
   protected SubTable(ReadableFontData data) {
     this(data, null);
@@ -62,12 +60,9 @@ public abstract class SubTable extends FontDataTable {
   /**
    * Constructor.
    *
-   * @param data
-   *          the data object that contains the subtable
-   * @param offset
-   *          the offset within the data where the subtable starts
-   * @param length
-   *          the length of the subtable data within the data object
+   * @param data the data object that contains the subtable
+   * @param offset the offset within the data where the subtable starts
+   * @param length the length of the subtable data within the data object
    */
   protected SubTable(ReadableFontData data, int offset, int length) {
     this(data.slice(offset, length));
@@ -80,19 +75,16 @@ public abstract class SubTable extends FontDataTable {
   /**
    * An abstract base class for subtable builders.
    *
-   * @param <T>
-   *          the type of the subtable
+   * @param <T> the type of the subtable
    */
-  public abstract static class Builder<T extends SubTable> extends FontDataTable.Builder<T> {
+  protected abstract static class Builder<T extends SubTable> extends FontDataTable.Builder<T> {
     private ReadableFontData masterData;
 
     /**
      * Constructor.
      *
-     * @param data
-     *          the data for the subtable being built
-     * @param masterData
-     *          the data for the full table
+     * @param data the data for the subtable being built
+     * @param masterData the data for the full table
      */
     protected Builder(WritableFontData data, ReadableFontData masterData) {
       super(data);
@@ -102,10 +94,8 @@ public abstract class SubTable extends FontDataTable {
     /**
      * Constructor.
      *
-     * @param data
-     *          the data for the subtable being built
-     * @param masterData
-     *          the data for the full table
+     * @param data the data for the subtable being built
+     * @param masterData the data for the full table
      */
     protected Builder(ReadableFontData data, ReadableFontData masterData) {
       super(data);
@@ -115,8 +105,7 @@ public abstract class SubTable extends FontDataTable {
     /**
      * Constructor.
      *
-     * @param data
-     *          the data for the subtable being built
+     * @param data the data for the subtable being built
      */
     protected Builder(WritableFontData data) {
       super(data);
@@ -125,8 +114,7 @@ public abstract class SubTable extends FontDataTable {
     /**
      * Constructor.
      *
-     * @param data
-     *          the data for the subtable being built
+     * @param data the data for the subtable being built
      */
     protected Builder(ReadableFontData data) {
       super(data);
@@ -137,9 +125,8 @@ public abstract class SubTable extends FontDataTable {
      *
      * Creates a new empty sub-table.
      *
-     * @param dataSize
-     *          the initial size for the data; if it is positive then the size
-     *          is fixed; if it is negative then it is variable sized
+     * @param dataSize the initial size for the data; if it is positive then the
+     *        size is fixed; if it is negative then it is variable sized
      */
     protected Builder(int dataSize) {
       super(dataSize);
@@ -169,13 +156,5 @@ public abstract class SubTable extends FontDataTable {
   // TODO(stuartg): move to constructor
   protected void setPadding(int padding) {
     this.padding = padding;
-  }
-
-  protected void dumpData() {
-    System.out.println("\n\n" + this.getClass().getSimpleName());
-    int readableCount = Math.min(30, data.length());
-    for (int i = 0; i < readableCount; i += 2) {
-      System.out.printf("0x%04X %d\n", data.readUShort(i), data.readUShort(i));
-    }
   }
 }

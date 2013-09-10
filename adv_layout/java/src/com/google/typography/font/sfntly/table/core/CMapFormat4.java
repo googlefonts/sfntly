@@ -123,7 +123,7 @@ public final class CMapFormat4 extends CMap {
 
   private static int idDeltaOffset(int segCount) {
     int idDeltaOffset =
-        Offset.format4EndCount.offset + ((2 * segCount + 1)) * FontData.DataSize.USHORT.size();
+        Offset.format4EndCount.offset + ((2 * segCount) + 1) * FontData.DataSize.USHORT.size();
     return idDeltaOffset;
   }
 
@@ -135,14 +135,14 @@ public final class CMapFormat4 extends CMap {
 
   private static int idRangeOffsetOffset(int segCount) {
     int idRangeOffsetOffset =
-        Offset.format4EndCount.offset + ((2 * segCount + 1)) * FontData.DataSize.USHORT.size()
+        Offset.format4EndCount.offset + ((2 * segCount) + 1) * FontData.DataSize.USHORT.size()
             + segCount * FontData.DataSize.SHORT.size();
     return idRangeOffsetOffset;
   }
 
   private static int glyphIdArrayOffset(int segCount) {
     int glyphIdArrayOffset =
-        Offset.format4EndCount.offset + (3 * segCount + 1) * FontData.DataSize.USHORT.size()
+        Offset.format4EndCount.offset + ((3 * segCount) + 1) * FontData.DataSize.USHORT.size()
         + segCount * FontData.DataSize.SHORT.size();
     return glyphIdArrayOffset;
   }
