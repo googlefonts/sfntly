@@ -15,7 +15,7 @@ import java.util.TreeSet;
 /**
  * @author dougfelt@google.com (Doug Felt)
  */
-public abstract class LayoutCommonTable<T extends LookupTableOld> extends SubTable {
+public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable {
   private static int VERSION_OFFSET = 0;
   private static int SCRIPT_LIST_OFFSET = 4;
   private static int FEATURE_LIST_OFFSET = 6;
@@ -289,8 +289,8 @@ public abstract class LayoutCommonTable<T extends LookupTableOld> extends SubTab
     }
   }
 
-  public static abstract class Builder<T extends LookupTableOld>
-      extends SubTable.Builder<LayoutCommonTable<T>> {
+  public static abstract class Builder<T extends LookupTable>
+  extends SubTable.Builder<LayoutCommonTable<T>> {
     private int serializedLength;
     private ScriptListTable.Builder serializedScriptListBuilder;
     private FeatureListTable.Builder serializedFeatureListBuilder;
@@ -311,7 +311,7 @@ public abstract class LayoutCommonTable<T extends LookupTableOld> extends SubTab
     protected abstract LookupListTable handleCreateLookupList(
         ReadableFontData data, boolean dataIsCanonical);
 
-    private static abstract class ObjectId<T extends LookupTableOld> {
+    private static abstract class ObjectId<T extends LookupTable> {
       protected Builder<T> builder;
 
       public abstract void delete();
