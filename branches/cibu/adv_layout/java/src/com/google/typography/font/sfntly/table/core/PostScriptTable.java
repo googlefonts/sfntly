@@ -69,8 +69,8 @@ public final class PostScriptTable extends Table {
   }
 
   private AtomicReference<List<String>> names = new AtomicReference<List<String>>();
-
-  private static final String[] STANDARD_NAMES = { 
+  
+  private static final String[] STANDARD_NAMES = {
     ".notdef",
     ".null",
     "nonmarkingreturn",

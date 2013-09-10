@@ -143,7 +143,7 @@ public final class CMapFormat4 extends CMap {
   private static int glyphIdArrayOffset(int segCount) {
     int glyphIdArrayOffset =
         Offset.format4EndCount.offset + ((3 * segCount) + 1) * FontData.DataSize.USHORT.size()
-        + segCount * FontData.DataSize.SHORT.size();
+            + segCount * FontData.DataSize.SHORT.size();
     return glyphIdArrayOffset;
   }
 
