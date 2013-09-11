@@ -2,7 +2,7 @@ package com.google.typography.font.sfntly.table.opentype.ligaturesubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class LigatureSet extends OffsetRecordTable<Ligature> {
   public LigatureSet(ReadableFontData data, int base, boolean dataIsCanonical) {
@@ -29,18 +29,18 @@ public class LigatureSet extends OffsetRecordTable<Ligature> {
     }
 
     @Override
-    protected VisibleBuilder<Ligature> createSubTableBuilder() {
+    protected VisibleSubTable.Builder<Ligature> createSubTableBuilder() {
       return new Ligature.Builder();
     }
 
     @Override
-    protected VisibleBuilder<Ligature> createSubTableBuilder(
+    protected VisibleSubTable.Builder<Ligature> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
       return new Ligature.Builder(data, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<Ligature> createSubTableBuilder(Ligature subTable) {
+    protected VisibleSubTable.Builder<Ligature> createSubTableBuilder(Ligature subTable) {
       return new Ligature.Builder(subTable);
     }
 

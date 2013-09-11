@@ -5,7 +5,7 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.SubstLookupRecordList;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class InnerArraysFmt3 extends SubTable {
   public final CoverageArray backtrackGlyphs;
@@ -30,7 +30,7 @@ public class InnerArraysFmt3 extends SubTable {
     lookupRecords = new SubstLookupRecordList(data, records.limit());
   }
 
-  public static class Builder extends VisibleBuilder<InnerArraysFmt3> {
+  public static class Builder extends VisibleSubTable.Builder<InnerArraysFmt3> {
 
     protected boolean dataIsCanonical;
     public CoverageArray.Builder backtrackGlyphsBuilder;

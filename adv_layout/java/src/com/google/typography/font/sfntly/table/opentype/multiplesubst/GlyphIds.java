@@ -4,7 +4,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class GlyphIds extends OffsetRecordTable<NumRecordTable> {
   public static final int FIELD_COUNT = 1;
@@ -59,18 +59,18 @@ public class GlyphIds extends OffsetRecordTable<NumRecordTable> {
     }
 
     @Override
-    protected VisibleBuilder<NumRecordTable> createSubTableBuilder() {
+    protected VisibleSubTable.Builder<NumRecordTable> createSubTableBuilder() {
       return new NumRecordTable.Builder();
     }
 
     @Override
-    protected VisibleBuilder<NumRecordTable> createSubTableBuilder(
+    protected VisibleSubTable.Builder<NumRecordTable> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
       return new NumRecordTable.Builder(data, 0, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<NumRecordTable> createSubTableBuilder(NumRecordTable subTable) {
+    protected VisibleSubTable.Builder<NumRecordTable> createSubTableBuilder(NumRecordTable subTable) {
       return new NumRecordTable.Builder(subTable);
     }
   }

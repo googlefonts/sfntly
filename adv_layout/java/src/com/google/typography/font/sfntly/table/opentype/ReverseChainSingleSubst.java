@@ -6,7 +6,7 @@ import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.Covera
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.InnerArraysFmt3;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordTable;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class ReverseChainSingleSubst extends SubstSubtable {
   public static final int FIELD_COUNT = 1;
@@ -45,7 +45,7 @@ public class ReverseChainSingleSubst extends SubstSubtable {
   // //////////////////////////////////
   // Builder
 
-  public static class Builder extends VisibleBuilder<ReverseChainSingleSubst> {
+  public static class Builder extends VisibleSubTable.Builder<ReverseChainSingleSubst> {
 
     protected boolean dataIsCanonical;
     public CoverageTable.Builder coverageBuilder;

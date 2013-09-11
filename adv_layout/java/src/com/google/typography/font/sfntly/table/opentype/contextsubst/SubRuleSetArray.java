@@ -3,7 +3,7 @@ package com.google.typography.font.sfntly.table.opentype.contextsubst;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class SubRuleSetArray extends OffsetRecordTable<SubRuleSet> {
   public static final int FIELD_COUNT = 1;
@@ -49,18 +49,18 @@ public class SubRuleSetArray extends OffsetRecordTable<SubRuleSet> {
     }
 
     @Override
-    protected VisibleBuilder<SubRuleSet> createSubTableBuilder() {
+    protected VisibleSubTable.Builder<SubRuleSet> createSubTableBuilder() {
       return new SubRuleSet.Builder();
     }
 
     @Override
-    protected VisibleBuilder<SubRuleSet> createSubTableBuilder(
+    protected VisibleSubTable.Builder<SubRuleSet> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
       return new SubRuleSet.Builder(data, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<SubRuleSet> createSubTableBuilder(SubRuleSet subTable) {
+    protected VisibleSubTable.Builder<SubRuleSet> createSubTableBuilder(SubRuleSet subTable) {
       return new SubRuleSet.Builder(subTable);
     }
 

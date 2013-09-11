@@ -4,7 +4,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.ClassDefTable;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class ChainSubClassSetArray extends OffsetRecordTable<ChainSubClassSet> {
   public static final int FIELD_COUNT = 4;
@@ -62,18 +62,18 @@ public class ChainSubClassSetArray extends OffsetRecordTable<ChainSubClassSet> {
     }
 
     @Override
-    protected VisibleBuilder<ChainSubClassSet> createSubTableBuilder() {
+    protected VisibleSubTable.Builder<ChainSubClassSet> createSubTableBuilder() {
       return new ChainSubClassSet.Builder();
     }
 
     @Override
-    protected VisibleBuilder<ChainSubClassSet> createSubTableBuilder(
+    protected VisibleSubTable.Builder<ChainSubClassSet> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
       return new ChainSubClassSet.Builder(data, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<ChainSubClassSet> createSubTableBuilder(ChainSubClassSet subTable) {
+    protected VisibleSubTable.Builder<ChainSubClassSet> createSubTableBuilder(ChainSubClassSet subTable) {
       return new ChainSubClassSet.Builder(subTable);
     }
 

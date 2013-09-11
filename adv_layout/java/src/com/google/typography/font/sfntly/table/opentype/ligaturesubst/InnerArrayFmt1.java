@@ -3,7 +3,7 @@ package com.google.typography.font.sfntly.table.opentype.ligaturesubst;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class InnerArrayFmt1 extends OffsetRecordTable<LigatureSet> {
   public static final int FIELD_COUNT = 1;
@@ -43,18 +43,18 @@ public class InnerArrayFmt1 extends OffsetRecordTable<LigatureSet> {
     }
 
     @Override
-    protected VisibleBuilder<LigatureSet> createSubTableBuilder() {
+    protected VisibleSubTable.Builder<LigatureSet> createSubTableBuilder() {
       return new LigatureSet.Builder();
     }
 
     @Override
-    protected VisibleBuilder<LigatureSet> createSubTableBuilder(
+    protected VisibleSubTable.Builder<LigatureSet> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
       return new LigatureSet.Builder(data, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<LigatureSet> createSubTableBuilder(LigatureSet subTable) {
+    protected VisibleSubTable.Builder<LigatureSet> createSubTableBuilder(LigatureSet subTable) {
       return new LigatureSet.Builder(subTable);
     }
 

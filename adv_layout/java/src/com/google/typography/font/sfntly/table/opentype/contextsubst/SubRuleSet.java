@@ -1,7 +1,7 @@
 package com.google.typography.font.sfntly.table.opentype.contextsubst;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class SubRuleSet extends SubGenericRuleSet<SubRule> {
   public SubRuleSet(ReadableFontData data, int base, boolean dataIsCanonical) {
@@ -33,18 +33,18 @@ public class SubRuleSet extends SubGenericRuleSet<SubRule> {
     }
 
     @Override
-    protected VisibleBuilder<SubRule> createSubTableBuilder() {
+    protected VisibleSubTable.Builder<SubRule> createSubTableBuilder() {
       return new SubRule.Builder();
     }
 
     @Override
-    protected VisibleBuilder<SubRule> createSubTableBuilder(
+    protected VisibleSubTable.Builder<SubRule> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
       return new SubRule.Builder(data, 0, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<SubRule> createSubTableBuilder(SubRule subTable) {
+    protected VisibleSubTable.Builder<SubRule> createSubTableBuilder(SubRule subTable) {
       return new SubRule.Builder(subTable);
     }
   }

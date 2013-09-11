@@ -2,7 +2,7 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class LookupListTable extends OffsetRecordTable<LookupTable> {
   public static final int FIELD_COUNT = 0;
@@ -25,18 +25,18 @@ public class LookupListTable extends OffsetRecordTable<LookupTable> {
     }
 
     @Override
-    protected VisibleBuilder<LookupTable> createSubTableBuilder() {
+    protected VisibleSubTable.Builder<LookupTable> createSubTableBuilder() {
       return new LookupTable.Builder();
     }
 
     @Override
-    protected VisibleBuilder<LookupTable> createSubTableBuilder(
+    protected VisibleSubTable.Builder<LookupTable> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
       return new LookupTable.Builder(data, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<LookupTable> createSubTableBuilder(LookupTable subTable) {
+    protected VisibleSubTable.Builder<LookupTable> createSubTableBuilder(LookupTable subTable) {
       return new LookupTable.Builder(subTable);
     }
 

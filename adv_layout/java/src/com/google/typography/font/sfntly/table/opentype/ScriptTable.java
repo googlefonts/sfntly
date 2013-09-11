@@ -3,8 +3,7 @@ package com.google.typography.font.sfntly.table.opentype;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.TagOffsetsTable;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
-
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,7 +62,7 @@ public class ScriptTable extends TagOffsetsTable<LangSysTable> {
   }
 
   public static class Builder extends TagOffsetsTable.Builder<ScriptTable, LangSysTable> {
-    private VisibleBuilder<LangSysTable> defLangSysBuilder;
+    private VisibleSubTable.Builder<LangSysTable> defLangSysBuilder;
 
     public Builder() {
       super();
@@ -83,13 +82,13 @@ public class ScriptTable extends TagOffsetsTable<LangSysTable> {
     }
 
     @Override
-    public VisibleBuilder<LangSysTable> createSubTableBuilder(
+    public VisibleSubTable.Builder<LangSysTable> createSubTableBuilder(
         ReadableFontData data, int tag, boolean dataIsCanonical) {
       return new LangSysTable.Builder(data, dataIsCanonical);
     }
 
     @Override
-    public VisibleBuilder<LangSysTable> createSubTableBuilder() {
+    public VisibleSubTable.Builder<LangSysTable> createSubTableBuilder() {
       return new LangSysTable.Builder();
     }
 

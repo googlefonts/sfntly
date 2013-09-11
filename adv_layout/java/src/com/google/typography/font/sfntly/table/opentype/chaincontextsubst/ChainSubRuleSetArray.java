@@ -3,7 +3,7 @@ package com.google.typography.font.sfntly.table.opentype.chaincontextsubst;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class ChainSubRuleSetArray extends OffsetRecordTable<ChainSubRuleSet> {
   public static final int FIELD_COUNT = 1;
@@ -46,18 +46,18 @@ public class ChainSubRuleSetArray extends OffsetRecordTable<ChainSubRuleSet> {
     }
 
     @Override
-    protected VisibleBuilder<ChainSubRuleSet> createSubTableBuilder() {
+    protected VisibleSubTable.Builder<ChainSubRuleSet> createSubTableBuilder() {
       return new ChainSubRuleSet.Builder();
     }
 
     @Override
-    protected VisibleBuilder<ChainSubRuleSet> createSubTableBuilder(
+    protected VisibleSubTable.Builder<ChainSubRuleSet> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
       return new ChainSubRuleSet.Builder(data, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<ChainSubRuleSet> createSubTableBuilder(ChainSubRuleSet subTable) {
+    protected VisibleSubTable.Builder<ChainSubRuleSet> createSubTableBuilder(ChainSubRuleSet subTable) {
       return new ChainSubRuleSet.Builder(subTable);
     }
 

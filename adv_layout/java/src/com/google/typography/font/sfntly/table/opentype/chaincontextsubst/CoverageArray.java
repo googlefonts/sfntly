@@ -4,7 +4,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTable;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class CoverageArray extends OffsetRecordTable<CoverageTable> {
   public static final int FIELD_COUNT = 0;
@@ -46,18 +46,18 @@ public class CoverageArray extends OffsetRecordTable<CoverageTable> {
     }
 
     @Override
-    protected VisibleBuilder<CoverageTable> createSubTableBuilder() {
+    protected VisibleSubTable.Builder<CoverageTable> createSubTableBuilder() {
       return new CoverageTable.Builder();
     }
 
     @Override
-    protected VisibleBuilder<CoverageTable> createSubTableBuilder(
+    protected VisibleSubTable.Builder<CoverageTable> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical) {
       return new CoverageTable.Builder(data, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<CoverageTable> createSubTableBuilder(CoverageTable subTable) {
+    protected VisibleSubTable.Builder<CoverageTable> createSubTableBuilder(CoverageTable subTable) {
       return new CoverageTable.Builder(subTable);
     }
 
