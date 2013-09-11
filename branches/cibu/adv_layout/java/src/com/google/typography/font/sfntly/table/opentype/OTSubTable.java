@@ -4,9 +4,8 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.FontDataTable;
 import com.google.typography.font.sfntly.table.SubTable;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 /**
  * Consolidates dataIsCanonical handling and building logic used by the OpenType tables.
@@ -57,7 +56,7 @@ public abstract class OTSubTable extends SubTable {
     return sliceData(base, index, count, 2, data.length());
   }
 
-  protected abstract static class Builder<T extends OTSubTable> extends VisibleBuilder<T> {
+  protected abstract static class Builder<T extends OTSubTable> extends VisibleSubTable.Builder<T> {
     protected final boolean dataIsCanonical;
     private int serializedLength;
 

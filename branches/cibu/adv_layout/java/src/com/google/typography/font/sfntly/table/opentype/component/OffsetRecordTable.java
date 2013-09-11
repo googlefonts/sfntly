@@ -91,7 +91,7 @@ implements Iterable<S> {
   T extends OffsetRecordTable<? extends SubTable>, S extends SubTable>
   extends HeaderTable.Builder<T> {
 
-    public List<VisibleBuilder<S>> builders;
+    public List<VisibleSubTable.Builder<S>> builders;
     protected boolean dataIsCanonical;
     protected int serializedLength;
     private int serializedCount;
@@ -148,16 +148,16 @@ implements Iterable<S> {
       return builders.get(tag);
     }
 
-    public VisibleBuilder<S> addBuilder() {
+    public VisibleSubTable.Builder<S> addBuilder() {
       prepareToEdit();
-      VisibleBuilder<S> builder = createSubTableBuilder();
+      VisibleSubTable.Builder<S> builder = createSubTableBuilder();
       builders.add(builder);
       return builder;
     }
 
-    public VisibleBuilder<S> addBuilder(S subTable) {
+    public VisibleSubTable.Builder<S> addBuilder(S subTable) {
       prepareToEdit();
-      VisibleBuilder<S> builder = createSubTableBuilder(subTable);
+      VisibleSubTable.Builder<S> builder = createSubTableBuilder(subTable);
       builders.add(builder);
       return builder;
     }
@@ -230,12 +230,12 @@ implements Iterable<S> {
 
     protected abstract T readTable(ReadableFontData data, int base, boolean dataIsCanonical);
 
-    protected abstract VisibleBuilder<S> createSubTableBuilder();
+    protected abstract VisibleSubTable.Builder<S> createSubTableBuilder();
 
-    protected abstract VisibleBuilder<S> createSubTableBuilder(
+    protected abstract VisibleSubTable.Builder<S> createSubTableBuilder(
         ReadableFontData data, boolean dataIsCanonical);
 
-    protected abstract VisibleBuilder<S> createSubTableBuilder(S subTable);
+    protected abstract VisibleSubTable.Builder<S> createSubTableBuilder(S subTable);
 
     // ////////////////////////////////////
     // private methods
@@ -254,7 +254,7 @@ implements Iterable<S> {
 
     private void initFromData(NumRecordList recordList) {
       ReadableFontData data = recordList.readData;
-      builders = new ArrayList<VisibleBuilder<S>>();
+      builders = new ArrayList<VisibleSubTable.Builder<S>>();
       if (data == null) {
         return;
       }
@@ -268,7 +268,7 @@ implements Iterable<S> {
       do {
         NumRecord record = recordIterator.next();
         int offset = record.value;
-        VisibleBuilder<S> builder = createSubTableBuilder(data, offset);
+        VisibleSubTable.Builder<S> builder = createSubTableBuilder(data, offset);
         builders.add(builder);
       } while (recordIterator.hasNext());
     }
@@ -283,7 +283,7 @@ implements Iterable<S> {
 
       int len = 0;
       int count = 0;
-      for (VisibleBuilder<S> builder : builders) {
+      for (VisibleSubTable.Builder<S> builder : builders) {
         int sublen = builder.subDataSizeToSerialize();
         if (sublen > 0) {
           ++count;
@@ -326,7 +326,7 @@ implements Iterable<S> {
       }
 
       NumRecordList recordList = new NumRecordList(newData);
-      for (VisibleBuilder<S> builder : builders) {
+      for (VisibleSubTable.Builder<S> builder : builders) {
         if (builder.serializedLength > 0) {
           NumRecord record = new NumRecord(subTableFillPos);
           recordList.add(record);
@@ -344,7 +344,7 @@ implements Iterable<S> {
       return data.length();
     }
 
-    private VisibleBuilder<S> createSubTableBuilder(ReadableFontData data, int offset) {
+    private VisibleSubTable.Builder<S> createSubTableBuilder(ReadableFontData data, int offset) {
       ReadableFontData newData = data.slice(offset);
       return createSubTableBuilder(newData, dataIsCanonical);
     }

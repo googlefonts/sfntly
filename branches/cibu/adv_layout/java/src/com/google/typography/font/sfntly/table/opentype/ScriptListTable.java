@@ -2,8 +2,7 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.TagOffsetsTable;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
-
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,13 +39,13 @@ public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
   public static class Builder extends TagOffsetsTable.Builder<ScriptListTable, ScriptTable> {
 
     @Override
-    protected VisibleBuilder<ScriptTable> createSubTableBuilder(
+    protected VisibleSubTable.Builder<ScriptTable> createSubTableBuilder(
         ReadableFontData data, int tag, boolean dataIsCanonical) {
       return new ScriptTable.Builder(data, 0, dataIsCanonical);
     }
 
     @Override
-    protected VisibleBuilder<ScriptTable> createSubTableBuilder() {
+    protected VisibleSubTable.Builder<ScriptTable> createSubTableBuilder() {
       return new ScriptTable.Builder();
     }
 

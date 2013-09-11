@@ -93,7 +93,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
   public abstract static class Builder<T extends HeaderTable, S extends SubTable>
       extends HeaderTable.Builder<T> {
 
-    public TreeMap<Integer, VisibleBuilder<S>> builders;
+    public TreeMap<Integer, VisibleSubTable.Builder<S>> builders;
     protected int serializedLength;
     private int serializedCount;
     private final int base;
@@ -141,9 +141,9 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
       return builders.get(tag);
     }
 
-    public VisibleBuilder<S> addBuilderForTag(int tag) {
+    public VisibleSubTable.Builder<S> addBuilderForTag(int tag) {
       prepareToEdit();
-      VisibleBuilder<S> builder = builders.get(tag);
+      VisibleSubTable.Builder<S> builder = builders.get(tag);
       if (builder == null) {
         builder = createSubTableBuilder();
         builders.put(tag, builder);
@@ -203,9 +203,9 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
 
     protected abstract T readTable(ReadableFontData data, int base, boolean dataIsCanonical);
 
-    protected abstract VisibleBuilder<S> createSubTableBuilder();
+    protected abstract VisibleSubTable.Builder<S> createSubTableBuilder();
 
-    protected abstract VisibleBuilder<S> createSubTableBuilder(
+    protected abstract VisibleSubTable.Builder<S> createSubTableBuilder(
         ReadableFontData data, int tag, boolean dataIsCanonical);
 
     // ////////////////////////////////////
@@ -219,7 +219,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
     }
 
     private void initFromData(ReadableFontData data, int base) {
-      builders = new TreeMap<Integer, VisibleBuilder<S>>();
+      builders = new TreeMap<Integer, VisibleSubTable.Builder<S>>();
       if (data == null) {
         return;
       }
@@ -243,7 +243,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
           subTableLimit = record.offset;
           // TODO(cibu): length computation does not seems to be correct.
           int length = subTableLimit - offset;
-          VisibleBuilder<S> builder = createSubTableBuilder(data, offset, length, tag);
+          VisibleSubTable.Builder<S> builder = createSubTableBuilder(data, offset, length, tag);
           builders.put(tag, builder);
         } while (recordIterator.hasNext());
       } else {
@@ -251,7 +251,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
           TagOffsetRecord record = recordIterator.next();
           int offset = record.offset;
           int tag = record.tag;
-          VisibleBuilder<S> builder = createSubTableBuilder(data, offset, -1, tag);
+          VisibleSubTable.Builder<S> builder = createSubTableBuilder(data, offset, -1, tag);
           builders.put(tag, builder);
         } while (recordIterator.hasNext());
       }
@@ -267,7 +267,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
 
       int len = 0;
       int count = 0;
-      for (VisibleBuilder<? extends SubTable> builder : builders.values()) {
+      for (VisibleSubTable.Builder<? extends SubTable> builder : builders.values()) {
         int sublen = builder.subDataSizeToSerialize();
         if (sublen > 0) {
           ++count;
@@ -306,9 +306,9 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
       int subTableFillPos = tableSize;
 
       TagOffsetRecordList recordList = new TagOffsetRecordList(newData);
-      for (Entry<Integer, VisibleBuilder<S>> entry : builders.entrySet()) {
+      for (Entry<Integer, VisibleSubTable.Builder<S>> entry : builders.entrySet()) {
         int tag = entry.getKey();
-        VisibleBuilder<? extends SubTable> builder = entry.getValue();
+        VisibleSubTable.Builder<? extends SubTable> builder = entry.getValue();
         if (builder.serializedLength > 0) {
           TagOffsetRecord record = new TagOffsetRecord(tag, subTableFillPos);
           recordList.add(record);
@@ -326,7 +326,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
       return data.length();
     }
 
-    private VisibleBuilder<S> createSubTableBuilder(
+    private VisibleSubTable.Builder<S> createSubTableBuilder(
         ReadableFontData data, int offset, int length, int tag) {
       boolean dataIsCanonical = (length >= 0);
       ReadableFontData newData = dataIsCanonical ? data.slice(offset, length) : data.slice(offset);

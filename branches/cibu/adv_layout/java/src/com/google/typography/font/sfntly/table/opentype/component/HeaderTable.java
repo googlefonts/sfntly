@@ -33,7 +33,7 @@ public abstract class HeaderTable extends SubTable {
 
   public abstract int fieldCount();
 
-  public abstract static class Builder<T extends HeaderTable> extends VisibleBuilder<T> {
+  public abstract static class Builder<T extends HeaderTable> extends VisibleSubTable.Builder<T> {
     private Map<Integer, Integer> map = new HashMap<Integer, Integer>();
     protected boolean dataIsCanonical = false;
 

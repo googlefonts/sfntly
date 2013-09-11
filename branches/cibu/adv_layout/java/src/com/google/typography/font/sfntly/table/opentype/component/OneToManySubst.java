@@ -87,7 +87,7 @@ public class OneToManySubst extends SubstSubtable implements Iterable<NumRecordT
       return arrayBuilder.builderForTag(tag);
     }
 
-    public VisibleBuilder<NumRecordTable> addBuilder() {
+    public VisibleSubTable.Builder<NumRecordTable> addBuilder() {
       setModelChanged();
       return arrayBuilder.addBuilder();
     }

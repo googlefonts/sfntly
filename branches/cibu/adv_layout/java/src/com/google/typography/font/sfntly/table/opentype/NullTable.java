@@ -2,7 +2,7 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public final class NullTable extends SubstSubtable {
   public static final int RECORD_SIZE = 0;
@@ -23,7 +23,7 @@ public final class NullTable extends SubstSubtable {
     return RECORD_SIZE;
   }
 
-  public static class Builder extends VisibleBuilder<NullTable> {
+  public static class Builder extends VisibleSubTable.Builder<NullTable> {
     public Builder() {
     }
 

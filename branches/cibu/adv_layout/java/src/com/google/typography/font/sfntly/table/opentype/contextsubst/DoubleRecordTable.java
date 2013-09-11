@@ -7,7 +7,7 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
 import com.google.typography.font.sfntly.table.opentype.component.SubstLookupRecordList;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class DoubleRecordTable extends SubTable {
   public final NumRecordList inputGlyphs;
@@ -26,7 +26,7 @@ public class DoubleRecordTable extends SubTable {
     this(data, 0, dataIsCanonical);
   }
 
-  public abstract static class Builder<T extends DoubleRecordTable> extends VisibleBuilder<T> {
+  public abstract static class Builder<T extends DoubleRecordTable> extends VisibleSubTable.Builder<T> {
 
     protected NumRecordList inputGlyphIdsBuilder;
     protected SubstLookupRecordList substLookupRecordsBuilder;

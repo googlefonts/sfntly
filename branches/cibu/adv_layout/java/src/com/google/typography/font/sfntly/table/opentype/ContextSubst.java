@@ -4,7 +4,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleBuilder;
+import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.DoubleRecordTable;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubClassSetArray;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubGenericRuleSet;
@@ -117,7 +117,7 @@ public class ContextSubst extends SubstSubtable {
       return arrayBuilder.builderForTag(tag);
     }
 
-    public VisibleBuilder<SubRuleSet> addBuilder() {
+    public VisibleSubTable.Builder<SubRuleSet> addBuilder() {
       setModelChanged();
       return arrayBuilder.addBuilder();
     }
