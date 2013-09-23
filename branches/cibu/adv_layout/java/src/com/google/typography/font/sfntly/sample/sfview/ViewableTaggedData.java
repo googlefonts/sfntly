@@ -216,7 +216,7 @@ public class ViewableTaggedData {
 
     @Override
     public void pushRange(String label, ReadableFontData data) {
-      rangeStack = new RangeNode(label, data, rangeStack, data.boundOffset());
+      rangeStack = new RangeNode(label, data, rangeStack, data.boundOffset(0));
     }
 
     @Override
@@ -250,11 +250,10 @@ public class ViewableTaggedData {
         throw new IllegalStateException("not in a range");
       }
       ReadableFontData data = rangeStack.data;
-      int dataOffset = data.boundOffset();
       int base = rangeStack.base;
-      int pos = base - dataOffset + rangeStack.pos;
+      int pos = rangeStack.pos;
 
-      int position = dataOffset + pos;
+      int position = base + pos;
       int width;
       int value;
       String alt;
