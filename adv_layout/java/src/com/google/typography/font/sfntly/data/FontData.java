@@ -184,7 +184,7 @@ public abstract class FontData {
    * @param offset the offset to get the bound compensated offset for
    * @return the bound compensated offset
    */
-  protected final int boundOffset(int offset) {
+  public final int boundOffset(int offset) {
     return offset + this.boundOffset;
   }
 
@@ -197,19 +197,5 @@ public abstract class FontData {
    */
   protected final int boundLength(int offset, int length) {
     return Math.min(length, this.boundLength - offset);
-  }
-
-  /**
-   * Used by inspecting tooling only.
-   */
-  public final int boundOffset() {
-    return boundOffset;
-  }
-
-  /**
-   * Used by inspecting tooling only.
-   */
-  public final int boundLength() {
-    return boundLength;
   }
 }
