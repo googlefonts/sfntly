@@ -45,15 +45,13 @@ public class Rule {
   }
 
   // Closure related
-  public static GlyphGroup charGlyphClosure(String txt, Font font) {
-    PostScriptTable post = font.getTable(Tag.post);
+  public static GlyphGroup charGlyphClosure(Font font, String txt) {
     CMapTable cmapTable = font.getTable(Tag.cmap);
     GlyphGroup glyphGroup = glyphGroupForText(txt, cmapTable);
 
     Set<Rule> featuredRules = featuredRules(font);
     Map<Integer, Set<Rule>> glyphRuleMap = createGlyphRuleMap(featuredRules);
     GlyphGroup ruleClosure = closure(glyphRuleMap, glyphGroup);
-    System.out.println("Closure: " + toString(ruleClosure, post));
     return ruleClosure;
   }
 
@@ -462,33 +460,8 @@ public class Rule {
   static String toString(RuleSegment context, PostScriptTable post) {
     StringBuilder sb = new StringBuilder();
     for (GlyphGroup glyphGroup : context) {
-      sb.append(toString(glyphGroup, post));
+      sb.append(glyphGroup.toString(post));
       sb.append(" ");
-    }
-    return sb.toString();
-  }
-
-  static String toString(GlyphGroup glyphIds, PostScriptTable post) {
-    StringBuilder sb = new StringBuilder();
-    if (glyphIds.isInverse()) {
-      sb.append("not-");
-    }
-    int glyphCount = glyphIds.size();
-    if (glyphCount > 1) {
-      sb.append("[ ");
-    }
-    for (int glyphId : glyphIds) {
-      sb.append(glyphId);
-
-      String glyphName = post.glyphName(glyphId);
-      if (glyphName != null) {
-        sb.append("-");
-        sb.append(glyphName);
-      }
-      sb.append(" ");
-    }
-    if (glyphCount > 1) {
-      sb.append("] ");
     }
     return sb.toString();
   }

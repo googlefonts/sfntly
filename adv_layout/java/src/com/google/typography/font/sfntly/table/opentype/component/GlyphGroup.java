@@ -1,5 +1,7 @@
 package com.google.typography.font.sfntly.table.opentype.component;
 
+import com.google.typography.font.sfntly.table.core.PostScriptTable;
+
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Iterator;
@@ -121,16 +123,28 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
 
   @Override
   public String toString() {
+    return toString(null);
+  }
+
+  public String toString(PostScriptTable post) {
     StringBuilder sb = new StringBuilder();
     if (this.inverse) {
       sb.append("not-");
     }
-    int glyphCount = this.size();
+    int glyphCount = size();
     if (glyphCount > 1) {
       sb.append("[ ");
     }
     for (int glyphId : this) {
       sb.append(glyphId);
+
+      if (post != null) {
+        String glyphName = post.glyphName(glyphId);
+        if (glyphName != null) {
+          sb.append("-");
+          sb.append(glyphName);
+        }
+      }
       sb.append(" ");
     }
     if (glyphCount > 1) {
