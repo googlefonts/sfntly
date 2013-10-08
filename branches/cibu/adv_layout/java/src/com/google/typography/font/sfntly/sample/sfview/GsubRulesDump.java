@@ -2,6 +2,8 @@ package com.google.typography.font.sfntly.sample.sfview;
 
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
+import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.opentype.component.GlyphGroup;
 import com.google.typography.font.sfntly.table.opentype.component.Rule;
 
@@ -23,7 +25,10 @@ public class GsubRulesDump {
     }
 
     Font font = fonts[0];
-    GlyphGroup ruleClosure = Rule.charGlyphClosure(txt, font);
+    GlyphGroup ruleClosure = Rule.charGlyphClosure(font, txt);
+    PostScriptTable post = font.getTable(Tag.post);
+    Rule.dumpLookups(font);
+    System.out.println("Closure: " + ruleClosure.toString(post));
   }
 
   public static Font[] loadFont(File file) throws IOException {
