@@ -16,6 +16,8 @@
 
 #include "sfntly/data/writable_font_data.h"
 
+#include <algorithm>
+
 #include "sfntly/data/memory_byte_array.h"
 #include "sfntly/data/growable_memory_byte_array.h"
 

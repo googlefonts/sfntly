@@ -16,6 +16,8 @@
 
 #include "sfntly/table/core/os2_table.h"
 
+#include <algorithm>
+
 namespace sfntly {
 /******************************************************************************
  * Constants
