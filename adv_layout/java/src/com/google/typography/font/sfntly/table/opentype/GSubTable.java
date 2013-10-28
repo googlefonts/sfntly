@@ -21,11 +21,19 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * A GSub table.
  */
 public class GSubTable extends Table {
   private final GsubCommonTable gsub;
+  private final AtomicReference<ScriptListTable>
+      scriptListTable = new AtomicReference<ScriptListTable>();
+  private final AtomicReference<FeatureListTable>
+      featureListTable = new AtomicReference<FeatureListTable>();
+  private final AtomicReference<LookupListTable>
+      lookupListTable = new AtomicReference<LookupListTable>();
 
   enum Offset {
     version(0), scriptList(4), featureList(6), lookupList(8);
@@ -65,7 +73,10 @@ public class GSubTable extends Table {
    * @return the ScriptList
    */
   public ScriptListTable scriptList() {
-    return gsub.createScriptList();
+    if (scriptListTable.get() == null) {
+      scriptListTable.compareAndSet(null, gsub.createScriptList());
+    }
+    return scriptListTable.get();
   }
 
   /**
@@ -74,7 +85,10 @@ public class GSubTable extends Table {
    * @return the FeatureList
    */
   public FeatureListTable featureList() {
-    return gsub.createFeatureList();
+    if (featureListTable.get() == null) {
+      featureListTable.compareAndSet(null, gsub.createFeatureList());
+    }
+    return featureListTable.get();
   }
 
   /**
@@ -83,7 +97,10 @@ public class GSubTable extends Table {
    * @return the LookupList
    */
   public LookupListTable lookupList() {
-    return gsub.createLookupList();
+    if (lookupListTable.get() == null) {
+      lookupListTable.compareAndSet(null, gsub.createLookupList());
+    }
+    return lookupListTable.get();
   }
 
   /**
