@@ -41,7 +41,7 @@
   #include <stdint.h>
 #endif
 
-#include <cstddef>
+#include <stddef.h>
 #include <vector>
 #include <set>
 
