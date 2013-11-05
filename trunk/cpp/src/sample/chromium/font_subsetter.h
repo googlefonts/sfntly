@@ -18,7 +18,7 @@
 #ifndef SFNTLY_CPP_SRC_TEST_FONT_SUBSETTER_H_
 #define SFNTLY_CPP_SRC_TEST_FONT_SUBSETTER_H_
 
-#include <cstddef>
+#include <stddef.h>
 
 class SfntlyWrapper {
  public:
