@@ -1,5 +1,7 @@
 package com.google.typography.font.sfntly.table.opentype.component;
 
+import com.google.typography.font.sfntly.table.core.PostScriptTable;
+
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -71,4 +73,14 @@ public class RuleSegment extends LinkedList<GlyphGroup> {
     }
     return sb.toString();
   }
+
+  String toString(PostScriptTable post) {
+    StringBuilder sb = new StringBuilder();
+    for (GlyphGroup glyphGroup : this) {
+      sb.append(glyphGroup.toString(post));
+      sb.append(" ");
+    }
+    return sb.toString();
+  }
+
 }

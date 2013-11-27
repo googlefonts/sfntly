@@ -443,11 +443,10 @@ public class Rule {
       System.out.println(
           "------------------------------ " + index + " --------------------------------");
       for (Rule rule : rules) {
-        System.out.println(toString(rule, post));
+        System.out.println(rule.toString(post));
       }
     }
   }
-
 
   public static void dumpLookups(Font font) {
     GSubTable gsub = font.getTable(Tag.GSUB);
@@ -457,28 +456,19 @@ public class Rule {
     System.out.println("\nFeatured Lookup IDs: " + Rule.featuredLookups(font));
   }
 
-  static String toString(RuleSegment context, PostScriptTable post) {
+  private String toString(PostScriptTable post) {
     StringBuilder sb = new StringBuilder();
-    for (GlyphGroup glyphGroup : context) {
-      sb.append(glyphGroup.toString(post));
-      sb.append(" ");
-    }
-    return sb.toString();
-  }
-
-  static String toString(Rule rule, PostScriptTable post) {
-    StringBuilder sb = new StringBuilder();
-    if (rule.backtrack != null && rule.backtrack.size() > 0) {
-      sb.append(toString(rule.backtrack, post));
+    if (backtrack != null && backtrack.size() > 0) {
+      sb.append(backtrack.toString(post));
       sb.append("} ");
     }
-    sb.append(toString(rule.input, post));
-    if (rule.lookAhead != null && rule.lookAhead.size() > 0) {
+    sb.append(input.toString(post));
+    if (lookAhead != null && lookAhead.size() > 0) {
       sb.append("{ ");
-      sb.append(toString(rule.lookAhead, post));
+      sb.append(lookAhead.toString(post));
     }
     sb.append("=> ");
-    sb.append(toString(rule.subst, post));
+    sb.append(subst.toString(post));
     return sb.toString();
   }
 
