@@ -216,7 +216,7 @@ public class ViewableTaggedData {
 
     @Override
     public void pushRange(String label, ReadableFontData data) {
-      rangeStack = new RangeNode(label, data, rangeStack, data.boundOffset(0));
+      rangeStack = new RangeNode(label, data, rangeStack, data.dataOffset());
     }
 
     @Override
