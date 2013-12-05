@@ -17,7 +17,7 @@ public class ChainContextSubst extends SubstSubtable {
   // //////////////
   // Constructors
 
-  public ChainContextSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
+  ChainContextSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     switch (format) {
     case 1:
@@ -92,7 +92,7 @@ public class ChainContextSubst extends SubstSubtable {
     }
   }
 
-  protected ChainSubGenericRuleSet<?> createSubTable(
+  private ChainSubGenericRuleSet<?> createSubTable(
       ReadableFontData data, boolean dataIsCanonical) {
     switch (format) {
     case 1:
@@ -133,24 +133,24 @@ public class ChainContextSubst extends SubstSubtable {
   // //////////////////////////////////
   // Builder
 
-  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
+  private static class Builder extends SubstSubtable.Builder<SubstSubtable> {
 
     private final ChainSubRuleSetArray.Builder arrayBuilder;
 
     // //////////////
     // Constructors
 
-    public Builder() {
+    private Builder() {
       super();
       arrayBuilder = new ChainSubRuleSetArray.Builder();
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    private Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       arrayBuilder = new ChainSubRuleSetArray.Builder(data, dataIsCanonical);
     }
 
-    public Builder(SubstSubtable subTable) {
+    private Builder(SubstSubtable subTable) {
       ChainContextSubst ligSubst = (ChainContextSubst) subTable;
       arrayBuilder = new ChainSubRuleSetArray.Builder(ligSubst.ruleSets);
     }
@@ -158,16 +158,16 @@ public class ChainContextSubst extends SubstSubtable {
     // /////////////////////////////
     // Public methods for builders
 
-    public int subTableCount() {
+    private int subTableCount() {
       return arrayBuilder.subTableCount();
     }
 
-    public SubTable.Builder<? extends SubTable> builderForTag(int tag) {
+    private SubTable.Builder<? extends SubTable> builderForTag(int tag) {
       setModelChanged();
       return arrayBuilder.builderForTag(tag);
     }
 
-    public void removeBuilderForTag(int tag) {
+    private void removeBuilderForTag(int tag) {
       setModelChanged();
       arrayBuilder.removeBuilderForTag(tag);
     }

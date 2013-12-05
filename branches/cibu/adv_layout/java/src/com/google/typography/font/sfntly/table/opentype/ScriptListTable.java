@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
 
-  public ScriptListTable(ReadableFontData data, boolean dataIsCanonical) {
+  ScriptListTable(ReadableFontData data, boolean dataIsCanonical) {
     super(data, dataIsCanonical);
   }
 
@@ -36,7 +36,7 @@ public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
     return map;
   }
 
-  public static class Builder extends TagOffsetsTable.Builder<ScriptListTable, ScriptTable> {
+  static class Builder extends TagOffsetsTable.Builder<ScriptListTable, ScriptTable> {
 
     @Override
     protected VisibleSubTable.Builder<ScriptTable> createSubTableBuilder(

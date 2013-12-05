@@ -5,19 +5,18 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 
 public abstract class VisibleSubTable extends SubTable {
-  public VisibleSubTable(ReadableFontData data) {
+  private VisibleSubTable(ReadableFontData data) {
     super(data);
   }
 
   public abstract static class Builder<T extends SubTable> extends SubTable.Builder<T> {
-
     protected int serializedLength;
 
-    public Builder() {
+    protected Builder() {
       super(null);
     }
 
-    public Builder(ReadableFontData data) {
+    protected Builder(ReadableFontData data) {
       super(data);
     }
 
@@ -28,9 +27,9 @@ public abstract class VisibleSubTable extends SubTable {
     public abstract int subDataSizeToSerialize();
 
     @Override
-    public abstract void subDataSet();
+    protected abstract void subDataSet();
 
     @Override
-    public abstract T subBuildTable(ReadableFontData data);
+    protected abstract T subBuildTable(ReadableFontData data);
   }
 }

@@ -11,9 +11,8 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
-public class SFView {
+class SFView {
   public static void main(String[] args) throws IOException {
-
     for (String fontName : args) {
       System.out.println("Displaying font: " + fontName);
       Font[] fonts = loadFont(new File(fontName));
@@ -32,7 +31,7 @@ public class SFView {
     }
   }
 
-  public static Font[] loadFont(File file) throws IOException {
+  private static Font[] loadFont(File file) throws IOException {
     FontFactory fontFactory = FontFactory.getInstance();
     fontFactory.fingerprintFont(true);
     FileInputStream is = null;

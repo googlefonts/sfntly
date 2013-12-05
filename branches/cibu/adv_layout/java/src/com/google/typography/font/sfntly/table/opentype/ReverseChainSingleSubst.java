@@ -9,8 +9,8 @@ import com.google.typography.font.sfntly.table.opentype.component.NumRecordTable
 import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class ReverseChainSingleSubst extends SubstSubtable {
-  public static final int FIELD_COUNT = 1;
-  public static final int COVERAGE_INDEX = SubstSubtable.FIELD_COUNT;
+  private static final int FIELD_COUNT = 1;
+  private static final int COVERAGE_INDEX = SubstSubtable.FIELD_SIZE;
   public final CoverageTable coverage;
   public final CoverageArray backtrackGlyphs;
   public final CoverageArray lookAheadGlyphs;
@@ -19,7 +19,7 @@ public class ReverseChainSingleSubst extends SubstSubtable {
   // //////////////
   // Constructors
 
-  public ReverseChainSingleSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
+  ReverseChainSingleSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     if (format != 1) {
       throw new IllegalStateException("Subt format value is " + format + " (should be 1).");
@@ -45,32 +45,32 @@ public class ReverseChainSingleSubst extends SubstSubtable {
   // //////////////////////////////////
   // Builder
 
-  public static class Builder extends VisibleSubTable.Builder<ReverseChainSingleSubst> {
+  private static class Builder extends VisibleSubTable.Builder<ReverseChainSingleSubst> {
 
-    protected boolean dataIsCanonical;
-    public CoverageTable.Builder coverageBuilder;
-    public CoverageArray.Builder backtrackGlyphsBuilder;
-    public CoverageArray.Builder lookAheadGlyphsBuilder;
+    private boolean dataIsCanonical;
+    private CoverageTable.Builder coverageBuilder;
+    private CoverageArray.Builder backtrackGlyphsBuilder;
+    private CoverageArray.Builder lookAheadGlyphsBuilder;
 
     // ///////////////
     // constructors
 
-    public Builder() {
+    private Builder() {
       super();
     }
 
-    public Builder(InnerArraysFmt3 table) {
+    private Builder(InnerArraysFmt3 table) {
       this(table.readFontData(), 0, false);
     }
 
-    public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
+    private Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data);
       if (!dataIsCanonical) {
         prepareToEdit();
       }
     }
 
-    public Builder(Builder other) {
+    private Builder(Builder other) {
       super();
       coverageBuilder = other.coverageBuilder;
       backtrackGlyphsBuilder = other.backtrackGlyphsBuilder;

@@ -48,7 +48,7 @@ public class CoverageTable extends SubstSubtable {
     }
   }
 
-  public RecordList<?> records() {
+  private RecordList<?> records() {
     return array.recordList;
   }
 
@@ -57,7 +57,7 @@ public class CoverageTable extends SubstSubtable {
 
   public static class Builder extends SubstSubtable.Builder<CoverageTable> {
 
-    protected final RecordsTable.Builder<?, ?> arrayBuilder;
+    private final RecordsTable.Builder<?, ?> arrayBuilder;
 
     // //////////////
     // Constructors
@@ -86,14 +86,14 @@ public class CoverageTable extends SubstSubtable {
     }
 
     // //////////////////////////////
-    // Public methods to update
+    // private methods to update
 
-    public int valueCount() {
+    private int valueCount() {
       return arrayBuilder.count();
     }
 
     // //////////////////////////////
-    // Public methods to serialize
+    // private methods to serialize
 
     @Override
     public int subDataSizeToSerialize() {

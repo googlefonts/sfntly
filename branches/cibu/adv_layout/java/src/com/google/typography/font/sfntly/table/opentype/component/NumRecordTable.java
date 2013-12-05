@@ -32,7 +32,7 @@ public class NumRecordTable extends RecordsTable<NumRecord> {
       super(data, base, dataIsCanonical);
     }
 
-    public Builder(RecordsTable.Builder<NumRecordTable, NumRecord> builder) {
+    private Builder(RecordsTable.Builder<NumRecordTable, NumRecord> builder) {
       super();
       records = builder.records();
     }
@@ -58,7 +58,7 @@ public class NumRecordTable extends RecordsTable<NumRecord> {
     }
 
     @Override
-    public int fieldCount() {
+    protected int fieldCount() {
       return 0;
     }
 

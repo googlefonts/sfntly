@@ -4,13 +4,13 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.GsubLookupType;
 
 public class ExtensionSubst extends SubstSubtable {
-  public static final int LOOKUP_TYPE_OFFSET = 0;
-  public static final int LOOKUP_OFFSET_OFFSET = 2;
+  private static final int LOOKUP_TYPE_OFFSET = 0;
+  private static final int LOOKUP_OFFSET_OFFSET = 2;
 
   final GsubLookupType lookupType;
   final int lookupOffset;
 
-  public ExtensionSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
+  ExtensionSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     if (format != 1) {
       throw new IllegalArgumentException("illegal extension format " + format);
@@ -46,12 +46,12 @@ public class ExtensionSubst extends SubstSubtable {
     }
   }
 
-  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
-    public Builder() {
+  private static class Builder extends SubstSubtable.Builder<SubstSubtable> {
+    private Builder() {
       super();
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    private Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
 

@@ -11,9 +11,9 @@ import java.util.NoSuchElementException;
 
 public abstract class RecordList<T extends Record> implements Iterable<T> {
   private static final int COUNT_OFFSET = 0;
-  public static final int DATA_OFFSET = 2;
-  public final int base;
-  public final int recordBase;
+  static final int DATA_OFFSET = 2;
+  final int base;
+  private final int recordBase;
 
   final ReadableFontData readData;
   private final WritableFontData writeData;
@@ -21,12 +21,13 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
   private List<T> recordsToWrite;
 
   /*
-   *public RecordList(WritableFontData data) { this.readData = null;
+   *private RecordList(WritableFontData data) { this.readData = null;
    * this.writeData = data; this.count = 0; this.base = 0; this.recordBase =
    * RECORD_BASE_DEFAULT; if (writeData != null) {
    * writeData.writeUShort(COUNT_OFFSET, 0); } }
    */
-  public RecordList(ReadableFontData data, int countDecrement, int countOffset, int valuesOffset) {
+  protected RecordList(ReadableFontData data, int countDecrement, int countOffset,
+      int valuesOffset) {
     this.readData = data;
     this.writeData = null;
     this.base = countOffset;
@@ -37,7 +38,7 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
     }
   }
 
-  public RecordList(RecordList<T> other) {
+  protected RecordList(RecordList<T> other) {
     this.readData = other.readData;
     this.writeData = other.writeData;
     this.base = other.base;
@@ -46,15 +47,15 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
     this.recordsToWrite = other.recordsToWrite;
   }
 
-  public RecordList(ReadableFontData data) {
+  protected RecordList(ReadableFontData data) {
     this(data, 0);
   }
 
-  public RecordList(ReadableFontData data, int countDecrement) {
+  protected RecordList(ReadableFontData data, int countDecrement) {
     this(data, countDecrement, 0, DATA_OFFSET);
   }
 
-  public RecordList(ReadableFontData data, int countDecrement, int countOffset) {
+  protected RecordList(ReadableFontData data, int countDecrement, int countOffset) {
     this(data, countDecrement, countOffset, countOffset + DATA_OFFSET);
   }
 
@@ -77,7 +78,7 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
     return base + index * recordSize();
   }
 
-  public T get(int index) {
+  T get(int index) {
     if (recordsToWrite != null) {
       return recordsToWrite.get(index);
     }
@@ -133,13 +134,13 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
     return this;
   }
 
-  public RecordList<T> addAll(Collection<T> recordsToWrite) {
+  private RecordList<T> addAll(Collection<T> recordsToWrite) {
     copyFromRead();
     this.recordsToWrite.addAll(recordsToWrite);
     return this;
   }
 
-  public int write() {
+  private int write() {
     if (writeData == null) {
       throw new UnsupportedOperationException();
     }

@@ -7,26 +7,26 @@ import com.google.typography.font.sfntly.table.opentype.component.RecordList;
 import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
 
 public class Ligature extends RecordsTable<NumRecord> {
-  public static final int FIELD_COUNT = 1;
+  private static final int FIELD_COUNT = 1;
 
   public static final int LIG_GLYPH_INDEX = 0;
-  public static final int LIG_GLYPH_DEFAULT = 0;
+  private static final int LIG_GLYPH_DEFAULT = 0;
 
-  public Ligature(ReadableFontData data, int base, boolean dataIsCanonical) {
+  Ligature(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
-  public static class Builder extends RecordsTable.Builder<Ligature, NumRecord> {
+  static class Builder extends RecordsTable.Builder<Ligature, NumRecord> {
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
 
-    public Builder() {
+    Builder() {
       super();
     }
 
-    public Builder(Ligature table) {
+    Builder(Ligature table) {
       super(table);
     }
 
@@ -41,7 +41,7 @@ public class Ligature extends RecordsTable<NumRecord> {
     }
 
     @Override
-    public int fieldCount() {
+    protected int fieldCount() {
       return FIELD_COUNT;
     }
 

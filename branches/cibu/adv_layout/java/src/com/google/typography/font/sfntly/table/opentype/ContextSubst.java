@@ -18,7 +18,7 @@ public class ContextSubst extends SubstSubtable {
   // //////////////
   // Constructors
 
-  public ContextSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
+  ContextSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     switch (format) {
     case 1:
@@ -63,7 +63,7 @@ public class ContextSubst extends SubstSubtable {
     return (format == 1) ? ruleSets.subTableAt(index) : classSets.subTableAt(index);
   }
 
-  protected SubGenericRuleSet<? extends DoubleRecordTable> createSubTable(
+  private SubGenericRuleSet<? extends DoubleRecordTable> createSubTable(
       ReadableFontData data, boolean dataIsCanonical) {
     return (format == 1) ? ruleSets.readSubTable(data, dataIsCanonical)
         : classSets.readSubTable(data, dataIsCanonical);
@@ -83,52 +83,52 @@ public class ContextSubst extends SubstSubtable {
   // //////////////////////////////////
   // Builder
 
-  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
+  private static class Builder extends SubstSubtable.Builder<SubstSubtable> {
 
     private final SubRuleSetArray.Builder arrayBuilder;
 
     // //////////////
     // Constructors
 
-    public Builder() {
+    private Builder() {
       super();
       arrayBuilder = new SubRuleSetArray.Builder();
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    private Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       arrayBuilder = new SubRuleSetArray.Builder(data, dataIsCanonical);
     }
 
-    public Builder(SubstSubtable subTable) {
+    private Builder(SubstSubtable subTable) {
       ContextSubst ligSubst = (ContextSubst) subTable;
       arrayBuilder = new SubRuleSetArray.Builder(ligSubst.ruleSets);
     }
 
     // /////////////////////////////
-    // Public methods for builders
+    // private methods for builders
 
-    public int subTableCount() {
+    private int subTableCount() {
       return arrayBuilder.subTableCount();
     }
 
-    public SubTable.Builder<? extends SubTable> builderForTag(int tag) {
+    private SubTable.Builder<? extends SubTable> builderForTag(int tag) {
       setModelChanged();
       return arrayBuilder.builderForTag(tag);
     }
 
-    public VisibleSubTable.Builder<SubRuleSet> addBuilder() {
+    private VisibleSubTable.Builder<SubRuleSet> addBuilder() {
       setModelChanged();
       return arrayBuilder.addBuilder();
     }
 
-    public void removeBuilderForTag(int tag) {
+    private void removeBuilderForTag(int tag) {
       setModelChanged();
       arrayBuilder.removeBuilderForTag(tag);
     }
 
     // ///////////////////////////////
-    // Public methods to serialize
+    // private methods to serialize
 
     @Override
     public int subDataSizeToSerialize() {

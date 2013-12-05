@@ -15,7 +15,7 @@ import java.util.TreeSet;
 /**
  * @author dougfelt@google.com (Doug Felt)
  */
-public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable {
+abstract class LayoutCommonTable<T extends LookupTable> extends SubTable {
   private static int VERSION_OFFSET = 0;
   private static int SCRIPT_LIST_OFFSET = 4;
   private static int FEATURE_LIST_OFFSET = 6;
@@ -24,7 +24,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
 
   private static int VERSION_ID = 0x00010000;
 
-  protected final boolean dataIsCanonical;
+  private final boolean dataIsCanonical;
 
   private FeatureListTable featureList;
   private LookupListTable lookupList;
@@ -41,15 +41,16 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     this.dataIsCanonical = dataIsCanonical;
   }
 
-  static int readScriptListOffset(ReadableFontData data) {
+  private static int readScriptListOffset(ReadableFontData data) {
     return data.readUShort(SCRIPT_LIST_OFFSET);
   }
 
-  int scriptListOffset() {
+  private int scriptListOffset() {
     return readScriptListOffset(data);
   }
 
-  static ReadableFontData scriptListData(ReadableFontData commonData, boolean dataIsCanonical) {
+  private static ReadableFontData scriptListData(ReadableFontData commonData,
+      boolean dataIsCanonical) {
     int start = readScriptListOffset(commonData);
     if (dataIsCanonical) {
       int limit = readFeatureListOffset(commonData);
@@ -62,15 +63,16 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     return new ScriptListTable(scriptListData(data, dataIsCanonical), dataIsCanonical);
   }
 
-  static int readFeatureListOffset(ReadableFontData data) {
+  private static int readFeatureListOffset(ReadableFontData data) {
     return data.readUShort(FEATURE_LIST_OFFSET);
   }
 
-  int featureListOffset() {
+  private int featureListOffset() {
     return readFeatureListOffset(data);
   }
 
-  static ReadableFontData featureListData(ReadableFontData commonData, boolean dataIsCanonical) {
+  private static ReadableFontData featureListData(ReadableFontData commonData,
+      boolean dataIsCanonical) {
     int start = readFeatureListOffset(commonData);
     if (dataIsCanonical) {
       int limit = readLookupListOffset(commonData);
@@ -83,15 +85,16 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     return new FeatureListTable(featureListData(data, dataIsCanonical), dataIsCanonical);
   }
 
-  static int readLookupListOffset(ReadableFontData data) {
+  private static int readLookupListOffset(ReadableFontData data) {
     return data.readUShort(LOOKUP_LIST_OFFSET);
   }
 
-  int lookupListOffset() {
+  private int lookupListOffset() {
     return readLookupListOffset(data);
   }
 
-  static ReadableFontData lookupListData(ReadableFontData commonData, boolean dataIsCanonical) {
+  private static ReadableFontData lookupListData(ReadableFontData commonData,
+      boolean dataIsCanonical) {
     int start = readLookupListOffset(commonData);
     if (dataIsCanonical) {
       int limit = commonData.length();
@@ -100,7 +103,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     return commonData.slice(start);
   }
 
-  LookupListTable createLookupList() {
+  protected LookupListTable createLookupList() {
     return handleCreateLookupList(lookupListData(data, dataIsCanonical), dataIsCanonical);
   }
 
@@ -110,7 +113,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
   // private static final Comparator<FeatureTable> featureComparator =
   // new Comparator<FeatureTable>() {
   // @Override
-  // public int compare(FeatureTable o1, FeatureTable o2) {
+  // private int compare(FeatureTable o1, FeatureTable o2) {
   // return o1.featureTag() - o2.featureTag();
   // }
   // };
@@ -122,7 +125,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       this.map = new HashMap<Integer, FeatureTable>();
     }
 
-    public FeatureTable get(int featureIndex) {
+    private FeatureTable get(int featureIndex) {
       FeatureTable featureTable;
       synchronized (this) {
         featureTable = map.get(featureIndex);
@@ -143,18 +146,18 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     }
   }
 
-  FeatureTable getFeatureTable(int featureIndex) {
+  private FeatureTable getFeatureTable(int featureIndex) {
     return featureCache.get(featureIndex);
   }
 
-  class LookupCache {
+  private class LookupCache {
     private final Map<Integer, LookupTable> map;
 
     private LookupCache() {
       map = new HashMap<Integer, LookupTable>();
     }
 
-    public LookupTable get(int lookupIndex) {
+    private LookupTable get(int lookupIndex) {
       LookupTable lookup;
       synchronized (this) {
         lookup = map.get(lookupIndex);
@@ -175,20 +178,20 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
     }
   }
 
-  LookupTable getLookupTable(int lookupIndex) {
+  private LookupTable getLookupTable(int lookupIndex) {
     return lookupCache.get(lookupIndex);
   }
 
-  static class BidirectionalMultiMap<X, Y> {
+  private static class BidirectionalMultiMap<X, Y> {
     private final Map<X, Set<Y>> xyMap;
     private final Map<Y, Set<X>> yxMap;
 
-    BidirectionalMultiMap() {
+    private BidirectionalMultiMap() {
       xyMap = new HashMap<X, Set<Y>>();
       yxMap = new HashMap<Y, Set<X>>();
     }
 
-    void add(X x, Y y) {
+    private void add(X x, Y y) {
       Set<Y> yset = xyMap.get(x);
       if (yset == null) {
         yset = new TreeSet<Y>();
@@ -203,42 +206,42 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       xset.add(x);
     }
 
-    Set<X> xSet() {
+    private Set<X> xSet() {
       return xyMap.keySet();
     }
 
-    Set<Y> ySet() {
+    private Set<Y> ySet() {
       return yxMap.keySet();
     }
 
-    boolean containsXY(X x, Y y) {
+    private boolean containsXY(X x, Y y) {
       Set<Y> yset = xyMap.get(x);
       return yset != null && yset.contains(y);
     }
 
-    boolean containsX(X x) {
+    private boolean containsX(X x) {
       return xyMap.containsKey(x);
     }
 
-    boolean containsY(Y y) {
+    private boolean containsY(Y y) {
       return yxMap.containsKey(y);
     }
 
-    Set<Y> getX(X x) {
+    private Set<Y> getX(X x) {
       if (xyMap.containsKey(x)) {
         return Collections.unmodifiableSet(xyMap.get(x));
       }
       return null;
     }
 
-    Set<X> getY(Y y) {
+    private Set<X> getY(Y y) {
       if (yxMap.containsKey(y)) {
         return Collections.unmodifiableSet(yxMap.get(y));
       }
       return null;
     }
 
-    void remove(X x, Y y) {
+    private void remove(X x, Y y) {
       Set<Y> yset = xyMap.get(x);
       if (yset == null) {
         return;
@@ -254,7 +257,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       }
     }
 
-    void removeX(X x) {
+    private void removeX(X x) {
       Set<Y> yset = xyMap.get(x);
       if (yset == null) {
         return;
@@ -269,7 +272,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       }
     }
 
-    void removeY(Y y) {
+    private void removeY(Y y) {
       Set<X> xset = yxMap.get(y);
       if (xset == null) {
         return;
@@ -284,12 +287,12 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       }
     }
 
-    public int size() {
+    private int size() {
       return xyMap.keySet().size();
     }
   }
 
-  public static abstract class Builder<T extends LookupTable>
+  static abstract class Builder<T extends LookupTable>
   extends SubTable.Builder<LayoutCommonTable<T>> {
     private int serializedLength;
     private ScriptListTable.Builder serializedScriptListBuilder;
@@ -304,7 +307,7 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
       super(data);
     }
 
-    public Builder() {
+    private Builder() {
       super(null);
     }
 
@@ -312,12 +315,12 @@ public abstract class LayoutCommonTable<T extends LookupTable> extends SubTable 
         ReadableFontData data, boolean dataIsCanonical);
 
     private static abstract class ObjectId<T extends LookupTable> {
-      protected Builder<T> builder;
+      private Builder<T> builder;
 
-      public abstract void delete();
+      protected abstract void delete();
     }
 
-    void assertBuilder(ObjectId<T> id) {
+    private void assertBuilder(ObjectId<T> id) {
       if (this != id.builder) {
         throw new IllegalArgumentException("cannot operate on foreign or deleted id");
       }

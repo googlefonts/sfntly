@@ -5,21 +5,21 @@ import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTa
 import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class LigatureSet extends OffsetRecordTable<Ligature> {
-  public LigatureSet(ReadableFontData data, int base, boolean dataIsCanonical) {
+  LigatureSet(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
-  public static class Builder extends OffsetRecordTable.Builder<LigatureSet, Ligature> {
+  static class Builder extends OffsetRecordTable.Builder<LigatureSet, Ligature> {
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
 
-    public Builder() {
+    Builder() {
       super();
     }
 
-    public Builder(LigatureSet table) {
+    Builder(LigatureSet table) {
       super(table);
     }
 
@@ -49,7 +49,7 @@ public class LigatureSet extends OffsetRecordTable<Ligature> {
     }
 
     @Override
-    public int fieldCount() {
+    protected int fieldCount() {
       return 0;
     }
   }

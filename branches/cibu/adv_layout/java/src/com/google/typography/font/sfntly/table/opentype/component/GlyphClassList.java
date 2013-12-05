@@ -4,19 +4,19 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
 public class GlyphClassList extends NumRecordList {
-  public GlyphClassList(WritableFontData data) {
+  private GlyphClassList(WritableFontData data) {
     super(data);
   }
 
-  public GlyphClassList(ReadableFontData data) {
+  private GlyphClassList(ReadableFontData data) {
     super(data);
   }
 
-  public GlyphClassList(ReadableFontData data, int countDecrement) {
+  private GlyphClassList(ReadableFontData data, int countDecrement) {
     super(data, countDecrement);
   }
 
-  public GlyphClassList(
+  private GlyphClassList(
       ReadableFontData data, int countDecrement, int countOffset, int valuesOffset) {
     super(data, countDecrement, countOffset, valuesOffset);
   }

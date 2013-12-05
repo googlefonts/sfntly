@@ -3,19 +3,19 @@ package com.google.typography.font.sfntly.table.opentype.component;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
-public final class TagOffsetRecord implements Record {
-  public static final int RECORD_SIZE = 6;
-  public static final int TAG_POS = 0;
-  public static final int OFFSET_POS = 4;
-  public final int tag;
-  public final int offset;
+final class TagOffsetRecord implements Record {
+  static final int RECORD_SIZE = 6;
+  private static final int TAG_POS = 0;
+  private static final int OFFSET_POS = 4;
+  final int tag;
+  final int offset;
 
-  public TagOffsetRecord(ReadableFontData data, int base) {
+  TagOffsetRecord(ReadableFontData data, int base) {
     this.tag = data.readULongAsInt(base + TAG_POS);
     this.offset = data.readUShort(base + OFFSET_POS);
   }
 
-  public TagOffsetRecord(int tag, int offset) {
+  TagOffsetRecord(int tag, int offset) {
     this.tag = tag;
     this.offset = offset;
   }

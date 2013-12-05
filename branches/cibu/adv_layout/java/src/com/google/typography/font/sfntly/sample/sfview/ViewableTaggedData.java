@@ -5,7 +5,6 @@ package com.google.typography.font.sfntly.sample.sfview;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
-import com.google.typography.font.sfntly.table.opentype.TaggedData;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -26,7 +25,7 @@ import java.util.TreeMap;
 /**
  * @author dougfelt@google.com (Doug Felt)
  */
-public class ViewableTaggedData {
+class ViewableTaggedData {
   private List<Marker> markers = new ArrayList<Marker>();
   private final Style style;
   private final Metrics metrics;
@@ -35,30 +34,30 @@ public class ViewableTaggedData {
     this(markers, new Style(), new Metrics());
   }
 
-  ViewableTaggedData(List<Marker> markers, Style style, Metrics metrics) {
+  private ViewableTaggedData(List<Marker> markers, Style style, Metrics metrics) {
     this.markers = markers;
     this.style = style;
     this.metrics = metrics;
   }
 
-  static class Style {
-    int marginScale;
-    int marginOffset;
-    int marginPad;
-    int columnPad;
-    Font dataFont;
-    Font labelFont;
-    Color positionColor;
-    Color dataColor;
-    Color altColor;
-    Color labelColor;
-    Color headerColor;
+  private static class Style {
+    private int marginScale;
+    private int marginOffset;
+    private int marginPad;
+    private int columnPad;
+    private Font dataFont;
+    private Font labelFont;
+    private Color positionColor;
+    private Color dataColor;
+    private Color altColor;
+    private Color labelColor;
+    private Color headerColor;
     // shades of blue hue 221.8 saturation 5% to 35% value 93.5 (yafla)
     // E3E6EE, D7DEEE, CBD6EE, BFCDEE, B3C5EE, A7BDEE, 9BB4EE
-    Color[] depthColors = {
+    private Color[] depthColors = {
         new Color(0x9BB4EE), new Color(0xB3C5EE), new Color(0xCBD6EE), new Color(0xE3E6EE) };
 
-    Style() {
+    private Style() {
       marginScale = 4; // distance between lines
       marginOffset = 1; // distance from origin to tip of arrow/base
       marginPad = 4; // distance from marginOffset to first line
@@ -73,19 +72,19 @@ public class ViewableTaggedData {
     }
   }
 
-  static class Metrics {
-    int lineHeight; // total line height
-    int baseline; // distance from bottom up to baseline
-    int xHeight; // distance from baseline up to xHeight
-    int marginWidth;
-    int positionWidth;
-    int dataWidth;
-    int altWidth;
-    int labelWidth;
-    int headerWidth;
-    int totalWidth;
+  private static class Metrics {
+    private int lineHeight; // total line height
+    private int baseline; // distance from bottom up to baseline
+    private int xHeight; // distance from baseline up to xHeight
+    private int marginWidth;
+    private int positionWidth;
+    private int dataWidth;
+    private int altWidth;
+    private int labelWidth;
+    private int headerWidth;
+    private int totalWidth;
 
-    Metrics() {
+    private Metrics() {
       lineHeight = 15;
       xHeight = 5;
       marginWidth = 50;
@@ -96,12 +95,12 @@ public class ViewableTaggedData {
       updateTotalWidth();
     }
 
-    void zero() {
+    private void zero() {
       lineHeight = baseline = xHeight = 0;
       marginWidth = positionWidth = dataWidth = altWidth = labelWidth = headerWidth = totalWidth = 0;
     }
 
-    void updateTotalWidth() {
+    private void updateTotalWidth() {
       totalWidth = marginWidth
           + Math.max(positionWidth + dataWidth + altWidth + labelWidth, headerWidth);
     }
@@ -115,7 +114,7 @@ public class ViewableTaggedData {
     return metrics.totalWidth;
   }
 
-  public void draw(Graphics g, int x, int y) {
+  void draw(Graphics g, int x, int y) {
     DrawContext context = new DrawContext(style, metrics, g, x, y);
     for (Marker m : markers) {
       m.draw(context);
@@ -130,7 +129,7 @@ public class ViewableTaggedData {
    *          widths and line height as minimums).
    * @return the dimensions
    */
-  public Dimension measure(boolean zeroMetrics) {
+  Dimension measure(boolean zeroMetrics) {
     if (zeroMetrics) {
       metrics.zero();
     }
@@ -143,17 +142,18 @@ public class ViewableTaggedData {
     return context.dimension();
   }
 
-  static class TaggedDataImpl implements TaggedData {
+  public static class TaggedDataImpl implements TaggedData {
     private final List<Marker> markers = new ArrayList<Marker>();
     private RangeNode rangeStack;
     private final PostScriptTable post;
 
-    public TaggedDataImpl(PostScriptTable post) {
+    TaggedDataImpl(PostScriptTable post) {
       this.post = post;
     }
 
     @Override
-    public void tagRange(String string, int start, int length, int depth) {
+    public
+    void tagRange(String string, int start, int length, int depth) {
       boolean hasEnd = (length & ~0xffff) == 0;
       if (!hasEnd) {
         depth = -1;
@@ -184,7 +184,7 @@ public class ViewableTaggedData {
 
     // Range-related apis
 
-    static class RangeNode {
+    private static class RangeNode {
       String label;
       ReadableFontData data;
       RangeNode next;
@@ -333,7 +333,7 @@ public class ViewableTaggedData {
     }
   }
 
-  static class DrawContext {
+  private static class DrawContext {
     private final Style style;
     private final Metrics metrics;
     private final Graphics g; // if null, we are measuring
@@ -347,7 +347,7 @@ public class ViewableTaggedData {
     private int lastRenderedPosition;
     private int expectedPosition = -1;
 
-    public DrawContext(Style style, Metrics metrics, Graphics g, int x, int y) {
+    private DrawContext(Style style, Metrics metrics, Graphics g, int x, int y) {
       this.style = style;
       this.metrics = metrics;
       this.g = g;
@@ -361,7 +361,7 @@ public class ViewableTaggedData {
       this.lc = 0;
     }
 
-    public void measureLineHeight() {
+    private void measureLineHeight() {
       LineMetrics dataMetrics = style.dataFont.getLineMetrics("0123456789abcdef", frc);
       LineMetrics labelMetrics = style.labelFont.getLineMetrics("ABC", frc);
 
@@ -376,7 +376,7 @@ public class ViewableTaggedData {
       metrics.xHeight = xHeight - 3; // this is just not coming out right
     }
 
-    public Dimension dimension() {
+    private Dimension dimension() {
       metrics.marginWidth += style.columnPad;
       metrics.positionWidth += style.columnPad;
       metrics.dataWidth += style.columnPad;
@@ -390,12 +390,12 @@ public class ViewableTaggedData {
       return new Dimension(width, height);
     }
 
-    void newLine() {
+    private void newLine() {
       lc += 1;
       y += metrics.lineHeight;
     }
 
-    void srcRef(Reference ref) {
+    private void srcRef(Reference ref) {
       ref.setSrc(x, y);
       if (ref.sourcePosition < ref.targetPosition) {
         return;
@@ -403,7 +403,7 @@ public class ViewableTaggedData {
       drawRef(ref);
     }
 
-    void trgRef(Reference ref) {
+    private void trgRef(Reference ref) {
       ref.setTrg(x, y);
       if (ref.sourcePosition > ref.targetPosition) {
         return;
@@ -430,9 +430,9 @@ public class ViewableTaggedData {
       return REF_COLORS[m % REF_COLORS.length];
     }
 
-    RefWidthFinder refWidthFinder = new RefWidthFinder();
+    private RefWidthFinder refWidthFinder = new RefWidthFinder();
 
-    void drawRef(Reference ref) {
+    private void drawRef(Reference ref) {
       int m = refWidthFinder.add(ref);
 
       int srcx = ref.srcx - style.marginOffset;
@@ -463,7 +463,7 @@ public class ViewableTaggedData {
       g.fillPolygon(xpts, ypts, 3);
     }
 
-    int updateWidth(String s, Font f, int w) {
+    private int updateWidth(String s, Font f, int w) {
       Rectangle2D bounds = style.dataFont.getStringBounds(s, frc);
       int width = (int) Math.ceil(bounds.getWidth());
       if (width > w) {
@@ -472,7 +472,7 @@ public class ViewableTaggedData {
       return w;
     }
 
-    void markPosition(int position) {
+    private void markPosition(int position) {
       if (position == lastMarkedPosition) {
         return;
       }
@@ -494,7 +494,7 @@ public class ViewableTaggedData {
       newLine();
     }
 
-    void drawRangeBackground() {
+    private void drawRangeBackground() {
       if (measuring()) {
         return;
       }
@@ -505,7 +505,7 @@ public class ViewableTaggedData {
           metrics.totalWidth - metrics.marginWidth, metrics.lineHeight);
     }
 
-    void drawLine(int position, int value, int width, String alt, String label) {
+    private void drawLine(int position, int value, int width, String alt, String label) {
       markPosition(position);
       if (lastRenderedPosition == position) {
         if (alt == null && label == null) {
@@ -565,7 +565,7 @@ public class ViewableTaggedData {
       expectedPosition = position + width;
     }
 
-    void drawHeader(int position, String header) {
+    private void drawHeader(int position, String header) {
       markPosition(position);
       if (lastRenderedPosition == position) {
         newLine();
@@ -581,66 +581,66 @@ public class ViewableTaggedData {
       }
     }
 
-    public void rangeTransition(Range range, boolean start) {
+    private void rangeTransition(Range range, boolean start) {
       if (range.length >= 0) {
         rangeDepth = start ? range.depth : -1;
       }
     }
   }
 
-  static class Range {
-    final String name;
-    final int start;
-    final int length;
-    int depth;
+  private static class Range {
+    private final String name;
+    private final int start;
+    private final int length;
+    private int depth;
 
-    Range(String name, int start, int length, int depth) {
+    private Range(String name, int start, int length, int depth) {
       this.name = name;
       this.start = start;
       this.length = length;
       this.depth = depth;
     }
 
-    int start() {
+    private int start() {
       return start;
     }
 
-    int limit() {
+    private int limit() {
       return start + length;
     }
   }
 
-  static class Reference {
-    final int sourcePosition;
-    final int targetPosition;
-    int srcx, srcy, trgx, trgy;
-    boolean srcset, trgset;
+  private static class Reference {
+    private final int sourcePosition;
+    private final int targetPosition;
+    private int srcx, srcy, trgx, trgy;
+    private boolean srcset, trgset;
 
-    Reference(int sourcePosition, int targetPosition) {
+    private Reference(int sourcePosition, int targetPosition) {
       this.sourcePosition = sourcePosition;
       this.targetPosition = targetPosition;
     }
 
-    void setSrc(int x, int y) {
+    private void setSrc(int x, int y) {
       srcx = x - 1;
       srcy = y - 5;
       srcset = true;
     }
 
-    void setTrg(int x, int y) {
+    private void setTrg(int x, int y) {
       trgx = x;
       trgy = y - 5;
       trgset = true;
     }
   }
 
-  static class WidthUsageRecord {
-    final Map<Integer, Integer> widthUsage = new HashMap<Integer, Integer>();
+  private static class WidthUsageRecord {
+    private final Map<Integer, Integer> widthUsage = new HashMap<Integer, Integer>();
     private int width;
     private int src;
     static private final WidthUsageRecord EMPTY = new WidthUsageRecord();
 
-    public static WidthUsageRecord copyWithWidthAdded(WidthUsageRecord other, int width, int src) {
+    private static WidthUsageRecord copyWithWidthAdded(WidthUsageRecord other, int width, int src) {
       WidthUsageRecord current = new WidthUsageRecord();
       current.width = width;
       current.src = src;
@@ -655,7 +655,7 @@ public class ViewableTaggedData {
       return current;
     }
 
-    public int lowestEquality(WidthUsageRecord other) {
+    private int lowestEquality(WidthUsageRecord other) {
       for (int i = 0; this.widthUsage.containsKey(i); i++) {
         if (other.widthUsage.get(i) == this.widthUsage.get(i)) {
           return i;
@@ -664,11 +664,11 @@ public class ViewableTaggedData {
       return other.widthUsage.keySet().size();
     }
 
-    public int width() {
+    private int width() {
       return width;
     }
 
-    public int src() {
+    private int src() {
       return src;
     }
 
@@ -678,15 +678,15 @@ public class ViewableTaggedData {
     }
   }
 
-  static class RefWidthFinder {
-    final TreeMap<Integer, WidthUsageRecord> tgt2widthUsage;
+  private static class RefWidthFinder {
+    private final TreeMap<Integer, WidthUsageRecord> tgt2widthUsage;
     static private final int MAX_WIDTH = 600;
 
-    public RefWidthFinder() {
+    private RefWidthFinder() {
       tgt2widthUsage = new TreeMap<Integer, WidthUsageRecord>();
     }
 
-    public int add(Reference ref) {
+    private int add(Reference ref) {
       int src = ref.sourcePosition;
       int trg = ref.targetPosition;
       WidthUsageRecord match = null;
@@ -719,10 +719,10 @@ public class ViewableTaggedData {
     }
   }
 
-  static abstract class Marker implements Comparable<Marker> {
+  private static abstract class Marker implements Comparable<Marker> {
     final int position;
 
-    Marker(int position) {
+    private Marker(int position) {
       this.position = position;
     }
 
@@ -745,10 +745,11 @@ public class ViewableTaggedData {
       return order(rhs);
     }
 
-    static final Object[] classOrder = { RangeEnd.class, RangeStart.class, ReferenceTarget.class,
+    private static final Object[] classOrder = { RangeEnd.class, RangeStart.class,
+        ReferenceTarget.class,
       Field.class, ReferenceSource.class };
 
-    static int classOrder(Class<? extends Marker> clzz) {
+    private static int classOrder(Class<? extends Marker> clzz) {
       for (int i = 0; i < classOrder.length; ++i) {
         if (classOrder[i] == clzz) {
           return i;
@@ -758,16 +759,16 @@ public class ViewableTaggedData {
     }
   }
 
-  static class RangeStart extends Marker {
-    final Range range;
+  private static class RangeStart extends Marker {
+    private final Range range;
 
-    RangeStart(Range range) {
+    private RangeStart(Range range) {
       super(range.start());
       this.range = range;
     }
 
     @Override
-    public void draw(DrawContext c) {
+    void draw(DrawContext c) {
       c.rangeTransition(range, true);
       c.drawHeader(range.start(), range.name);
     }
@@ -778,16 +779,16 @@ public class ViewableTaggedData {
     }
   }
 
-  static class RangeEnd extends Marker {
-    final Range range;
+  private static class RangeEnd extends Marker {
+    private final Range range;
 
-    RangeEnd(Range range) {
+    private RangeEnd(Range range) {
       super(range.limit());
       this.range = range;
     }
 
     @Override
-    public void draw(DrawContext c) {
+    void draw(DrawContext c) {
     }
 
     @Override
@@ -796,13 +797,13 @@ public class ViewableTaggedData {
     }
   }
 
-  static class Field extends Marker {
-    final int width;
-    final int value;
-    final String alt;
-    final String label;
+  private static class Field extends Marker {
+    private final int width;
+    private final int value;
+    private final String alt;
+    private final String label;
 
-    Field(int position, int width, int value, String alt, String label) {
+    private Field(int position, int width, int value, String alt, String label) {
       super(position);
       this.width = width;
       this.value = value;
@@ -821,12 +822,12 @@ public class ViewableTaggedData {
     }
   }
 
-  static class ReferenceSource extends Marker {
+  private static class ReferenceSource extends Marker {
     private final Reference ref;
     private final int value;
     private final String label;
 
-    ReferenceSource(Reference ref, int value, String label) {
+    private ReferenceSource(Reference ref, int value, String label) {
       super(ref.sourcePosition);
       this.ref = ref;
       this.value = value;
@@ -846,10 +847,10 @@ public class ViewableTaggedData {
     }
   }
 
-  static class ReferenceTarget extends Marker {
+  private static class ReferenceTarget extends Marker {
     private final Reference ref;
 
-    ReferenceTarget(Reference ref) {
+    private ReferenceTarget(Reference ref) {
       super(ref.targetPosition);
       this.ref = ref;
     }

@@ -7,11 +7,11 @@ import com.google.typography.font.sfntly.table.opentype.component.RecordList;
 import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
 
 public class FeatureTable extends RecordsTable<NumRecord> {
-  public static final int FIELD_COUNT = 1;
-  public static final int FEATURE_PARAMS_INDEX = 0;
-  public static final int FEATURE_PARAMS_DEFAULT = 0;
+  private static final int FIELD_COUNT = 1;
+  private static final int FEATURE_PARAMS_INDEX = 0;
+  private static final int FEATURE_PARAMS_DEFAULT = 0;
 
-  public FeatureTable(ReadableFontData data, boolean dataIsCanonical) {
+  FeatureTable(ReadableFontData data, boolean dataIsCanonical) {
     super(data, dataIsCanonical);
   }
 
@@ -25,18 +25,18 @@ public class FeatureTable extends RecordsTable<NumRecord> {
     return FIELD_COUNT;
   }
 
-  public static class Builder extends 
+  static class Builder extends
   RecordsTable.Builder<FeatureTable, NumRecord> {
 
-    public Builder() {
+    Builder() {
       super();
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
 
-    public Builder(RecordsTable.Builder<FeatureTable, NumRecord> builder) {
+    private Builder(RecordsTable.Builder<FeatureTable, NumRecord> builder) {
       super();
       records = builder.records();
     }

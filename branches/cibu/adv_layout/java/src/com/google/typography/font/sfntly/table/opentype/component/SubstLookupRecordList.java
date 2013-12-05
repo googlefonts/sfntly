@@ -6,7 +6,7 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import java.util.Iterator;
 
 public final class SubstLookupRecordList extends RecordList<SubstLookupRecord> {
-  public SubstLookupRecordList(WritableFontData data) {
+  private SubstLookupRecordList(WritableFontData data) {
     super(data);
   }
 
@@ -18,11 +18,11 @@ public final class SubstLookupRecordList extends RecordList<SubstLookupRecord> {
     super(data, 0, countOffset, valuesOffset);
   }
 
-  public static int sizeOfListOfCount(int count) {
+  private static int sizeOfListOfCount(int count) {
     return RecordList.DATA_OFFSET + count * SubstLookupRecord.RECORD_SIZE;
   }
 
-  public SubstLookupRecord getRecordForTag(int tag) {
+  private SubstLookupRecord getRecordForTag(int tag) {
     Iterator<SubstLookupRecord> iterator = iterator();
     while (iterator.hasNext()) {
       SubstLookupRecord record = iterator.next();

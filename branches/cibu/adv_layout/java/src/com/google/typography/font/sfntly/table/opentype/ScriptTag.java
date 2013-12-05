@@ -133,18 +133,18 @@ public enum ScriptTag {
     this.description = description;
   }
 
-  public int tag() {
+  private int tag() {
     return tag;
   }
 
-  public String description() {
+  private String description() {
     return description;
   }
 
   private final int tag;
   private final String description;
 
-  public static ScriptTag fromTag(int tag) {
+  static ScriptTag fromTag(int tag) {
     for (ScriptTag script : ScriptTag.values()) {
       if (script.tag == tag) {
         return script;

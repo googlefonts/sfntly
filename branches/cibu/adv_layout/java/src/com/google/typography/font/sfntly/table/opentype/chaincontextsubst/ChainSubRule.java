@@ -3,20 +3,20 @@ package com.google.typography.font.sfntly.table.opentype.chaincontextsubst;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 
 public class ChainSubRule extends ChainSubGenericRule {
-  public ChainSubRule(ReadableFontData data, int base, boolean dataIsCanonical) {
+  ChainSubRule(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
-  public static class Builder extends ChainSubGenericRule.Builder<ChainSubRule> {
-    public Builder() {
+  static class Builder extends ChainSubGenericRule.Builder<ChainSubRule> {
+    Builder() {
       super();
     }
 
-    public Builder(ChainSubRule table) {
+    Builder(ChainSubRule table) {
       super(table);
     }
 
-    public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
+    Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data, base, dataIsCanonical);
     }
 

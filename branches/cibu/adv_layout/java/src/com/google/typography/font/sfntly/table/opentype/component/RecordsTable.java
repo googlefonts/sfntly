@@ -13,16 +13,16 @@ public abstract class RecordsTable<R extends Record> extends HeaderTable impleme
   // ///////////////
   // constructors
 
-  public RecordsTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+  protected RecordsTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     recordList = createRecordList(data.slice(base + headerSize()));
   }
 
-  public RecordsTable(ReadableFontData data, boolean dataIsCanonical) {
+  protected RecordsTable(ReadableFontData data, boolean dataIsCanonical) {
     this(data, 0, dataIsCanonical);
   }
 
-  public RecordsTable(RecordList<R> records) {
+  protected RecordsTable(RecordList<R> records) {
     super(records.readData, records.base, false);
     recordList = records;
   }
@@ -35,7 +35,7 @@ public abstract class RecordsTable<R extends Record> extends HeaderTable impleme
   // ////////////////////////////////////
   // implementations pushed to subclasses
 
-  abstract protected RecordList<R> createRecordList(ReadableFontData data);
+  protected abstract RecordList<R> createRecordList(ReadableFontData data);
 
   // ////////////////////////////////////
   // builder
@@ -44,26 +44,26 @@ public abstract class RecordsTable<R extends Record> extends HeaderTable impleme
   extends HeaderTable.Builder<T> {
 
     protected RecordList<R> records;
-    protected int serializedLength;
-    protected final int base;
+    private int serializedLength;
+    private final int base;
 
     // ///////////////
     // constructors
 
-    public Builder() {
+    protected Builder() {
       super();
       base = 0;
     }
 
-    public Builder(RecordsTable<R> table) {
+    protected Builder(RecordsTable<R> table) {
       this(table.readFontData(), table.base, table.dataIsCanonical);
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       this(data, 0, dataIsCanonical);
     }
 
-    public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data);
       this.base = base;
       if (!dataIsCanonical) {
@@ -71,26 +71,26 @@ public abstract class RecordsTable<R extends Record> extends HeaderTable impleme
       }
     }
 
-    public Builder(RecordsTable.Builder<T, R> other) {
+    protected Builder(RecordsTable.Builder<T, R> other) {
       super();
       base = other.base;
       records = other.records;
     }
 
     // ////////////////
-    // public methods
+    // private methods
 
     public RecordList<R> records() {
       return records;
     }
 
-    public int add(R record) {
+    private int add(R record) {
       prepareToEdit();
       records.add(record);
       return records.count();
     }
 
-    public boolean contains(R record) {
+    private boolean contains(R record) {
       initFromData(internalReadData(), base);
       return records.contains(record);
     }

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FontLoader {
-
   public static List<File> getFontFiles(String fontDir) {
     List<File> fontFiles = new ArrayList<File>();
     getFontFiles(fontFiles, new File(fontDir), "", true);
@@ -55,5 +54,4 @@ public class FontLoader {
       is.close();
     }
   }
-
 }

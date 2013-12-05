@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * @author dougfelt@google.com (Doug Felt)
  */
-public enum FeatureTag {
+enum FeatureTag {
   aalt("Access All Alternates"),
   abvf("Above-base Forms"),
   abvm("Above-base Mark Positioning"),
@@ -170,7 +170,7 @@ public enum FeatureTag {
     this.name = name;
   }
 
-  public static FeatureTag forTagValue(int value) {
+  private static FeatureTag forTagValue(int value) {
     synchronized(FeatureTag.class) {
       if (tagMap == null) {
         Map<Integer, FeatureTag> map = new HashMap<Integer, FeatureTag>();
@@ -183,11 +183,11 @@ public enum FeatureTag {
     }
   }
 
-  public int tag() {
+  private int tag() {
     return tag;
   }
 
-  public String longName() {
+  private String longName() {
     return name;
   }
 

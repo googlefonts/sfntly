@@ -6,10 +6,10 @@ import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTa
 import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class InnerArrayFmt1 extends OffsetRecordTable<LigatureSet> {
-  public static final int FIELD_COUNT = 1;
+  private static final int FIELD_COUNT = 1;
 
-  public static final int COVERAGE_INDEX = 0;
-  public static final int COVERAGE_DEFAULT = 0;
+  private static final int COVERAGE_INDEX = 0;
+  private static final int COVERAGE_DEFAULT = 0;
   public final CoverageTable coverage;
 
   public InnerArrayFmt1(ReadableFontData data, int base, boolean dataIsCanonical) {
@@ -64,7 +64,7 @@ public class InnerArrayFmt1 extends OffsetRecordTable<LigatureSet> {
     }
 
     @Override
-    public int fieldCount() {
+    protected int fieldCount() {
       return FIELD_COUNT;
     }
   }

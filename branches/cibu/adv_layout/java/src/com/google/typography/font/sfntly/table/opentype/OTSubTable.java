@@ -12,15 +12,15 @@ import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTabl
  *
  * @author dougfelt@google.com (Doug Felt)
  */
-public abstract class OTSubTable extends SubTable {
-  protected final boolean dataIsCanonical;
+abstract class OTSubTable extends SubTable {
+  final boolean dataIsCanonical;
 
   protected OTSubTable(ReadableFontData data, boolean dataIsCanonical) {
     super(data);
     this.dataIsCanonical = dataIsCanonical;
   }
 
-  public abstract Builder<? extends OTSubTable> builder();
+  protected abstract Builder<? extends OTSubTable> builder();
 
   /**
    * Returns a slice based on an index into an offset array.  If the data is
@@ -35,7 +35,7 @@ public abstract class OTSubTable extends SubTable {
    * @param limit the limit of the last element in the array.
    * @return the slice.
    */
-  ReadableFontData sliceData(int base, int index, int count, int stride, int limit) {
+  private ReadableFontData sliceData(int base, int index, int count, int stride, int limit) {
     int pos = base + index * stride;
     int start = data.readUShort(pos);
     if (!dataIsCanonical) {
@@ -52,12 +52,12 @@ public abstract class OTSubTable extends SubTable {
    * (offsets are contiguous in the index) and the length of the data as the limit
    * (these are the last objects in the data).
    */
-  ReadableFontData sliceData(int base, int index, int count) {
+  private ReadableFontData sliceData(int base, int index, int count) {
     return sliceData(base, index, count, 2, data.length());
   }
 
-  protected abstract static class Builder<T extends OTSubTable> extends VisibleSubTable.Builder<T> {
-    protected final boolean dataIsCanonical;
+  abstract static class Builder<T extends OTSubTable> extends VisibleSubTable.Builder<T> {
+    private final boolean dataIsCanonical;
     private int serializedLength;
 
     protected Builder(ReadableFontData data, boolean dataIsCanonical) {
@@ -73,7 +73,7 @@ public abstract class OTSubTable extends SubTable {
       }
     }
 
-    protected Builder() {
+    private Builder() {
       this(null, false);
     }
 
@@ -85,32 +85,32 @@ public abstract class OTSubTable extends SubTable {
      * Returns true if the data has not been edited, and thus there is no model
      * to serialize.
      */
-    abstract boolean unedited();
+    protected abstract boolean unedited();
 
     /**
      * Create a model for editing from the data.
      * This causes <code>unedited()</code> to return false;
      * @param data
      */
-    abstract void readModel(ReadableFontData data, boolean dataIsCanonical);
+    protected abstract void readModel(ReadableFontData data, boolean dataIsCanonical);
 
     /**
      * Computes the serialized length of the data.  This computes its own serialized
      * length and calls subDataSizeToSerialize on any subTables to get their length.
      */
-    abstract int computeSerializedLength();
+    protected abstract int computeSerializedLength();
 
     /**
      * Writes the model, which is exactly as long as computeSerializedLength.
      */
-    abstract void writeModel(WritableFontData data);
+    protected abstract void writeModel(WritableFontData data);
 
     /**
      * The first time this is called, it calls initFromData to build the model and
      * calls setModelChanged to indicate that the model will need to be written out.
      * It also resets the serializedLength so it will be recomputed.
      */
-    void prepareToEdit() {
+    protected void prepareToEdit() {
       if (unedited()) {
         readModel(internalReadData(), dataIsCanonical);
         serializedLength = -1;
@@ -135,8 +135,7 @@ public abstract class OTSubTable extends SubTable {
      * call this recursively on its sub-tables.
      */
     @Override
-    public
-    final int subDataSizeToSerialize() {
+    public final int subDataSizeToSerialize() {
       if (serializedLength == -1) {
         if (unedited()) {
             prepareToEdit();
@@ -154,8 +153,7 @@ public abstract class OTSubTable extends SubTable {
      * finishes, resets serializedLength.
      */
     @Override
-    public
-    final int subSerialize(WritableFontData newData) {
+    public final int subSerialize(WritableFontData newData) {
       if (unedited()) {
         internalReadData().copyTo(newData);
       } else {

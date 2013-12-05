@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ScriptTable extends TagOffsetsTable<LangSysTable> {
-  public static final int FIELD_COUNT = 1;
+  private static final int FIELD_COUNT = 1;
 
-  public static final int DEFAULT_LANG_SYS_INDEX = 0;
-  public static final int NO_DEFAULT_LANG_SYS = 0;
+  private static final int DEFAULT_LANG_SYS_INDEX = 0;
+  private static final int NO_DEFAULT_LANG_SYS = 0;
 
-  public ScriptTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+  ScriptTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
@@ -28,7 +28,7 @@ public class ScriptTable extends TagOffsetsTable<LangSysTable> {
     return langSysTable;
   }
 
-  public LanguageTag langSysAt(int index) {
+  private LanguageTag langSysAt(int index) {
     return LanguageTag.fromTag(this.tagAt(index));
   }
 
@@ -52,7 +52,7 @@ public class ScriptTable extends TagOffsetsTable<LangSysTable> {
   }
 
   @Override
-  public LangSysTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+  protected LangSysTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
     return new LangSysTable(data, dataIsCanonical);
   }
 
@@ -61,14 +61,14 @@ public class ScriptTable extends TagOffsetsTable<LangSysTable> {
     return FIELD_COUNT;
   }
 
-  public static class Builder extends TagOffsetsTable.Builder<ScriptTable, LangSysTable> {
+  static class Builder extends TagOffsetsTable.Builder<ScriptTable, LangSysTable> {
     private VisibleSubTable.Builder<LangSysTable> defLangSysBuilder;
 
-    public Builder() {
+    Builder() {
       super();
     }
 
-    public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
+    Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data, base, dataIsCanonical);
       int defLangSys = getField(DEFAULT_LANG_SYS_INDEX);
       if (defLangSys != NO_DEFAULT_LANG_SYS) {
@@ -76,19 +76,19 @@ public class ScriptTable extends TagOffsetsTable<LangSysTable> {
       }
     }
 
-    public Builder(ScriptTable.Builder other) {
+    private Builder(ScriptTable.Builder other) {
       super(other);
       defLangSysBuilder = other.defLangSysBuilder;
     }
 
     @Override
-    public VisibleSubTable.Builder<LangSysTable> createSubTableBuilder(
+    protected VisibleSubTable.Builder<LangSysTable> createSubTableBuilder(
         ReadableFontData data, int tag, boolean dataIsCanonical) {
       return new LangSysTable.Builder(data, dataIsCanonical);
     }
 
     @Override
-    public VisibleSubTable.Builder<LangSysTable> createSubTableBuilder() {
+    protected VisibleSubTable.Builder<LangSysTable> createSubTableBuilder() {
       return new LangSysTable.Builder();
     }
 

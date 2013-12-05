@@ -16,7 +16,7 @@ public class ChainSubGenericRule extends SubTable {
   // //////////////
   // Constructors
 
-  public ChainSubGenericRule(ReadableFontData data, int base, boolean dataIsCanonical) {
+  protected ChainSubGenericRule(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data);
     backtrackGlyphs = new NumRecordList(data);
     inputClasses = new NumRecordList(data, 1, backtrackGlyphs.limit());
@@ -25,33 +25,34 @@ public class ChainSubGenericRule extends SubTable {
         data, lookAheadGlyphs.limit(), lookAheadGlyphs.limit() + 2);
   }
 
-  public abstract static class Builder<T extends ChainSubGenericRule> extends VisibleSubTable.Builder<T> {
+  abstract static class Builder<T extends ChainSubGenericRule> extends
+      VisibleSubTable.Builder<T> {
 
-    protected boolean dataIsCanonical;
-    public NumRecordList backtrackGlyphsBuilder;
-    public NumRecordList inputGlyphsBuilder;
-    public NumRecordList lookAheadGlyphsBuilder;
-    public SubstLookupRecordList lookupRecordsBuilder;
+    private boolean dataIsCanonical;
+    private NumRecordList backtrackGlyphsBuilder;
+    private NumRecordList inputGlyphsBuilder;
+    private NumRecordList lookAheadGlyphsBuilder;
+    private SubstLookupRecordList lookupRecordsBuilder;
 
     // ///////////////
     // constructors
 
-    public Builder() {
+    protected Builder() {
       super();
     }
 
-    public Builder(ChainSubGenericRule table) {
+    protected Builder(ChainSubGenericRule table) {
       this(table.readFontData(), 0, false);
     }
 
-    public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data);
       if (!dataIsCanonical) {
         prepareToEdit();
       }
     }
 
-    public Builder(Builder<T> other) {
+    private Builder(Builder<T> other) {
       super();
       backtrackGlyphsBuilder = other.backtrackGlyphsBuilder;
       inputGlyphsBuilder = other.inputGlyphsBuilder;

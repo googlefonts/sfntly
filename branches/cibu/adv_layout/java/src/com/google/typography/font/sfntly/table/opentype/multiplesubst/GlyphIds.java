@@ -7,10 +7,10 @@ import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTa
 import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class GlyphIds extends OffsetRecordTable<NumRecordTable> {
-  public static final int FIELD_COUNT = 1;
+  private static final int FIELD_COUNT = 1;
 
-  public static final int COVERAGE_INDEX = 0;
-  public static final int COVERAGE_DEFAULT = 0;
+  private static final int COVERAGE_INDEX = 0;
+  private static final int COVERAGE_DEFAULT = 0;
   public final CoverageTable coverage;
 
   public GlyphIds(ReadableFontData data, int base, boolean dataIsCanonical) {
@@ -54,7 +54,7 @@ public class GlyphIds extends OffsetRecordTable<NumRecordTable> {
     }
 
     @Override
-    public int fieldCount() {
+    protected int fieldCount() {
       return FIELD_COUNT;
     }
 

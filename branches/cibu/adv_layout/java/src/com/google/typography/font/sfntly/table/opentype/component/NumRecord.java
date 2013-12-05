@@ -4,11 +4,11 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
 public final class NumRecord implements Record {
-  public static final int RECORD_SIZE = 2;
-  public static final int TAG_POS = 0;
-  public final int value;
+  static final int RECORD_SIZE = 2;
+  private static final int TAG_POS = 0;
+  final int value;
 
-  public NumRecord(ReadableFontData data, int base) {
+  NumRecord(ReadableFontData data, int base) {
     this.value = data.readUShort(base + TAG_POS);
   }
 

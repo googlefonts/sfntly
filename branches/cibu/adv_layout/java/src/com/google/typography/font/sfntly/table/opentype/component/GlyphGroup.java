@@ -17,17 +17,17 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
     super();
   }
 
-  public GlyphGroup(int glyph) {
+  GlyphGroup(int glyph) {
     super.set(glyph);
   }
 
-  public GlyphGroup(Collection<Integer> glyphs) {
+  GlyphGroup(Collection<Integer> glyphs) {
     for (int glyph : glyphs) {
       super.set(glyph);
     }
   }
 
-  public static GlyphGroup inverseGlyphGroup(Collection<GlyphGroup> glyphGroups) {
+  static GlyphGroup inverseGlyphGroup(Collection<GlyphGroup> glyphGroups) {
     GlyphGroup result = new GlyphGroup();
     for(GlyphGroup glyphGroup : glyphGroups) {
       result.or(glyphGroup);
@@ -36,7 +36,7 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
     return result;
   }
 
-  public GlyphGroup(int[] glyphs) {
+  private GlyphGroup(int[] glyphs) {
     for (int glyph : glyphs) {
       super.set(glyph);
     }
@@ -46,17 +46,17 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
     this.set(glyph);
   }
 
-  public void addAll(Collection<Integer> glyphs) {
+  void addAll(Collection<Integer> glyphs) {
     for (int glyph : glyphs) {
       super.set(glyph);
     }
   }
 
-  public void addAll(GlyphGroup other) {
+  void addAll(GlyphGroup other) {
     this.or(other);
   }
 
-  public void copyTo(Collection<Integer> target) {
+  void copyTo(Collection<Integer> target) {
     List<Integer> list = new LinkedList<Integer>();
     for ( int i = this.nextSetBit( 0 ); i >= 0; i = this.nextSetBit( i + 1 ) ) {
       target.add(i);
@@ -82,15 +82,15 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
     return intersection;
   }
 
-  public boolean contains(int glyph) {
+  boolean contains(int glyph) {
     return get(glyph) ^ inverse;
   }
 
-  public boolean intersects(GlyphGroup other) {
+  private boolean intersects(GlyphGroup other) {
     return !intersection(other).isEmpty();
   }
 
-  public boolean isInverse() {
+  private boolean isInverse() {
     return inverse;
   }
 

@@ -5,13 +5,13 @@ import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.component.HeaderTable;
 
 public class HeaderFmt1 extends HeaderTable {
-  public static final int FIELD_COUNT = 2;
+  private static final int FIELD_COUNT = 2;
 
-  public static final int COVERAGE_INDEX = 0;
-  public static final int COVERAGE_DEFAULT = 0;
+  private static final int COVERAGE_INDEX = 0;
+  private static final int COVERAGE_DEFAULT = 0;
 
-  public static final int DELTA_GLYPH_ID_INDEX = 1;
-  public static final int DELTA_GLYPH_ID_DEFAULT = 0;
+  private static final int DELTA_GLYPH_ID_INDEX = 1;
+  private static final int DELTA_GLYPH_ID_DEFAULT = 0;
 
   public final CoverageTable coverage;
 
@@ -56,12 +56,12 @@ public class HeaderFmt1 extends HeaderTable {
     }
 
     @Override
-    public int fieldCount() {
+    protected int fieldCount() {
       return FIELD_COUNT;
     }
 
     @Override
-    public HeaderFmt1 subBuildTable(ReadableFontData data) {
+    protected HeaderFmt1 subBuildTable(ReadableFontData data) {
       return new HeaderFmt1(data, 0, false);
     }
   }

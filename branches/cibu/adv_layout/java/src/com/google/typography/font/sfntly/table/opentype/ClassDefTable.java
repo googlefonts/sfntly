@@ -9,7 +9,7 @@ import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
 
 public class ClassDefTable extends SubstSubtable {
   public final RecordsTable<?> array;
-  public boolean dataIsCanonical;
+  private boolean dataIsCanonical;
 
   // //////////////
   // Constructors
@@ -33,7 +33,7 @@ public class ClassDefTable extends SubstSubtable {
   // ////////////////////////////////////////
   // Utility methods specific to this class
 
-  public RecordList<?> records() {
+  private RecordList<?> records() {
     return array.recordList;
   }
 
@@ -58,14 +58,14 @@ public class ClassDefTable extends SubstSubtable {
   // //////////////////////////////////
   // Builder
 
-  public static class Builder extends SubstSubtable.Builder<ClassDefTable> {
+  private static class Builder extends SubstSubtable.Builder<ClassDefTable> {
 
-    protected final RecordsTable.Builder<?, ?> arrayBuilder;
+    private final RecordsTable.Builder<?, ?> arrayBuilder;
 
     // //////////////
     // Constructors
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    private Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       switch (format) {
       case 1:
@@ -79,19 +79,19 @@ public class ClassDefTable extends SubstSubtable {
       }
     }
 
-    public Builder(ClassDefTable table) {
+    private Builder(ClassDefTable table) {
       this(table.readFontData(), table.dataIsCanonical);
     }
 
     // //////////////////////////////
-    // Public methods to update
+    // private methods to update
 
-    public int valueCount() {
+    private int valueCount() {
       return arrayBuilder.count();
     }
 
     // //////////////////////////////
-    // Public methods to serialize
+    // private methods to serialize
 
     @Override
     public int subDataSizeToSerialize() {

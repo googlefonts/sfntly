@@ -2,14 +2,14 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 
-public class GsubCommonTable extends LayoutCommonTable<GsubLookupTable> {
+class GsubCommonTable extends LayoutCommonTable<GsubLookupTable> {
 
-  protected GsubCommonTable(ReadableFontData data, boolean dataIsCanonical) {
+  GsubCommonTable(ReadableFontData data, boolean dataIsCanonical) {
     super(data, dataIsCanonical);
   }
 
   @Override
-  LookupListTable createLookupList() {
+  protected LookupListTable createLookupList() {
     return super.createLookupList();
   }
 
@@ -18,13 +18,13 @@ public class GsubCommonTable extends LayoutCommonTable<GsubLookupTable> {
     return new LookupListTable(data, dataIsCanonical);
   }
 
-  public static class Builder extends LayoutCommonTable.Builder<GsubLookupTable> {
+  static class Builder extends LayoutCommonTable.Builder<GsubLookupTable> {
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
 
-    public Builder() {
+    private Builder() {
       super(null, false);
     }
 

@@ -7,16 +7,16 @@ import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTa
 import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class ChainSubClassSetArray extends OffsetRecordTable<ChainSubClassSet> {
-  public static final int FIELD_COUNT = 4;
+  private static final int FIELD_COUNT = 4;
 
-  public static final int COVERAGE_INDEX = 0;
-  public static final int COVERAGE_DEFAULT = 0;
-  public static final int BACKTRACK_CLASS_DEF_INDEX = 1;
-  public static final int BACKTRACK_CLASS_DEF_DEFAULT = 0;
-  public static final int INPUT_CLASS_DEF_INDEX = 2;
-  public static final int INPUT_CLASS_DEF_DEFAULT = 0;
-  public static final int LOOK_AHEAD_CLASS_DEF_INDEX = 3;
-  public static final int LOOK_AHEAD_CLASS_DEF_DEFAULT = 0;
+  private static final int COVERAGE_INDEX = 0;
+  private static final int COVERAGE_DEFAULT = 0;
+  private static final int BACKTRACK_CLASS_DEF_INDEX = 1;
+  private static final int BACKTRACK_CLASS_DEF_DEFAULT = 0;
+  private static final int INPUT_CLASS_DEF_INDEX = 2;
+  private static final int INPUT_CLASS_DEF_DEFAULT = 0;
+  private static final int LOOK_AHEAD_CLASS_DEF_INDEX = 3;
+  private static final int LOOK_AHEAD_CLASS_DEF_DEFAULT = 0;
 
   public final CoverageTable coverage;
   public final ClassDefTable backtrackClassDef;
@@ -40,18 +40,18 @@ public class ChainSubClassSetArray extends OffsetRecordTable<ChainSubClassSet> {
     return new ChainSubClassSet(data, 0, dataIsCanonical);
   }
 
-  public static class Builder
+  private static class Builder
       extends OffsetRecordTable.Builder<ChainSubClassSetArray, ChainSubClassSet> {
 
-    public Builder() {
+    private Builder() {
       super();
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    private Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
 
-    public Builder(ChainSubClassSetArray table) {
+    private Builder(ChainSubClassSetArray table) {
       super(table);
     }
 

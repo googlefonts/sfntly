@@ -5,20 +5,20 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 
 import java.util.Iterator;
 
-public final class TagOffsetRecordList extends RecordList<TagOffsetRecord> {
-  public TagOffsetRecordList(WritableFontData data) {
+final class TagOffsetRecordList extends RecordList<TagOffsetRecord> {
+  TagOffsetRecordList(WritableFontData data) {
     super(data);
   }
 
-  public TagOffsetRecordList(ReadableFontData data) {
+  TagOffsetRecordList(ReadableFontData data) {
     super(data);
   }
 
-  public static int sizeOfListOfCount(int count) {
+  static int sizeOfListOfCount(int count) {
     return RecordList.DATA_OFFSET + count * TagOffsetRecord.RECORD_SIZE;
   }
 
-  public TagOffsetRecord getRecordForTag(int tag) {
+  TagOffsetRecord getRecordForTag(int tag) {
     Iterator<TagOffsetRecord> iterator = iterator();
     while (iterator.hasNext()) {
       TagOffsetRecord record = iterator.next();

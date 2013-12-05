@@ -6,10 +6,10 @@ import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTa
 import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class ChainSubRuleSetArray extends OffsetRecordTable<ChainSubRuleSet> {
-  public static final int FIELD_COUNT = 1;
+  private static final int FIELD_COUNT = 1;
 
-  public static final int COVERAGE_INDEX = 0;
-  public static final int COVERAGE_DEFAULT = 0;
+  private static final int COVERAGE_INDEX = 0;
+  private static final int COVERAGE_DEFAULT = 0;
 
   public final CoverageTable coverage;
 
@@ -57,7 +57,8 @@ public class ChainSubRuleSetArray extends OffsetRecordTable<ChainSubRuleSet> {
     }
 
     @Override
-    protected VisibleSubTable.Builder<ChainSubRuleSet> createSubTableBuilder(ChainSubRuleSet subTable) {
+    protected VisibleSubTable.Builder<ChainSubRuleSet> createSubTableBuilder(
+        ChainSubRuleSet subTable) {
       return new ChainSubRuleSet.Builder(subTable);
     }
 

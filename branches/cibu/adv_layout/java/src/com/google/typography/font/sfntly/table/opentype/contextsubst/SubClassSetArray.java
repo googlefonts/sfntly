@@ -7,12 +7,12 @@ import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTa
 import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class SubClassSetArray extends OffsetRecordTable<SubClassSet> {
-  public static final int FIELD_COUNT = 2;
+  private static final int FIELD_COUNT = 2;
 
-  public static final int COVERAGE_INDEX = 0;
-  public static final int COVERAGE_DEFAULT = 0;
-  public static final int CLASS_DEF_INDEX = 1;
-  public static final int CLASS_DEF_DEFAULT = 0;
+  private static final int COVERAGE_INDEX = 0;
+  private static final int COVERAGE_DEFAULT = 0;
+  private static final int CLASS_DEF_INDEX = 1;
+  private static final int CLASS_DEF_DEFAULT = 0;
 
   public final CoverageTable coverage;
   public final ClassDefTable classDef;
@@ -30,17 +30,17 @@ public class SubClassSetArray extends OffsetRecordTable<SubClassSet> {
     return new SubClassSet(data, 0, dataIsCanonical);
   }
 
-  public static class Builder extends OffsetRecordTable.Builder<SubClassSetArray, SubClassSet> {
+  private static class Builder extends OffsetRecordTable.Builder<SubClassSetArray, SubClassSet> {
 
-    public Builder() {
+    private Builder() {
       super();
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical, boolean isFmt2) {
+    private Builder(ReadableFontData data, boolean dataIsCanonical, boolean isFmt2) {
       super(data, dataIsCanonical);
     }
 
-    public Builder(SubClassSetArray table) {
+    private Builder(SubClassSetArray table) {
       super(table);
     }
 
@@ -72,7 +72,7 @@ public class SubClassSetArray extends OffsetRecordTable<SubClassSet> {
     }
 
     @Override
-    public int fieldCount() {
+    protected int fieldCount() {
       return FIELD_COUNT;
     }
   }
