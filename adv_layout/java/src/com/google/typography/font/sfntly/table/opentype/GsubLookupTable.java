@@ -8,25 +8,22 @@ import com.google.typography.font.sfntly.table.opentype.component.GsubLookupType
 /**
  * @author dougfelt@google.com (Doug Felt)
  */
-public abstract class GsubLookupTable extends LookupTable {
+abstract class GsubLookupTable extends LookupTable {
 
-  public GsubLookupTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+  private GsubLookupTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
-  @Override
-  public abstract GsubLookupType lookupType();
+  private static abstract class Builder<T extends GsubLookupTable> extends LookupTable.Builder {
 
-  public static abstract class Builder<T extends GsubLookupTable> extends LookupTable.Builder {
-
-    protected Builder(ReadableFontData data, boolean dataIsCanonical) {
+    private Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
 
-    protected Builder() {
+    private Builder() {
     }
 
-    protected Builder(T table) {
+    private Builder(T table) {
       super(table);
     }
   }

@@ -18,16 +18,16 @@ implements Iterable<S> {
   // ///////////////
   // constructors
 
-  public OffsetRecordTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+  protected OffsetRecordTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     recordList = new NumRecordList(data.slice(base + headerSize()));
   }
 
-  public OffsetRecordTable(ReadableFontData data, boolean dataIsCanonical) {
+  protected OffsetRecordTable(ReadableFontData data, boolean dataIsCanonical) {
     this(data, 0, dataIsCanonical);
   }
 
-  public OffsetRecordTable(NumRecordList records) {
+  protected OffsetRecordTable(NumRecordList records) {
     super(records.readData, records.base, false);
     recordList = records;
   }
@@ -73,7 +73,7 @@ implements Iterable<S> {
   // ////////////////////////////////////
   // implementations pushed to subclasses
 
-  abstract protected S readSubTable(ReadableFontData data, boolean dataIsCanonical);
+  protected abstract S readSubTable(ReadableFontData data, boolean dataIsCanonical);
 
   // ////////////////////////////////////
   // private methods
@@ -91,9 +91,9 @@ implements Iterable<S> {
   T extends OffsetRecordTable<? extends SubTable>, S extends SubTable>
   extends HeaderTable.Builder<T> {
 
-    public List<VisibleSubTable.Builder<S>> builders;
-    protected boolean dataIsCanonical;
-    protected int serializedLength;
+    private List<VisibleSubTable.Builder<S>> builders;
+    private boolean dataIsCanonical;
+    private int serializedLength;
     private int serializedCount;
     private final int base;
     private int serializedSubtablePartLength;
@@ -102,20 +102,20 @@ implements Iterable<S> {
     // ///////////////
     // constructors
 
-    public Builder() {
+    protected Builder() {
       super();
       base = 0;
     }
 
-    public Builder(T table) {
+    protected Builder(T table) {
       this(table.readFontData(), table.base, table.dataIsCanonical);
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       this(data, 0, dataIsCanonical);
     }
 
-    public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data);
       this.base = base;
       this.dataIsCanonical = dataIsCanonical;
@@ -124,7 +124,7 @@ implements Iterable<S> {
       }
     }
 
-    public Builder(NumRecordList records) {
+    protected Builder(NumRecordList records) {
       super();
       base = records.base;
       if (builders == null) {

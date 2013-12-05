@@ -4,7 +4,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class ChainSubRuleSet extends ChainSubGenericRuleSet<ChainSubRule> {
-  public ChainSubRuleSet(ReadableFontData data, int base, boolean dataIsCanonical) {
+  ChainSubRuleSet(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
@@ -13,18 +13,18 @@ public class ChainSubRuleSet extends ChainSubGenericRuleSet<ChainSubRule> {
     return new ChainSubRule(data, base, dataIsCanonical);
   }
 
-  public static class Builder
+  static class Builder
       extends ChainSubGenericRuleSet.Builder<ChainSubRuleSet, ChainSubRule> {
 
-    public Builder() {
+    Builder() {
       super();
     }
 
-    public Builder(ChainSubRuleSet table) {
+    Builder(ChainSubRuleSet table) {
       super(table);
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
 

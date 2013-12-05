@@ -30,33 +30,33 @@ public class InnerArraysFmt3 extends SubTable {
     lookupRecords = new SubstLookupRecordList(data, records.limit());
   }
 
-  public static class Builder extends VisibleSubTable.Builder<InnerArraysFmt3> {
+  private static class Builder extends VisibleSubTable.Builder<InnerArraysFmt3> {
 
-    protected boolean dataIsCanonical;
-    public CoverageArray.Builder backtrackGlyphsBuilder;
-    public CoverageArray.Builder inputGlyphsBuilder;
-    public CoverageArray.Builder lookAheadGlyphsBuilder;
-    public SubstLookupRecordList lookupRecordsBuilder;
+    private boolean dataIsCanonical;
+    private CoverageArray.Builder backtrackGlyphsBuilder;
+    private CoverageArray.Builder inputGlyphsBuilder;
+    private CoverageArray.Builder lookAheadGlyphsBuilder;
+    private SubstLookupRecordList lookupRecordsBuilder;
 
     // ///////////////
     // constructors
 
-    public Builder() {
+    private Builder() {
       super();
     }
 
-    public Builder(InnerArraysFmt3 table) {
+    private Builder(InnerArraysFmt3 table) {
       this(table.readFontData(), 0, false);
     }
 
-    public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
+    private Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data);
       if (!dataIsCanonical) {
         prepareToEdit();
       }
     }
 
-    public Builder(Builder other) {
+    private Builder(Builder other) {
       super();
       backtrackGlyphsBuilder = other.backtrackGlyphsBuilder;
       inputGlyphsBuilder = other.inputGlyphsBuilder;

@@ -6,7 +6,7 @@ import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTabl
 
 public class FeatureListTable extends TagOffsetsTable<FeatureTable> {
 
-  public FeatureListTable(ReadableFontData data, boolean dataIsCanonical) {
+  FeatureListTable(ReadableFontData data, boolean dataIsCanonical) {
     super(data, dataIsCanonical);
   }
 
@@ -15,13 +15,13 @@ public class FeatureListTable extends TagOffsetsTable<FeatureTable> {
     return new FeatureTable(data, dataIsCanonical);
   }
 
-  public static class Builder extends TagOffsetsTable.Builder<FeatureListTable, FeatureTable> {
+  static class Builder extends TagOffsetsTable.Builder<FeatureListTable, FeatureTable> {
 
-    public Builder() {
+    private Builder() {
       super();
     }
 
-    public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
+    private Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data, 0, false);
     }
 

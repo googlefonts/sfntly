@@ -6,13 +6,13 @@ import com.google.typography.font.sfntly.table.opentype.singlesubst.HeaderFmt1;
 import com.google.typography.font.sfntly.table.opentype.singlesubst.InnerArrayFmt2;
 
 public class SingleSubst extends SubstSubtable {
-  public final HeaderFmt1 fmt1;
-  public final InnerArrayFmt2 fmt2;
+  private final HeaderFmt1 fmt1;
+  private final InnerArrayFmt2 fmt2;
 
   // //////////////
   // Constructors
 
-  public SingleSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
+  SingleSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     switch (format) {
     case 1:
@@ -31,7 +31,7 @@ public class SingleSubst extends SubstSubtable {
   // //////////////////////////////////
   // Methods specific to this class
 
-  public CoverageTable coverage() {
+  private CoverageTable coverage() {
     switch (format) {
     case 1:
       return fmt1.coverage;
@@ -59,7 +59,7 @@ public class SingleSubst extends SubstSubtable {
   // //////////////////////////////////
   // Builder
 
-  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
+  private static class Builder extends SubstSubtable.Builder<SubstSubtable> {
 
     private final HeaderFmt1.Builder fmt1Builder;
     private final InnerArrayFmt2.Builder fmt2Builder;
@@ -67,26 +67,26 @@ public class SingleSubst extends SubstSubtable {
     // //////////////
     // Constructors
 
-    public Builder() {
+    private Builder() {
       super();
       fmt1Builder = new HeaderFmt1.Builder();
       fmt2Builder = new InnerArrayFmt2.Builder();
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    private Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       fmt1Builder = new HeaderFmt1.Builder(data, dataIsCanonical);
       fmt2Builder = new InnerArrayFmt2.Builder(data, dataIsCanonical);
     }
 
-    public Builder(SubstSubtable subTable) {
+    private Builder(SubstSubtable subTable) {
       SingleSubst ligSubst = (SingleSubst) subTable;
       fmt1Builder = new HeaderFmt1.Builder(ligSubst.fmt1);
       fmt2Builder = new InnerArrayFmt2.Builder(ligSubst.fmt2);
     }
 
     // ///////////////////////////////
-    // Public methods to serialize
+    // private methods to serialize
 
     @Override
     public int subDataSizeToSerialize() {

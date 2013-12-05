@@ -7,10 +7,10 @@ import com.google.typography.font.sfntly.table.opentype.component.RecordList;
 import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
 
 public class InnerArrayFmt1 extends RecordsTable<NumRecord> {
-  public static final int FIELD_COUNT = 1;
+  private static final int FIELD_COUNT = 1;
 
   public static final int START_GLYPH_INDEX = 0;
-  public static final int START_GLYPH_CONST = 0;
+  private static final int START_GLYPH_CONST = 0;
 
   public InnerArrayFmt1(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
@@ -28,7 +28,7 @@ public class InnerArrayFmt1 extends RecordsTable<NumRecord> {
 
   public static class Builder extends RecordsTable.Builder<InnerArrayFmt1, NumRecord> {
 
-    public Builder() {
+    private Builder() {
       super();
     }
 
@@ -36,7 +36,7 @@ public class InnerArrayFmt1 extends RecordsTable<NumRecord> {
       super(data, base, dataIsCanonical);
     }
 
-    public Builder(RecordsTable.Builder<InnerArrayFmt1, NumRecord> builder) {
+    private Builder(RecordsTable.Builder<InnerArrayFmt1, NumRecord> builder) {
       super(builder);
     }
 

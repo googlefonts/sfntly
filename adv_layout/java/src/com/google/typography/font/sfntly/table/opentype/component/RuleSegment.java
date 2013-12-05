@@ -5,30 +5,30 @@ import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import java.util.Collection;
 import java.util.LinkedList;
 
-public class RuleSegment extends LinkedList<GlyphGroup> {
+class RuleSegment extends LinkedList<GlyphGroup> {
   private static final long serialVersionUID = 4563803321401665616L;
 
-  public RuleSegment() {
+  RuleSegment() {
     super();
   }
 
-  public RuleSegment(GlyphGroup glyphGroup) {
+  RuleSegment(GlyphGroup glyphGroup) {
     addInternal(glyphGroup);
   }
 
-  public RuleSegment(int glyph) {
+  RuleSegment(int glyph) {
     GlyphGroup glyphGroup = new GlyphGroup(glyph);
     addInternal(glyphGroup);
   }
 
-  public RuleSegment(GlyphList glyphs) {
+  RuleSegment(GlyphList glyphs) {
     for (int glyph : glyphs) {
       GlyphGroup glyphGroup = new GlyphGroup(glyph);
       addInternal(glyphGroup);
     }
   }
 
-  public boolean add(int glyph) {
+  boolean add(int glyph) {
     GlyphGroup glyphGroup = new GlyphGroup(glyph);
     return addInternal(glyphGroup);
   }
@@ -43,7 +43,7 @@ public class RuleSegment extends LinkedList<GlyphGroup> {
     return super.addAll(glyphGroups);
   }
 
-  public boolean match(GlyphList glyphs) {
+  private boolean match(GlyphList glyphs) {
     if (glyphs.size() != this.size()) {
       return false;
     }

@@ -9,17 +9,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public abstract class HeaderTable extends SubTable {
-  public static final int FIELD_SIZE = 2;
+  protected static final int FIELD_SIZE = 2;
   protected boolean dataIsCanonical = false;
   protected int base = 0;
 
-  public HeaderTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+  protected HeaderTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data);
     this.base = base;
     this.dataIsCanonical = dataIsCanonical;
   }
 
-  public int writeFieldAt(WritableFontData newData, int index, int value) {
+  private int writeFieldAt(WritableFontData newData, int index, int value) {
     return newData.writeUShort(index * FIELD_SIZE, value);
   }
 
@@ -37,23 +37,23 @@ public abstract class HeaderTable extends SubTable {
     private Map<Integer, Integer> map = new HashMap<Integer, Integer>();
     protected boolean dataIsCanonical = false;
 
-    public Builder() {
+    protected Builder() {
       super();
       initFields();
     }
 
-    public Builder(ReadableFontData data) {
+    protected Builder(ReadableFontData data) {
       super(data);
       initFields();
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data);
       this.dataIsCanonical = dataIsCanonical;
       initFields();
     }
 
-    public Builder(T table) {
+    protected Builder(T table) {
       super();
       initFields();
       for (int i = 0; i < table.fieldCount(); i++) {
@@ -61,17 +61,17 @@ public abstract class HeaderTable extends SubTable {
       }
     }
 
-    public int setField(int index, int value) {
+    protected int setField(int index, int value) {
       return map.put(index, value);
     }
 
-    public int getField(int index) {
+    protected int getField(int index) {
       return map.get(index);
     }
 
     protected abstract void initFields();
 
-    public abstract int fieldCount();
+    protected abstract int fieldCount();
 
     public int headerSize() {
       return FIELD_SIZE * fieldCount();

@@ -8,10 +8,10 @@ import com.google.typography.font.sfntly.table.opentype.component.RecordList;
 import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
 
 public class InnerArrayFmt2 extends RecordsTable<NumRecord> {
-  public static final int FIELD_COUNT = 1;
+  private static final int FIELD_COUNT = 1;
 
-  public static final int COVERAGE_INDEX = 0;
-  public static final int COVERAGE_DEFAULT = 0;
+  private static final int COVERAGE_INDEX = 0;
+  private static final int COVERAGE_DEFAULT = 0;
   public final CoverageTable coverage;
 
   public InnerArrayFmt2(ReadableFontData data, int base, boolean dataIsCanonical) {
@@ -50,7 +50,7 @@ public class InnerArrayFmt2 extends RecordsTable<NumRecord> {
     }
 
     @Override
-    public int fieldCount() {
+    protected int fieldCount() {
       return FIELD_COUNT;
     }
 

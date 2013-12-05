@@ -13,28 +13,28 @@ import java.util.TreeMap;
 
 public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
     implements Iterable<S> {
-  public final TagOffsetRecordList recordList;
+  private final TagOffsetRecordList recordList;
 
   // ///////////////
   // constructors
 
-  public TagOffsetsTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+  protected TagOffsetsTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     recordList = new TagOffsetRecordList(data.slice(headerSize() + base));
   }
 
-  public TagOffsetsTable(ReadableFontData data, boolean dataIsCanonical) {
+  protected TagOffsetsTable(ReadableFontData data, boolean dataIsCanonical) {
     this(data, 0, dataIsCanonical);
   }
 
   // ////////////////
-  // public methods
+  // private methods
 
   public int count() {
     return recordList.count();
   }
 
-  public int tagAt(int index) {
+  protected int tagAt(int index) {
     return recordList.get(index).tag;
   }
 
@@ -43,7 +43,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
     return subTableForRecord(record);
   }
 
-  public S subTableForTag(int tag) {
+  private S subTableForTag(int tag) {
     TagOffsetRecord record = recordList.getRecordForTag(tag);
     if (record == null) {
       return null;
@@ -54,7 +54,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
   @Override
   public Iterator<S> iterator() {
     return new Iterator<S>() {
-      Iterator<TagOffsetRecord> recordIterator = recordList.iterator();
+      private Iterator<TagOffsetRecord> recordIterator = recordList.iterator();
 
       @Override
       public boolean hasNext() {
@@ -80,7 +80,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
   // ////////////////////////////////////
   // implementations pushed to subclasses
 
-  abstract protected S readSubTable(ReadableFontData data, boolean dataIsCanonical);
+  protected abstract S readSubTable(ReadableFontData data, boolean dataIsCanonical);
 
   // ////////////////////////////////////
   // private methods
@@ -93,31 +93,31 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
   public abstract static class Builder<T extends HeaderTable, S extends SubTable>
       extends HeaderTable.Builder<T> {
 
-    public TreeMap<Integer, VisibleSubTable.Builder<S>> builders;
-    protected int serializedLength;
+    private TreeMap<Integer, VisibleSubTable.Builder<S>> builders;
+    private int serializedLength;
     private int serializedCount;
     private final int base;
 
     // ///////////////
     // constructors
 
-    public Builder() {
+    protected Builder() {
       super();
       base = 0;
     }
 
-    public Builder(TagOffsetsTable<T> table) {
+    private Builder(TagOffsetsTable<T> table) {
       this(table.readFontData(), table.base, table.dataIsCanonical);
     }
 
-    public Builder(TagOffsetsTable.Builder<T, S> other) {
+    protected Builder(TagOffsetsTable.Builder<T, S> other) {
       super();
       builders = other.builders;
       dataIsCanonical = other.dataIsCanonical;
       base = other.base;
     }
 
-    public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data);
       this.base = base;
       this.dataIsCanonical = dataIsCanonical;
@@ -127,21 +127,21 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
     }
 
     // ////////////////
-    // public methods
+    // private methods
 
-    public int subTableCount() {
+    private int subTableCount() {
       if (builders == null) {
         return new TagOffsetRecordList(internalReadData().slice(headerSize() + base)).count();
       }
       return builders.size();
     }
 
-    public SubTable.Builder<? extends SubTable> builderForTag(int tag) {
+    private SubTable.Builder<? extends SubTable> builderForTag(int tag) {
       prepareToEdit();
       return builders.get(tag);
     }
 
-    public VisibleSubTable.Builder<S> addBuilderForTag(int tag) {
+    private VisibleSubTable.Builder<S> addBuilderForTag(int tag) {
       prepareToEdit();
       VisibleSubTable.Builder<S> builder = builders.get(tag);
       if (builder == null) {
@@ -151,7 +151,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
       return builder;
     }
 
-    public void removeBuilderForTag(int tag) {
+    private void removeBuilderForTag(int tag) {
       prepareToEdit();
       builders.remove(tag);
     }

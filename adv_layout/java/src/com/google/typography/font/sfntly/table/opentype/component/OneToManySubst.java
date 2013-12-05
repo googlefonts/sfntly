@@ -15,7 +15,7 @@ public class OneToManySubst extends SubstSubtable implements Iterable<NumRecordT
   // //////////////
   // Constructors
 
-  public OneToManySubst(ReadableFontData data, int base, boolean dataIsCanonical) {
+  protected OneToManySubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     if (format != 1) {
       throw new IllegalStateException("Subt format value is " + format + " (should be 1).");
@@ -39,7 +39,7 @@ public class OneToManySubst extends SubstSubtable implements Iterable<NumRecordT
     return array.iterator();
   }
 
-  protected NumRecordTable createSubTable(ReadableFontData data, boolean dataIsCanonical) {
+  private NumRecordTable createSubTable(ReadableFontData data, boolean dataIsCanonical) {
     return array.readSubTable(data, dataIsCanonical);
   }
 
@@ -53,52 +53,52 @@ public class OneToManySubst extends SubstSubtable implements Iterable<NumRecordT
   // //////////////////////////////////
   // Builder
 
-  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
+  private static class Builder extends SubstSubtable.Builder<SubstSubtable> {
 
     private final GlyphIds.Builder arrayBuilder;
 
     // //////////////
     // Constructors
 
-    public Builder() {
+    private Builder() {
       super();
       arrayBuilder = new GlyphIds.Builder();
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    private Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       arrayBuilder = new GlyphIds.Builder(data, dataIsCanonical);
     }
 
-    public Builder(SubstSubtable subTable) {
+    private Builder(SubstSubtable subTable) {
       OneToManySubst multiSubst = (OneToManySubst) subTable;
       arrayBuilder = new GlyphIds.Builder(multiSubst.array);
     }
 
     // /////////////////////////////
-    // Public methods for builders
+    // private methods for builders
 
-    public int subTableCount() {
+    private int subTableCount() {
       return arrayBuilder.subTableCount();
     }
 
-    public SubTable.Builder<? extends SubTable> builderForTag(int tag) {
+    private SubTable.Builder<? extends SubTable> builderForTag(int tag) {
       setModelChanged();
       return arrayBuilder.builderForTag(tag);
     }
 
-    public VisibleSubTable.Builder<NumRecordTable> addBuilder() {
+    private VisibleSubTable.Builder<NumRecordTable> addBuilder() {
       setModelChanged();
       return arrayBuilder.addBuilder();
     }
 
-    public void removeBuilderForTag(int tag) {
+    private void removeBuilderForTag(int tag) {
       setModelChanged();
       arrayBuilder.removeBuilderForTag(tag);
     }
 
     // ///////////////////////////////
-    // Public methods to serialize
+    // private methods to serialize
 
     @Override
     public int subDataSizeToSerialize() {

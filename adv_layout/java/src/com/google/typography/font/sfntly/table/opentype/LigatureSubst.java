@@ -15,7 +15,7 @@ public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet
   // //////////////
   // Constructors
 
-  public LigatureSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
+  LigatureSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     if (format != 1) {
       throw new IllegalStateException("Subt format value is " + format + " (should be 1).");
@@ -39,7 +39,7 @@ public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet
     return array.iterator();
   }
 
-  protected LigatureSet createSubTable(ReadableFontData data, boolean dataIsCanonical) {
+  private LigatureSet createSubTable(ReadableFontData data, boolean dataIsCanonical) {
     return array.readSubTable(data, dataIsCanonical);
   }
 
@@ -53,52 +53,52 @@ public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet
   // //////////////////////////////////
   // Builder
 
-  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
+  static class Builder extends SubstSubtable.Builder<SubstSubtable> {
 
     private final InnerArrayFmt1.Builder arrayBuilder;
 
     // //////////////
     // Constructors
 
-    public Builder() {
+    Builder() {
       super();
       arrayBuilder = new InnerArrayFmt1.Builder();
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       arrayBuilder = new InnerArrayFmt1.Builder(data, dataIsCanonical);
     }
 
-    public Builder(SubstSubtable subTable) {
+    Builder(SubstSubtable subTable) {
       LigatureSubst ligSubst = (LigatureSubst) subTable;
       arrayBuilder = new InnerArrayFmt1.Builder(ligSubst.array);
     }
 
     // /////////////////////////////
-    // Public methods for builders
+    // private methods for builders
 
-    public int subTableCount() {
+    private int subTableCount() {
       return arrayBuilder.subTableCount();
     }
 
-    public SubTable.Builder<? extends SubTable> builderForTag(int tag) {
+    private SubTable.Builder<? extends SubTable> builderForTag(int tag) {
       setModelChanged();
       return arrayBuilder.builderForTag(tag);
     }
 
-    public VisibleSubTable.Builder<LigatureSet> addBuilder() {
+    private VisibleSubTable.Builder<LigatureSet> addBuilder() {
       setModelChanged();
       return arrayBuilder.addBuilder();
     }
 
-    public void removeBuilderForTag(int tag) {
+    private void removeBuilderForTag(int tag) {
       setModelChanged();
       arrayBuilder.removeBuilderForTag(tag);
     }
 
     // ///////////////////////////////
-    // Public methods to serialize
+    // private methods to serialize
 
     @Override
     public int subDataSizeToSerialize() {

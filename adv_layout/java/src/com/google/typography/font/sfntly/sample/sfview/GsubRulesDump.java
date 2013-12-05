@@ -12,9 +12,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class GsubRulesDump {
+class GsubRulesDump {
   public static void main(String[] args) throws IOException {
-
     String fontName = args[0];
     String txt = args[1];
 
@@ -31,7 +30,7 @@ public class GsubRulesDump {
     System.out.println("Closure: " + ruleClosure.toString(post));
   }
 
-  public static Font[] loadFont(File file) throws IOException {
+  private static Font[] loadFont(File file) throws IOException {
     FontFactory fontFactory = FontFactory.getInstance();
     fontFactory.fingerprintFont(true);
     FileInputStream is = new FileInputStream(file);

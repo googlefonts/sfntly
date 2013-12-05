@@ -6,15 +6,15 @@ import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTa
 import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class LookupTable extends OffsetRecordTable<SubstSubtable> {
-  public static final int FIELD_COUNT = 2;
+  private static final int FIELD_COUNT = 2;
 
-  public static final int LOOKUP_TYPE_INDEX = 0;
-  public static final int LOOKUP_TYPE_DEFAULT = 0;
+  static final int LOOKUP_TYPE_INDEX = 0;
+  private static final int LOOKUP_TYPE_DEFAULT = 0;
 
-  public static final int LOOKUP_FLAG_INDEX = 1;
-  public static final int LOOKUP_FLAG_DEFAULT = 0;
+  private static final int LOOKUP_FLAG_INDEX = 1;
+  private static final int LOOKUP_FLAG_DEFAULT = 0;
 
-  public enum LookupFlagBit {
+  private enum LookupFlagBit {
     RIGHT_TO_LEFT(0x0001),
     IGNORE_BASE_GLYPHS(0x0002),
     IGNORE_LIGATURES(0x0004),
@@ -29,12 +29,12 @@ public class LookupTable extends OffsetRecordTable<SubstSubtable> {
       this.bit = bit;
     }
 
-    public int getValue(int value) {
+    private int getValue(int value) {
       return bit & value;
     }
   }
 
-  public LookupTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+  protected LookupTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     int lookupFlag = getField(LOOKUP_FLAG_INDEX);
     if (LookupFlagBit.USE_MARK_FILTERING_SET.getValue(lookupFlag) != 0) {
@@ -50,12 +50,12 @@ public class LookupTable extends OffsetRecordTable<SubstSubtable> {
     return GsubLookupType.forTypeNum(getField(LOOKUP_TYPE_INDEX));
   }
 
-  public GsubLookupType lookupFlag() {
+  private GsubLookupType lookupFlag() {
     return GsubLookupType.forTypeNum(getField(LOOKUP_FLAG_INDEX));
   }
 
   @Override
-  public SubstSubtable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+  protected SubstSubtable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
     int lookupType = getField(LOOKUP_TYPE_INDEX);
     GsubLookupType gsubLookupType = GsubLookupType.forTypeNum(lookupType);
     switch (gsubLookupType) {
@@ -87,24 +87,24 @@ public class LookupTable extends OffsetRecordTable<SubstSubtable> {
     return FIELD_COUNT;
   }
 
-  public Builder builder() {
+  Builder builder() {
     return new Builder();
   }
 
   public static class Builder extends OffsetRecordTable.Builder<LookupTable, SubstSubtable> {
-    public Builder() {
+    Builder() {
       super();
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    Builder(ReadableFontData data, boolean dataIsCanonical) {
       this(data, 0, dataIsCanonical);
     }
 
-    public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
+    private Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data, base, dataIsCanonical);
     }
 
-    public Builder(LookupTable table) {
+    Builder(LookupTable table) {
       super(table);
     }
 
@@ -135,7 +135,7 @@ public class LookupTable extends OffsetRecordTable<SubstSubtable> {
     }
 
     @Override
-    protected void initFields() {
+    public void initFields() {
       setField(LOOKUP_TYPE_INDEX, LOOKUP_TYPE_DEFAULT);
       setField(LOOKUP_FLAG_INDEX, LOOKUP_FLAG_INDEX);
     }

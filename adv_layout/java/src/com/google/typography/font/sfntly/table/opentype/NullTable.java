@@ -5,35 +5,35 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public final class NullTable extends SubstSubtable {
-  public static final int RECORD_SIZE = 0;
+  private static final int RECORD_SIZE = 0;
 
-  public NullTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+  NullTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
-  public NullTable(ReadableFontData data) {
+  private NullTable(ReadableFontData data) {
     super(data, 0, false);
   }
 
-  public NullTable() {
+  private NullTable() {
     super(null, 0, false);
   }
 
-  public int writeTo(WritableFontData newData, int base) {
+  private int writeTo(WritableFontData newData, int base) {
     return RECORD_SIZE;
   }
 
-  public static class Builder extends VisibleSubTable.Builder<NullTable> {
-    public Builder() {
+  private static class Builder extends VisibleSubTable.Builder<NullTable> {
+    private Builder() {
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    private Builder(ReadableFontData data, boolean dataIsCanonical) {
     }
 
-    public Builder(NullTable table) {
+    private Builder(NullTable table) {
     }
 
-    public void set(NullTable header) {
+    private void set(NullTable header) {
       setModelChanged();
     }
 
@@ -42,7 +42,7 @@ public final class NullTable extends SubstSubtable {
       return NullTable.RECORD_SIZE;
     }
 
-    public int subSerialize(WritableFontData newData, int subTableOffset) {
+    private int subSerialize(WritableFontData newData, int subTableOffset) {
       return NullTable.RECORD_SIZE;
     }
 

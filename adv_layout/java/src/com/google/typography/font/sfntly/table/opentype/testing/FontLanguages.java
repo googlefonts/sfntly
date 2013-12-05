@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class FontLanguages {
-  public static String[][] langScriptData = { { "aa", "Latn" },
+class FontLanguages {
+  private static String[][] langScriptData = { { "aa", "Latn" },
     { "ab", "Cyrl" },
     { "abq", "Cyrl" },
     { "ace", "Latn" },
@@ -604,8 +604,8 @@ public class FontLanguages {
     { "zun", "Latn" },
     { "zza", "Arab" }, };
 
-  public static Map<String, ScriptTag> fontSpecificScript = new HashMap<String, ScriptTag>();
-  public Map<ScriptTag, Set<String>> scriptLangMap = new HashMap<ScriptTag, Set<String>>();
+  private static Map<String, ScriptTag> fontSpecificScript = new HashMap<String, ScriptTag>();
+  private Map<ScriptTag, Set<String>> scriptLangMap = new HashMap<ScriptTag, Set<String>>();
   static {
     fontSpecificScript.put("laoo", ScriptTag.lao);
     fontSpecificScript.put("yiii", ScriptTag.yi);
@@ -618,7 +618,7 @@ public class FontLanguages {
 
   }
 
-  public FontLanguages(List<String> availableLangs) {
+  FontLanguages(List<String> availableLangs) {
     for (String[] entry : langScriptData) {
       String lang = entry[0];
       if (!availableLangs.contains(lang)) {
@@ -660,7 +660,7 @@ public class FontLanguages {
     langs.add(lang);
   }
 
-  public Set<String> get(Font font) {
+  Set<String> get(Font font) {
     Set<String> langs = new HashSet<String>();
     GSubTable gsub = font.getTable(Tag.GSUB);
     if (gsub == null) {

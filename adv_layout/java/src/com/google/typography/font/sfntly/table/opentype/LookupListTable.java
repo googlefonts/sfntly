@@ -5,9 +5,9 @@ import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTa
 import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class LookupListTable extends OffsetRecordTable<LookupTable> {
-  public static final int FIELD_COUNT = 0;
+  private static final int FIELD_COUNT = 0;
 
-  public LookupListTable(ReadableFontData data, boolean dataIsCanonical) {
+  LookupListTable(ReadableFontData data, boolean dataIsCanonical) {
     super(data, dataIsCanonical);
   }
 
@@ -16,7 +16,7 @@ public class LookupListTable extends OffsetRecordTable<LookupTable> {
     return new LookupTable(data, base, dataIsCanonical);
   }
 
-  public static class Builder extends OffsetRecordTable.Builder<LookupListTable, LookupTable> {
+  static class Builder extends OffsetRecordTable.Builder<LookupListTable, LookupTable> {
 
     @Override
     protected LookupListTable readTable(

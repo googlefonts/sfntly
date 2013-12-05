@@ -7,9 +7,9 @@ import com.google.typography.font.sfntly.table.opentype.component.OffsetRecordTa
 import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 
 public class CoverageArray extends OffsetRecordTable<CoverageTable> {
-  public static final int FIELD_COUNT = 0;
+  private static final int FIELD_COUNT = 0;
 
-  public CoverageArray(ReadableFontData data, int base, boolean dataIsCanonical) {
+  private CoverageArray(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
@@ -18,21 +18,21 @@ public class CoverageArray extends OffsetRecordTable<CoverageTable> {
   }
 
   @Override
-  public CoverageTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
+  protected CoverageTable readSubTable(ReadableFontData data, boolean dataIsCanonical) {
     return new CoverageTable(data, 0, dataIsCanonical);
   }
 
   public static class Builder extends OffsetRecordTable.Builder<CoverageArray, CoverageTable> {
 
-    public Builder() {
+    private Builder() {
       super();
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    private Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
 
-    public Builder(CoverageArray table) {
+    private Builder(CoverageArray table) {
       super(table);
     }
 

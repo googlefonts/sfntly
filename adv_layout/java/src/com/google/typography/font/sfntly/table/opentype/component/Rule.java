@@ -22,13 +22,13 @@ import java.util.Map;
 import java.util.Set;
 
 public class Rule {
-  public final RuleSegment backtrack;
-  public final RuleSegment input;
-  public final RuleSegment lookAhead;
-  public final RuleSegment subst;
-  public final int hashCode;
+  private final RuleSegment backtrack;
+  private final RuleSegment input;
+  private final RuleSegment lookAhead;
+  final RuleSegment subst;
+  private final int hashCode;
 
-  public Rule(RuleSegment backtrack, RuleSegment input, RuleSegment lookAhead, RuleSegment subst) {
+  Rule(RuleSegment backtrack, RuleSegment input, RuleSegment lookAhead, RuleSegment subst) {
     this.backtrack = backtrack;
     this.input = input;
     this.lookAhead = lookAhead;
@@ -36,7 +36,7 @@ public class Rule {
     this.hashCode = getHashCode();
   }
 
-  public Rule(Rule other, RuleSegment subst) {
+  private Rule(Rule other, RuleSegment subst) {
     this.backtrack = other.backtrack;
     this.input = other.input;
     this.lookAhead = other.lookAhead;
@@ -129,7 +129,7 @@ public class Rule {
     return rules;
   }
 
-  public static Set<Integer> featuredLookups(Font font) {
+  private static Set<Integer> featuredLookups(Font font) {
     GSubTable gsub = font.getTable(Tag.GSUB);
     if (gsub == null) {
       return null;
@@ -197,7 +197,7 @@ public class Rule {
 
   // Rule operation
 
-  public void applyRuleOnRuleWithSubst(Rule targetRule, int at, LinkedList<Rule> accumulateTo) {
+  private void applyRuleOnRuleWithSubst(Rule targetRule, int at, LinkedList<Rule> accumulateTo) {
     RuleSegment matchSegment = targetRule.match(this, at);
     if (matchSegment == null) {
       return;
@@ -257,7 +257,7 @@ public class Rule {
     }
   }
 
-  static Set<RuleSegment> permuteToSegments(List<GlyphGroup> glyphGroups) {
+  private static Set<RuleSegment> permuteToSegments(List<GlyphGroup> glyphGroups) {
     Set<RuleSegment> result = new LinkedHashSet<RuleSegment>();
     result.add(new RuleSegment());
 
@@ -276,7 +276,7 @@ public class Rule {
     return result;
   }
 
-  static Rule applyRuleOnRuleWithoutSubst(Rule ruleToApply, Rule targetRule, int at) {
+  private static Rule applyRuleOnRuleWithoutSubst(Rule ruleToApply, Rule targetRule, int at) {
 
     RuleSegment matchSegment = targetRule.match(ruleToApply, at);
     if (matchSegment == null) {
@@ -294,13 +294,15 @@ public class Rule {
     return new Rule(newBacktrack, ruleToApply.input, newLookAhead, ruleToApply.subst);
   }
 
-  static void applyRulesOnRuleWithSubst(Set<Rule> rulesToApply, Rule targetRule, int at, LinkedList<Rule> accumulateTo) {
+  private static void applyRulesOnRuleWithSubst(Set<Rule> rulesToApply, Rule targetRule, int at,
+      LinkedList<Rule> accumulateTo) {
     for (Rule ruleToApply : rulesToApply) {
       ruleToApply.applyRuleOnRuleWithSubst(targetRule, at, accumulateTo);
     }
   }
 
-  static void applyRulesOnRuleWithoutSubst(Set<Rule> rulesToApply, Rule targetRule, int at, LinkedList<Rule> accumulateTo) {
+  private static void applyRulesOnRuleWithoutSubst(Set<Rule> rulesToApply, Rule targetRule, int at,
+      LinkedList<Rule> accumulateTo) {
     for (Rule ruleToApply : rulesToApply) {
       Rule newRule = applyRuleOnRuleWithoutSubst(ruleToApply, targetRule, at);
       if (newRule != null) {
@@ -309,7 +311,8 @@ public class Rule {
     }
   }
 
-  static LinkedList<Rule> applyRulesOnRules(Set<Rule> rulesToApply, List<Rule> targetRules, int at) {
+  static LinkedList<Rule> applyRulesOnRules(Set<Rule> rulesToApply, List<Rule> targetRules,
+      int at) {
     LinkedList<Rule> result = new LinkedList<Rule>();
     for (Rule targetRule : targetRules) {
       if (targetRule.subst != null) {
@@ -374,7 +377,7 @@ public class Rule {
     return thisAllSegments;
   }
 
-  static Rule prependToInput(int prefix, Rule other) {
+  private static Rule prependToInput(int prefix, Rule other) {
     RuleSegment input = new RuleSegment(prefix);
     input.addAll(other.input);
 
@@ -399,7 +402,8 @@ public class Rule {
     return result;
   }
 
-  static Set<Rule> oneToOneRules(RuleSegment backtrack, List<Integer> inputs, RuleSegment lookAhead, List<Integer> substs) {
+  static Set<Rule> oneToOneRules(RuleSegment backtrack, List<Integer> inputs,
+      RuleSegment lookAhead, List<Integer> substs) {
     if (inputs.size() != substs.size()) {
       throw new IllegalArgumentException("input - subst should have same count");
     }
@@ -417,7 +421,7 @@ public class Rule {
     return oneToOneRules(null, inputs, null, substs);
   }
 
-  static List<Rule> addContextToInputs(
+  private static List<Rule> addContextToInputs(
       RuleSegment backtrack, List<RuleSegment> inputs, RuleSegment lookAhead) {
     List<Rule> result = new ArrayList<Rule>();
     for (RuleSegment input : inputs) {
@@ -437,7 +441,7 @@ public class Rule {
     return list;
   }
 
-  public static void dumpRuleMap(Map<Integer, Set<Rule>> rulesList, PostScriptTable post) {
+  private static void dumpRuleMap(Map<Integer, Set<Rule>> rulesList, PostScriptTable post) {
     for (int index : rulesList.keySet()) {
       Set<Rule> rules = rulesList.get(index);
       System.out.println(
@@ -522,7 +526,7 @@ public class Rule {
     return hashCode;
   }
 
-  public int getHashCode() {
+  private int getHashCode() {
     int hashCode = 1;
     for (RuleSegment e : new RuleSegment[] {input, subst, backtrack, lookAhead}) {
       hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());

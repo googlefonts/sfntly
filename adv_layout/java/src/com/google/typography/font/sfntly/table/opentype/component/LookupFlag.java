@@ -1,6 +1,6 @@
 package com.google.typography.font.sfntly.table.opentype.component;
 
-public enum LookupFlag {
+enum LookupFlag {
   RIGHT_TO_LEFT(1),
   IGNORE_BASE_GLYPHS(2),
   IGNORE_LIGATURES(4),

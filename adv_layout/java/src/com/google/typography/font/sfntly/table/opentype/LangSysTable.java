@@ -7,26 +7,26 @@ import com.google.typography.font.sfntly.table.opentype.component.RecordList;
 import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
 
 public class LangSysTable extends RecordsTable<NumRecord> {
-  public static final int FIELD_COUNT = 2;
+  private static final int FIELD_COUNT = 2;
 
-  public static final int LOOKUP_ORDER_INDEX = 0;
-  public static final int LOOKUP_ORDER_CONST = 0;
+  private static final int LOOKUP_ORDER_INDEX = 0;
+  private static final int LOOKUP_ORDER_CONST = 0;
 
-  public static final int REQ_FEATURE_INDEX_INDEX = 1;
-  public static final int NO_REQ_FEATURE = 0xffff;
+  private static final int REQ_FEATURE_INDEX_INDEX = 1;
+  private static final int NO_REQ_FEATURE = 0xffff;
 
-  public LangSysTable(ReadableFontData data, boolean dataIsCanonical) {
+  LangSysTable(ReadableFontData data, boolean dataIsCanonical) {
     super(data, dataIsCanonical);
     if (getField(LOOKUP_ORDER_INDEX) != LOOKUP_ORDER_CONST) {
       throw new IllegalArgumentException();
     }
   }
 
-  public boolean hasRequiredFeature() {
+  private boolean hasRequiredFeature() {
     return getField(REQ_FEATURE_INDEX_INDEX) != NO_REQ_FEATURE;
   }
 
-  public int requiredFeature() {
+  private int requiredFeature() {
     return getField(REQ_FEATURE_INDEX_INDEX);
   }
 
@@ -40,24 +40,23 @@ public class LangSysTable extends RecordsTable<NumRecord> {
     return FIELD_COUNT;
   }
 
-  public static class Builder extends RecordsTable.Builder<LangSysTable, NumRecord> {
-
-    public Builder() {
+  static class Builder extends RecordsTable.Builder<LangSysTable, NumRecord> {
+    Builder() {
       super();
     }
 
-    public Builder(ReadableFontData data, boolean dataIsCanonical) {
+    Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
 
-    public Builder(RecordsTable.Builder<LangSysTable, NumRecord> builder) {
+    private Builder(RecordsTable.Builder<LangSysTable, NumRecord> builder) {
       super(builder);
     }
 
     // //////////////////////////////
-    // Public methods to update
+    // private methods to update
 
-    public Builder addFeatureIndices(int... indices) {
+    private Builder addFeatureIndices(int... indices) {
       for (int index : indices) {
         NumRecord record = new NumRecord(index);
         if (!records.contains(record)) {
@@ -67,7 +66,7 @@ public class LangSysTable extends RecordsTable<NumRecord> {
       return this;
     }
 
-    public Builder setRequiredFeatureIndex(int index) {
+    private Builder setRequiredFeatureIndex(int index) {
       NumRecord record = new NumRecord(index);
       if (!records.contains(record)) {
         return this;

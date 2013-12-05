@@ -20,11 +20,11 @@ import javax.swing.SwingConstants;
 /**
  * @author dougfelt@google.com (Doug Felt)
  */
-public class SFFontView extends JComponent implements Scrollable {
+class SFFontView extends JComponent implements Scrollable {
   private static final long serialVersionUID = 1L;
   private final ViewableTaggedData viewer;
 
-  public SFFontView(Font font) {
+  SFFontView(Font font) {
     setBackground(Color.WHITE);
 
     PostScriptTable post = font.getTable(Tag.post);

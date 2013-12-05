@@ -20,7 +20,7 @@ public class RangeRecordTable extends RecordsTable<RangeRecord> {
 
   public static class Builder extends RecordsTable.Builder<RangeRecordTable, RangeRecord> {
 
-    public Builder() {
+    private Builder() {
       super();
     }
 
@@ -28,7 +28,7 @@ public class RangeRecordTable extends RecordsTable<RangeRecord> {
       super(data, base, dataIsCanonical);
     }
 
-    public Builder(RecordsTable.Builder<RangeRecordTable, RangeRecord> builder) {
+    private Builder(RecordsTable.Builder<RangeRecordTable, RangeRecord> builder) {
       super();
       records = builder.records();
     }
@@ -50,7 +50,7 @@ public class RangeRecordTable extends RecordsTable<RangeRecord> {
     }
 
     @Override
-    public int fieldCount() {
+    protected int fieldCount() {
       return 0;
     }
 

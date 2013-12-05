@@ -3,6 +3,7 @@
 package com.google.typography.font.sfntly.sample.sfview;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
+import com.google.typography.font.sfntly.sample.sfview.TaggedData.FieldType;
 import com.google.typography.font.sfntly.table.FontDataTable;
 import com.google.typography.font.sfntly.table.opentype.AlternateSubst;
 import com.google.typography.font.sfntly.table.opentype.ChainContextSubst;
@@ -24,8 +25,6 @@ import com.google.typography.font.sfntly.table.opentype.ScriptListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTable;
 import com.google.typography.font.sfntly.table.opentype.SingleSubst;
 import com.google.typography.font.sfntly.table.opentype.SubstSubtable;
-import com.google.typography.font.sfntly.table.opentype.TaggedData;
-import com.google.typography.font.sfntly.table.opentype.TaggedData.FieldType;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubClassRule;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubClassSet;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubGenericRuleSet;
@@ -56,18 +55,18 @@ import java.util.TreeSet;
 /**
  * @author dougfelt@google.com (Doug Felt)
  */
-public class OtTableTagger {
+class OtTableTagger {
   private final TaggedData td;
   private final Map<Class<? extends FontDataTable>, TagMethod> tagMethodRegistry;
 
-  public OtTableTagger(TaggedData tdata) {
+  OtTableTagger(TaggedData tdata) {
     this.td = tdata;
     this.tagMethodRegistry = new HashMap<Class<? extends FontDataTable>, TagMethod>();
 
     registerTagMethods();
   }
 
-  public void tag(GSubTable gsub) {
+  void tag(GSubTable gsub) {
     if (gsub == null) {
       return;
     }
@@ -79,7 +78,7 @@ public class OtTableTagger {
 
   private final List<String> tableCache = new ArrayList<String>();
 
-  public void tagTable(FontDataTable table) {
+  private void tagTable(FontDataTable table) {
     if (table == null) {
       return;
     }
@@ -104,13 +103,13 @@ public class OtTableTagger {
   }
 
   abstract class TagMethod {
-    protected final Class<? extends FontDataTable> clzz;
+    private final Class<? extends FontDataTable> clzz;
 
-    TagMethod(Class<? extends FontDataTable> clzz) {
+    private TagMethod(Class<? extends FontDataTable> clzz) {
       this.clzz = clzz;
     }
 
-    String tableLabel(FontDataTable table) {
+    private String tableLabel(FontDataTable table) {
       Class<?> clzz = table.getClass();
       Class<?> encl = clzz.getEnclosingClass();
       if (encl == null) {
@@ -119,7 +118,7 @@ public class OtTableTagger {
       return encl.getSimpleName() + "." + clzz.getSimpleName();
     }
 
-    abstract void tag(FontDataTable table);
+    protected abstract void tag(FontDataTable table);
   }
 
   private void register(TagMethod m) {
@@ -137,7 +136,8 @@ public class OtTableTagger {
   void registerTagMethods() {
     register(new TagMethod(ScriptListTable.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         ScriptListTable table = (ScriptListTable) fdt;
         int scriptCount = td.tagRangeField(FieldType.SHORT, "script count");
         for (int i = 0; i < scriptCount; ++i) {
@@ -152,7 +152,8 @@ public class OtTableTagger {
 
     register(new TagMethod(ScriptTable.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         ScriptTable table = (ScriptTable) fdt;
         td.tagRangeField(FieldType.OFFSET_NONZERO, "default lang sys");
         int langCount = td.tagRangeField(FieldType.SHORT, "language count");
@@ -169,7 +170,8 @@ public class OtTableTagger {
 
     register(new TagMethod(LangSysTable.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         LangSysTable table = (LangSysTable) fdt;
         td.tagRangeField(FieldType.SHORT_IGNORED, "lookup order");
         td.tagRangeField(FieldType.SHORT_IGNORED_FFFF, "required feature");
@@ -182,7 +184,8 @@ public class OtTableTagger {
 
     register(new TagMethod(FeatureListTable.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         FeatureListTable table = (FeatureListTable) fdt;
         int featureCount = td.tagRangeField(FieldType.SHORT, "feature count");
         for (int i = 0; i < featureCount; ++i) {
@@ -197,7 +200,8 @@ public class OtTableTagger {
 
     register(new TagMethod(FeatureTable.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         FeatureTable table = (FeatureTable) fdt;
         td.tagRangeField(FieldType.OFFSET_NONZERO, "feature params");
         td.tagRangeField(FieldType.SHORT, "lookup count");
@@ -209,7 +213,8 @@ public class OtTableTagger {
 
     register(new TagMethod(LookupListTable.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         LookupListTable table = (LookupListTable) fdt;
         int lookupCount = td.tagRangeField(FieldType.SHORT, "lookup count");
         for (int i = 0; i < lookupCount; ++i) {
@@ -226,7 +231,8 @@ public class OtTableTagger {
 
     register(new TagMethod(LookupTable.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         LookupTable table = (LookupTable) fdt;
         td.tagRangeField(FieldType.SHORT, "lookup type");
         td.tagRangeField(FieldType.SHORT, "lookup flags");
@@ -243,7 +249,8 @@ public class OtTableTagger {
 
     register(new TagMethod(LigatureSubst.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         LigatureSubst table = (LigatureSubst) fdt;
         td.tagRangeField(FieldType.SHORT, "subst format");
         td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
@@ -264,7 +271,8 @@ public class OtTableTagger {
 
     register(new TagMethod(LigatureSet.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         LigatureSet table = (LigatureSet) fdt;
         td.tagRangeField(FieldType.SHORT, "lookup count");
         for (int i = 0; i < table.recordList.count(); ++i) {
@@ -281,7 +289,8 @@ public class OtTableTagger {
 
     register(new TagMethod(Ligature.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         Ligature table = (Ligature) fdt;
         td.tagRangeField(FieldType.GLYPH, "lig glyph");
         td.tagRangeField(FieldType.SHORT, "glyph count + 1");
@@ -293,18 +302,20 @@ public class OtTableTagger {
 
     register(new TagMethod(SingleSubst.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         SingleSubst table = (SingleSubst) fdt;
         td.tagRangeField(FieldType.SHORT, "format");
         switch (table.format) {
         case 1:
-          HeaderFmt1 tableFmt1 = table.fmt1;
+          HeaderFmt1 tableFmt1 = table.fmt1Table();
           td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
           tagTable(tableFmt1.coverage);
           td.tagRangeField(FieldType.SHORT, "delta glyph id");
           break;
         case 2:
-          com.google.typography.font.sfntly.table.opentype.singlesubst.InnerArrayFmt2 tableFmt2 = table.fmt2;
+          com.google.typography.font.sfntly.table.opentype.singlesubst.InnerArrayFmt2 tableFmt2 =
+              table.fmt2Table();
           td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
           tagTable(tableFmt2.coverage);
           td.tagRangeField(FieldType.SHORT, "glyph count");
@@ -318,7 +329,8 @@ public class OtTableTagger {
 
     register(new TagMethod(MultipleSubst.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         OneToManySubst table = (OneToManySubst) fdt;
         td.tagRangeField(FieldType.SHORT, "subst format");
         td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
@@ -339,7 +351,8 @@ public class OtTableTagger {
 
     register(new TagMethod(NumRecordTable.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         NumRecordTable table = (NumRecordTable) fdt;
         td.tagRangeField(FieldType.SHORT, "glyph count");
         for (int i = 0; i < table.recordList.count(); ++i) {
@@ -350,7 +363,8 @@ public class OtTableTagger {
 
     register(new TagMethod(ContextSubst.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         ContextSubst table = (ContextSubst) fdt;
         td.tagRangeField(FieldType.SHORT, "subst format");
         td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
@@ -376,7 +390,8 @@ public class OtTableTagger {
 
     register(new TagMethod(SubRuleSet.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         SubGenericRuleSet<?> table = (SubGenericRuleSet<?>) fdt;
         td.tagRangeField(FieldType.SHORT, "sub rule count");
         int subTableCount = table.recordList.count();
@@ -392,7 +407,8 @@ public class OtTableTagger {
 
     register(new TagMethod(SubRule.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         SubRule table = (SubRule) fdt;
         td.tagRangeField(FieldType.SHORT, "input glyph count + 1");
         td.tagRangeField(FieldType.SHORT, "subst lookup record count");
@@ -410,7 +426,8 @@ public class OtTableTagger {
 
     register(new TagMethod(SubClassRule.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         SubClassRule table = (SubClassRule) fdt;
         td.tagRangeField(FieldType.SHORT, "input class count + 1");
         td.tagRangeField(FieldType.SHORT, "subst lookup record count");
@@ -428,7 +445,8 @@ public class OtTableTagger {
 
     register(new TagMethod(ChainContextSubst.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         ChainContextSubst table = (ChainContextSubst) fdt;
         td.tagRangeField(FieldType.SHORT, "subst format");
         if (table.format == 1 || table.format == 2) {
@@ -500,7 +518,8 @@ public class OtTableTagger {
 
     register(new TagMethod(ChainSubRuleSet.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         ChainSubRuleSet table = (ChainSubRuleSet) fdt;
         td.tagRangeField(FieldType.SHORT, "sub rule count");
         int subTableCount = table.recordList.count();
@@ -516,7 +535,8 @@ public class OtTableTagger {
 
     register(new TagMethod(ChainSubRule.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         ChainSubRule table = (ChainSubRule) fdt;
         td.tagRangeField(FieldType.SHORT, "backtrack glyph count");
         int glyphCount = table.backtrackGlyphs.count();
@@ -547,7 +567,8 @@ public class OtTableTagger {
 
     register(new TagMethod(ChainSubClassSet.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         ChainSubClassSet table = (ChainSubClassSet) fdt;
         td.tagRangeField(FieldType.SHORT, "sub class count");
         int subTableCount = table.recordList.count();
@@ -563,7 +584,8 @@ public class OtTableTagger {
 
     register(new TagMethod(ChainSubClassRule.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         ChainSubClassRule table = (ChainSubClassRule) fdt;
         td.tagRangeField(FieldType.SHORT, "backtrack glyph class count");
         int glyphCount = table.backtrackGlyphs.count();
@@ -594,7 +616,8 @@ public class OtTableTagger {
 
     register(new TagMethod(ExtensionSubst.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         ExtensionSubst table = (ExtensionSubst) fdt;
         td.tagRangeField(FieldType.SHORT, "format");
         td.tagRangeField(FieldType.SHORT, "lookup type");
@@ -606,7 +629,8 @@ public class OtTableTagger {
 
     register(new TagMethod(ReverseChainSingleSubst.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         ReverseChainSingleSubst table = (ReverseChainSingleSubst) fdt;
         td.tagRangeField(FieldType.SHORT, "subst format");
         td.tagRangeField(FieldType.OFFSET_NONZERO, "input coverage offset");
@@ -641,7 +665,8 @@ public class OtTableTagger {
 
     register(new TagMethod(CoverageTable.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         CoverageTable table = (CoverageTable) fdt;
         td.tagRangeField(FieldType.SHORT, "format");
         if (table.format == 1) {
@@ -665,7 +690,8 @@ public class OtTableTagger {
 
     register(new TagMethod(ClassDefTable.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
         ClassDefTable table = (ClassDefTable) fdt;
         td.tagRangeField(FieldType.SHORT, "format");
         if (table.format == 1) {
@@ -690,7 +716,8 @@ public class OtTableTagger {
 
     register(new TagMethod(NullTable.class) {
       @Override
-      public void tag(FontDataTable fdt) {
+      protected
+      void tag(FontDataTable fdt) {
       }
     });
   }

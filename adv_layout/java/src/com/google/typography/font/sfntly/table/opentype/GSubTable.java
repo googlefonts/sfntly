@@ -35,7 +35,7 @@ public class GSubTable extends Table {
   private final AtomicReference<LookupListTable>
       lookupListTable = new AtomicReference<LookupListTable>();
 
-  enum Offset {
+  private enum Offset {
     version(0), scriptList(4), featureList(6), lookupList(8);
 
     final int offset;
@@ -63,7 +63,7 @@ public class GSubTable extends Table {
    *
    * @return table version
    */
-  public int version() {
+  private int version() {
     return this.data.readFixed(Offset.version.offset);
   }
 
@@ -132,12 +132,12 @@ public class GSubTable extends Table {
      * @param data
      *          the readable data for the table
      */
-    protected Builder(Header header, ReadableFontData data) {
+    private Builder(Header header, ReadableFontData data) {
       super(header, data);
       gsub = new GsubCommonTable.Builder(data, false);
     }
 
-    public GsubCommonTable.Builder commonBuilder() {
+    private GsubCommonTable.Builder commonBuilder() {
       setModelChanged();
       return gsub;
     }
