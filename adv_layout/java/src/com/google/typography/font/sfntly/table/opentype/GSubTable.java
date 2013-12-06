@@ -35,16 +35,6 @@ public class GSubTable extends Table {
   private final AtomicReference<LookupListTable>
       lookupListTable = new AtomicReference<LookupListTable>();
 
-  private enum Offset {
-    version(0), scriptList(4), featureList(6), lookupList(8);
-
-    final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
-  }
-
   /**
    * Constructor.
    *
@@ -56,15 +46,6 @@ public class GSubTable extends Table {
   private GSubTable(Header header, ReadableFontData data, boolean dataIsCanonical) {
     super(header, data);
     gsub = new GsubCommonTable(data, dataIsCanonical);
-  }
-
-  /**
-   * Get the table version.
-   *
-   * @return table version
-   */
-  private int version() {
-    return this.data.readFixed(Offset.version.offset);
   }
 
   /**
@@ -135,11 +116,6 @@ public class GSubTable extends Table {
     private Builder(Header header, ReadableFontData data) {
       super(header, data);
       gsub = new GsubCommonTable.Builder(data, false);
-    }
-
-    private GsubCommonTable.Builder commonBuilder() {
-      setModelChanged();
-      return gsub;
     }
 
     @Override

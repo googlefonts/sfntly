@@ -422,19 +422,19 @@ enum LanguageTag {
     this.iso3List = iso3List;
   }
 
-  private int tag() {
+  public int tag() {
     return tag;
   }
 
-  private String longName() {
+  public String longName() {
     return name;
   }
 
-  private boolean isDeprecated() {
+  public boolean isDeprecated() {
     return this == DHV;
   }
 
-  private List<String> iso3List() {
+  public List<String> iso3List() {
     return Arrays.asList(iso3List.split(","));
   }
 

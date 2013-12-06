@@ -133,11 +133,11 @@ public enum ScriptTag {
     this.description = description;
   }
 
-  private int tag() {
+  public int tag() {
     return tag;
   }
 
-  private String description() {
+  public String description() {
     return description;
   }
 

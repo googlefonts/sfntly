@@ -2,8 +2,6 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.SubTable;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.InnerArrayFmt1;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.LigatureSet;
 
@@ -37,10 +35,6 @@ public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet
   @Override
   public Iterator<LigatureSet> iterator() {
     return array.iterator();
-  }
-
-  private LigatureSet createSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return array.readSubTable(data, dataIsCanonical);
   }
 
   // //////////////////////////////////
@@ -78,24 +72,7 @@ public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet
     // /////////////////////////////
     // private methods for builders
 
-    private int subTableCount() {
-      return arrayBuilder.subTableCount();
-    }
 
-    private SubTable.Builder<? extends SubTable> builderForTag(int tag) {
-      setModelChanged();
-      return arrayBuilder.builderForTag(tag);
-    }
-
-    private VisibleSubTable.Builder<LigatureSet> addBuilder() {
-      setModelChanged();
-      return arrayBuilder.addBuilder();
-    }
-
-    private void removeBuilderForTag(int tag) {
-      setModelChanged();
-      arrayBuilder.removeBuilderForTag(tag);
-    }
 
     // ///////////////////////////////
     // private methods to serialize

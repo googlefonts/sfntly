@@ -20,12 +20,10 @@ public abstract class SubstSubtable extends HeaderTable {
   }
 
   public abstract static class Builder<T extends SubstSubtable> extends HeaderTable.Builder<T> {
-    private boolean dataIsCanonical;
     protected int format;
 
     protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data);
-      this.dataIsCanonical = dataIsCanonical;
       format = getField(FORMAT_INDEX);
     }
 

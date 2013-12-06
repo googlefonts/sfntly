@@ -14,7 +14,7 @@ class TestLanguagesForFonts {
 
   private static final FontLanguages fontLanguages = new FontLanguages(availableLangs(WORDS_DIR));
 
-  private static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOException {
     List<File> fontFiles = FontLoader.getFontFiles(FONTS_ROOT);
     PrintWriter writer = new PrintWriter(OUTPUT_FILE);
     for (File fontFile : fontFiles) {

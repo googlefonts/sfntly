@@ -43,21 +43,6 @@ class RuleSegment extends LinkedList<GlyphGroup> {
     return super.addAll(glyphGroups);
   }
 
-  private boolean match(GlyphList glyphs) {
-    if (glyphs.size() != this.size()) {
-      return false;
-    }
-    int i = 0;
-    for (int glyph : glyphs) {
-      GlyphGroup glyphGroup = this.get(i);
-      if (glyphGroup.size() != 1 || !glyphGroup.contains(glyph)) {
-        return false;
-      }
-      i++;
-    }
-    return true;
-  }
-
   private boolean addInternal(GlyphGroup glyphGroup) {
     if (glyphGroup == null) {
       throw new IllegalArgumentException("Null GlyphGroup not allowed");

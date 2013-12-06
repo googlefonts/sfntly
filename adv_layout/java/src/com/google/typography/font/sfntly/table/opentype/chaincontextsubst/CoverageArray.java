@@ -24,18 +24,6 @@ public class CoverageArray extends OffsetRecordTable<CoverageTable> {
 
   public static class Builder extends OffsetRecordTable.Builder<CoverageArray, CoverageTable> {
 
-    private Builder() {
-      super();
-    }
-
-    private Builder(ReadableFontData data, boolean dataIsCanonical) {
-      super(data, dataIsCanonical);
-    }
-
-    private Builder(CoverageArray table) {
-      super(table);
-    }
-
     public Builder(NumRecordList records) {
       super(records);
     }

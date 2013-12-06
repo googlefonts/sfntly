@@ -12,7 +12,6 @@ public class LookupTable extends OffsetRecordTable<SubstSubtable> {
   private static final int LOOKUP_TYPE_DEFAULT = 0;
 
   private static final int LOOKUP_FLAG_INDEX = 1;
-  private static final int LOOKUP_FLAG_DEFAULT = 0;
 
   private enum LookupFlagBit {
     RIGHT_TO_LEFT(0x0001),
@@ -50,7 +49,7 @@ public class LookupTable extends OffsetRecordTable<SubstSubtable> {
     return GsubLookupType.forTypeNum(getField(LOOKUP_TYPE_INDEX));
   }
 
-  private GsubLookupType lookupFlag() {
+  public GsubLookupType lookupFlag() {
     return GsubLookupType.forTypeNum(getField(LOOKUP_FLAG_INDEX));
   }
 

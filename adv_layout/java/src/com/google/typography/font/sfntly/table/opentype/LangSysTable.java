@@ -22,14 +22,6 @@ public class LangSysTable extends RecordsTable<NumRecord> {
     }
   }
 
-  private boolean hasRequiredFeature() {
-    return getField(REQ_FEATURE_INDEX_INDEX) != NO_REQ_FEATURE;
-  }
-
-  private int requiredFeature() {
-    return getField(REQ_FEATURE_INDEX_INDEX);
-  }
-
   @Override
   protected RecordList<NumRecord> createRecordList(ReadableFontData data) {
     return new NumRecordList(data);
@@ -49,32 +41,8 @@ public class LangSysTable extends RecordsTable<NumRecord> {
       super(data, dataIsCanonical);
     }
 
-    private Builder(RecordsTable.Builder<LangSysTable, NumRecord> builder) {
-      super(builder);
-    }
-
     // //////////////////////////////
     // private methods to update
-
-    private Builder addFeatureIndices(int... indices) {
-      for (int index : indices) {
-        NumRecord record = new NumRecord(index);
-        if (!records.contains(record)) {
-          records.add(new NumRecord(index));
-        }
-      }
-      return this;
-    }
-
-    private Builder setRequiredFeatureIndex(int index) {
-      NumRecord record = new NumRecord(index);
-      if (!records.contains(record)) {
-        return this;
-      }
-
-      setField(REQ_FEATURE_INDEX_INDEX, index);
-      return this;
-    }
 
     @Override
     protected void initFields() {

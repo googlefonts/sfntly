@@ -4,7 +4,6 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -132,19 +131,6 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
     copyFromRead();
     recordsToWrite.add(record);
     return this;
-  }
-
-  private RecordList<T> addAll(Collection<T> recordsToWrite) {
-    copyFromRead();
-    this.recordsToWrite.addAll(recordsToWrite);
-    return this;
-  }
-
-  private int write() {
-    if (writeData == null) {
-      throw new UnsupportedOperationException();
-    }
-    return writeTo(writeData);
   }
 
   public int writeTo(WritableFontData writeData) {

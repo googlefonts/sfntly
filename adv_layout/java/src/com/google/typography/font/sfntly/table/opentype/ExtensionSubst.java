@@ -46,7 +46,7 @@ public class ExtensionSubst extends SubstSubtable {
     }
   }
 
-  private static class Builder extends SubstSubtable.Builder<SubstSubtable> {
+  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
     private Builder() {
       super();
     }

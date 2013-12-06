@@ -19,10 +19,6 @@ public abstract class HeaderTable extends SubTable {
     this.dataIsCanonical = dataIsCanonical;
   }
 
-  private int writeFieldAt(WritableFontData newData, int index, int value) {
-    return newData.writeUShort(index * FIELD_SIZE, value);
-  }
-
   public int getField(int index) {
     return data.readUShort(base + index * FIELD_SIZE);
   }

@@ -2,7 +2,6 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubClassSetArray;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubGenericRuleSet;
 import com.google.typography.font.sfntly.table.opentype.chaincontextsubst.ChainSubRuleSetArray;
@@ -92,17 +91,7 @@ public class ChainContextSubst extends SubstSubtable {
     }
   }
 
-  private ChainSubGenericRuleSet<?> createSubTable(
-      ReadableFontData data, boolean dataIsCanonical) {
-    switch (format) {
-    case 1:
-      return ruleSets.readSubTable(data, dataIsCanonical);
-    case 2:
-      return classSets.readSubTable(data, dataIsCanonical);
-    default:
-      return null;
-    }
-  }
+
 
   // //////////////////////////////////
   // Methods specific to this class
@@ -133,7 +122,7 @@ public class ChainContextSubst extends SubstSubtable {
   // //////////////////////////////////
   // Builder
 
-  private static class Builder extends SubstSubtable.Builder<SubstSubtable> {
+  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
 
     private final ChainSubRuleSetArray.Builder arrayBuilder;
 
@@ -153,23 +142,6 @@ public class ChainContextSubst extends SubstSubtable {
     private Builder(SubstSubtable subTable) {
       ChainContextSubst ligSubst = (ChainContextSubst) subTable;
       arrayBuilder = new ChainSubRuleSetArray.Builder(ligSubst.ruleSets);
-    }
-
-    // /////////////////////////////
-    // Public methods for builders
-
-    private int subTableCount() {
-      return arrayBuilder.subTableCount();
-    }
-
-    private SubTable.Builder<? extends SubTable> builderForTag(int tag) {
-      setModelChanged();
-      return arrayBuilder.builderForTag(tag);
-    }
-
-    private void removeBuilderForTag(int tag) {
-      setModelChanged();
-      arrayBuilder.removeBuilderForTag(tag);
     }
 
     // ///////////////////////////////

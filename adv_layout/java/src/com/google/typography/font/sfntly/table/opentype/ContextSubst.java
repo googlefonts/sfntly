@@ -2,13 +2,10 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordList;
-import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.DoubleRecordTable;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubClassSetArray;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubGenericRuleSet;
-import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRuleSet;
 import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRuleSetArray;
 
 public class ContextSubst extends SubstSubtable {
@@ -63,11 +60,7 @@ public class ContextSubst extends SubstSubtable {
     return (format == 1) ? ruleSets.subTableAt(index) : classSets.subTableAt(index);
   }
 
-  private SubGenericRuleSet<? extends DoubleRecordTable> createSubTable(
-      ReadableFontData data, boolean dataIsCanonical) {
-    return (format == 1) ? ruleSets.readSubTable(data, dataIsCanonical)
-        : classSets.readSubTable(data, dataIsCanonical);
-  }
+
 
   // //////////////////////////////////
   // Methods specific to this class
@@ -83,8 +76,7 @@ public class ContextSubst extends SubstSubtable {
   // //////////////////////////////////
   // Builder
 
-  private static class Builder extends SubstSubtable.Builder<SubstSubtable> {
-
+  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
     private final SubRuleSetArray.Builder arrayBuilder;
 
     // //////////////
@@ -108,24 +100,7 @@ public class ContextSubst extends SubstSubtable {
     // /////////////////////////////
     // private methods for builders
 
-    private int subTableCount() {
-      return arrayBuilder.subTableCount();
-    }
 
-    private SubTable.Builder<? extends SubTable> builderForTag(int tag) {
-      setModelChanged();
-      return arrayBuilder.builderForTag(tag);
-    }
-
-    private VisibleSubTable.Builder<SubRuleSet> addBuilder() {
-      setModelChanged();
-      return arrayBuilder.addBuilder();
-    }
-
-    private void removeBuilderForTag(int tag) {
-      setModelChanged();
-      arrayBuilder.removeBuilderForTag(tag);
-    }
 
     // ///////////////////////////////
     // private methods to serialize

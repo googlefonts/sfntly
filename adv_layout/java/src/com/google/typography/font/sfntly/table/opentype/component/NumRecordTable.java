@@ -32,11 +32,6 @@ public class NumRecordTable extends RecordsTable<NumRecord> {
       super(data, base, dataIsCanonical);
     }
 
-    private Builder(RecordsTable.Builder<NumRecordTable, NumRecord> builder) {
-      super();
-      records = builder.records();
-    }
-
     public Builder(NumRecordTable table) {
       super(table);
     }

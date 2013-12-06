@@ -3,8 +3,6 @@ package com.google.typography.font.sfntly.table.opentype.component;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
-import java.util.Iterator;
-
 public final class SubstLookupRecordList extends RecordList<SubstLookupRecord> {
   private SubstLookupRecordList(WritableFontData data) {
     super(data);
@@ -16,21 +14,6 @@ public final class SubstLookupRecordList extends RecordList<SubstLookupRecord> {
 
   public SubstLookupRecordList(ReadableFontData data, int countOffset, int valuesOffset) {
     super(data, 0, countOffset, valuesOffset);
-  }
-
-  private static int sizeOfListOfCount(int count) {
-    return RecordList.DATA_OFFSET + count * SubstLookupRecord.RECORD_SIZE;
-  }
-
-  private SubstLookupRecord getRecordForTag(int tag) {
-    Iterator<SubstLookupRecord> iterator = iterator();
-    while (iterator.hasNext()) {
-      SubstLookupRecord record = iterator.next();
-      if (record.sequenceIndex == tag) {
-        return record;
-      }
-    }
-    return null;
   }
 
   @Override

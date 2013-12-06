@@ -31,7 +31,7 @@ public class SingleSubst extends SubstSubtable {
   // //////////////////////////////////
   // Methods specific to this class
 
-  private CoverageTable coverage() {
+  public CoverageTable coverage() {
     switch (format) {
     case 1:
       return fmt1.coverage;
@@ -59,7 +59,7 @@ public class SingleSubst extends SubstSubtable {
   // //////////////////////////////////
   // Builder
 
-  private static class Builder extends SubstSubtable.Builder<SubstSubtable> {
+  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
 
     private final HeaderFmt1.Builder fmt1Builder;
     private final InnerArrayFmt2.Builder fmt2Builder;

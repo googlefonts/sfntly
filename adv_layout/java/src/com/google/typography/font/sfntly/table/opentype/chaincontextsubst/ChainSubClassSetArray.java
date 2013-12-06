@@ -40,7 +40,7 @@ public class ChainSubClassSetArray extends OffsetRecordTable<ChainSubClassSet> {
     return new ChainSubClassSet(data, 0, dataIsCanonical);
   }
 
-  private static class Builder
+  public static class Builder
       extends OffsetRecordTable.Builder<ChainSubClassSetArray, ChainSubClassSet> {
 
     private Builder() {

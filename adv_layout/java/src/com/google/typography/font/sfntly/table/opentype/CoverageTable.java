@@ -4,7 +4,6 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.NumRecordTable;
 import com.google.typography.font.sfntly.table.opentype.component.RangeRecordTable;
-import com.google.typography.font.sfntly.table.opentype.component.RecordList;
 import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
 
 public class CoverageTable extends SubstSubtable {
@@ -48,15 +47,7 @@ public class CoverageTable extends SubstSubtable {
     }
   }
 
-  private RecordList<?> records() {
-    return array.recordList;
-  }
-
-  // //////////////////////////////////
-  // Builder
-
   public static class Builder extends SubstSubtable.Builder<CoverageTable> {
-
     private final RecordsTable.Builder<?, ?> arrayBuilder;
 
     // //////////////
@@ -88,9 +79,7 @@ public class CoverageTable extends SubstSubtable {
     // //////////////////////////////
     // private methods to update
 
-    private int valueCount() {
-      return arrayBuilder.count();
-    }
+
 
     // //////////////////////////////
     // private methods to serialize

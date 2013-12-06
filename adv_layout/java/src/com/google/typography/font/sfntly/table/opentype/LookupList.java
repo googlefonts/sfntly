@@ -14,11 +14,8 @@ import java.util.List;
  * @author dougfelt@google.com (Doug Felt)
  */
 abstract class LookupList extends SubTable {
-  private final boolean dataIsCanonical;
-
   private LookupList(ReadableFontData data, boolean dataIsCanonical) {
     super(data);
-    this.dataIsCanonical = dataIsCanonical;
   }
 
   private static final int LOOKUP_COUNT_OFFSET = 0;
@@ -32,26 +29,11 @@ abstract class LookupList extends SubTable {
     return data.readUShort(LOOKUP_COUNT_OFFSET);
   }
 
-  private int lookupCount() {
-    return readLookupCount(data);
-  }
-
   private static int readLookupOffsetAt(ReadableFontData data, int index) {
     if (data == null) {
       return -1;
     }
     return data.readUShort(LOOKUP_OFFSET_BASE + index * LOOKUP_OFFSET_SIZE);
-  }
-
-  private int lookupOffsetAt(int index) {
-    return readLookupOffsetAt(data, index);
-  }
-
-  private static int readLookupTypeNumAtOffset(ReadableFontData data, int offset) {
-    if (data == null) {
-      return -1;
-    }
-    return data.readUShort(offset + LookupTable.LOOKUP_TYPE_INDEX);
   }
 
   private static ReadableFontData readLookupData(ReadableFontData data, boolean dataIsCanonical,
@@ -74,14 +56,9 @@ abstract class LookupList extends SubTable {
 
   protected abstract LookupType lookupTypeAt(int index);
 
-  private LookupTable lookupAt(int index) {
-    ReadableFontData lookupData = readLookupData(data, dataIsCanonical, index);
-    return createLookup(lookupData);
-  }
-
   protected abstract LookupTable createLookup(ReadableFontData data);
 
-  private static abstract class Builder extends SubTable.Builder<LookupList> {
+  static abstract class Builder extends SubTable.Builder<LookupList> {
     private List<LookupTable.Builder> builders;
     private boolean dataIsCanonical;
     private int serializedCount;
@@ -115,49 +92,6 @@ abstract class LookupList extends SubTable {
       if (builders == null) {
         initFromData(internalReadData());
       }
-    }
-
-    private int lookupCount() {
-      if (builders == null) {
-        return readLookupCount(internalReadData());
-      }
-      return builders.size();
-    }
-
-    private LookupTable.Builder lookupAt(int index) {
-      prepareToEdit();
-      return builders.get(index);
-    }
-
-    private Builder addLookup(LookupTable lookup) {
-      return addLookup(lookup.builder());
-    }
-
-    private Builder addLookup(LookupTable.Builder lookup) {
-      return addLookupAt(lookup, lookupCount());
-    }
-
-    private Builder addLookupAt(LookupTable lookup, int index) {
-      return addLookupAt(lookup.builder(), index);
-    }
-
-    private Builder addLookupAt(LookupTable.Builder lookup, int index) {
-      prepareToEdit();
-      builders.add(index, lookup);
-      return this;
-    }
-
-    private Builder moveLookup(int fromIndex, int toIndex) {
-      prepareToEdit();
-      LookupTable.Builder builder = builders.remove(fromIndex);
-      builders.add(toIndex, builder);
-      return this;
-    }
-
-    private Builder removeLookupAt(int index) {
-      prepareToEdit();
-      builders.remove(index);
-      return this;
     }
 
     private int serializeFromBuilders(WritableFontData newData) {

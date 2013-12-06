@@ -28,7 +28,6 @@ public class ChainSubGenericRule extends SubTable {
   abstract static class Builder<T extends ChainSubGenericRule> extends
       VisibleSubTable.Builder<T> {
 
-    private boolean dataIsCanonical;
     private NumRecordList backtrackGlyphsBuilder;
     private NumRecordList inputGlyphsBuilder;
     private NumRecordList lookAheadGlyphsBuilder;
@@ -50,14 +49,6 @@ public class ChainSubGenericRule extends SubTable {
       if (!dataIsCanonical) {
         prepareToEdit();
       }
-    }
-
-    private Builder(Builder<T> other) {
-      super();
-      backtrackGlyphsBuilder = other.backtrackGlyphsBuilder;
-      inputGlyphsBuilder = other.inputGlyphsBuilder;
-      lookAheadGlyphsBuilder = other.lookAheadGlyphsBuilder;
-      lookupRecordsBuilder = other.lookupRecordsBuilder;
     }
 
     // ////////////////////////////////////
