@@ -3,7 +3,6 @@ package com.google.typography.font.sfntly.table.opentype.component;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 
 public class RangeRecordTable extends RecordsTable<RangeRecord> {
-
   public RangeRecordTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
@@ -19,18 +18,8 @@ public class RangeRecordTable extends RecordsTable<RangeRecord> {
   }
 
   public static class Builder extends RecordsTable.Builder<RangeRecordTable, RangeRecord> {
-
-    private Builder() {
-      super();
-    }
-
     public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data, base, dataIsCanonical);
-    }
-
-    private Builder(RecordsTable.Builder<RangeRecordTable, RangeRecord> builder) {
-      super();
-      records = builder.records();
     }
 
     @Override

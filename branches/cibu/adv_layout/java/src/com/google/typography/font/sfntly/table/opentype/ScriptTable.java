@@ -76,11 +76,6 @@ public class ScriptTable extends TagOffsetsTable<LangSysTable> {
       }
     }
 
-    private Builder(ScriptTable.Builder other) {
-      super(other);
-      defLangSysBuilder = other.defLangSysBuilder;
-    }
-
     @Override
     protected VisibleSubTable.Builder<LangSysTable> createSubTableBuilder(
         ReadableFontData data, int tag, boolean dataIsCanonical) {

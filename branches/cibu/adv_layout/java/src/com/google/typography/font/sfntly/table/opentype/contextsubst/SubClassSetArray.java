@@ -30,7 +30,7 @@ public class SubClassSetArray extends OffsetRecordTable<SubClassSet> {
     return new SubClassSet(data, 0, dataIsCanonical);
   }
 
-  private static class Builder extends OffsetRecordTable.Builder<SubClassSetArray, SubClassSet> {
+  public static class Builder extends OffsetRecordTable.Builder<SubClassSetArray, SubClassSet> {
 
     private Builder() {
       super();

@@ -501,18 +501,6 @@ class RuleExtractor {
     return result;
   }
 
-  private static class LaterEntry {
-    private int lookupListIndex;
-    private GsubLookupType lookupType;
-    private SubstSubtable table;
-
-    private LaterEntry(int lookupListIndex, GsubLookupType lookupType, SubstSubtable table) {
-      this.lookupListIndex = lookupListIndex;
-      this.lookupType = lookupType;
-      this.table = table;
-    }
-  }
-
   static Map<Integer, Set<Rule>> extract(LookupListTable table) {
     Map<Integer, Set<Rule>> allRules = new TreeMap<Integer, Set<Rule>>();
     for (int i = 0; i < table.subTableCount(); i++) {

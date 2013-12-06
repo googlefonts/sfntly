@@ -43,14 +43,6 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
     return subTableForRecord(record);
   }
 
-  private S subTableForTag(int tag) {
-    TagOffsetRecord record = recordList.getRecordForTag(tag);
-    if (record == null) {
-      return null;
-    }
-    return subTableForRecord(record);
-  }
-
   @Override
   public Iterator<S> iterator() {
     return new Iterator<S>() {
@@ -106,10 +98,6 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
       base = 0;
     }
 
-    private Builder(TagOffsetsTable<T> table) {
-      this(table.readFontData(), table.base, table.dataIsCanonical);
-    }
-
     protected Builder(TagOffsetsTable.Builder<T, S> other) {
       super();
       builders = other.builders;
@@ -124,36 +112,6 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
       if (!dataIsCanonical) {
         prepareToEdit();
       }
-    }
-
-    // ////////////////
-    // private methods
-
-    private int subTableCount() {
-      if (builders == null) {
-        return new TagOffsetRecordList(internalReadData().slice(headerSize() + base)).count();
-      }
-      return builders.size();
-    }
-
-    private SubTable.Builder<? extends SubTable> builderForTag(int tag) {
-      prepareToEdit();
-      return builders.get(tag);
-    }
-
-    private VisibleSubTable.Builder<S> addBuilderForTag(int tag) {
-      prepareToEdit();
-      VisibleSubTable.Builder<S> builder = builders.get(tag);
-      if (builder == null) {
-        builder = createSubTableBuilder();
-        builders.put(tag, builder);
-      }
-      return builder;
-    }
-
-    private void removeBuilderForTag(int tag) {
-      prepareToEdit();
-      builders.remove(tag);
     }
 
     // ////////////////////////////////////

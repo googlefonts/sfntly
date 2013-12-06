@@ -36,11 +36,6 @@ public class FeatureTable extends RecordsTable<NumRecord> {
       super(data, dataIsCanonical);
     }
 
-    private Builder(RecordsTable.Builder<FeatureTable, NumRecord> builder) {
-      super();
-      records = builder.records();
-    }
-    
     @Override
     protected FeatureTable readTable(ReadableFontData data, int base, boolean dataIsCanonical) {
       if (base != 0) {

@@ -84,17 +84,6 @@ public abstract class RecordsTable<R extends Record> extends HeaderTable impleme
       return records;
     }
 
-    private int add(R record) {
-      prepareToEdit();
-      records.add(record);
-      return records.count();
-    }
-
-    private boolean contains(R record) {
-      initFromData(internalReadData(), base);
-      return records.contains(record);
-    }
-
     public int count() {
       initFromData(internalReadData(), base);
       return records.count();

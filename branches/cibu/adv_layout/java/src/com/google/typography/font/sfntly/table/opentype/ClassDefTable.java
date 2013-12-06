@@ -4,7 +4,6 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.classdef.InnerArrayFmt1;
 import com.google.typography.font.sfntly.table.opentype.component.RangeRecordTable;
-import com.google.typography.font.sfntly.table.opentype.component.RecordList;
 import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
 
 public class ClassDefTable extends SubstSubtable {
@@ -33,10 +32,6 @@ public class ClassDefTable extends SubstSubtable {
   // ////////////////////////////////////////
   // Utility methods specific to this class
 
-  private RecordList<?> records() {
-    return array.recordList;
-  }
-
   public InnerArrayFmt1 fmt1Table() {
     switch (format) {
     case 1:
@@ -58,8 +53,7 @@ public class ClassDefTable extends SubstSubtable {
   // //////////////////////////////////
   // Builder
 
-  private static class Builder extends SubstSubtable.Builder<ClassDefTable> {
-
+  public static class Builder extends SubstSubtable.Builder<ClassDefTable> {
     private final RecordsTable.Builder<?, ?> arrayBuilder;
 
     // //////////////
@@ -86,9 +80,7 @@ public class ClassDefTable extends SubstSubtable {
     // //////////////////////////////
     // private methods to update
 
-    private int valueCount() {
-      return arrayBuilder.count();
-    }
+
 
     // //////////////////////////////
     // private methods to serialize

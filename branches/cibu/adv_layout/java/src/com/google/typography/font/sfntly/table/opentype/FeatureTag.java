@@ -170,8 +170,8 @@ enum FeatureTag {
     this.name = name;
   }
 
-  private static FeatureTag forTagValue(int value) {
-    synchronized(FeatureTag.class) {
+  public static FeatureTag forTagValue(int value) {
+    synchronized (FeatureTag.class) {
       if (tagMap == null) {
         Map<Integer, FeatureTag> map = new HashMap<Integer, FeatureTag>();
         for (FeatureTag tag : values()) {
@@ -187,7 +187,7 @@ enum FeatureTag {
     return tag;
   }
 
-  private String longName() {
+  public String longName() {
     return name;
   }
 

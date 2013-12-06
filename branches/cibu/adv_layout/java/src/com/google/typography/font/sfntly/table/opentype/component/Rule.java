@@ -36,14 +36,6 @@ public class Rule {
     this.hashCode = getHashCode();
   }
 
-  private Rule(Rule other, RuleSegment subst) {
-    this.backtrack = other.backtrack;
-    this.input = other.input;
-    this.lookAhead = other.lookAhead;
-    this.subst = subst;
-    this.hashCode = getHashCode();
-  }
-
   // Closure related
   public static GlyphGroup charGlyphClosure(Font font, String txt) {
     CMapTable cmapTable = font.getTable(Tag.cmap);
@@ -421,17 +413,7 @@ public class Rule {
     return oneToOneRules(null, inputs, null, substs);
   }
 
-  private static List<Rule> addContextToInputs(
-      RuleSegment backtrack, List<RuleSegment> inputs, RuleSegment lookAhead) {
-    List<Rule> result = new ArrayList<Rule>();
-    for (RuleSegment input : inputs) {
-      result.add(new Rule(backtrack, input, lookAhead, null));
-    }
-    return result;
-  }
-
   // Dump routines
-
   private static Set<Integer> codepointsFromStr(String s) {
     Set<Integer> list = new HashSet<Integer>();
     for (int cp, i = 0; i < s.length(); i += Character.charCount(cp)) {

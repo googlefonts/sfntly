@@ -27,17 +27,8 @@ public class InnerArrayFmt1 extends RecordsTable<NumRecord> {
   }
 
   public static class Builder extends RecordsTable.Builder<InnerArrayFmt1, NumRecord> {
-
-    private Builder() {
-      super();
-    }
-
     public Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data, base, dataIsCanonical);
-    }
-
-    private Builder(RecordsTable.Builder<InnerArrayFmt1, NumRecord> builder) {
-      super(builder);
     }
 
     @Override

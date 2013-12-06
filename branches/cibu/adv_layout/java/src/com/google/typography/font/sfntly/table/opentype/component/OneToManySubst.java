@@ -2,7 +2,6 @@ package com.google.typography.font.sfntly.table.opentype.component;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.SubstSubtable;
 import com.google.typography.font.sfntly.table.opentype.multiplesubst.GlyphIds;
@@ -39,10 +38,6 @@ public class OneToManySubst extends SubstSubtable implements Iterable<NumRecordT
     return array.iterator();
   }
 
-  private NumRecordTable createSubTable(ReadableFontData data, boolean dataIsCanonical) {
-    return array.readSubTable(data, dataIsCanonical);
-  }
-
   // //////////////////////////////////
   // Methods specific to this class
 
@@ -50,11 +45,7 @@ public class OneToManySubst extends SubstSubtable implements Iterable<NumRecordT
     return array.coverage;
   }
 
-  // //////////////////////////////////
-  // Builder
-
-  private static class Builder extends SubstSubtable.Builder<SubstSubtable> {
-
+  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
     private final GlyphIds.Builder arrayBuilder;
 
     // //////////////
@@ -73,28 +64,6 @@ public class OneToManySubst extends SubstSubtable implements Iterable<NumRecordT
     private Builder(SubstSubtable subTable) {
       OneToManySubst multiSubst = (OneToManySubst) subTable;
       arrayBuilder = new GlyphIds.Builder(multiSubst.array);
-    }
-
-    // /////////////////////////////
-    // private methods for builders
-
-    private int subTableCount() {
-      return arrayBuilder.subTableCount();
-    }
-
-    private SubTable.Builder<? extends SubTable> builderForTag(int tag) {
-      setModelChanged();
-      return arrayBuilder.builderForTag(tag);
-    }
-
-    private VisibleSubTable.Builder<NumRecordTable> addBuilder() {
-      setModelChanged();
-      return arrayBuilder.addBuilder();
-    }
-
-    private void removeBuilderForTag(int tag) {
-      setModelChanged();
-      arrayBuilder.removeBuilderForTag(tag);
     }
 
     // ///////////////////////////////

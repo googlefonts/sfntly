@@ -22,40 +22,6 @@ abstract class OTSubTable extends SubTable {
 
   protected abstract Builder<? extends OTSubTable> builder();
 
-  /**
-   * Returns a slice based on an index into an offset array.  If the data is
-   * canonical, this returns a slice between two offsets, or between the last
-   * offset and limit (typically the end of the data).  If the data is not
-   * canonical, this returns a 'one-sided' slice starting at offset.
-   *
-   * @param base the start of the offset array
-   * @param index the 0-based index into the array
-   * @param count the number of items in the array
-   * @param stride the number of bytes between one array element and the next
-   * @param limit the limit of the last element in the array.
-   * @return the slice.
-   */
-  private ReadableFontData sliceData(int base, int index, int count, int stride, int limit) {
-    int pos = base + index * stride;
-    int start = data.readUShort(pos);
-    if (!dataIsCanonical) {
-      return data.slice(start);
-    }
-    if (index + 1 < count) {
-      limit = data.readUShort(pos + stride);
-    }
-    return data.slice(start, limit - start);
-  }
-
-  /**
-   * Overload of sliceData(int, int, int, int, int) that uses 2 for the stride
-   * (offsets are contiguous in the index) and the length of the data as the limit
-   * (these are the last objects in the data).
-   */
-  private ReadableFontData sliceData(int base, int index, int count) {
-    return sliceData(base, index, count, 2, data.length());
-  }
-
   abstract static class Builder<T extends OTSubTable> extends VisibleSubTable.Builder<T> {
     private final boolean dataIsCanonical;
     private int serializedLength;
@@ -71,10 +37,6 @@ abstract class OTSubTable extends SubTable {
         serializedLength = -1;
         setModelChanged();
       }
-    }
-
-    private Builder() {
-      this(null, false);
     }
 
     protected Builder(T table) {

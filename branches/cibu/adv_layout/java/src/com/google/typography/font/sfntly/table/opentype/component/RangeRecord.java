@@ -18,12 +18,6 @@ final class RangeRecord implements Record {
     this.property = data.readUShort(base + PROPERTY_OFFSET);
   }
 
-  private RangeRecord(int tag, int offset, int startCoverageIndex) {
-    this.start = tag;
-    this.end = offset;
-    this.property = startCoverageIndex;
-  }
-
   @Override
   public int writeTo(WritableFontData newData, int base) {
     newData.writeUShort(base + START_OFFSET, start);

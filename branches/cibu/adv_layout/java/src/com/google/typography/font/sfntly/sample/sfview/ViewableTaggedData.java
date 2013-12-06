@@ -51,7 +51,6 @@ class ViewableTaggedData {
     private Color dataColor;
     private Color altColor;
     private Color labelColor;
-    private Color headerColor;
     // shades of blue hue 221.8 saturation 5% to 35% value 93.5 (yafla)
     // E3E6EE, D7DEEE, CBD6EE, BFCDEE, B3C5EE, A7BDEE, 9BB4EE
     private Color[] depthColors = {
@@ -68,7 +67,6 @@ class ViewableTaggedData {
       dataColor = Color.BLACK;
       altColor = new Color(0x8B0000);
       labelColor = Color.BLUE;
-      headerColor = Color.BLUE;
     }
   }
 
@@ -614,8 +612,6 @@ class ViewableTaggedData {
     private final int sourcePosition;
     private final int targetPosition;
     private int srcx, srcy, trgx, trgy;
-    private boolean srcset, trgset;
-
     private Reference(int sourcePosition, int targetPosition) {
       this.sourcePosition = sourcePosition;
       this.targetPosition = targetPosition;
@@ -624,13 +620,11 @@ class ViewableTaggedData {
     private void setSrc(int x, int y) {
       srcx = x - 1;
       srcy = y - 5;
-      srcset = true;
     }
 
     private void setTrg(int x, int y) {
       trgx = x;
       trgy = y - 5;
-      trgset = true;
     }
   }
 

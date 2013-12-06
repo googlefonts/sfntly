@@ -8,8 +8,4 @@ class GlyphList extends ArrayList<Integer> {
   GlyphList() {
     super();
   }
-
-  private GlyphList(int glyph) {
-    super.add(glyph);
-  }
 }

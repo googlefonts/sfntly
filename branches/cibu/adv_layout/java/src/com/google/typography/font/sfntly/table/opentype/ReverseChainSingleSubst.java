@@ -45,9 +45,8 @@ public class ReverseChainSingleSubst extends SubstSubtable {
   // //////////////////////////////////
   // Builder
 
-  private static class Builder extends VisibleSubTable.Builder<ReverseChainSingleSubst> {
+  public static class Builder extends VisibleSubTable.Builder<ReverseChainSingleSubst> {
 
-    private boolean dataIsCanonical;
     private CoverageTable.Builder coverageBuilder;
     private CoverageArray.Builder backtrackGlyphsBuilder;
     private CoverageArray.Builder lookAheadGlyphsBuilder;

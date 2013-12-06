@@ -36,12 +36,6 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
     return result;
   }
 
-  private GlyphGroup(int[] glyphs) {
-    for (int glyph : glyphs) {
-      super.set(glyph);
-    }
-  }
-
   public void add(int glyph) {
     this.set(glyph);
   }
@@ -84,14 +78,6 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
 
   boolean contains(int glyph) {
     return get(glyph) ^ inverse;
-  }
-
-  private boolean intersects(GlyphGroup other) {
-    return !intersection(other).isEmpty();
-  }
-
-  private boolean isInverse() {
-    return inverse;
   }
 
   @Override

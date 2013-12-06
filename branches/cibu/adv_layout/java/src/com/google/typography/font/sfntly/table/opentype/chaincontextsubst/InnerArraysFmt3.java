@@ -30,9 +30,7 @@ public class InnerArraysFmt3 extends SubTable {
     lookupRecords = new SubstLookupRecordList(data, records.limit());
   }
 
-  private static class Builder extends VisibleSubTable.Builder<InnerArraysFmt3> {
-
-    private boolean dataIsCanonical;
+  public static class Builder extends VisibleSubTable.Builder<InnerArraysFmt3> {
     private CoverageArray.Builder backtrackGlyphsBuilder;
     private CoverageArray.Builder inputGlyphsBuilder;
     private CoverageArray.Builder lookAheadGlyphsBuilder;
