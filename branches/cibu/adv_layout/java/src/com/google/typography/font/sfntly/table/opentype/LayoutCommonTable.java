@@ -101,7 +101,7 @@ abstract class LayoutCommonTable<T extends LookupTable> extends SubTable {
       super(data);
     }
 
-    private Builder() {
+    protected Builder() {
       super(null);
     }
 

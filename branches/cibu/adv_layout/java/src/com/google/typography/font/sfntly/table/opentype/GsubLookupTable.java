@@ -9,20 +9,20 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
  */
 abstract class GsubLookupTable extends LookupTable {
 
-  private GsubLookupTable(ReadableFontData data, int base, boolean dataIsCanonical) {
+  protected GsubLookupTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
   }
 
   static abstract class Builder<T extends GsubLookupTable> extends LookupTable.Builder {
 
-    private Builder(ReadableFontData data, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
 
-    private Builder() {
+    protected Builder() {
     }
 
-    private Builder(T table) {
+    protected Builder(T table) {
       super(table);
     }
   }

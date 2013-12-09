@@ -31,16 +31,15 @@ public class SubClassSetArray extends OffsetRecordTable<SubClassSet> {
   }
 
   public static class Builder extends OffsetRecordTable.Builder<SubClassSetArray, SubClassSet> {
-
-    private Builder() {
+    protected Builder() {
       super();
     }
 
-    private Builder(ReadableFontData data, boolean dataIsCanonical, boolean isFmt2) {
+    protected Builder(ReadableFontData data, boolean dataIsCanonical, boolean isFmt2) {
       super(data, dataIsCanonical);
     }
 
-    private Builder(SubClassSetArray table) {
+    protected Builder(SubClassSetArray table) {
       super(table);
     }
 

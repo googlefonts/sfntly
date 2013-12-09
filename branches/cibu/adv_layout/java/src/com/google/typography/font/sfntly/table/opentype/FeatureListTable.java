@@ -17,11 +17,11 @@ public class FeatureListTable extends TagOffsetsTable<FeatureTable> {
 
   static class Builder extends TagOffsetsTable.Builder<FeatureListTable, FeatureTable> {
 
-    private Builder() {
+    protected Builder() {
       super();
     }
 
-    private Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data, 0, false);
     }
 

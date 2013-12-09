@@ -36,34 +36,28 @@ public class InnerArraysFmt3 extends SubTable {
     private CoverageArray.Builder lookAheadGlyphsBuilder;
     private SubstLookupRecordList lookupRecordsBuilder;
 
-    // ///////////////
-    // constructors
-
-    private Builder() {
+    protected Builder() {
       super();
     }
 
-    private Builder(InnerArraysFmt3 table) {
+    protected Builder(InnerArraysFmt3 table) {
       this(table.readFontData(), 0, false);
     }
 
-    private Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data);
       if (!dataIsCanonical) {
         prepareToEdit();
       }
     }
 
-    private Builder(Builder other) {
+    protected Builder(Builder other) {
       super();
       backtrackGlyphsBuilder = other.backtrackGlyphsBuilder;
       inputGlyphsBuilder = other.inputGlyphsBuilder;
       lookAheadGlyphsBuilder = other.lookAheadGlyphsBuilder;
       lookupRecordsBuilder = other.lookupRecordsBuilder;
     }
-
-    // ////////////////////////////////////
-    // overriden methods
 
     @Override
     public int subDataSizeToSerialize() {

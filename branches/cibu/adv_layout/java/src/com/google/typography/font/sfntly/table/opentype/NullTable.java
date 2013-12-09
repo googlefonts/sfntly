@@ -19,7 +19,7 @@ public final class NullTable extends SubstSubtable {
     super(null, 0, false);
   }
 
-  public static class Builder extends VisibleSubTable.Builder<NullTable> {
+  public final static class Builder extends VisibleSubTable.Builder<NullTable> {
     private Builder() {
     }
 

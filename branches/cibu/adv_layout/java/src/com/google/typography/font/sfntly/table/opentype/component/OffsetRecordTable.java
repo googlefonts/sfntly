@@ -99,9 +99,6 @@ implements Iterable<S> {
     private int serializedSubtablePartLength;
     private int serializedTablePartLength;
 
-    // ///////////////
-    // constructors
-
     protected Builder() {
       super();
       base = 0;

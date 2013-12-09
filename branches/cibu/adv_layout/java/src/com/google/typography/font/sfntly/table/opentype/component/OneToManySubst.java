@@ -48,26 +48,20 @@ public class OneToManySubst extends SubstSubtable implements Iterable<NumRecordT
   public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
     private final GlyphIds.Builder arrayBuilder;
 
-    // //////////////
-    // Constructors
-
-    private Builder() {
+    protected Builder() {
       super();
       arrayBuilder = new GlyphIds.Builder();
     }
 
-    private Builder(ReadableFontData data, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       arrayBuilder = new GlyphIds.Builder(data, dataIsCanonical);
     }
 
-    private Builder(SubstSubtable subTable) {
+    protected Builder(SubstSubtable subTable) {
       OneToManySubst multiSubst = (OneToManySubst) subTable;
       arrayBuilder = new GlyphIds.Builder(multiSubst.array);
     }
-
-    // ///////////////////////////////
-    // private methods to serialize
 
     @Override
     public int subDataSizeToSerialize() {

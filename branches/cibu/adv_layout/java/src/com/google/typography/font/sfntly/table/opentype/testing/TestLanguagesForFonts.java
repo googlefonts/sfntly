@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-class TestLanguagesForFonts {
+public class TestLanguagesForFonts {
   private static final String FONTS_ROOT = "/usr/local/google/home/cibu/sfntly/fonts";
   private static final String WORDS_DIR = "/usr/local/google/home/cibu/sfntly/adv_layout/data/testdata/wiki_words";
   private static final String OUTPUT_FILE = "/tmp/font-languages.txt";

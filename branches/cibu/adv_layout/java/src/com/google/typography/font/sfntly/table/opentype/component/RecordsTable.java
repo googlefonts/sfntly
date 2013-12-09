@@ -37,18 +37,12 @@ public abstract class RecordsTable<R extends Record> extends HeaderTable impleme
 
   protected abstract RecordList<R> createRecordList(ReadableFontData data);
 
-  // ////////////////////////////////////
-  // builder
-
   public abstract static class Builder<T extends HeaderTable, R extends Record>
   extends HeaderTable.Builder<T> {
 
     protected RecordList<R> records;
     private int serializedLength;
     private final int base;
-
-    // ///////////////
-    // constructors
 
     protected Builder() {
       super();

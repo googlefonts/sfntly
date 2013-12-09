@@ -11,7 +11,7 @@ import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
-class SFView {
+public class SFView {
   public static void main(String[] args) throws IOException {
     for (String fontName : args) {
       System.out.println("Displaying font: " + fontName);

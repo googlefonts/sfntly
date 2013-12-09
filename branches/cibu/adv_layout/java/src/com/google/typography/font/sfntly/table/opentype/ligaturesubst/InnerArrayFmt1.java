@@ -24,7 +24,6 @@ public class InnerArrayFmt1 extends OffsetRecordTable<LigatureSet> {
   }
 
   public static class Builder extends OffsetRecordTable.Builder<InnerArrayFmt1, LigatureSet> {
-
     public Builder() {
       super();
     }

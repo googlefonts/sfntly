@@ -42,42 +42,32 @@ public class ReverseChainSingleSubst extends SubstSubtable {
     return super.fieldCount() + FIELD_COUNT;
   }
 
-  // //////////////////////////////////
-  // Builder
-
   public static class Builder extends VisibleSubTable.Builder<ReverseChainSingleSubst> {
-
     private CoverageTable.Builder coverageBuilder;
     private CoverageArray.Builder backtrackGlyphsBuilder;
     private CoverageArray.Builder lookAheadGlyphsBuilder;
 
-    // ///////////////
-    // constructors
-
-    private Builder() {
+    protected Builder() {
       super();
     }
 
-    private Builder(InnerArraysFmt3 table) {
+    protected Builder(InnerArraysFmt3 table) {
       this(table.readFontData(), 0, false);
     }
 
-    private Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
       super(data);
       if (!dataIsCanonical) {
         prepareToEdit();
       }
     }
 
-    private Builder(Builder other) {
+    protected Builder(Builder other) {
       super();
       coverageBuilder = other.coverageBuilder;
       backtrackGlyphsBuilder = other.backtrackGlyphsBuilder;
       lookAheadGlyphsBuilder = other.lookAheadGlyphsBuilder;
     }
-
-    // ////////////////////////////////////
-    // overriden methods
 
     @Override
     public int subDataSizeToSerialize() {

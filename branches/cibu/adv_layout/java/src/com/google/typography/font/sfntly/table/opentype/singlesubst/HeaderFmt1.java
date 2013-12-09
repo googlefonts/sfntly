@@ -36,7 +36,6 @@ public class HeaderFmt1 extends HeaderTable {
   }
 
   public static class Builder extends HeaderTable.Builder<HeaderFmt1> {
-
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }

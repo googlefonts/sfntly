@@ -17,7 +17,6 @@ public class Ligature extends RecordsTable<NumRecord> {
   }
 
   static class Builder extends RecordsTable.Builder<Ligature, NumRecord> {
-
     Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
