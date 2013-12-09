@@ -30,7 +30,6 @@ public class SubRuleSetArray extends OffsetRecordTable<SubRuleSet> {
   }
 
   public static class Builder extends OffsetRecordTable.Builder<SubRuleSetArray, SubRuleSet> {
-
     public Builder() {
       super();
     }

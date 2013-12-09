@@ -60,8 +60,6 @@ public class ContextSubst extends SubstSubtable {
     return (format == 1) ? ruleSets.subTableAt(index) : classSets.subTableAt(index);
   }
 
-
-
   // //////////////////////////////////
   // Methods specific to this class
 
@@ -73,37 +71,23 @@ public class ContextSubst extends SubstSubtable {
     return (format == 2) ? classSets.classDef : null;
   }
 
-  // //////////////////////////////////
-  // Builder
-
   public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
     private final SubRuleSetArray.Builder arrayBuilder;
 
-    // //////////////
-    // Constructors
-
-    private Builder() {
+    protected Builder() {
       super();
       arrayBuilder = new SubRuleSetArray.Builder();
     }
 
-    private Builder(ReadableFontData data, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       arrayBuilder = new SubRuleSetArray.Builder(data, dataIsCanonical);
     }
 
-    private Builder(SubstSubtable subTable) {
+    protected Builder(SubstSubtable subTable) {
       ContextSubst ligSubst = (ContextSubst) subTable;
       arrayBuilder = new SubRuleSetArray.Builder(ligSubst.ruleSets);
     }
-
-    // /////////////////////////////
-    // private methods for builders
-
-
-
-    // ///////////////////////////////
-    // private methods to serialize
 
     @Override
     public int subDataSizeToSerialize() {

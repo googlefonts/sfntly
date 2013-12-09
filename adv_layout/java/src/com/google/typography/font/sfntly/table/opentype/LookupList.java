@@ -64,12 +64,12 @@ abstract class LookupList extends SubTable {
     private int serializedCount;
     private int serializedLength;
 
-    private Builder(ReadableFontData data, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data);
       this.dataIsCanonical = dataIsCanonical;
     }
 
-    private Builder() {
+    protected Builder() {
       this(null, false);
     }
 

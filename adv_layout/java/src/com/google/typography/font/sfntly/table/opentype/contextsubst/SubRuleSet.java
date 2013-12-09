@@ -14,7 +14,6 @@ public class SubRuleSet extends SubGenericRuleSet<SubRule> {
   }
 
   static class Builder extends SubGenericRuleSet.Builder<SubRuleSet, SubRule> {
-
     Builder() {
       super();
     }

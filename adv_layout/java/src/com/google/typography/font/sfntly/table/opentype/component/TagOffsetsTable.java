@@ -90,9 +90,6 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
     private int serializedCount;
     private final int base;
 
-    // ///////////////
-    // constructors
-
     protected Builder() {
       super();
       base = 0;
@@ -113,9 +110,6 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
         prepareToEdit();
       }
     }
-
-    // ////////////////////////////////////
-    // overriden methods
 
     @Override
     public int subDataSizeToSerialize() {

@@ -23,7 +23,6 @@ public class NumRecordTable extends RecordsTable<NumRecord> {
   }
 
   public static class Builder extends RecordsTable.Builder<NumRecordTable, NumRecord> {
-
     public Builder() {
       super();
     }

@@ -30,7 +30,6 @@ public class GlyphIds extends OffsetRecordTable<NumRecordTable> {
   }
 
   public static class Builder extends OffsetRecordTable.Builder<GlyphIds, NumRecordTable> {
-
     public Builder() {
       super();
     }

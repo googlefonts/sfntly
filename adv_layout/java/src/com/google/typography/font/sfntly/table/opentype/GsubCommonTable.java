@@ -20,11 +20,11 @@ class GsubCommonTable extends LayoutCommonTable<GsubLookupTable> {
 
   static class Builder extends LayoutCommonTable.Builder<GsubLookupTable> {
 
-    Builder(ReadableFontData data, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
 
-    private Builder() {
+    protected Builder() {
       super(null, false);
     }
 

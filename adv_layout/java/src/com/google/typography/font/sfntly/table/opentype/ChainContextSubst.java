@@ -119,27 +119,20 @@ public class ChainContextSubst extends SubstSubtable {
     return (format == 2) ? classSets.lookAheadClassDef : null;
   }
 
-  // //////////////////////////////////
-  // Builder
-
   public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
-
     private final ChainSubRuleSetArray.Builder arrayBuilder;
 
-    // //////////////
-    // Constructors
-
-    private Builder() {
+    protected Builder() {
       super();
       arrayBuilder = new ChainSubRuleSetArray.Builder();
     }
 
-    private Builder(ReadableFontData data, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       arrayBuilder = new ChainSubRuleSetArray.Builder(data, dataIsCanonical);
     }
 
-    private Builder(SubstSubtable subTable) {
+    protected Builder(SubstSubtable subTable) {
       ChainContextSubst ligSubst = (ChainContextSubst) subTable;
       arrayBuilder = new ChainSubRuleSetArray.Builder(ligSubst.ruleSets);
     }

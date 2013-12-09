@@ -26,7 +26,6 @@ public class InnerArrayFmt2 extends RecordsTable<NumRecord> {
   }
 
   public static class Builder extends RecordsTable.Builder<InnerArrayFmt2, NumRecord> {
-
     public Builder() {
       super();
     }

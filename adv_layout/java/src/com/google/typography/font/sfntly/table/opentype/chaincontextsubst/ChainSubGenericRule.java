@@ -27,14 +27,10 @@ public class ChainSubGenericRule extends SubTable {
 
   abstract static class Builder<T extends ChainSubGenericRule> extends
       VisibleSubTable.Builder<T> {
-
     private NumRecordList backtrackGlyphsBuilder;
     private NumRecordList inputGlyphsBuilder;
     private NumRecordList lookAheadGlyphsBuilder;
     private SubstLookupRecordList lookupRecordsBuilder;
-
-    // ///////////////
-    // constructors
 
     protected Builder() {
       super();
@@ -50,9 +46,6 @@ public class ChainSubGenericRule extends SubTable {
         prepareToEdit();
       }
     }
-
-    // ////////////////////////////////////
-    // overriden methods
 
     @Override
     public int subDataSizeToSerialize() {

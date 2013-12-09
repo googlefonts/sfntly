@@ -50,16 +50,10 @@ public class ClassDefTable extends SubstSubtable {
     }
   }
 
-  // //////////////////////////////////
-  // Builder
-
   public static class Builder extends SubstSubtable.Builder<ClassDefTable> {
     private final RecordsTable.Builder<?, ?> arrayBuilder;
 
-    // //////////////
-    // Constructors
-
-    private Builder(ReadableFontData data, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       switch (format) {
       case 1:
@@ -73,17 +67,9 @@ public class ClassDefTable extends SubstSubtable {
       }
     }
 
-    private Builder(ClassDefTable table) {
+    protected Builder(ClassDefTable table) {
       this(table.readFontData(), table.dataIsCanonical);
     }
-
-    // //////////////////////////////
-    // private methods to update
-
-
-
-    // //////////////////////////////
-    // private methods to serialize
 
     @Override
     public int subDataSizeToSerialize() {

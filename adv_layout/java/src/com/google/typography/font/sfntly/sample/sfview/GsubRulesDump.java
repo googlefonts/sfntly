@@ -12,7 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-class GsubRulesDump {
+public class GsubRulesDump {
   public static void main(String[] args) throws IOException {
     String fontName = args[0];
     String txt = args[1];

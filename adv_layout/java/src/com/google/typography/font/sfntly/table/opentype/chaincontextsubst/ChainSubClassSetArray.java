@@ -43,15 +43,15 @@ public class ChainSubClassSetArray extends OffsetRecordTable<ChainSubClassSet> {
   public static class Builder
       extends OffsetRecordTable.Builder<ChainSubClassSetArray, ChainSubClassSet> {
 
-    private Builder() {
+    protected Builder() {
       super();
     }
 
-    private Builder(ReadableFontData data, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
 
-    private Builder(ChainSubClassSetArray table) {
+    protected Builder(ChainSubClassSetArray table) {
       super(table);
     }
 

@@ -47,11 +47,11 @@ public class ExtensionSubst extends SubstSubtable {
   }
 
   public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
-    private Builder() {
+    protected Builder() {
       super();
     }
 
-    private Builder(ReadableFontData data, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
 

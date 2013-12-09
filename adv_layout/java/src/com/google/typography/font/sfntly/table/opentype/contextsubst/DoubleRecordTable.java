@@ -27,13 +27,9 @@ public class DoubleRecordTable extends SubTable {
   }
 
   public abstract static class Builder<T extends DoubleRecordTable> extends VisibleSubTable.Builder<T> {
-
     protected NumRecordList inputGlyphIdsBuilder;
     protected SubstLookupRecordList substLookupRecordsBuilder;
     protected int serializedLength;
-
-    // ///////////////
-    // constructors
 
     public Builder() {
       super();
@@ -55,9 +51,6 @@ public class DoubleRecordTable extends SubTable {
       inputGlyphIdsBuilder = other.inputGlyphIdsBuilder;
       substLookupRecordsBuilder = other.substLookupRecordsBuilder;
     }
-
-    // ////////////////////////////////////
-    // overriden methods
 
     @Override
     public int subDataSizeToSerialize() {

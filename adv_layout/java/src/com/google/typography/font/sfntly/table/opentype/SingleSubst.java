@@ -56,37 +56,28 @@ public class SingleSubst extends SubstSubtable {
     throw new IllegalArgumentException("unexpected format table requested: " + format);
   }
 
-  // //////////////////////////////////
-  // Builder
-
   public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
 
     private final HeaderFmt1.Builder fmt1Builder;
     private final InnerArrayFmt2.Builder fmt2Builder;
 
-    // //////////////
-    // Constructors
-
-    private Builder() {
+    protected Builder() {
       super();
       fmt1Builder = new HeaderFmt1.Builder();
       fmt2Builder = new InnerArrayFmt2.Builder();
     }
 
-    private Builder(ReadableFontData data, boolean dataIsCanonical) {
+    protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       fmt1Builder = new HeaderFmt1.Builder(data, dataIsCanonical);
       fmt2Builder = new InnerArrayFmt2.Builder(data, dataIsCanonical);
     }
 
-    private Builder(SubstSubtable subTable) {
+    protected Builder(SubstSubtable subTable) {
       SingleSubst ligSubst = (SingleSubst) subTable;
       fmt1Builder = new HeaderFmt1.Builder(ligSubst.fmt1);
       fmt2Builder = new InnerArrayFmt2.Builder(ligSubst.fmt2);
     }
-
-    // ///////////////////////////////
-    // private methods to serialize
 
     @Override
     public int subDataSizeToSerialize() {

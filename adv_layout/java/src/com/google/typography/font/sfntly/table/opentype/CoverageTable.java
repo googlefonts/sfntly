@@ -50,9 +50,6 @@ public class CoverageTable extends SubstSubtable {
   public static class Builder extends SubstSubtable.Builder<CoverageTable> {
     private final RecordsTable.Builder<?, ?> arrayBuilder;
 
-    // //////////////
-    // Constructors
-
     public Builder() {
       super();
       arrayBuilder = new NumRecordTable.Builder();
@@ -76,14 +73,6 @@ public class CoverageTable extends SubstSubtable {
       this(table.readFontData(), table.dataIsCanonical);
     }
 
-    // //////////////////////////////
-    // private methods to update
-
-
-
-    // //////////////////////////////
-    // private methods to serialize
-
     @Override
     public int subDataSizeToSerialize() {
       return super.subDataSizeToSerialize() + arrayBuilder.subDataSizeToSerialize();
@@ -95,11 +84,8 @@ public class CoverageTable extends SubstSubtable {
       return arrayBuilder.subSerialize(newData.slice(newOffset));
     }
 
-    // ///////////////////
-    // Overriden methods
-
     @Override
-    public CoverageTable subBuildTable(ReadableFontData data) {
+    protected CoverageTable subBuildTable(ReadableFontData data) {
       return new CoverageTable(data, 0, false);
     }
 

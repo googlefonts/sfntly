@@ -10,7 +10,6 @@ public class LigatureSet extends OffsetRecordTable<Ligature> {
   }
 
   static class Builder extends OffsetRecordTable.Builder<LigatureSet, Ligature> {
-
     Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
     }
