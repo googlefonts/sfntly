@@ -1,13 +1,13 @@
 // Copyright 2012 Google Inc. All Rights Reserved.
 
-package com.google.typography.font.sfntly.table.opentype;
+package com.google.typography.font.sfntly.sample.sfview;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 
 /**
  * @author dougfelt@google.com (Doug Felt)
  */
-public interface TaggedData {
+interface TaggedData {
   /**
    * @param string
    *          label

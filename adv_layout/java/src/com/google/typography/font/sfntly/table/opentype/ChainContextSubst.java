@@ -119,7 +119,7 @@ public class ChainContextSubst extends SubstSubtable {
     return (format == 2) ? classSets.lookAheadClassDef : null;
   }
 
-  public static class Builder extends SubstSubtable.Builder<SubstSubtable> {
+  protected static class Builder extends SubstSubtable.Builder<SubstSubtable> {
     private final ChainSubRuleSetArray.Builder arrayBuilder;
 
     protected Builder() {

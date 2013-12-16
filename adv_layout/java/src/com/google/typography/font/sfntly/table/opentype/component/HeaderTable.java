@@ -73,6 +73,11 @@ public abstract class HeaderTable extends SubTable {
       return FIELD_SIZE * fieldCount();
     }
 
+    /**
+     * Even though public, not to be used by the end users. Made public only
+     * make it available to packages under
+     * {@code com.google.typography.font.sfntly.table.opentype}.
+     */
     @Override
     public int subDataSizeToSerialize() {
       return headerSize();
