@@ -23,6 +23,11 @@ public abstract class VisibleSubTable extends SubTable {
     @Override
     public abstract int subSerialize(WritableFontData newData);
 
+    /**
+     * Even though public, not to be used by the end users. Made public only
+     * make it available to packages under
+     * {@code com.google.typography.font.sfntly.table.opentype}.
+     */
     @Override
     public abstract int subDataSizeToSerialize();
 

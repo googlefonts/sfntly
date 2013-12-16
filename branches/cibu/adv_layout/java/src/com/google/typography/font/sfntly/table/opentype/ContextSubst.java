@@ -89,6 +89,11 @@ public class ContextSubst extends SubstSubtable {
       arrayBuilder = new SubRuleSetArray.Builder(ligSubst.ruleSets);
     }
 
+    /**
+     * Even though public, not to be used by the end users. Made public only
+     * make it available to packages under
+     * {@code com.google.typography.font.sfntly.table.opentype}.
+     */
     @Override
     public int subDataSizeToSerialize() {
       return arrayBuilder.subDataSizeToSerialize();
