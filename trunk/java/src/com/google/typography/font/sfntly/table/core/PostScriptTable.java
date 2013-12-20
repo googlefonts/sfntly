@@ -384,7 +384,8 @@ public final class PostScriptTable extends Table {
   }
   
   public String glyphName(int glyphNum) {
-    if (glyphNum < 0 || glyphNum >= numberOfGlyphs()) {
+    int numberOfGlyphs = numberOfGlyphs();
+    if (numberOfGlyphs > 0 && (glyphNum < 0 || glyphNum >= numberOfGlyphs)) {
       throw new IndexOutOfBoundsException();
     }
     int glyphNameIndex = 0;
@@ -392,6 +393,8 @@ public final class PostScriptTable extends Table {
       glyphNameIndex = glyphNum;
     } else if (version() == VERSION_2) {
       glyphNameIndex = this.data.readUShort(Offset.glyphNameIndex.offset + 2 * glyphNum);
+    } else {
+      return null;
     }
     if (glyphNameIndex < NUM_STANDARD_NAMES) {
       return STANDARD_NAMES[glyphNameIndex];
