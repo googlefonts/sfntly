@@ -4,10 +4,10 @@ package com.google.typography.font.tools.fontinfo;
 
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Font.MacintoshEncodingId;
+import com.google.typography.font.sfntly.Font.PlatformId;
 import com.google.typography.font.sfntly.Font.UnicodeEncodingId;
 import com.google.typography.font.sfntly.Font.WindowsEncodingId;
 import com.google.typography.font.sfntly.Tag;
-import com.google.typography.font.sfntly.Font.PlatformId;
 import com.google.typography.font.sfntly.math.Fixed1616;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.core.CMap;

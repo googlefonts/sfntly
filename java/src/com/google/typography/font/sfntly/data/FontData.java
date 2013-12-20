@@ -178,10 +178,19 @@ public abstract class FontData {
   }
 
   /**
+   * Returns the offset in the underlying data taking into account any bounds on
+   * the data.
+   */
+  public final int dataOffset() {
+    return this.boundOffset;
+  }
+
+  /**
    * Gets the offset in the underlying data taking into account any bounds on
    * the data.
    *
-   * @param offset the offset to get the bound compensated offset for
+   * @param offset
+   *          the offset to get the bound compensated offset for
    * @return the bound compensated offset
    */
   protected final int boundOffset(int offset) {
