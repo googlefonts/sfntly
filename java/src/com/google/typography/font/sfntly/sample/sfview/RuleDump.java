@@ -23,7 +23,7 @@ public class RuleDump {
     }
 
     Font font = fonts[0];
-    GlyphGroup ruleClosure = Rule.charGlyphClosure(txt, font);
+    GlyphGroup ruleClosure = Rule.charGlyphClosure(font, txt);
   }
 
   public static Font[] loadFont(File file) throws IOException {
