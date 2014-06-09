@@ -52,7 +52,7 @@ bool BitmapGlyphInfo::operator==(const BitmapGlyphInfo& rhs) const {
 
 bool BitmapGlyphInfo::operator==(BitmapGlyphInfo* rhs) {
   if (rhs == NULL) {
-    return this == NULL;
+    return false;  // Well defined C++ code's this is always not null.
   }
   return (format_ == rhs->format() &&
           glyph_id_ == rhs->glyph_id() &&
