@@ -19,11 +19,9 @@
 
 #include <limits.h>
 
-#include <vector>
-
-#include "sfntly/port/type.h"
 #include "sfntly/data/byte_array.h"
 #include "sfntly/port/refcount.h"
+#include "sfntly/port/type.h"
 
 namespace sfntly {
 
@@ -60,16 +58,7 @@ class FontData : virtual public RefCount {
   // visible within the bounds set.
   // @param offset the start of the new bounds
   // @param length the number of bytes in the bounded array
-  // @return true if the bounding range was successful; false otherwise
-  virtual bool Bound(int32_t offset, int32_t length);
-
-  // Sets limits on the size of the FontData. This is a offset bound only so if
-  // the FontData is writable and growable then there is no limit to that growth
-  // from the bounding operation.
-  // @param offset the start of the new bounds which must be within the current
-  //        size of the FontData
-  // @return true if the bounding range was successful; false otherwise
-  virtual bool Bound(int32_t offset);
+  virtual void Bound(int32_t offset, int32_t length);
 
   // Makes a slice of this FontData. The returned slice will share the data with
   // the original <code>FontData</code>.
