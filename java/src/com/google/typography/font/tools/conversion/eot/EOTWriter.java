@@ -166,8 +166,14 @@ public class EOTWriter {
 
   private int writeCodePages(int start, OS2Table os2Table, WritableFontData writableFontData) {
     int index = start;
-    index += writableFontData.writeULongLE(index, os2Table.ulCodePageRange1());
-    index += writableFontData.writeULongLE(index, os2Table.ulCodePageRange2());
+    if (os2Table.tableVersion() >= 1) {
+    	index += writableFontData.writeULongLE(index, os2Table.ulCodePageRange1());
+    	index += writableFontData.writeULongLE(index, os2Table.ulCodePageRange2());
+    }
+    else {
+    	index += writableFontData.writeULongLE(index, 0x00000001);
+    	index += writableFontData.writeULongLE(index, 0x00000000);
+    }
     return index - start;
   }
 
