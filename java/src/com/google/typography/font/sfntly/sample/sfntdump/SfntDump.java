@@ -224,7 +224,7 @@ public class SfntDump {
   private static final void printUsage() {
     System.out.println("FontDumper [-all|-a] [-table] [-t tag] [-name] [-cmap] [-g|-glyph range|li"
         + "st] [-c|-char range|list] [-?|-h|-help] fontfile | directory");
-    System.out.println("dump information aobut the font file or all fonts in a directory");
+    System.out.println("dump information about the font file or all fonts in a directory");
     System.out.println("\t-all,-a\t\tdump all information");
     System.out.println("\t-table\t\tdump all table indexes");
     System.out.println(

@@ -320,7 +320,7 @@ public class DataDisplayTable {
    * @return the padded string
    */
   private static String padLeft(String s, int minLength) {
-    return String.format("%1$#" + minLength + "s", s);
+    return String.format("%1$" + minLength + "s", s);
   }
 
   /**

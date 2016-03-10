@@ -1221,7 +1221,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
             encodingName = "UTF-16BE";
             break;
           case ShiftJIS:
-            encodingName = "windows-933";
+            encodingName = "windows-932";
             break;
           case PRC:
             encodingName = "windows-936";
