@@ -146,6 +146,7 @@ public class SfntTool {
           removeTables.add(Tag.VDMX);
           removeTables.add(Tag.LTSH);
           removeTables.add(Tag.DSIG);
+          removeTables.add(Tag.vhea);
           // AAT tables, not yet defined in sfntly Tag class
           removeTables.add(Tag.intValue(new byte[]{'m', 'o', 'r', 't'}));
           removeTables.add(Tag.intValue(new byte[]{'m', 'o', 'r', 'x'}));
@@ -162,6 +163,7 @@ public class SfntTool {
           removeTables.add(Tag.VDMX);
           removeTables.add(Tag.LTSH);
           removeTables.add(Tag.DSIG);
+          removeTables.add(Tag.vhea);
           hintStripper.setRemoveTables(removeTables);
           newFont = hintStripper.subset().build();
         }
