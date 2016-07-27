@@ -57,6 +57,9 @@ class SubsetterImpl {
   bool LoadFont(const char* font_name,
                 const unsigned char* original_font,
                 size_t font_size);
+  bool LoadFont(int font_index,
+                const unsigned char* original_font,
+                size_t font_size);
   int SubsetFont(const unsigned int* glyph_ids,
                  size_t glyph_count,
                  unsigned char** output_buffer);

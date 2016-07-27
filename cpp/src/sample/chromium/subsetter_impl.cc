@@ -616,6 +616,24 @@ SubsetterImpl::SubsetterImpl() {
 SubsetterImpl::~SubsetterImpl() {
 }
 
+bool SubsetterImpl::LoadFont(int font_index,
+                             const unsigned char* original_font,
+                             size_t font_size) {
+  MemoryInputStream mis;
+  mis.Attach(original_font, font_size);
+  if (factory_ == NULL) {
+    factory_.Attach(FontFactory::GetInstance());
+  }
+
+  FontArray font_array;
+  factory_->LoadFonts(&mis, &font_array);
+  if (font_index < 0 || (size_t)font_index >= font_array.size()) {
+    return false;
+  }
+  font_ = font_array[font_index].p_;
+  return font_ != NULL;
+}
+
 bool SubsetterImpl::LoadFont(const char* font_name,
                              const unsigned char* original_font,
                              size_t font_size) {

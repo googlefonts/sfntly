@@ -46,6 +46,30 @@ class SfntlyWrapper {
                         const unsigned int* glyph_ids,
                         size_t glyph_count,
                         unsigned char** output_buffer);
+
+
+  // Font subsetting API
+  //
+  // Input TTF/TTC/OTF fonts, specify the glyph IDs to subset, and the subset
+  // font is returned in |output_buffer| (caller to delete[]).  Return value is
+  // the length of output_buffer allocated.
+  //
+  // If subsetting fails, a negative value is returned.  If none of the glyph
+  // IDs specified is found, the function will return 0.
+  //
+  // |font_name|      Font index, ignored for non-TTC files, 0-indexed.
+  // |original_font|  Original font file contents.
+  // |font_size|      Size of |original_font| in bytes.
+  // |glyph_ids|      Glyph IDs to subset.  If the specified glyph ID is not
+  //                  found in the font file, it will be ignored silently.
+  // |glyph_count|    Number of glyph IDs in |glyph_ids|
+  // |output_buffer|  Generated subset font.  Caller to delete[].
+  static int SubsetFont(int font_index,
+                        const unsigned char* original_font,
+                        size_t font_size,
+                        const unsigned int* glyph_ids,
+                        size_t glyph_count,
+                        unsigned char** output_buffer);
 };
 
 #endif  // SFNTLY_CPP_SRC_TEST_FONT_SUBSETTER_H_

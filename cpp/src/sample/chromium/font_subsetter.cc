@@ -37,3 +37,24 @@ int SfntlyWrapper::SubsetFont(const char* font_name,
 
   return subsetter.SubsetFont(glyph_ids, glyph_count, output_buffer);
 }
+
+int SfntlyWrapper::SubsetFont(int font_index,
+                              const unsigned char* original_font,
+                              size_t font_size,
+                              const unsigned int* glyph_ids,
+                              size_t glyph_count,
+                              unsigned char** output_buffer) {
+  if (output_buffer == NULL ||
+      original_font == NULL || font_size == 0 ||
+      glyph_ids == NULL || glyph_count == 0) {
+    return 0;
+  }
+
+  sfntly::SubsetterImpl subsetter;
+  if (!subsetter.LoadFont(font_index, original_font, font_size)) {
+    return -1;  // Load error or font not found.
+  }
+
+  return subsetter.SubsetFont(glyph_ids, glyph_count, output_buffer);
+}
+
