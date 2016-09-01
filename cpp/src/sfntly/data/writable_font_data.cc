@@ -17,6 +17,7 @@
 #include "sfntly/data/writable_font_data.h"
 
 #include <algorithm>
+#include <limits>
 
 #include "sfntly/data/memory_byte_array.h"
 #include "sfntly/data/growable_memory_byte_array.h"
@@ -167,7 +168,9 @@ void WritableFontData::CopyFrom(InputStream* is) {
 
 CALLER_ATTACH FontData* WritableFontData::Slice(int32_t offset,
                                                 int32_t length) {
-  if (offset < 0 || offset + length > Size()) {
+  if (offset < 0 || length < 0 ||
+      offset > std::numeric_limits<int32_t>::max() - length ||
+      offset + length > Size()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
     throw IndexOutOfBoundsException(
         "Attempt to bind data outside of its limits");
@@ -179,7 +182,7 @@ CALLER_ATTACH FontData* WritableFontData::Slice(int32_t offset,
 }
 
 CALLER_ATTACH FontData* WritableFontData::Slice(int32_t offset) {
-  if (offset > Size()) {
+  if (offset < 0 || offset > Size()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
     throw IndexOutOfBoundsException(
         "Attempt to bind data outside of its limits");

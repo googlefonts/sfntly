@@ -294,7 +294,9 @@ int32_t ReadableFontData::SearchULong(int32_t start_index,
 
 CALLER_ATTACH FontData* ReadableFontData::Slice(int32_t offset,
                                                 int32_t length) {
-  if (offset < 0 || offset + length > Size()) {
+  if (offset < 0 || length < 0 ||
+      offset > std::numeric_limits<int32_t>::max() - length ||
+      offset + length > Size()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
     throw IndexOutOfBoundsException(
         "Attempt to bind data outside of its limits");
