@@ -215,10 +215,11 @@ CALLER_ATTACH GlyphTable::Glyph*
 
   ReadableFontDataPtr sliced_data;
   sliced_data.Attach(down_cast<ReadableFontData*>(data->Slice(offset, length)));
-  if (type == GlyphType::kSimple) {
-    glyph = new SimpleGlyph(sliced_data);
-  } else {
-    glyph = new CompositeGlyph(sliced_data);
+  if (sliced_data) {
+    if (type == GlyphType::kSimple)
+      glyph = new SimpleGlyph(sliced_data);
+    else
+      glyph = new CompositeGlyph(sliced_data);
   }
   return glyph.Detach();
 }
