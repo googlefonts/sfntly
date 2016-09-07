@@ -64,7 +64,7 @@ int32_t ReadableFontData::ReadUByte(int32_t index) {
     throw IndexOutOfBoundException(
         "Index attempted to be read from is out of bounds", index);
 #endif
-    return -1;
+    return kInvalidUnsigned;
   }
   return b;
 }
@@ -95,10 +95,10 @@ int32_t ReadableFontData::ReadChar(int32_t index) {
 int32_t ReadableFontData::ReadUShort(int32_t index) {
   int32_t b1 = ReadUByte(index);
   if (b1 < 0)
-    return -1;
+    return kInvalidUnsigned;
   int32_t b2 = ReadUByte(index + 1);
   if (b2 < 0)
-    return -1;
+    return kInvalidUnsigned;
   return 0xffff & (b1 << 8 | b2);
 }
 
@@ -115,29 +115,29 @@ int32_t ReadableFontData::ReadShort(int32_t index) {
 int32_t ReadableFontData::ReadUInt24(int32_t index) {
   int32_t b1 = ReadUByte(index);
   if (b1 < 0)
-    return -1;
+    return kInvalidUnsigned;
   int32_t b2 = ReadUByte(index + 1);
   if (b2 < 0)
-    return -1;
+    return kInvalidUnsigned;
   int32_t b3 = ReadUByte(index + 2);
   if (b3 < 0)
-    return -1;
+    return kInvalidUnsigned;
   return 0xffffff & (b1 << 16 | b2 << 8 | b3);
 }
 
 int64_t ReadableFontData::ReadULong(int32_t index) {
   int32_t b1 = ReadUByte(index);
   if (b1 < 0)
-    return -1;
+    return kInvalidUnsigned;
   int32_t b2 = ReadUByte(index + 1);
   if (b2 < 0)
-    return -1;
+    return kInvalidUnsigned;
   int32_t b3 = ReadUByte(index + 2);
   if (b3 < 0)
-    return -1;
+    return kInvalidUnsigned;
   int32_t b4 = ReadUByte(index + 3);
   if (b4 < 0)
-    return -1;
+    return kInvalidUnsigned;
   return 0xffffffffL & (b1 << 24 | b2 << 16 | b3 << 8 | b4);
 }
 
@@ -154,16 +154,16 @@ int32_t ReadableFontData::ReadULongAsInt(int32_t index) {
 int64_t ReadableFontData::ReadULongLE(int32_t index) {
   int32_t b1 = ReadUByte(index);
   if (b1 < 0)
-    return -1;
+    return kInvalidUnsigned;
   int32_t b2 = ReadUByte(index + 1);
   if (b2 < 0)
-    return -1;
+    return kInvalidUnsigned;
   int32_t b3 = ReadUByte(index + 2);
   if (b3 < 0)
-    return -1;
+    return kInvalidUnsigned;
   int32_t b4 = ReadUByte(index + 3);
   if (b4 < 0)
-    return -1;
+    return kInvalidUnsigned;
   return 0xffffffffL & (b1 | b2 << 8 | b3 << 16 | b4 << 24);
 }
 

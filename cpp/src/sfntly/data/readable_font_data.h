@@ -53,6 +53,7 @@ class ReadableFontData : public FontData,
 
   static const int32_t kInvalidByte = 128;
   static const int32_t kInvalidShort = 32768;
+  static const int32_t kInvalidUnsigned = -1;
 
   static CALLER_ATTACH ReadableFontData* CreateReadableFontData(ByteVector* b);
 
