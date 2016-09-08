@@ -40,24 +40,27 @@
 
 namespace sfntly {
 
-const int32_t SFNTVERSION_MAJOR = 1;
-const int32_t SFNTVERSION_MINOR = 0;
+namespace {
+
+const int32_t kSFNTVersionMajor = 1;
+const int32_t kSFNTVersionMinor = 0;
+
+const int32_t kMaxTableSize = 200 * 1024 * 1024;
+
+}  // namespace
 
 /******************************************************************************
  * Font class
  ******************************************************************************/
 Font::~Font() {}
 
-bool Font::HasTable(int32_t tag) {
-  TableMap::const_iterator result = tables_.find(tag);
-  TableMap::const_iterator end = tables_.end();
-  return (result != end);
+bool Font::HasTable(int32_t tag) const {
+  return tables_.find(tag) != tables_.end();
 }
 
 Table* Font::GetTable(int32_t tag) {
-  if (!HasTable(tag)) {
+  if (!HasTable(tag))
     return NULL;
-  }
   return tables_[tag];
 }
 
@@ -308,15 +311,12 @@ Table::Builder* Font::Builder::NewTableBuilder(int32_t tag,
 }
 
 void Font::Builder::RemoveTableBuilder(int32_t tag) {
-  TableBuilderMap::iterator target = table_builders_.find(tag);
-  if (target != table_builders_.end()) {
-    table_builders_.erase(target);
-  }
+  table_builders_.erase(tag);
 }
 
 Font::Builder::Builder(FontFactory* factory)
     : factory_(factory),
-      sfnt_version_(Fixed1616::Fixed(SFNTVERSION_MAJOR, SFNTVERSION_MINOR)) {
+      sfnt_version_(Fixed1616::Fixed(kSFNTVersionMajor, kSFNTVersionMinor)) {
 }
 
 void Font::Builder::LoadFont(InputStream* is) {
@@ -525,32 +525,38 @@ void Font::Builder::LoadTableData(HeaderOffsetSortedSet* headers,
                                   FontInputStream* is,
                                   DataBlockMap* table_data) {
   assert(table_data);
-  for (HeaderOffsetSortedSet::iterator table_header = headers->begin(),
+  for (HeaderOffsetSortedSet::iterator it = headers->begin(),
                                        table_end = headers->end();
-                                       table_header != table_end;
-                                       ++table_header) {
-    is->Skip((*table_header)->offset() - is->position());
-    FontInputStream table_is(is, (*table_header)->length());
+                                       it != table_end;
+                                       ++it) {
+    const Ptr<Header> header = *it;
+    is->Skip(header->offset() - is->position());
+    if (header->length() > kMaxTableSize)
+      continue;
+
+    FontInputStream table_is(is, header->length());
     WritableFontDataPtr data;
-    data.Attach(
-        WritableFontData::CreateWritableFontData((*table_header)->length()));
-    data->CopyFrom(&table_is, (*table_header)->length());
-    table_data->insert(DataBlockEntry(*table_header, data));
+    data.Attach(WritableFontData::CreateWritableFontData(header->length()));
+    data->CopyFrom(&table_is, header->length());
+    table_data->insert(DataBlockEntry(header, data));
   }
 }
 
 void Font::Builder::LoadTableData(HeaderOffsetSortedSet* headers,
                                   WritableFontData* fd,
                                   DataBlockMap* table_data) {
-  for (HeaderOffsetSortedSet::iterator table_header = headers->begin(),
+  for (HeaderOffsetSortedSet::iterator it = headers->begin(),
                                        table_end = headers->end();
-                                       table_header != table_end;
-                                       ++table_header) {
+                                       it != table_end;
+                                       ++it) {
+    const Ptr<Header> header = *it;
+    if (header->length() > kMaxTableSize)
+      continue;
+
     FontDataPtr sliced_data;
-    sliced_data.Attach(
-        fd->Slice((*table_header)->offset(), (*table_header)->length()));
+    sliced_data.Attach(fd->Slice(header->offset(), header->length()));
     WritableFontDataPtr data = down_cast<WritableFontData*>(sliced_data.p_);
-    table_data->insert(DataBlockEntry(*table_header, data));
+    table_data->insert(DataBlockEntry(header, data));
   }
 }
 

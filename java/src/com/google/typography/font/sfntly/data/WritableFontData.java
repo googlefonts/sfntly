@@ -125,7 +125,8 @@ public final class WritableFontData extends ReadableFontData {
    */
   @Override
   public WritableFontData slice(int offset, int length) {
-    if (offset < 0 || (offset + length) > this.size()) {
+    if (offset < 0 || length < 0 || offset > Integer.MAX_VALUE - length ||
+        (offset + length) > this.size()) {
       throw new IndexOutOfBoundsException("Attempt to bind data outside of its limits.");
     }
     WritableFontData slice = new WritableFontData(this, offset, length);
