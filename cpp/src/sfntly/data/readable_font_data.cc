@@ -18,6 +18,8 @@
 
 #include <stdio.h>
 
+#include <limits>
+
 #include "sfntly/data/memory_byte_array.h"
 #include "sfntly/data/writable_font_data.h"
 #include "sfntly/port/exception_type.h"
