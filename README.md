@@ -1,5 +1,7 @@
 # What is sfntly?
 
+sfntly is pronounced "esfontlee".
+
 sfntly is a Java and C++ library for using, editing, and creating sfnt container based fonts (e.g. OpenType, TrueType). This library was initially created by Google's Font Team and the C++ port was done by the Chrome team. It has been made open source.
 
 The basic features of sfntly are the reading, editing, and writing of an sfnt container font. Fonts that use an sfnt container include OpenType, TrueType, AAT/GX, and Graphite. sfntly isn't itself a tool that is usable by an end user - it is a library that allows software developers to build tools that manipulate fonts in ways that haven't been easily accessible to most developers. The sfntly library is available in Java with a partial C++ port. However, we have included some font tools that are built on top of sfntly: a font subsetter, font dumper, a font linter, some compression utilities.
