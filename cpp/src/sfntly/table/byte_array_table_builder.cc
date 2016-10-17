@@ -15,6 +15,7 @@
  */
 
 #include "sfntly/table/byte_array_table_builder.h"
+#include "sfntly/port/exception_type.h"
 
 namespace sfntly {
 

@@ -20,6 +20,7 @@
 #include <stdlib.h>
 
 #include "sfntly/math/font_math.h"
+#include "sfntly/port/exception_type.h"
 
 namespace sfntly {
 /******************************************************************************

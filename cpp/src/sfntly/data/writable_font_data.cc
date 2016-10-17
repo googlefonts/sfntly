@@ -21,6 +21,7 @@
 
 #include "sfntly/data/memory_byte_array.h"
 #include "sfntly/data/growable_memory_byte_array.h"
+#include "sfntly/port/exception_type.h"
 
 namespace sfntly {
 
@@ -172,7 +173,7 @@ CALLER_ATTACH FontData* WritableFontData::Slice(int32_t offset,
       offset > std::numeric_limits<int32_t>::max() - length ||
       offset + length > Size()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
-    throw IndexOutOfBoundsException(
+    throw IndexOutOfBoundException(
         "Attempt to bind data outside of its limits");
 #endif
     return NULL;
@@ -184,7 +185,7 @@ CALLER_ATTACH FontData* WritableFontData::Slice(int32_t offset,
 CALLER_ATTACH FontData* WritableFontData::Slice(int32_t offset) {
   if (offset < 0 || offset > Size()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
-    throw IndexOutOfBoundsException(
+    throw IndexOutOfBoundException(
         "Attempt to bind data outside of its limits");
 #endif
     return NULL;

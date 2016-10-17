@@ -217,7 +217,7 @@ void LocaTable::Builder::Initialize(ReadableFontData* data) {
 int32_t LocaTable::Builder::CheckGlyphRange(int32_t glyph_id) {
   if (glyph_id < 0 || glyph_id > LastGlyphIndex()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
-    throw IndexOutOfBoundsException("Glyph ID is outside of the allowed range");
+    throw IndexOutOfBoundException("Glyph ID is outside of the allowed range");
 #endif
     return -1;
   }

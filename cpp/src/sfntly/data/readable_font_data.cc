@@ -300,7 +300,7 @@ CALLER_ATTACH FontData* ReadableFontData::Slice(int32_t offset,
       offset > std::numeric_limits<int32_t>::max() - length ||
       offset + length > Size()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
-    throw IndexOutOfBoundsException(
+    throw IndexOutOfBoundException(
         "Attempt to bind data outside of its limits");
 #endif
     return NULL;
@@ -312,7 +312,7 @@ CALLER_ATTACH FontData* ReadableFontData::Slice(int32_t offset,
 CALLER_ATTACH FontData* ReadableFontData::Slice(int32_t offset) {
   if (offset < 0 || offset > Size()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
-    throw IndexOutOfBoundsException(
+    throw IndexOutOfBoundException(
         "Attempt to bind data outside of its limits");
 #endif
     return NULL;

@@ -17,6 +17,7 @@
 #include "sfntly/table/font_data_table.h"
 
 #include "sfntly/data/font_output_stream.h"
+#include "sfntly/port/exception_type.h"
 
 namespace sfntly {
 

@@ -18,6 +18,7 @@
 #define SFNTLY_CPP_SRC_SFNTLY_PORT_JAVA_ITERATOR_H_
 
 #include "sfntly/port/refcount.h"
+#include "sfntly/port/exception_type.h"
 
 // Interface of Java iterator.
 // This is a forward read-only iterator that represents java.util.Iterator<E>

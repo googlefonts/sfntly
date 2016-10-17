@@ -15,6 +15,7 @@
  */
 
 #include "sfntly/port/memory_output_stream.h"
+#include "sfntly/port/exception_type.h"
 
 namespace sfntly {
 

@@ -15,6 +15,7 @@
  */
 
 #include "sfntly/data/font_output_stream.h"
+#include "sfntly/port/exception_type.h"
 
 #include <algorithm>
 

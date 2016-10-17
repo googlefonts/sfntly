@@ -15,6 +15,7 @@
  */
 
 #include "sfntly/table/core/horizontal_device_metrics_table.h"
+#include "sfntly/port/exception_type.h"
 
 namespace sfntly {
 /******************************************************************************
@@ -37,7 +38,7 @@ int32_t HorizontalDeviceMetricsTable::RecordSize() {
 int32_t HorizontalDeviceMetricsTable::PixelSize(int32_t record_index) {
   if (record_index < 0 || record_index >= NumRecords()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
-    throw IndexOutOfBoundsException();
+    throw IndexOutOfBoundException();
 #endif
     return -1;
   }
@@ -48,7 +49,7 @@ int32_t HorizontalDeviceMetricsTable::PixelSize(int32_t record_index) {
 int32_t HorizontalDeviceMetricsTable::MaxWidth(int32_t record_index) {
   if (record_index < 0 || record_index >= NumRecords()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
-    throw IndexOutOfBoundsException();
+    throw IndexOutOfBoundException();
 #endif
     return -1;
   }
@@ -61,7 +62,7 @@ int32_t HorizontalDeviceMetricsTable::Width(int32_t record_index,
   if (record_index < 0 || record_index >= NumRecords() ||
       glyph_num < 0 || glyph_num >= num_glyphs_) {
 #if !defined (SFNTLY_NO_EXCEPTION)
-    throw IndexOutOfBoundsException();
+    throw IndexOutOfBoundException();
 #endif
     return -1;
   }
