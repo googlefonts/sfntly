@@ -123,6 +123,17 @@ void Font::SerializeHeader(FontOutputStream* fos,
   fos->WriteUShort(log2_of_max_power_of_2);
   fos->WriteUShort((table_headers->size() * 16) - search_range);
 
+    // ssheldon: the woff exporter is complaining that the tables are not in order, technically sorting them
+    // will fix that error using the commented code but it actually breaks the font. Making a note in
+    // case for some unexpected reason this becomes important later.
+    //
+    //    std::sort(table_headers->begin(), table_headers->end(),
+    //              [] (HeaderPtr const& a, HeaderPtr const& b) { return a->tag() < b->tag(); });
+    //    
+    //    for (TableHeaderList::iterator record = table_headers->begin(),
+    //         record_end = table_headers->end();
+    //         record != record_end; ++record) {
+    
   HeaderTagSortedSet sorted_headers;
   std::copy(table_headers->begin(),
             table_headers->end(),
