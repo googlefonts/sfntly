@@ -53,7 +53,9 @@ class ReadableFontData : public FontData,
 
   static const int32_t kInvalidByte = 128;
   static const int32_t kInvalidShort = 32768;
+  static const int32_t kInvalidLong = 0xffffffff;
   static const int32_t kInvalidUnsigned = -1;
+  static const int64_t kInvalidLongDateTime = -1;
 
   static CALLER_ATTACH ReadableFontData* CreateReadableFontData(ByteVector* b);
 
@@ -122,7 +124,7 @@ class ReadableFontData : public FontData,
 
   // Read the ULONG at the given index.
   // @param index index into the font data
-  // @return the ULONG
+  // @return the ULONG; kInvalidUnsigned if outside the bounds of the font data
   // @throws IndexOutOfBoundsException if index is outside the FontData's range
   virtual int64_t ReadULong(int32_t index);
 
@@ -140,7 +142,7 @@ class ReadableFontData : public FontData,
 
   // Read the LONG at the given index.
   // @param index index into the font data
-  // @return the LONG
+  // @return the LONG; kInvalidLong if outside the bounds of the font data
   // @throws IndexOutOfBoundsException if index is outside the FontData's range
   virtual int32_t ReadLong(int32_t index);
 
@@ -152,7 +154,8 @@ class ReadableFontData : public FontData,
 
   // Read the LONGDATETIME at the given index.
   // @param index index into the font data
-  // @return the LONGDATETIME
+  // @return the LONGDATETIME; kInvalidLongDateTime if outside the bounds of the
+  // font data
   // @throws IndexOutOfBoundsException if index is outside the FontData's range
   virtual int64_t ReadDateTimeAsLong(int32_t index);
 
