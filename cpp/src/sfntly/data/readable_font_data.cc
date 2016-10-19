@@ -111,7 +111,9 @@ int32_t ReadableFontData::ReadShort(int32_t index) {
   int32_t b2 = ReadUByte(index + 1);
   if (b2 < 0)
     return kInvalidShort;
-  return ((b1 << 8 | b2) << 16) >> 16;
+
+  uint32_t result = static_cast<uint32_t>(b1) << 8 | b2;
+  return static_cast<int32_t>(result << 16) >> 16;
 }
 
 int32_t ReadableFontData::ReadUInt24(int32_t index) {
