@@ -24,6 +24,7 @@ namespace sfntly {
 
 struct IndexToLocFormat {
   enum {
+    kInvalidOffset = -1,
     kShortOffset = 0,
     kLongOffset = 1
   };
