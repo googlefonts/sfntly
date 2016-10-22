@@ -393,14 +393,18 @@ void Font::Builder::BuildTablesFromBuilders(Font* font,
 }
 
 static Table::Builder* GetBuilder(TableBuilderMap* builder_map, int32_t tag) {
-  if (builder_map) {
-    TableBuilderMap::iterator target = builder_map->find(tag);
-    if (target != builder_map->end()) {
-      return target->second.p_;
-    }
-  }
+  if (!builder_map)
+    return NULL;
 
-  return NULL;
+  TableBuilderMap::iterator target = builder_map->find(tag);
+  if (target == builder_map->end())
+    return NULL;
+
+  Table::Builder* builder = target->second.p_;
+  if (!builder || !builder->InternalReadData())
+    return NULL;
+
+  return builder;
 }
 
 void Font::Builder::InterRelateBuilders(TableBuilderMap* builder_map) {

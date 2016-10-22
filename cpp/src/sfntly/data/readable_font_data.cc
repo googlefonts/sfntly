@@ -111,7 +111,9 @@ int32_t ReadableFontData::ReadShort(int32_t index) {
   int32_t b2 = ReadUByte(index + 1);
   if (b2 < 0)
     return kInvalidShort;
-  return ((b1 << 8 | b2) << 16) >> 16;
+
+  uint32_t result = static_cast<uint32_t>(b1) << 8 | b2;
+  return static_cast<int32_t>(result << 16) >> 16;
 }
 
 int32_t ReadableFontData::ReadUInt24(int32_t index) {
@@ -170,10 +172,19 @@ int64_t ReadableFontData::ReadULongLE(int32_t index) {
 }
 
 int32_t ReadableFontData::ReadLong(int32_t index) {
-  return ReadByte(index) << 24 |
-         ReadUByte(index + 1) << 16 |
-         ReadUByte(index + 2) << 8 |
-         ReadUByte(index + 3);
+  int32_t b1 = ReadByte(index);
+  if (b1 == kInvalidByte)
+    return kInvalidLong;
+  int32_t b2 = ReadUByte(index + 1);
+  if (b2 < 0)
+    return kInvalidLong;
+  int32_t b3 = ReadUByte(index + 2);
+  if (b3 < 0)
+    return kInvalidLong;
+  int32_t b4 = ReadUByte(index + 3);
+  if (b4 < 0)
+    return kInvalidLong;
+  return static_cast<uint32_t>(b1) << 24 | b2 << 16 | b3 << 8 | b4;
 }
 
 int32_t ReadableFontData::ReadFixed(int32_t index) {
@@ -181,7 +192,13 @@ int32_t ReadableFontData::ReadFixed(int32_t index) {
 }
 
 int64_t ReadableFontData::ReadDateTimeAsLong(int32_t index) {
-  return (int64_t)ReadULong(index) << 32 | ReadULong(index + 4);
+  int32_t high = ReadULong(index);
+  if (high == kInvalidUnsigned)
+    return kInvalidLongDateTime;
+  int32_t low = ReadULong(index + 4);
+  if (low == kInvalidUnsigned)
+    return kInvalidLongDateTime;
+  return (int64_t)high << 32 | low;
 }
 
 int32_t ReadableFontData::ReadFWord(int32_t index) {

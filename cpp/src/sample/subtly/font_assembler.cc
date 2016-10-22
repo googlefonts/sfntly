@@ -211,6 +211,8 @@ bool FontAssembler::AssembleGlyphAndLocaTables() {
     // If there are missing glyphs between the last glyph_id and the
     // current resolved_glyph_id, since the LOCA table needs to have the same
     // size, the offset is kept the same.
+    loca_list.resize(std::max(loca_list.size(),
+                     static_cast<size_t>(resolved_glyph_id + 2)));
     for (int32_t i = last_glyph_id + 1; i <= resolved_glyph_id; ++i)
       loca_list[i] = last_offset;
     last_offset += length;
