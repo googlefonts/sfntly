@@ -400,7 +400,12 @@ static Table::Builder* GetBuilder(TableBuilderMap* builder_map, int32_t tag) {
   if (target == builder_map->end())
     return NULL;
 
-  Table::Builder* builder = target->second.p_;
+  return target->second.p_;
+}
+
+// Like GetBuilder(), but the returned Builder must be able to support reads.
+static Table::Builder* GetReadBuilder(TableBuilderMap* builder_map, int32_t tag) {
+  Table::Builder* builder = GetBuilder(builder_map, tag);
   if (!builder || !builder->InternalReadData())
     return NULL;
 
@@ -408,46 +413,46 @@ static Table::Builder* GetBuilder(TableBuilderMap* builder_map, int32_t tag) {
 }
 
 void Font::Builder::InterRelateBuilders(TableBuilderMap* builder_map) {
-  Table::Builder* raw_head_builder = GetBuilder(builder_map, Tag::head);
+  Table::Builder* raw_head_builder = GetReadBuilder(builder_map, Tag::head);
   FontHeaderTableBuilderPtr header_table_builder;
   if (raw_head_builder != NULL) {
-      header_table_builder =
-          down_cast<FontHeaderTable::Builder*>(raw_head_builder);
+    header_table_builder =
+        down_cast<FontHeaderTable::Builder*>(raw_head_builder);
   }
 
-  Table::Builder* raw_hhea_builder = GetBuilder(builder_map, Tag::hhea);
+  Table::Builder* raw_hhea_builder = GetReadBuilder(builder_map, Tag::hhea);
   HorizontalHeaderTableBuilderPtr horizontal_header_builder;
   if (raw_head_builder != NULL) {
-      horizontal_header_builder =
-          down_cast<HorizontalHeaderTable::Builder*>(raw_hhea_builder);
+    horizontal_header_builder =
+        down_cast<HorizontalHeaderTable::Builder*>(raw_hhea_builder);
   }
 
-  Table::Builder* raw_maxp_builder = GetBuilder(builder_map, Tag::maxp);
+  Table::Builder* raw_maxp_builder = GetReadBuilder(builder_map, Tag::maxp);
   MaximumProfileTableBuilderPtr max_profile_builder;
   if (raw_maxp_builder != NULL) {
-      max_profile_builder =
-          down_cast<MaximumProfileTable::Builder*>(raw_maxp_builder);
+    max_profile_builder =
+        down_cast<MaximumProfileTable::Builder*>(raw_maxp_builder);
   }
 
   Table::Builder* raw_loca_builder = GetBuilder(builder_map, Tag::loca);
   LocaTableBuilderPtr loca_table_builder;
   if (raw_loca_builder != NULL) {
-      loca_table_builder = down_cast<LocaTable::Builder*>(raw_loca_builder);
+    loca_table_builder = down_cast<LocaTable::Builder*>(raw_loca_builder);
   }
 
   Table::Builder* raw_hmtx_builder = GetBuilder(builder_map, Tag::hmtx);
   HorizontalMetricsTableBuilderPtr horizontal_metrics_builder;
   if (raw_hmtx_builder != NULL) {
-      horizontal_metrics_builder =
-          down_cast<HorizontalMetricsTable::Builder*>(raw_hmtx_builder);
+    horizontal_metrics_builder =
+        down_cast<HorizontalMetricsTable::Builder*>(raw_hmtx_builder);
   }
 
 #if defined (SFNTLY_EXPERIMENTAL)
   Table::Builder* raw_hdmx_builder = GetBuilder(builder_map, Tag::hdmx);
   HorizontalDeviceMetricsTableBuilderPtr hdmx_table_builder;
   if (raw_hdmx_builder != NULL) {
-      hdmx_table_builder =
-          down_cast<HorizontalDeviceMetricsTable::Builder*>(raw_hdmx_builder);
+    hdmx_table_builder =
+        down_cast<HorizontalDeviceMetricsTable::Builder*>(raw_hdmx_builder);
   }
 #endif
 
