@@ -181,7 +181,7 @@ void GlyphTable::Builder::Initialize(ReadableFontData* data,
 
 GlyphTable::GlyphBuilderList* GlyphTable::Builder::GetGlyphBuilders() {
   if (glyph_builders_.empty()) {
-    if (InternalReadData() && !loca_.empty()) {
+    if (InternalReadData() && loca_.empty()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
       throw IllegalStateException(
           "Loca values not set - unable to parse glyph data.");
