@@ -25,7 +25,7 @@
 #include <string>
 
 #include "sfntly/font.h"
-#include "sfntly/data/memory_byte_array.h"
+#include "sfntly/data/byte_array.h"
 
 namespace sfntly {
 class TestUtils {

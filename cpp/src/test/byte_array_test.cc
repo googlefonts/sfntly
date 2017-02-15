@@ -17,8 +17,7 @@
 #include <stdio.h>
 
 #include "gtest/gtest.h"
-#include "sfntly/data/memory_byte_array.h"
-#include "sfntly/data/growable_memory_byte_array.h"
+#include "sfntly/data/byte_array.h"
 
 namespace sfntly {
 namespace byte_array_test {
@@ -91,12 +90,12 @@ bool ReadComparison(ByteArray* ba1, ByteArray* ba2) {
 }
 
 bool CopyTest(ByteArray* ba) {
-  ByteArrayPtr fixed_copy = new MemoryByteArray(ba->Length());
+  ByteArrayPtr fixed_copy = new ByteArray();
   ba->CopyTo(fixed_copy);
   EXPECT_EQ(ba->Length(), fixed_copy->Length());
   EXPECT_TRUE(ReadComparison(ba, fixed_copy));
 
-  ByteArrayPtr growable_copy = new GrowableMemoryByteArray();
+  ByteArrayPtr growable_copy = new ByteArray();
   ba->CopyTo(growable_copy);
   EXPECT_EQ(ba->Length(), growable_copy->Length());
   EXPECT_TRUE(ReadComparison(ba, growable_copy));
@@ -116,7 +115,7 @@ bool TestMemoryByteArray() {
        i < sizeof(byte_array_test::BYTE_ARRAY_SIZES) / sizeof(int32_t); ++i) {
     int32_t size = byte_array_test::BYTE_ARRAY_SIZES[i];
     fprintf(stderr, "%d ", size);
-    ByteArrayPtr ba = new MemoryByteArray(size);
+    ByteArrayPtr ba = new ByteArray();
     byte_array_test::FillTestByteArray(ba, size);
     EXPECT_TRUE(byte_array_test::ByteArrayTester(ba));
   }
@@ -130,7 +129,7 @@ bool TestGrowableMemoryByteArray() {
        i < sizeof(byte_array_test::BYTE_ARRAY_SIZES) / sizeof(int32_t); ++i) {
     int32_t size = byte_array_test::BYTE_ARRAY_SIZES[i];
     fprintf(stderr, "%d ", size);
-    ByteArrayPtr ba = new GrowableMemoryByteArray();
+    ByteArrayPtr ba = new ByteArray();
     byte_array_test::FillTestByteArray(ba, size);
     EXPECT_TRUE(byte_array_test::ByteArrayTester(ba));
   }

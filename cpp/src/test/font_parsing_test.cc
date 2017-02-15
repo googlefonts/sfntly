@@ -17,7 +17,7 @@
 #include "gtest/gtest.h"
 
 #include "sfntly/data/font_input_stream.h"
-#include "sfntly/data/memory_byte_array.h"
+#include "sfntly/data/byte_array.h"
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
 #include "sfntly/table/core/font_header_table.h"
