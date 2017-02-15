@@ -69,13 +69,13 @@ GlyphTable::Builder::Builder(Header* header, ReadableFontData* data)
 GlyphTable::Builder::~Builder() {
 }
 
-void GlyphTable::Builder::SetLoca(const IntegerList& loca) {
+void GlyphTable::Builder::SetLoca(const std::vector<int32_t>& loca) {
   loca_ = loca;
   set_model_changed(false);
   glyph_builders_.clear();
 }
 
-void GlyphTable::Builder::GenerateLocaList(IntegerList* locas) {
+void GlyphTable::Builder::GenerateLocaList(std::vector<int32_t>* locas) {
   assert(locas);
   GlyphBuilderList* glyph_builders = GetGlyphBuilders();
   locas->push_back(0);
@@ -158,7 +158,7 @@ int32_t GlyphTable::Builder::SubSerialize(WritableFontData* new_data) {
 }
 
 void GlyphTable::Builder::Initialize(ReadableFontData* data,
-                                     const IntegerList& loca) {
+                                     const std::vector<int32_t>& loca) {
   if (data != NULL) {
     if (loca_.empty()) {
       return;
@@ -591,7 +591,7 @@ int32_t GlyphTable::CompositeGlyph::TransformationSize(int32_t contour) {
 }
 
 void GlyphTable::CompositeGlyph::Transformation(int32_t contour,
-                                                ByteVector* transformation) {
+                                                std::vector<uint8_t>* transformation) {
   int32_t contour_flags = Flags(contour);
   int32_t index = contour_index_[contour] + 2 * DataSize::kUSHORT;
   if ((contour_flags & kFLAG_ARG_1_AND_2_ARE_WORDS) ==

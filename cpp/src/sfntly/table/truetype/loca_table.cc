@@ -109,11 +109,11 @@ LocaTable::Builder* LocaTable::Builder::CreateBuilder(Header* header,
   return builder.Detach();
 }
 
-IntegerList* LocaTable::Builder::LocaList() {
+std::vector<int32_t>* LocaTable::Builder::LocaList() {
   return GetLocaList();
 }
 
-void LocaTable::Builder::SetLocaList(IntegerList* list) {
+void LocaTable::Builder::SetLocaList(std::vector<int32_t>* list) {
   loca_.clear();
   if (list) {
     loca_ = *list;
@@ -183,7 +183,7 @@ bool LocaTable::Builder::SubReadyToSerialize() {
 
 int32_t LocaTable::Builder::SubSerialize(WritableFontData* new_data) {
   int32_t size = 0;
-  for (IntegerList::iterator l = loca_.begin(), end = loca_.end();
+  for (std::vector<int32_t>::iterator l = loca_.begin(), end = loca_.end();
                              l != end; ++l) {
     if (format_version_ == IndexToLocFormat::kLongOffset) {
       size += new_data->WriteULong(size, *l);
@@ -228,7 +228,7 @@ int32_t LocaTable::Builder::LastGlyphIndex() {
   return !loca_.empty() ? loca_.size() - 2 : num_glyphs_ - 1;
 }
 
-IntegerList* LocaTable::Builder::GetLocaList() {
+std::vector<int32_t>* LocaTable::Builder::GetLocaList() {
   if (loca_.empty()) {
     Initialize(InternalReadData());
     set_model_changed();

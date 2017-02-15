@@ -32,16 +32,16 @@ class InputStream {
   virtual void Mark(int32_t readlimit) = 0;
   virtual bool MarkSupported() = 0;
   virtual int32_t Read() = 0;
-  virtual int32_t Read(ByteVector* b) = 0;
-  virtual int32_t Read(ByteVector* b, int32_t offset, int32_t length) = 0;
+  virtual int32_t Read(std::vector<uint8_t>* b) = 0;
+  virtual int32_t Read(std::vector<uint8_t>* b, int32_t offset, int32_t length) = 0;
   virtual void Reset() = 0;
   virtual int64_t Skip(int64_t n) = 0;
 };
 
 class PushbackInputStream : public InputStream {
  public:
-  virtual void Unread(ByteVector* b) = 0;
-  virtual void Unread(ByteVector* b, int32_t offset, int32_t length) = 0;
+  virtual void Unread(std::vector<uint8_t>* b) = 0;
+  virtual void Unread(std::vector<uint8_t>* b, int32_t offset, int32_t length) = 0;
 };
 
 }  // namespace sfntly

@@ -70,17 +70,17 @@ int32_t FileInputStream::Read() {
 #endif
     return 0;
   }
-  byte_t value;
+  uint8_t value;
   size_t length = fread(&value, 1, 1, file_);
   position_ += length;
   return value;
 }
 
-int32_t FileInputStream::Read(ByteVector* b) {
+int32_t FileInputStream::Read(std::vector<uint8_t>* b) {
   return Read(b, 0, b->size());
 }
 
-int32_t FileInputStream::Read(ByteVector* b, int32_t offset, int32_t length) {
+int32_t FileInputStream::Read(std::vector<uint8_t>* b, int32_t offset, int32_t length) {
   assert(b);
   if (!file_) {
 #if !defined (SFNTLY_NO_EXCEPTION)
@@ -127,11 +127,11 @@ int64_t FileInputStream::Skip(int64_t n) {
   return skip_count;
 }
 
-void FileInputStream::Unread(ByteVector* b) {
+void FileInputStream::Unread(std::vector<uint8_t>* b) {
   Unread(b, 0, b->size());
 }
 
-void FileInputStream::Unread(ByteVector* b, int32_t offset, int32_t length) {
+void FileInputStream::Unread(std::vector<uint8_t>* b, int32_t offset, int32_t length) {
   assert(b);
   assert(b->size() >= size_t(offset + length));
   if (!file_) {

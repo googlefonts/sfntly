@@ -469,8 +469,8 @@ int32_t CMapTable::CMapFormat2::GlyphId(int32_t character) {
   }
 
   uint32_t c = ToBE32(character);
-  byte_t high_byte = (c >> 8) & 0xff;
-  byte_t low_byte = c & 0xff;
+  uint8_t high_byte = (c >> 8) & 0xff;
+  uint8_t low_byte = c & 0xff;
   int32_t offset = SubHeaderOffset(high_byte);
 
   if (offset == 0) {
@@ -956,7 +956,7 @@ CMapTable::CMapFormat4::Builder::Builder(WritableFontData* data, int32_t offset,
 }
 
 CMapTable::CMapFormat4::Builder::Builder(SegmentList* segments,
-                                         IntegerList* glyph_id_array,
+                                         std::vector<int32_t>* glyph_id_array,
                                          const CMapId& cmap_id)
     : CMap::Builder(reinterpret_cast<ReadableFontData*>(NULL),
                     CMapFormat::kFormat4, cmap_id),
@@ -1016,7 +1016,7 @@ void CMapTable::CMapFormat4::Builder::set_segments(SegmentList* segments) {
   set_model_changed();
 }
 
-IntegerList* CMapTable::CMapFormat4::Builder::glyph_id_array() {
+std::vector<int32_t>* CMapTable::CMapFormat4::Builder::glyph_id_array() {
   if (glyph_id_array_.empty()) {
     Initialize(InternalReadData());
     set_model_changed();
@@ -1025,7 +1025,7 @@ IntegerList* CMapTable::CMapFormat4::Builder::glyph_id_array() {
 }
 
 void CMapTable::CMapFormat4::Builder::
-set_glyph_id_array(IntegerList* glyph_id_array) {
+set_glyph_id_array(std::vector<int32_t>* glyph_id_array) {
   glyph_id_array_.assign(glyph_id_array->begin(), glyph_id_array->end());
   set_model_changed();
 }

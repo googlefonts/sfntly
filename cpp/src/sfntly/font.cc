@@ -68,9 +68,9 @@ const TableMap* Font::GetTableMap() {
   return &tables_;
 }
 
-void Font::Serialize(OutputStream* os, IntegerList* table_ordering) {
+void Font::Serialize(OutputStream* os, std::vector<int32_t>* table_ordering) {
   assert(table_ordering);
-  IntegerList final_table_ordering;
+  std::vector<int32_t> final_table_ordering;
   GenerateTableOrdering(table_ordering, &final_table_ordering);
   TableHeaderList table_records;
   BuildTableHeadersForSerialization(&final_table_ordering, &table_records);
@@ -80,23 +80,23 @@ void Font::Serialize(OutputStream* os, IntegerList* table_ordering) {
   SerializeTables(&fos, &table_records);
 }
 
-Font::Font(int32_t sfnt_version, ByteVector* digest)
+Font::Font(int32_t sfnt_version, std::vector<uint8_t>* digest)
     : sfnt_version_(sfnt_version) {
   // non-trivial assignments that makes debugging hard if placed in
   // initialization list
   digest_ = *digest;
 }
 
-void Font::BuildTableHeadersForSerialization(IntegerList* table_ordering,
+void Font::BuildTableHeadersForSerialization(std::vector<int32_t>* table_ordering,
                                              TableHeaderList* table_headers) {
   assert(table_headers);
   assert(table_ordering);
 
-  IntegerList final_table_ordering;
+  std::vector<int32_t> final_table_ordering;
   GenerateTableOrdering(table_ordering, &final_table_ordering);
   int32_t table_offset = Offset::kTableRecordBegin + num_tables() *
                          Offset::kTableRecordSize;
-  for (IntegerList::iterator tag = final_table_ordering.begin(),
+  for (std::vector<int32_t>::iterator tag = final_table_ordering.begin(),
                              tag_end = final_table_ordering.end();
                              tag != tag_end; ++tag) {
     if (tables_.find(*tag) == tables_.end()) {
@@ -158,13 +158,13 @@ void Font::SerializeTables(FontOutputStream* fos,
     }
     int32_t filler_size = ((table_size + 3) & ~3) - table_size;
     for (int32_t i = 0; i < filler_size; ++i) {
-      fos->Write(static_cast<byte_t>(0));
+      fos->Write(static_cast<uint8_t>(0));
     }
   }
 }
 
-void Font::GenerateTableOrdering(IntegerList* default_table_ordering,
-                                 IntegerList* table_ordering) {
+void Font::GenerateTableOrdering(std::vector<int32_t>* default_table_ordering,
+                                 std::vector<int32_t>* table_ordering) {
   assert(default_table_ordering);
   assert(table_ordering);
   table_ordering->clear();
@@ -179,7 +179,7 @@ void Font::GenerateTableOrdering(IntegerList* default_table_ordering,
                           table != table_end; ++table) {
     tables_in_font.insert(Int2BoolEntry(table->first, false));
   }
-  for (IntegerList::iterator tag = default_table_ordering->begin(),
+  for (std::vector<int32_t>::iterator tag = default_table_ordering->begin(),
                              tag_end = default_table_ordering->end();
                              tag != tag_end; ++tag) {
     if (HasTable(*tag)) {
@@ -195,7 +195,7 @@ void Font::GenerateTableOrdering(IntegerList* default_table_ordering,
   }
 }
 
-void Font::DefaultTableOrdering(IntegerList* default_table_ordering) {
+void Font::DefaultTableOrdering(std::vector<int32_t>* default_table_ordering) {
   assert(default_table_ordering);
   default_table_ordering->clear();
   if (HasTable(Tag::CFF)) {
@@ -268,7 +268,7 @@ CALLER_ATTACH Font* Font::Builder::Build() {
   return font.Detach();
 }
 
-void Font::Builder::SetDigest(ByteVector* digest) {
+void Font::Builder::SetDigest(std::vector<uint8_t>* digest) {
   digest_.clear();
   digest_ = *digest;
 }

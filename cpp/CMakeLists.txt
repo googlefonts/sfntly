@@ -6,13 +6,15 @@ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 
 project(sfntly)
 
+set(GCC_OR_CLANG ((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR CMAKE_COMPILER_IS_GNUCXX))
+
 # For gcc, make the default be debug build and valgrind friendly.
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(GCC_OR_CLANG)
   if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
     add_definitions("-DDEBUG -D_DEBUG -g -fno-inline -fno-omit-frame-pointer -fno-builtin")
   endif(NOT CMAKE_BUILD_TYPE)
-endif(CMAKE_COMPILER_IS_GNUCXX)
+endif(GCC_OR_CLANG)
 
   set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/lib)
   set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
@@ -21,9 +23,9 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
 
 # The following simulates Chrome compilation flags
   add_definitions(-DSFNTLY_NO_EXCEPTION)
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(GCC_OR_CLANG)
   add_definitions(-D__wur=__attribute__\(\(warn_unused_result\)\) -Wall -Werror -fno-exceptions)
-endif(CMAKE_COMPILER_IS_GNUCXX)
+endif(GCC_OR_CLANG)
 
 # Use STL for TinyXML library
   add_definitions(-DTIXML_USE_STL)
@@ -69,9 +71,9 @@ endif(MSVC10 OR MSVC90)
                                      src/sfntly/tools/*.h src/sfntly/tools/*.cc)
   add_executable(subsetter ${SIMPLE_SUBSETTER})
   target_link_libraries(subsetter sfntly icuuc)
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(GCC_OR_CLANG)
   target_link_libraries(subsetter pthread)
-endif(CMAKE_COMPILER_IS_GNUCXX)
+endif(GCC_OR_CLANG)
   file(GLOB TINYXML src/test/tinyxml/*.cpp)
   add_library(tinyxml
               ${TINYXML})
@@ -86,9 +88,9 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
     ext/gtest/src/gtest-all.cc
     ext/gtest/src/gtest_main.cc)
   target_link_libraries(unit_test sfntly icuuc tinyxml)
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(GCC_OR_CLANG)
   target_link_libraries(unit_test pthread)
-endif(CMAKE_COMPILER_IS_GNUCXX)
+endif(GCC_OR_CLANG)
   # subtly targets
   file(GLOB SUBTLY_FILES src/sample/subtly/*.h src/sample/subtly/*.cc)
   file(GLOB SUBTLY_MAINS src/sample/subtly/*main.cc)
@@ -98,26 +100,26 @@ endif(CMAKE_COMPILER_IS_GNUCXX)
   add_executable(subtly_subsetter
     src/sample/subtly/subsetter_main.cc)
   target_link_libraries(subtly_subsetter subtly sfntly icuuc)
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(GCC_OR_CLANG)
   target_link_libraries(subtly_subsetter pthread)
-endif(CMAKE_COMPILER_IS_GNUCXX)
+endif(GCC_OR_CLANG)
   add_executable(subtly_merger
     src/sample/subtly/merger_main.cc)
   target_link_libraries(subtly_merger subtly sfntly icuuc)
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(GCC_OR_CLANG)
   target_link_libraries(subtly_merger pthread)
-endif(CMAKE_COMPILER_IS_GNUCXX)
+endif(GCC_OR_CLANG)
   add_executable(subtly_debug
     src/sample/subtly/debug_main.cc)
   target_link_libraries(subtly_debug subtly sfntly icuuc)
-if(CMAKE_COMPILER_IS_GNUCXX)
+if(GCC_OR_CLANG)
   target_link_libraries(subtly_debug pthread)
-endif(CMAKE_COMPILER_IS_GNUCXX)
+endif(GCC_OR_CLANG)
    add_executable(chrome_subsetter
      ${CHROME_SUBSETTER_LIB}
      src/sample/chromium/chrome_subsetter.cc
    )
    target_link_libraries(chrome_subsetter sfntly icuuc)
- if(CMAKE_COMPILER_IS_GNUCXX)
+ if(GCC_OR_CLANG)
    target_link_libraries(chrome_subsetter pthread)
- endif(CMAKE_COMPILER_IS_GNUCXX)
+ endif(GCC_OR_CLANG)
