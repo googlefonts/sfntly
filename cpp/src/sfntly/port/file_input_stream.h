@@ -34,14 +34,14 @@ class FileInputStream : public PushbackInputStream {
   virtual void Mark(int32_t readlimit);
   virtual bool MarkSupported();
   virtual int32_t Read();
-  virtual int32_t Read(ByteVector* b);
-  virtual int32_t Read(ByteVector* b, int32_t offset, int32_t length);
+  virtual int32_t Read(std::vector<uint8_t>* b);
+  virtual int32_t Read(std::vector<uint8_t>* b, int32_t offset, int32_t length);
   virtual void Reset();
   virtual int64_t Skip(int64_t n);
 
   // PushbackInputStream methods
-  virtual void Unread(ByteVector* b);
-  virtual void Unread(ByteVector* b, int32_t offset, int32_t length);
+  virtual void Unread(std::vector<uint8_t>* b);
+  virtual void Unread(std::vector<uint8_t>* b, int32_t offset, int32_t length);
 
   // Own methods
   virtual bool Open(const char* file_path);

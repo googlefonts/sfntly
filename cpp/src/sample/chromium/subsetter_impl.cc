@@ -376,14 +376,14 @@ bool InitializeBitmapBuilder(EbdtTable::Builder* ebdt, EblcTable::Builder* eblc,
 
 void CopyBigGlyphMetrics(BigGlyphMetrics::Builder* source,
                          BigGlyphMetrics::Builder* target) {
-  target->SetHeight(static_cast<byte_t>(source->Height()));
-  target->SetWidth(static_cast<byte_t>(source->Width()));
-  target->SetHoriBearingX(static_cast<byte_t>(source->HoriBearingX()));
-  target->SetHoriBearingY(static_cast<byte_t>(source->HoriBearingY()));
-  target->SetHoriAdvance(static_cast<byte_t>(source->HoriAdvance()));
-  target->SetVertBearingX(static_cast<byte_t>(source->VertBearingX()));
-  target->SetVertBearingY(static_cast<byte_t>(source->VertBearingY()));
-  target->SetVertAdvance(static_cast<byte_t>(source->VertAdvance()));
+  target->SetHeight(static_cast<uint8_t>(source->Height()));
+  target->SetWidth(static_cast<uint8_t>(source->Width()));
+  target->SetHoriBearingX(static_cast<uint8_t>(source->HoriBearingX()));
+  target->SetHoriBearingY(static_cast<uint8_t>(source->HoriBearingY()));
+  target->SetHoriAdvance(static_cast<uint8_t>(source->HoriAdvance()));
+  target->SetVertBearingX(static_cast<uint8_t>(source->VertBearingX()));
+  target->SetVertBearingY(static_cast<uint8_t>(source->VertBearingY()));
+  target->SetVertAdvance(static_cast<uint8_t>(source->VertAdvance()));
 }
 
 CALLER_ATTACH IndexSubTable::Builder*
