@@ -67,16 +67,16 @@
 #define SFNTLY_CPP_SRC_SFNTLY_PORT_REFCOUNT_H_
 
 #if !defined (NDEBUG)
-  #define ENABLE_OBJECT_COUNTER
+#define ENABLE_OBJECT_COUNTER
 //  #define REF_COUNT_DEBUGGING
 #endif
 
 #if defined (REF_COUNT_DEBUGGING)
-  #include <stdio.h>
-  #include <typeinfo>
+#include <stdio.h>
+#include <typeinfo>
 #endif
 
-#include "sfntly/port/atomic.h"
+#include <atomic>
 #include "sfntly/port/type.h"
 
 // Special tag for functions that requires caller to attach instead of using
@@ -84,192 +84,248 @@
 #define CALLER_ATTACH
 
 #if defined (REF_COUNT_DEBUGGING)
-  #define DEBUG_OUTPUT(a) \
+#define DEBUG_OUTPUT(a) \
       fprintf(stderr, "%s%s:oc=%d,oid=%d,rc=%d\n", a, \
               typeid(this).name(), object_counter_, object_id_, ref_count_)
 #else
-  #define DEBUG_OUTPUT(a)
+#define DEBUG_OUTPUT(a)
 #endif
 
 #if defined (_MSC_VER)
-  // VC 2008/2010 incorrectly gives this warning for pure virtual functions
-  // in virtual inheritance.  The only way to get around it is to disable it.
-  #pragma warning(disable:4250)
+// VC 2008/2010 incorrectly gives this warning for pure virtual functions
+// in virtual inheritance.  The only way to get around it is to disable it.
+#pragma warning(disable:4250)
 #endif
 
-namespace sfntly {
+namespace sfntly
+{
 
-class RefCount {
- public:
-  // Make gcc -Wnon-virtual-dtor happy.
-  virtual ~RefCount() {}
-
-  virtual size_t AddRef() const = 0;
-  virtual size_t Release() const = 0;
-};
-
-template <typename T>
-class NoAddRefRelease : public T {
- public:
-  NoAddRefRelease();
-  ~NoAddRefRelease();
-
- private:
-  virtual size_t AddRef() const = 0;
-  virtual size_t Release() const = 0;
-};
-
-template <typename TDerived>
-class RefCounted : virtual public RefCount {
- public:
-  RefCounted() : ref_count_(0) {
-#if defined (ENABLE_OBJECT_COUNTER)
-    object_id_ = AtomicIncrement(&next_id_);
-    AtomicIncrement(&object_counter_);
-    DEBUG_OUTPUT("C ");
-#endif
-  }
-  RefCounted(const RefCounted<TDerived>&) : ref_count_(0) {}
-  virtual ~RefCounted() {
-#if defined (ENABLE_OBJECT_COUNTER)
-    AtomicDecrement(&object_counter_);
-    DEBUG_OUTPUT("D ");
-#endif
-  }
-
-  RefCounted<TDerived>& operator=(const RefCounted<TDerived>&) {
-    // Each object maintains own ref count, don't propagate.
-    return *this;
-  }
-
-  virtual size_t AddRef() const {
-    size_t new_count = AtomicIncrement(&ref_count_);
-    DEBUG_OUTPUT("A ");
-    return new_count;
-  }
-
-  virtual size_t Release() const {
-    size_t new_ref_count = AtomicDecrement(&ref_count_);
-    DEBUG_OUTPUT("R ");
-    if (new_ref_count == 0) {
-      // A C-style is used to cast away const-ness and to derived.
-      // lint does not like this but this is how it works.
-      delete (TDerived*)(this);
+class RefCount
+{
+public:
+    // Make gcc -Wnon-virtual-dtor happy.
+    virtual ~RefCount()
+    {
     }
-    return new_ref_count;
-  }
 
-  mutable size_t ref_count_;  // reference count of current object
+    virtual size_t AddRef() const = 0;
+
+    virtual size_t Release() const = 0;
+};
+
+template<typename T>
+class NoAddRefRelease : public T
+{
+public:
+    NoAddRefRelease();
+
+    ~NoAddRefRelease();
+
+private:
+    virtual size_t AddRef() const = 0;
+
+    virtual size_t Release() const = 0;
+};
+
+template<typename TDerived>
+class RefCounted : virtual public RefCount
+{
+public:
+    RefCounted() : ref_count_(0)
+    {
 #if defined (ENABLE_OBJECT_COUNTER)
-  static size_t object_counter_;
-  static size_t next_id_;
-  mutable size_t object_id_;
+        std::atomic_fetch_add(&next_id_, (unsigned long)1);
+        object_id_ = next_id_;
+
+        std::atomic_fetch_add(&object_counter_, (unsigned long)1);
+        DEBUG_OUTPUT("C ");
+#endif
+    }
+
+    RefCounted(const RefCounted<TDerived> &) : ref_count_(0)
+    {
+    }
+
+    virtual ~RefCounted()
+    {
+#if defined (ENABLE_OBJECT_COUNTER)
+        std::atomic_fetch_sub(&object_counter_, (unsigned long)1)
+                DEBUG_OUTPUT("D ");
+#endif
+    }
+
+    RefCounted<TDerived> &operator=(const RefCounted<TDerived> &)
+    {
+        // Each object maintains own ref count, don't propagate.
+        return *this;
+    }
+
+    virtual size_t AddRef() const
+    {
+        std::atomic_fetch_add(&ref_count_, (unsigned long)1);
+        DEBUG_OUTPUT("A ");
+        return ref_count_;
+    }
+
+    virtual size_t Release() const
+    {
+
+        std::atomic_fetch_sub(&ref_count_, (unsigned long)1);
+        DEBUG_OUTPUT("R ");
+
+        if (ref_count_ == 0)
+        {
+            // A C-style is used to cast away const-ness and to derived.
+            // lint does not like this but this is how it works.
+            delete (TDerived *)(this);
+        }
+
+        return ref_count_;
+    }
+
+    mutable std::atomic_size_t ref_count_;  // reference count of current object
+
+#if defined (ENABLE_OBJECT_COUNTER)
+    static std::atomic_size_t object_counter_;
+    static std::atomic_size_t next_id_;
+    mutable size_t object_id_;
 #endif
 };
 
 #if defined (ENABLE_OBJECT_COUNTER)
-template <typename TDerived> size_t RefCounted<TDerived>::object_counter_ = 0;
-template <typename TDerived> size_t RefCounted<TDerived>::next_id_ = 0;
+template<typename TDerived> std::atomic_size_t RefCounted<TDerived>::object_counter_ = ATOMIC_VAR_INIT(0);
+template<typename TDerived> std::atomic_size_t RefCounted<TDerived>::next_id_ = ATOMIC_VAR_INIT(0);
 #endif
 
 // semi-smart pointer for RefCount derived objects, similar to CComPtr
-template <typename T>
-class Ptr {
- public:
-  Ptr() : p_(NULL) {
-  }
-
-  // This constructor shall not be explicit.
-  // lint does not like this but this is how it works.
-  Ptr(T* pT) : p_(NULL) {
-    *this = pT;
-  }
-
-  Ptr(const Ptr<T>& p) : p_(NULL) {
-    *this = p;
-  }
-
-  ~Ptr() {
-    Release();
-  }
-
-  T* operator=(T* pT) {
-    if (p_ == pT) {
-      return p_;
+template<typename T>
+class Ptr
+{
+public:
+    Ptr() : p_(NULL)
+    {
     }
-    if (pT) {
-      RefCount* p = static_cast<RefCount*>(pT);
-      if (p == NULL) {
-        return NULL;
-      }
-      p->AddRef();  // always AddRef() before Release()
+
+    // This constructor shall not be explicit.
+    // lint does not like this but this is how it works.
+    Ptr(T *pT) : p_(NULL)
+    {
+        *this = pT;
     }
-    Release();
-    p_ = pT;
-    return p_;
-  }
 
-  T* operator=(const Ptr<T>& p) {
-    if (p_ == p.p_) {
-      return p_;
+    Ptr(const Ptr<T> &p) : p_(NULL)
+    {
+        *this = p;
     }
-    return operator=(p.p_);
-  }
 
-  operator T*&() {
-    return p_;
-  }
-
-  T& operator*() const {
-    return *p_;  // It can throw!
-  }
-
-  NoAddRefRelease<T>* operator->() const {
-    return (NoAddRefRelease<T>*)p_;  // It can throw!
-  }
-
-  bool operator!() const {
-    return (p_ == NULL);
-  }
-
-  bool operator<(const Ptr<T>& p) const {
-    return (p_ < p.p_);
-  }
-
-  bool operator!=(T* pT) const {
-    return !operator==(pT);
-  }
-
-  bool operator==(T* pT) const {
-    return (p_ == pT);
-  }
-
-  size_t Release() const {
-    size_t ref_count = 0;
-    if (p_) {
-      RefCount* p = static_cast<RefCount*>(p_);
-      if (p) {
-        ref_count = p->Release();
-      }
-      p_ = NULL;
+    ~Ptr()
+    {
+        Release();
     }
-    return ref_count;
-  }
 
-  void Attach(T* pT) {
-    if (p_ != pT) {
-      Release();
-      p_ = pT;
+    T *operator=(T *pT)
+    {
+        if (p_ == pT)
+        {
+            return p_;
+        }
+
+        if (pT)
+        {
+            RefCount *p = static_cast<RefCount *>(pT);
+
+            if (p == NULL)
+            {
+                return NULL;
+            }
+
+            p->AddRef();  // always AddRef() before Release()
+        }
+        Release();
+        p_ = pT;
+        return p_;
     }
-  }
 
-  T* Detach() {
-    T* pT = p_;
-    p_ = NULL;
-    return pT;
-  }
+    T *operator=(const Ptr<T> &p)
+    {
+        if (p_ == p.p_)
+        {
+            return p_;
+        }
+        return operator=(p.p_);
+    }
 
-  mutable T* p_;
+    operator T *&()
+    {
+        return p_;
+    }
+
+    T &operator*() const
+    {
+        return *p_;  // It can throw!
+    }
+
+    NoAddRefRelease<T> *operator->() const
+    {
+        return (NoAddRefRelease<T> *)p_;  // It can throw!
+    }
+
+    bool operator!() const
+    {
+        return (p_ == NULL);
+    }
+
+    bool operator<(const Ptr<T> &p) const
+    {
+        return (p_ < p.p_);
+    }
+
+    bool operator!=(T *pT) const
+    {
+        return !operator==(pT);
+    }
+
+    bool operator==(T *pT) const
+    {
+        return (p_ == pT);
+    }
+
+    std::size_t Release() const
+    {
+
+        size_t ref_count = ATOMIC_VAR_INIT(0);
+
+        if (p_)
+        {
+            RefCount *p = static_cast<RefCount *>(p_);
+
+            if (p)
+            {
+                ref_count = p->Release();
+            }
+
+            p_ = NULL;
+        }
+        return ref_count;
+    }
+
+    void Attach(T *pT)
+    {
+        if (p_ != pT)
+        {
+            Release();
+            p_ = pT;
+        }
+    }
+
+    T *Detach()
+    {
+        T *pT = p_;
+        p_ = NULL;
+        return pT;
+    }
+
+    mutable T *p_;
 };
 
 }  // namespace sfntly
