@@ -247,6 +247,14 @@ CMapTable::CMap::Builder::~Builder() {
 CALLER_ATTACH CMapTable::CMap::Builder*
     CMapTable::CMap::Builder::GetBuilder(ReadableFontData* data, int32_t offset,
                                          const CMapId& cmap_id) {
+        
+  assert(data);
+  
+  if (!data)
+  {
+      return NULL;
+  }
+        
   // NOT IMPLEMENTED: Java enum value validation
   int32_t format = data->ReadUShort(offset);
   CMapBuilderPtr builder;
