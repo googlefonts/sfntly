@@ -180,6 +180,10 @@ void FontFactory::LoadCollectionForBuilding(WritableFontData* wfd,
   int32_t version = wfd->ReadFixed(Offset::kVersion);
   UNREFERENCED_PARAMETER(version);
   int32_t num_fonts = wfd->ReadULongAsInt(Offset::kNumFonts);
+  if (num_fonts < 0)
+    return;
+  if (num_fonts > wfd->Length() / 4)
+    return;
 
   builders->reserve(num_fonts);
   int32_t offset_table_offset = Offset::kOffsetTable;
