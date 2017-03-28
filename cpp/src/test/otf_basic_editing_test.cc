@@ -57,6 +57,7 @@ bool TestOTFBasicEditing() {
       down_cast<FontHeaderTable::Builder*>(
           font_builder->GetTableBuilder(Tag::head));
   int64_t mod_date = header_builder->Modified();
+  EXPECT_EQ(3397043097, mod_date);
   header_builder->SetModified(mod_date + 1);
   FontPtr font;
   font.Attach(font_builder->Build());
