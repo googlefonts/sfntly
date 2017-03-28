@@ -440,7 +440,7 @@ void Font::Builder::InterRelateBuilders(TableBuilderMap* builder_map) {
     loca_table_builder = down_cast<LocaTable::Builder*>(raw_loca_builder);
   }
 
-  Table::Builder* raw_hmtx_builder = GetBuilder(builder_map, Tag::hmtx);
+  Table::Builder* raw_hmtx_builder = GetReadBuilder(builder_map, Tag::hmtx);
   HorizontalMetricsTableBuilderPtr horizontal_metrics_builder;
   if (raw_hmtx_builder != NULL) {
     horizontal_metrics_builder =
