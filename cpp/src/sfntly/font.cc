@@ -459,18 +459,22 @@ void Font::Builder::InterRelateBuilders(TableBuilderMap* builder_map) {
   // set the inter table data required to build certain tables
   if (horizontal_metrics_builder != NULL) {
     if (max_profile_builder != NULL) {
-      horizontal_metrics_builder->SetNumGlyphs(
-          max_profile_builder->NumGlyphs());
+      int32_t num_glyphs = max_profile_builder->NumGlyphs();
+      if (num_glyphs >= 0)
+        horizontal_metrics_builder->SetNumGlyphs(num_glyphs);
     }
     if (horizontal_header_builder != NULL) {
-      horizontal_metrics_builder->SetNumberOfHMetrics(
-          horizontal_header_builder->NumberOfHMetrics());
+      int32_t num_hmetrics = horizontal_header_builder->NumberOfHMetrics();
+      if (num_hmetrics >= 0)
+        horizontal_metrics_builder->SetNumberOfHMetrics(num_hmetrics);
     }
   }
 
   if (loca_table_builder != NULL) {
     if (max_profile_builder != NULL) {
-      loca_table_builder->SetNumGlyphs(max_profile_builder->NumGlyphs());
+      int32_t num_glyphs = max_profile_builder->NumGlyphs();
+      if (num_glyphs >= 0)
+        loca_table_builder->SetNumGlyphs(num_glyphs);
     }
     if (header_table_builder != NULL) {
       loca_table_builder->set_format_version(

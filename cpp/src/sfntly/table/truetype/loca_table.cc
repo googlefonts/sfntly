@@ -140,6 +140,7 @@ int32_t LocaTable::Builder::GlyphLength(int32_t glyph_id) {
 }
 
 void LocaTable::Builder::SetNumGlyphs(int32_t num_glyphs) {
+  assert(num_glyphs >= 0);
   num_glyphs_ = num_glyphs;
 }
 
