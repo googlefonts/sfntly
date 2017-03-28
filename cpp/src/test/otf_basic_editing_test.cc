@@ -33,24 +33,34 @@ bool TestOTFBasicEditing() {
   factory.Attach(FontFactory::GetInstance());
   FontBuilderArray font_builder_array;
   BuilderForFontFile(SAMPLE_TTF_FILE, factory, &font_builder_array);
+  if (font_builder_array.size() != 1) {
+    EXPECT_TRUE(false);
+    return false;
+  }
   FontBuilderPtr font_builder = font_builder_array[0];
 
   // ensure the builder is not bogus
-  EXPECT_TRUE(font_builder != NULL);
+  if (!font_builder) {
+    EXPECT_TRUE(false);
+    return false;
+  }
   TableBuilderMap* builder_map = font_builder->table_builders();
-  EXPECT_TRUE(builder_map != NULL);
+  if (!builder_map) {
+    EXPECT_TRUE(false);
+    return false;
+  }
   IntegerSet builder_tags;
   for (TableBuilderMap::iterator i = builder_map->begin(),
                                  e = builder_map->end(); i != e; ++i) {
-    EXPECT_TRUE(i->second != NULL);
-    if (i->second == NULL) {
+    if (!i->second) {
+      EXPECT_TRUE(false);
       char tag[5] = {0};
       int32_t value = ToBE32(i->first);
       memcpy(tag, &value, 4);
       fprintf(stderr, "tag %s does not have valid builder\n", tag);
-    } else {
-      builder_tags.insert(i->first);
+      continue;
     }
+    builder_tags.insert(i->first);
   }
 
   FontHeaderTableBuilderPtr header_builder =
@@ -66,10 +76,10 @@ bool TestOTFBasicEditing() {
   const TableMap* table_map = font->GetTableMap();
   for (TableMap::const_iterator i = table_map->begin(), e = table_map->end();
                                 i != e; ++i) {
-    TablePtr table = (*i).second;
+    TablePtr table = i->second;
     HeaderPtr header = table->header();
-    EXPECT_TRUE(builder_tags.find(header->tag()) != builder_tags.end());
-    builder_tags.erase(header->tag());
+    size_t erased = builder_tags.erase(header->tag());
+    EXPECT_EQ(1U, erased);
   }
   EXPECT_TRUE(builder_tags.empty());
 
@@ -80,7 +90,7 @@ bool TestOTFBasicEditing() {
 
   // Checksum correctness of builder.
   TablePtr post = font->GetTable(Tag::post);
-  EXPECT_EQ(post->CalculatedChecksum(), TTF_CHECKSUM[SAMPLE_TTF_POST]);
+  EXPECT_EQ(TTF_CHECKSUM[SAMPLE_TTF_POST], post->CalculatedChecksum());
   return true;
 }
 
