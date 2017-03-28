@@ -40,7 +40,11 @@ int32_t LocaTable::GlyphLength(int32_t glyph_id) {
 #endif
     return 0;
   }
-  return Loca(glyph_id + 1) - Loca(glyph_id);
+  int32_t glyph_val = Loca(glyph_id);
+  int32_t glyph_next_val = Loca(glyph_id + 1);
+  if (glyph_val < 0 || glyph_next_val < 0 || glyph_next_val <= glyph_val)
+    return 0;
+  return glyph_next_val - glyph_val;
 }
 
 int32_t LocaTable::NumLocas() {
