@@ -400,7 +400,12 @@ static Table::Builder* GetBuilder(TableBuilderMap* builder_map, int32_t tag) {
   if (target == builder_map->end())
     return NULL;
 
-  Table::Builder* builder = target->second.p_;
+  return target->second.p_;
+}
+
+// Like GetBuilder(), but the returned Builder must be able to support reads.
+static Table::Builder* GetReadBuilder(TableBuilderMap* builder_map, int32_t tag) {
+  Table::Builder* builder = GetBuilder(builder_map, tag);
   if (!builder || !builder->InternalReadData())
     return NULL;
 
@@ -408,21 +413,21 @@ static Table::Builder* GetBuilder(TableBuilderMap* builder_map, int32_t tag) {
 }
 
 void Font::Builder::InterRelateBuilders(TableBuilderMap* builder_map) {
-  Table::Builder* raw_head_builder = GetBuilder(builder_map, Tag::head);
+  Table::Builder* raw_head_builder = GetReadBuilder(builder_map, Tag::head);
   FontHeaderTableBuilderPtr header_table_builder;
   if (raw_head_builder != NULL) {
     header_table_builder =
         down_cast<FontHeaderTable::Builder*>(raw_head_builder);
   }
 
-  Table::Builder* raw_hhea_builder = GetBuilder(builder_map, Tag::hhea);
+  Table::Builder* raw_hhea_builder = GetReadBuilder(builder_map, Tag::hhea);
   HorizontalHeaderTableBuilderPtr horizontal_header_builder;
   if (raw_head_builder != NULL) {
     horizontal_header_builder =
         down_cast<HorizontalHeaderTable::Builder*>(raw_hhea_builder);
   }
 
-  Table::Builder* raw_maxp_builder = GetBuilder(builder_map, Tag::maxp);
+  Table::Builder* raw_maxp_builder = GetReadBuilder(builder_map, Tag::maxp);
   MaximumProfileTableBuilderPtr max_profile_builder;
   if (raw_maxp_builder != NULL) {
     max_profile_builder =
@@ -435,7 +440,7 @@ void Font::Builder::InterRelateBuilders(TableBuilderMap* builder_map) {
     loca_table_builder = down_cast<LocaTable::Builder*>(raw_loca_builder);
   }
 
-  Table::Builder* raw_hmtx_builder = GetBuilder(builder_map, Tag::hmtx);
+  Table::Builder* raw_hmtx_builder = GetReadBuilder(builder_map, Tag::hmtx);
   HorizontalMetricsTableBuilderPtr horizontal_metrics_builder;
   if (raw_hmtx_builder != NULL) {
     horizontal_metrics_builder =
@@ -454,18 +459,22 @@ void Font::Builder::InterRelateBuilders(TableBuilderMap* builder_map) {
   // set the inter table data required to build certain tables
   if (horizontal_metrics_builder != NULL) {
     if (max_profile_builder != NULL) {
-      horizontal_metrics_builder->SetNumGlyphs(
-          max_profile_builder->NumGlyphs());
+      int32_t num_glyphs = max_profile_builder->NumGlyphs();
+      if (num_glyphs >= 0)
+        horizontal_metrics_builder->SetNumGlyphs(num_glyphs);
     }
     if (horizontal_header_builder != NULL) {
-      horizontal_metrics_builder->SetNumberOfHMetrics(
-          horizontal_header_builder->NumberOfHMetrics());
+      int32_t num_hmetrics = horizontal_header_builder->NumberOfHMetrics();
+      if (num_hmetrics >= 0)
+        horizontal_metrics_builder->SetNumberOfHMetrics(num_hmetrics);
     }
   }
 
   if (loca_table_builder != NULL) {
     if (max_profile_builder != NULL) {
-      loca_table_builder->SetNumGlyphs(max_profile_builder->NumGlyphs());
+      int32_t num_glyphs = max_profile_builder->NumGlyphs();
+      if (num_glyphs >= 0)
+        loca_table_builder->SetNumGlyphs(num_glyphs);
     }
     if (header_table_builder != NULL) {
       loca_table_builder->set_format_version(

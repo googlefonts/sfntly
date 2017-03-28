@@ -192,13 +192,13 @@ int32_t ReadableFontData::ReadFixed(int32_t index) {
 }
 
 int64_t ReadableFontData::ReadDateTimeAsLong(int32_t index) {
-  int32_t high = ReadULong(index);
+  int64_t high = ReadULong(index);
   if (high == kInvalidUnsigned)
     return kInvalidLongDateTime;
-  int32_t low = ReadULong(index + 4);
+  int64_t low = ReadULong(index + 4);
   if (low == kInvalidUnsigned)
     return kInvalidLongDateTime;
-  return (int64_t)high << 32 | low;
+  return high << 32 | low;
 }
 
 int32_t ReadableFontData::ReadFWord(int32_t index) {

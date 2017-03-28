@@ -16,6 +16,7 @@
 
 #include "subsetter_impl.h"
 
+#include <limits.h>
 #include <string.h>
 
 #include <algorithm>
@@ -270,6 +271,10 @@ bool SetupGlyfBuilders(Font::Builder* font_builder,
     for (int32_t j = last_glyph_id + 1; j <= *i; ++j) {
       loca_list[j] = last_offset;
     }
+
+    if (last_offset > INT_MAX - length)
+      return false;
+
     last_offset += length;
     loca_list[*i + 1] = last_offset;
     last_glyph_id = *i;
