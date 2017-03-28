@@ -191,6 +191,9 @@ void FontFactory::LoadCollectionForBuilding(WritableFontData* wfd,
                font_number < num_fonts;
                font_number++, offset_table_offset += DataSize::kULONG) {
     int32_t offset = wfd->ReadULongAsInt(offset_table_offset);
+    if (offset < 0 || offset >= wfd->Length())
+      continue;
+
     FontBuilderPtr builder;
     builder.Attach(LoadSingleOTFForBuilding(wfd, offset));
     builders->push_back(builder);
