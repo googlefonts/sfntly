@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#ifndef __clang_analyzer__
+
 #include "sfntly/table/core/name_table.h"
 
 #include <stdio.h>
@@ -721,3 +723,5 @@ UChar* NameTable::ConvertFromNameBytes(ByteVector* name_bytes,
 }
 
 }  // namespace sfntly
+
+#endif // not __clang_analyzer__
