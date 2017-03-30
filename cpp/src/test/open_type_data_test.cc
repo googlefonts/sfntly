@@ -16,7 +16,7 @@
 
 #include "gtest/gtest.h"
 #include "sfntly/data/writable_font_data.h"
-#include "sfntly/data/memory_byte_array.h"
+#include "sfntly/data/byte_array.h"
 
 namespace sfntly {
 
@@ -24,11 +24,11 @@ const uint8_t TEST_OTF_DATA[] =
     {0xff, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01};
 
 bool TestOTFRead() {
-  ByteVector bytes;
+  ByteArrayPtr array = new ByteArray();
+  array->SetFilledLength(sizeof(TEST_OTF_DATA) / sizeof(uint8_t));
   for (size_t i = 0; i < sizeof(TEST_OTF_DATA) / sizeof(uint8_t); ++i) {
-    bytes.push_back(TEST_OTF_DATA[i]);
+    array->Put((int32_t)i, TEST_OTF_DATA[i]);
   }
-  ByteArrayPtr array = new MemoryByteArray(&(bytes[0]), bytes.size());
   ReadableFontDataPtr data = new ReadableFontData(array);
 
   EXPECT_EQ(-1, data->ReadByte(0));
@@ -43,22 +43,22 @@ bool TestOTFRead() {
 }
 
 bool TestOTFCopy() {
-  ByteVector source_bytes(1024);
-  for (size_t i = 0; i < source_bytes.size(); ++i) {
-    source_bytes[i] = (uint8_t)(i & 0xff);
+  ByteArrayPtr source_array = new ByteArray();
+  source_array->SetFilledLength(1024);
+  for (int32_t i = 0; i < 1024; ++i) {
+    source_array->Put(i, (uint8_t)(i & 0xff));
   }
-  ByteArrayPtr source_array = new MemoryByteArray(&(source_bytes[0]), 1024);
   ReadableFontDataPtr source = new ReadableFontData(source_array);
 
-  ByteVector destination_bytes(1024);
-  ByteArrayPtr destination_array =
-      new MemoryByteArray(&(destination_bytes[0]), 1024);
+  ByteArrayPtr destination_array = new ByteArray();
+  destination_array->SetFilledLength(1024);
   WritableFontDataPtr destination = new WritableFontData(destination_array);
 
   int32_t length = source->CopyTo(destination);
   EXPECT_EQ(1024, length);
-  EXPECT_TRUE(std::equal(source_bytes.begin(), source_bytes.end(),
-                         destination_bytes.begin()));
+  for (int32_t i = 0; i < 1024; ++i) {
+    EXPECT_TRUE(source_array->Get(i) == destination_array->Get(i));
+  }
   return true;
 }
 

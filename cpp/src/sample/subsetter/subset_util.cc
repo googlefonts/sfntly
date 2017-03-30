@@ -25,7 +25,7 @@
 #include <memory>
 
 #include "sfntly/font.h"
-#include "sfntly/data/memory_byte_array.h"
+#include "sfntly/data/byte_array.h"
 #include "sfntly/port/memory_output_stream.h"
 #include "sfntly/port/type.h"
 #include "sfntly/tag.h"

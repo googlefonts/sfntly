@@ -37,7 +37,7 @@
 #include "sfntly/table/bitmap/index_sub_table_format5.h"
 #include "sfntly/table/core/name_table.h"
 #include "sfntly/tag.h"
-#include "sfntly/data/memory_byte_array.h"
+#include "sfntly/data/byte_array.h"
 #include "sfntly/port/memory_input_stream.h"
 #include "sfntly/port/memory_output_stream.h"
 

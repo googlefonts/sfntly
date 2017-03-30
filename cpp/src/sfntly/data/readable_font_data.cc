@@ -20,7 +20,7 @@
 
 #include <limits>
 
-#include "sfntly/data/memory_byte_array.h"
+#include "sfntly/data/byte_array.h"
 #include "sfntly/data/writable_font_data.h"
 #include "sfntly/port/exception_type.h"
 
@@ -40,7 +40,7 @@ ReadableFontData::~ReadableFontData() {}
 CALLER_ATTACH
 ReadableFontData* ReadableFontData::CreateReadableFontData(std::vector<uint8_t>* b) {
   assert(b);
-  ByteArrayPtr ba = new MemoryByteArray(b->size());
+  ByteArrayPtr ba = new ByteArray();
   ba->Put(0, b);
   ReadableFontDataPtr wfd = new ReadableFontData(ba);
   return wfd.Detach();

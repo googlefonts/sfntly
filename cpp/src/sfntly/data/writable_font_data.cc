@@ -19,8 +19,7 @@
 #include <algorithm>
 #include <limits>
 
-#include "sfntly/data/memory_byte_array.h"
-#include "sfntly/data/growable_memory_byte_array.h"
+#include "sfntly/data/byte_array.h"
 
 namespace sfntly {
 
@@ -33,11 +32,9 @@ WritableFontData::~WritableFontData() {}
 CALLER_ATTACH
 WritableFontData* WritableFontData::CreateWritableFontData(int32_t length) {
   ByteArrayPtr ba;
+  ba = new ByteArray();
   if (length > 0) {
-    ba = new MemoryByteArray(length);
     ba->SetFilledLength(length);
-  } else {
-    ba = new GrowableMemoryByteArray();
   }
   WritableFontDataPtr wfd = new WritableFontData(ba);
   return wfd.Detach();
@@ -48,7 +45,7 @@ WritableFontData* WritableFontData::CreateWritableFontData(int32_t length) {
 //                  savvy to do copying.
 CALLER_ATTACH
 WritableFontData* WritableFontData::CreateWritableFontData(std::vector<uint8_t>* b) {
-  ByteArrayPtr ba = new GrowableMemoryByteArray();
+  ByteArrayPtr ba = new ByteArray();
   ba->Put(0, b);
   WritableFontDataPtr wfd = new WritableFontData(ba);
   return wfd.Detach();

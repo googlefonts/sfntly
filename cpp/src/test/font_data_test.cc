@@ -20,7 +20,7 @@
 #include "gtest/gtest.h"
 #include "sfntly/port/type.h"
 #include "sfntly/data/writable_font_data.h"
-#include "sfntly/data/memory_byte_array.h"
+#include "sfntly/data/byte_array.h"
 
 namespace sfntly {
 
@@ -303,7 +303,7 @@ void SlicingWriteTest(ReadableFontData* rfd, WritableFontData* wfd) {
 bool TestReadableFontData() {
   for (size_t i = 0; i < sizeof(BYTE_ARRAY_SIZES) / sizeof(int32_t); ++i) {
     int32_t size = BYTE_ARRAY_SIZES[i];
-    ByteArrayPtr ba = new MemoryByteArray(size);
+    ByteArrayPtr ba = new ByteArray();
     FillTestByteArray(ba, size);
     ReadableFontDataPtr rfd = new ReadableFontData(ba);
     SlicingReadTest(rfd);
@@ -314,11 +314,11 @@ bool TestReadableFontData() {
 bool TestWritableFontData() {
   for (size_t i = 0; i < sizeof(BYTE_ARRAY_SIZES) / sizeof(int32_t); ++i) {
     int32_t size = BYTE_ARRAY_SIZES[i];
-    ByteArrayPtr ba = new MemoryByteArray(size);
+    ByteArrayPtr ba = new ByteArray();
     FillTestByteArray(ba, size);
     WritableFontDataPtr wfd = new WritableFontData(ba);
     SlicingReadTest(wfd);
-    ByteArrayPtr temp = new MemoryByteArray(size);
+    ByteArrayPtr temp = new ByteArray();
     WritableFontDataPtr wfd_copy = new WritableFontData(temp);
     SlicingWriteTest(wfd, wfd_copy);
   }

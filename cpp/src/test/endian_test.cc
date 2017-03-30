@@ -16,7 +16,7 @@
 
 #include "gtest/gtest.h"
 #include "sfntly/tag.h"
-#include "sfntly/data/growable_memory_byte_array.h"
+#include "sfntly/data/byte_array.h"
 #include "sfntly/data/writable_font_data.h"
 #include "sfntly/math/fixed1616.h"
 #include "sfntly/port/memory_output_stream.h"
@@ -35,7 +35,7 @@ bool TestEndian() {
       0x00, 0x01, 0x00, 0x00   // 24: fixed
   };
 
-  ByteArrayPtr ba1 = new GrowableMemoryByteArray();
+  ByteArrayPtr ba1 = new ByteArray();
   for (size_t i = 0; i < sizeof(test_data); ++i) {
     ba1->Put(i, test_data[i]);
   }

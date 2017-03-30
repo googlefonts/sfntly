@@ -16,8 +16,7 @@
 
 #include "subtly/utils.h"
 
-#include "sfntly/data/growable_memory_byte_array.h"
-#include "sfntly/data/memory_byte_array.h"
+#include "sfntly/data/byte_array.h"
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
 #include "sfntly/port/file_input_stream.h"

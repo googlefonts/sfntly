@@ -26,7 +26,7 @@
 #include <string>
 
 #include "gtest/gtest.h"
-#include "sfntly/data/memory_byte_array.h"
+#include "sfntly/data/byte_array.h"
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
 #include "sfntly/table/core/cmap_table.h"

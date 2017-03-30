@@ -19,7 +19,7 @@
 #include "sfntly/font_factory.h"
 #include "sfntly/table/core/font_header_table.h"
 #include "sfntly/tag.h"
-#include "sfntly/data/memory_byte_array.h"
+#include "sfntly/data/byte_array.h"
 #include "sfntly/port/endian.h"
 #include "sfntly/port/file_input_stream.h"
 #include "sfntly/port/memory_output_stream.h"

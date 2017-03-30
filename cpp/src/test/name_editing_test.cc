@@ -21,7 +21,7 @@
 #include <unicode/unistr.h>
 
 #include "gtest/gtest.h"
-#include "sfntly/data/memory_byte_array.h"
+#include "sfntly/data/byte_array.h"
 #include "sfntly/font.h"
 #include "sfntly/font_factory.h"
 #include "sfntly/port/memory_input_stream.h"
@@ -215,7 +215,7 @@ bool TestClearAllNamesAndSetOne() {
   MemoryOutputStream os;
   factory->SerializeFont(font, &os);
   FontArray font_array;
-  ByteArrayPtr new_ba = new MemoryByteArray(os.Get(), os.Size());
+  ByteArrayPtr new_ba = new ByteArray(os.Get(), os.Size());
   factory->LoadFonts(new_ba, &font_array);
   FontPtr new_font = font_array[0];
 
