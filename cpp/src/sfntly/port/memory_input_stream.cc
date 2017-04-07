@@ -82,7 +82,7 @@ int32_t MemoryInputStream::Read(ByteVector* b, int32_t offset, int32_t length) {
 #endif
     return 0;
   }
-  if (position_ >= length_) {
+  if (position_ > length_) {
 #if !defined (SFNTLY_NO_EXCEPTION)
     throw IOException("eof reached");
 #endif
