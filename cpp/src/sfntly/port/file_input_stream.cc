@@ -35,6 +35,10 @@ FileInputStream::~FileInputStream() {
   Close();
 }
 
+int32_t FileInputStream::Length() {
+  return length_;
+}
+
 int32_t FileInputStream::Available() {
   return length_ - position_;
 }

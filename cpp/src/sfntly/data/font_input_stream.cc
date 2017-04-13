@@ -32,10 +32,17 @@ FontInputStream::~FontInputStream() {
   // Do not close here, underlying InputStream will close themselves.
 }
 
+int32_t FontInputStream::Length() {
+  if (bounded_)
+    return length_;
+  if (stream_)
+    return stream_->Length();
+  return 0;
+}
+
 int32_t FontInputStream::Available() {
-  if (stream_) {
+  if (stream_)
     return stream_->Available();
-  }
   return 0;
 }
 

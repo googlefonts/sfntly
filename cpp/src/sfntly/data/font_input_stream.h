@@ -59,7 +59,7 @@ class FontInputStream : public InputStream {
 
   virtual ~FontInputStream();
 
-
+  virtual int32_t Length();
   virtual int32_t Available();
   virtual void Close();
   virtual void Mark(int32_t readlimit);

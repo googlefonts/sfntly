@@ -26,9 +26,6 @@ const int32_t ByteArray::COPY_BUFFER_SIZE = 8192;
 
 ByteArray::~ByteArray() {}
 
-int32_t ByteArray::Length() { return filled_length_; }
-int32_t ByteArray::Size() { return storage_length_; }
-
 int32_t ByteArray::SetFilledLength(int32_t filled_length) {
   filled_length_ = std::min<int32_t>(filled_length, storage_length_);
   return filled_length_;
@@ -50,9 +47,12 @@ int32_t ByteArray::Get(int32_t index,
                        int32_t offset,
                        int32_t length) {
   assert(b);
-  if (index < 0 || index >= filled_length_) {
+  if (index < 0 || index >= filled_length_)
     return 0;
-  }
+
+  if (length <= 0)
+    return 0;
+
   int32_t actual_length = std::min<int32_t>(length, filled_length_ - index);
   return InternalGet(index, b, offset, actual_length);
 }
