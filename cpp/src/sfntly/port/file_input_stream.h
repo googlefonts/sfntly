@@ -29,6 +29,7 @@ class FileInputStream : public PushbackInputStream {
   virtual ~FileInputStream();
 
   // InputStream methods
+  virtual int32_t Length();
   virtual int32_t Available();
   virtual void Close();
   virtual void Mark(int32_t readlimit);

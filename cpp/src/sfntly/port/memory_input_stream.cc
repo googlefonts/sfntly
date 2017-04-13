@@ -37,6 +37,10 @@ MemoryInputStream::~MemoryInputStream() {
   Close();
 }
 
+int32_t MemoryInputStream::Length() {
+  return length_;
+}
+
 int32_t MemoryInputStream::Available() {
   return length_ - position_;
 }

@@ -24,9 +24,7 @@ namespace sfntly {
 // C++ equivalent to Java's OutputStream class
 class InputStream {
  public:
-  // Make gcc -Wnon-virtual-dtor happy.
-  virtual ~InputStream() {}
-
+  virtual int32_t Length() = 0;
   virtual int32_t Available() = 0;
   virtual void Close() = 0;
   virtual void Mark(int32_t readlimit) = 0;
@@ -36,6 +34,9 @@ class InputStream {
   virtual int32_t Read(std::vector<uint8_t>* b, int32_t offset, int32_t length) = 0;
   virtual void Reset() = 0;
   virtual int64_t Skip(int64_t n) = 0;
+
+ protected:
+  virtual ~InputStream() {}
 };
 
 class PushbackInputStream : public InputStream {

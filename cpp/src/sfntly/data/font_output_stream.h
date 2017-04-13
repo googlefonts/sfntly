@@ -48,8 +48,6 @@ class FontOutputStream : public OutputStream {
   explicit FontOutputStream(OutputStream* os);
   virtual ~FontOutputStream();
 
-  virtual size_t position() { return position_; }
-
   virtual void Write(uint8_t b);
   virtual void Write(std::vector<uint8_t>* b);
   virtual void Write(std::vector<uint8_t>* b, int32_t off, int32_t len);
