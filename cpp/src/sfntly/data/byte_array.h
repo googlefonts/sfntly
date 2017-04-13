@@ -32,15 +32,15 @@ class ByteArray : virtual public RefCount {
   virtual ~ByteArray();
 
   // Gets the current filled and readable length of the array.
-  int32_t Length();
+  int32_t Length() const { return filled_length_; }
 
   // Gets the maximum size of the array. This is the maximum number of bytes that
   // the array can hold and all of it may not be filled with data or even fully
   // allocated yet.
-  int32_t Size();
+  int32_t Size() const { return storage_length_; }
 
   // Determines whether or not this array is growable or of fixed size.
-  bool growable() { return growable_; }
+  bool growable() const { return growable_; }
 
   int32_t SetFilledLength(int32_t filled_length);
 
