@@ -96,12 +96,8 @@ void FontFactory::LoadFontsForBuilding(std::vector<uint8_t>* b,
 }
 
 void FontFactory::SerializeFont(Font* font, OutputStream* os) {
-  font->Serialize(os, &table_ordering_);
-}
-
-void FontFactory::SetSerializationTableOrdering(
-    const std::vector<int32_t>& table_ordering) {
-  table_ordering_ = table_ordering;
+  std::vector<int32_t> table_ordering;
+  font->Serialize(os, &table_ordering);
 }
 
 CALLER_ATTACH Font::Builder* FontFactory::NewFontBuilder() {

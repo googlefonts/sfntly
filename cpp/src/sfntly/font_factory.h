@@ -81,12 +81,6 @@ class FontFactory : public RefCounted<FontFactory> {
   //       Byte buffer it is.
   void SerializeFont(Font* font, OutputStream* os);
 
-  // Set the table ordering to be used in serializing a font. The table ordering
-  // is an ordered list of table ids and tables will be serialized in the order
-  // given. Any tables whose id is not listed in the ordering will be placed in
-  // an unspecified order following those listed.
-  void SetSerializationTableOrdering(const std::vector<int32_t>& table_ordering);
-
   // Get an empty font builder for creating a new font from scratch.
   CALLER_ATTACH Font::Builder* NewFontBuilder();
 
@@ -131,7 +125,6 @@ class FontFactory : public RefCounted<FontFactory> {
   static bool IsCollection(ReadableFontData* wfd);
 
   bool fingerprint_;
-  std::vector<int32_t> table_ordering_;
 };
 typedef Ptr<FontFactory> FontFactoryPtr;
 
