@@ -626,6 +626,9 @@ void GlyphTable::CompositeGlyph::Initialize() {
   while ((flags & kFLAG_MORE_COMPONENTS) == kFLAG_MORE_COMPONENTS) {
     contour_index_.push_back(index);
     flags = data_->ReadUShort(index);
+    if (flags == ReadableFontData::kInvalidUnsigned)
+      break;
+
     index += 2 * DataSize::kUSHORT;  // flags and glyphIndex
     if ((flags & kFLAG_ARG_1_AND_2_ARE_WORDS) == kFLAG_ARG_1_AND_2_ARE_WORDS) {
       index += 2 * DataSize::kSHORT;
