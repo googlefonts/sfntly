@@ -354,29 +354,6 @@ CALLER_ATTACH ReadableFontData* GlyphTable::SimpleGlyph::Instructions() {
              data_->Slice(instructions_offset_, InstructionSize()));
 }
 
-int32_t GlyphTable::SimpleGlyph::NumberOfPoints(int32_t contour) {
-  Initialize();
-  if (contour >= NumberOfContours()) {
-    return 0;
-  }
-  return contour_index_[contour + 1] - contour_index_[contour];
-}
-
-int32_t GlyphTable::SimpleGlyph::XCoordinate(int32_t contour, int32_t point) {
-  Initialize();
-  return x_coordinates_[contour_index_[contour] + point];
-}
-
-int32_t GlyphTable::SimpleGlyph::YCoordinate(int32_t contour, int32_t point) {
-  Initialize();
-  return y_coordinates_[contour_index_[contour] + point];
-}
-
-bool GlyphTable::SimpleGlyph::OnCurve(int32_t contour, int32_t point) {
-  Initialize();
-  return on_curve_[contour_index_[contour] + point];
-}
-
 void GlyphTable::SimpleGlyph::Initialize() {
   AutoLock lock(initialization_lock_);
   if (initialized_) {
@@ -554,55 +531,6 @@ int32_t GlyphTable::CompositeGlyph::NumGlyphs() {
 
 int32_t GlyphTable::CompositeGlyph::GlyphIndex(int32_t contour) {
   return data_->ReadUShort(DataSize::kUSHORT + contour_index_[contour]);
-}
-
-int32_t GlyphTable::CompositeGlyph::Argument1(int32_t contour) {
-  int32_t index = 2 * DataSize::kUSHORT + contour_index_[contour];
-  int32_t contour_flags = Flags(contour);
-  if ((contour_flags & kFLAG_ARG_1_AND_2_ARE_WORDS) ==
-                       kFLAG_ARG_1_AND_2_ARE_WORDS) {
-    return data_->ReadUShort(index);
-  }
-  return data_->ReadByte(index);
-}
-
-int32_t GlyphTable::CompositeGlyph::Argument2(int32_t contour) {
-  int32_t index = 2 * DataSize::kUSHORT + contour_index_[contour];
-  int32_t contour_flags = Flags(contour);
-  if ((contour_flags & kFLAG_ARG_1_AND_2_ARE_WORDS) ==
-                       kFLAG_ARG_1_AND_2_ARE_WORDS) {
-    return data_->ReadUShort(index + DataSize::kUSHORT);
-  }
-  return data_->ReadByte(index + DataSize::kUSHORT);
-}
-
-int32_t GlyphTable::CompositeGlyph::TransformationSize(int32_t contour) {
-  int32_t contour_flags = Flags(contour);
-  if ((contour_flags & kFLAG_WE_HAVE_A_SCALE) == kFLAG_WE_HAVE_A_SCALE) {
-      return DataSize::kF2DOT14;
-    } else if ((contour_flags & kFLAG_WE_HAVE_AN_X_AND_Y_SCALE) ==
-                                kFLAG_WE_HAVE_AN_X_AND_Y_SCALE) {
-      return 2 * DataSize::kF2DOT14;
-    } else if ((contour_flags & kFLAG_WE_HAVE_A_TWO_BY_TWO) ==
-                                kFLAG_WE_HAVE_A_TWO_BY_TWO) {
-      return 4 * DataSize::kF2DOT14;
-    }
-    return 0;
-}
-
-void GlyphTable::CompositeGlyph::Transformation(int32_t contour,
-                                                std::vector<uint8_t>* transformation) {
-  int32_t contour_flags = Flags(contour);
-  int32_t index = contour_index_[contour] + 2 * DataSize::kUSHORT;
-  if ((contour_flags & kFLAG_ARG_1_AND_2_ARE_WORDS) ==
-                       kFLAG_ARG_1_AND_2_ARE_WORDS) {
-    index += 2 * DataSize::kSHORT;
-  } else {
-    index += 2 * DataSize::kBYTE;
-  }
-  int32_t tsize = TransformationSize(contour);
-  transformation->resize(tsize);
-  data_->ReadBytes(index, &((*transformation)[0]), 0, tsize);
 }
 
 int32_t GlyphTable::CompositeGlyph::InstructionSize() {

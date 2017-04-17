@@ -199,11 +199,6 @@ class GlyphTable : public SubTableContainerTable,
     virtual CALLER_ATTACH ReadableFontData* Instructions();
     virtual void Initialize();
 
-    int32_t NumberOfPoints(int32_t contour);
-    int32_t XCoordinate(int32_t contour, int32_t point);
-    int32_t YCoordinate(int32_t contour, int32_t point);
-    bool OnCurve(int32_t contour, int32_t point);
-
    private:
     void ParseData(bool fill_arrays);
     int32_t FlagAsInt(int32_t index);
@@ -272,10 +267,6 @@ class GlyphTable : public SubTableContainerTable,
     int32_t Flags(int32_t contour);
     int32_t NumGlyphs();
     int32_t GlyphIndex(int32_t contour);
-    int32_t Argument1(int32_t contour);
-    int32_t Argument2(int32_t contour);
-    int32_t TransformationSize(int32_t contour);
-    void Transformation(int32_t contour, std::vector<uint8_t>* transformation);
     virtual int32_t InstructionSize();
     virtual CALLER_ATTACH ReadableFontData* Instructions();
 
