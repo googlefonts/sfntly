@@ -522,6 +522,8 @@ GlyphTable::CompositeGlyph::~CompositeGlyph() {
 }
 
 int32_t GlyphTable::CompositeGlyph::Flags(int32_t contour) {
+  if (contour < 0 || static_cast<size_t>(contour) >= contour_index_.size())
+    return ReadableFontData::kInvalidUnsigned;
   return data_->ReadUShort(contour_index_[contour]);
 }
 
@@ -530,6 +532,8 @@ int32_t GlyphTable::CompositeGlyph::NumGlyphs() {
 }
 
 int32_t GlyphTable::CompositeGlyph::GlyphIndex(int32_t contour) {
+  if (contour < 0 || static_cast<size_t>(contour) >= contour_index_.size())
+    return ReadableFontData::kInvalidUnsigned;
   return data_->ReadUShort(DataSize::kUSHORT + contour_index_[contour]);
 }
 
