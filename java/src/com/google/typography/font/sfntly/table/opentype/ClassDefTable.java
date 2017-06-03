@@ -91,11 +91,6 @@ public class ClassDefTable extends SubstSubtable {
     }
 
     @Override
-    protected boolean subReadyToSerialize() {
-      return super.subReadyToSerialize() && true;
-    }
-
-    @Override
     public void subDataSet() {
       super.subDataSet();
       arrayBuilder.subDataSet();

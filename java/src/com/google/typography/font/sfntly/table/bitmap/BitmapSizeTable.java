@@ -526,10 +526,7 @@ public final class BitmapSizeTable extends SubTable {
 
     @Override
     protected boolean subReadyToSerialize() {
-      if (this.indexSubTableBuilders() == null) {
-        return false;
-      }
-      return true;
+      return this.indexSubTableBuilders() != null;
     }
 
     @Override

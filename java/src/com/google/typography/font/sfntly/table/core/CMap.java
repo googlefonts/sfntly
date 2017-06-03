@@ -141,10 +141,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
 
     @Override
     public boolean hasNext() {
-      if (character < maxCharacter) {
-        return true;
-      }
-      return false;
+      return character < maxCharacter;
     }
 
     @Override

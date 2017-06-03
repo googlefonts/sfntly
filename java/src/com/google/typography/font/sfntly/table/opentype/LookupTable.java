@@ -22,7 +22,7 @@ public class LookupTable extends OffsetRecordTable<SubstSubtable> {
     RESERVED(0x00E0),
     MARK_ATTACHMENT_TYPE(0xFF00);
 
-    private int bit;
+    private final int bit;
 
     private LookupFlagBit(int bit) {
       this.bit = bit;

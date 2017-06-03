@@ -724,10 +724,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
     Iterator<NameEntry> nameEntryIter = this.iterator(new NameEntryFilter() {
       @Override
       public boolean accept(int pid, int eid, int lid, int nid) {
-        if (pid == platformId && eid == encodingId && lid == languageId && nid == nameId) {
-          return true;
-        }
-        return false;
+        return pid == platformId && eid == encodingId && lid == languageId && nid == nameId;
       }
     });
     // can only be one name for each set of ids
@@ -1073,10 +1070,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
     @Override
     public boolean hasNext() {
       if (this.filter == null) {
-        if (this.nameIndex < nameCount()) {
-          return true;
-        }
-        return false;
+        return this.nameIndex < nameCount();
       }
       for (; this.nameIndex < nameCount(); this.nameIndex++) {
         if (filter.accept(
@@ -1403,10 +1397,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
     @Override
     protected boolean subReadyToSerialize() {
-      if (this.nameEntryMap == null || this.nameEntryMap.size() == 0) {
-        return false;
-      }
-      return true;
+      return this.nameEntryMap != null && this.nameEntryMap.size() != 0;
     }
 
     @Override

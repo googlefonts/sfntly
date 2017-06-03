@@ -69,7 +69,7 @@ public class SFLint {
     }
   }
 
-  private static final void printUsage() {
+  private static void printUsage() {
     System.out.println("SFLint [-?|-h|-help] fontfile");
     System.out.println("find problems with the font file");
     System.out.println("\t-?,-h,-help\tprint this help information");

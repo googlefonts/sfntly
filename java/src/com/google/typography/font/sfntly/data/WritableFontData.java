@@ -37,7 +37,7 @@ public final class WritableFontData extends ReadableFontData {
    *        create a growable font data
    * @return a new writable font data
    */
-  public static final WritableFontData createWritableFontData(int length) {
+  public static WritableFontData createWritableFontData(int length) {
     ByteArray<?> ba = null;
     if (length > 0) {
       ba = new MemoryByteArray(length);
@@ -57,7 +57,7 @@ public final class WritableFontData extends ReadableFontData {
    * @param b the byte array to wrap
    * @return a new writable font data
    */
-  public static final WritableFontData createWritableFontData(byte[] b) {
+  public static WritableFontData createWritableFontData(byte[] b) {
     ByteArray<?> ba = new MemoryByteArray(b);
     WritableFontData wfd = new WritableFontData(ba);
     return wfd;
@@ -70,7 +70,7 @@ public final class WritableFontData extends ReadableFontData {
    * @param original the source font data
    * @return a new writable font data
    */
-  public static final WritableFontData createWritableFontData(ReadableFontData original) {
+  public static WritableFontData createWritableFontData(ReadableFontData original) {
     ByteArray<?> ba = null;
     // TODO(stuartg): push this down into the BAs - maybe remove the difference between growable and fixed
     if (original.array.growable()) {
@@ -366,8 +366,8 @@ public final class WritableFontData extends ReadableFontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int writeDateTime(int index, long date) {
-    this.writeULong(index, (date >> 32) & 0xffffffff);
-    this.writeULong(index + 4, date & 0xffffffff);
+    this.writeULong(index, date >> 32);
+    this.writeULong(index + 4, date);
     return 8;
   }
 

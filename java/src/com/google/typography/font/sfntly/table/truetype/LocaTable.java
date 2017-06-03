@@ -139,10 +139,7 @@ public final class LocaTable extends Table {
 
     @Override
     public boolean hasNext() {
-      if (this.index <= numGlyphs) {
-        return true;
-      }
-      return false;
+      return this.index <= numGlyphs;
     }
 
     @Override

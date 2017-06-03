@@ -44,10 +44,7 @@ public final class CMapFormat0 extends CMap {
 
     @Override
     public boolean hasNext() {
-      if (character <= MAX_CHARACTER) {
-        return true;
-      }
-      return false;
+      return character <= MAX_CHARACTER;
     }
 
     @Override
