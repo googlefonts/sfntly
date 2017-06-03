@@ -35,13 +35,16 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Raph Levien
  */
 public class SfntTool {
   private boolean strip = false;
-  private String subsetString = null;
+  private Pattern subsetRegex;
+  private String subsetString;
   private boolean woff = false;
   private boolean eot = false;
   private boolean mtx = false;
@@ -67,6 +70,9 @@ public class SfntTool {
           nIters = 10000;
         } else if (option.equals("h") || option.equals("hints")) {
           tool.strip = true;
+        } else if (option.equals("r") || option.equals("regex")) {
+          tool.subsetRegex = Pattern.compile(args[i + 1]);
+          i++;
         } else if (option.equals("s") || option.equals("string")) {
           tool.subsetString = args[i + 1];
           i++;
@@ -91,8 +97,15 @@ public class SfntTool {
     }
 
     if (tool.woff && tool.eot) {
-      System.out.println("WOFF and EOT options are mutually exclusive");
+      System.err.println("WOFF and EOT options are mutually exclusive");
       System.exit(1);
+    }
+    if (tool.subsetRegex != null && tool.subsetString != null) {
+      System.err.println("regex and string options are mutually exclusive");
+      System.exit(1);
+    }
+    if (tool.subsetRegex != null) {
+      tool.subsetString = charsFromRegex(tool.subsetRegex);
     }
 
     if (fontFile != null && outputFile != null) {
@@ -102,11 +115,29 @@ public class SfntTool {
     }
   }
 
-  private static final void printUsage() {
+  private static String charsFromRegex(Pattern pattern) {
+    StringBuilder sb = new StringBuilder();
+    Matcher m = pattern.matcher("");
+    for (int cp = 0; cp <= Character.MAX_CODE_POINT; cp++) {
+      if (m.reset(new String(new int[]{cp}, 0, 1)).matches()) {
+        sb.appendCodePoint(cp);
+      }
+    }
+    String subsetString = sb.toString();
+
+    if (subsetString.isEmpty()) {
+      System.err.println("subset regex doesn't match any codepoint");
+      System.exit(1);
+    }
+    return subsetString;
+  }
+
+  private static void printUsage() {
     System.out.println("Subset [-?|-h|-help] [-b] [-s string] fontfile outfile");
     System.out.println("Prototype font subsetter");
     System.out.println("\t-?,-help\tprint this help information");
     System.out.println("\t-s,-string\t String to subset");
+    System.out.println("\t-r,-regex\t Regular expression for code points to subset, e.g. [A-Z]");
     System.out.println("\t-b,-bench\t Benchmark (run 10000 iterations)");
     System.out.println("\t-h,-hints\t Strip hints");
     System.out.println("\t-w,-woff\t Output WOFF format");
