@@ -145,10 +145,7 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
 
       @Override
       public boolean hasNext() {
-        if (this.glyphId <= IndexSubTableFormat2.Builder.this.lastGlyphIndex()) {
-          return true;
-        }
-        return false;
+        return this.glyphId <= Builder.this.lastGlyphIndex();
       }
 
       @Override

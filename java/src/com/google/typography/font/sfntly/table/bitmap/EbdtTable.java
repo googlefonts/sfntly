@@ -236,10 +236,7 @@ public final class EbdtTable extends SubTableContainerTable {
 
     @Override
     protected boolean subReadyToSerialize() {
-      if (this.glyphBuilders == null) {
-        return false;
-      }
-      return true;
+      return this.glyphBuilders != null;
     }
 
     @Override

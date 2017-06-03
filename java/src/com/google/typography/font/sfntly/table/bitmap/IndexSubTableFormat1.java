@@ -157,10 +157,7 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
 
       @Override
       public boolean hasNext() {
-        if (this.glyphId <= IndexSubTableFormat1.Builder.this.lastGlyphIndex()) {
-          return true;
-        }
-        return false;
+        return this.glyphId <= Builder.this.lastGlyphIndex();
       }
 
       @Override
@@ -215,10 +212,7 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
 
     @Override
     protected boolean subReadyToSerialize() {
-      if (this.offsetArray != null) {
-        return true;
-      }
-      return false;
+      return this.offsetArray != null;
     }
 
     @Override

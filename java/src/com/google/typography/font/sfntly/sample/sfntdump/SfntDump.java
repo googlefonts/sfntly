@@ -221,7 +221,7 @@ public class SfntDump {
     }
   }
 
-  private static final void printUsage() {
+  private static void printUsage() {
     System.out.println("FontDumper [-all|-a] [-table] [-t tag] [-name] [-cmap] [-g|-glyph range|li"
         + "st] [-c|-char range|list] [-?|-h|-help] fontfile | directory");
     System.out.println("dump information about the font file or all fonts in a directory");
@@ -252,7 +252,7 @@ public class SfntDump {
 
   private static final Pattern RANGE_PATTERN =
     Pattern.compile("(x?)([\\da-fA-F]{1,5})-(x?)([\\da-fA-F]{1,5})");
-  private static final BitSet parseRange(String range) {
+  private static BitSet parseRange(String range) {
     BitSet set = null;
 
     Matcher m = RANGE_PATTERN.matcher(range);
@@ -266,7 +266,7 @@ public class SfntDump {
   }
 
   private static final Pattern NUMBER_PATTERN = Pattern.compile("(x?)([\\da-fA-F]{1,5})");
-  private static final BitSet parseList(String list) {
+  private static BitSet parseList(String list) {
     BitSet set = null;
     String[] items = list.split(",");
 

@@ -227,7 +227,7 @@ public final class CMapFormat4 extends CMap {
 
     @Override
     public boolean hasNext() {
-      if (nextCharSet == true) {
+      if (nextCharSet) {
         return true;
       }
       while (segmentIndex < segCount) {
@@ -457,10 +457,7 @@ public final class CMapFormat4 extends CMap {
         return super.subReadyToSerialize();
       }
 
-      if (this.segments != null) {
-        return true;
-      }
-      return false;
+      return this.segments != null;
     }
 
     @Override

@@ -51,10 +51,7 @@ public final class CMapFormat6 extends CMap {
 
     @Override
     public boolean hasNext() {
-      if (character < (firstCode + entryCount)) {
-        return true;
-      }
-      return false;
+      return character < firstCode + entryCount;
     }
 
     @Override

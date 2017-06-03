@@ -256,11 +256,8 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
 
       @Override
       public boolean hasNext() {
-        if (this.codeOffsetPairIndex
-            < IndexSubTableFormat4.Builder.this.getOffsetArray().size() - 1) {
-          return true;
-        }
-        return false;
+        return this.codeOffsetPairIndex
+            < IndexSubTableFormat4.Builder.this.getOffsetArray().size() - 1;
       }
 
       @Override
@@ -318,10 +315,7 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
 
     @Override
     protected boolean subReadyToSerialize() {
-      if (this.offsetPairArray != null) {
-        return true;
-      }
-      return false;
+      return this.offsetPairArray != null;
     }
 
     @Override

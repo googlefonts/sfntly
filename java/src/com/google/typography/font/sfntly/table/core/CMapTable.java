@@ -394,10 +394,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
     @Override
     public boolean hasNext() {
       if (this.filter == null) {
-        if (this.tableIndex < numCMaps()) {
-          return true;
-        }
-        return false;
+        return this.tableIndex < numCMaps();
       }
       for (; this.tableIndex < numCMaps(); this.tableIndex++) {
         if (filter.accept(cmapId(this.tableIndex))) {
@@ -456,10 +453,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
     Iterator<CMap> cmapIter = this.iterator(new CMapFilter() {
       @Override
       public boolean accept(CMapId foundCMapId) {
-        if (cmapId.equals(foundCMapId)) {
-          return true;
-        }
-        return false;
+        return cmapId.equals(foundCMapId);
       }
     });
     // can only be one cmap for each set of ids

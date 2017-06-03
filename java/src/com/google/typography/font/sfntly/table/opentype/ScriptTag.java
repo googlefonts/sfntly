@@ -127,7 +127,7 @@ public enum ScriptTag {
   private ScriptTag(String description) {
     String tag = name();
     while (tag.length() < 4) {
-      tag = tag + ' ';
+      tag += ' ';
     }
     this.tag = Tag.intValue(tag);
     this.description = description;

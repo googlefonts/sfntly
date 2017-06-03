@@ -116,8 +116,7 @@ public class OTFBasicEditingTests extends TestCase {
 
     FontHeaderTable header = builtFont.getTable(Tag.head);
 
-    long headerAdjustment = (FontHeaderTable.CHECKSUM_ADJUSTMENT_BASE - builtChecksum) & 0xffffffff;
-    long checksumAdjustment = header.checkSumAdjustment();
+    long headerAdjustment = FontHeaderTable.CHECKSUM_ADJUSTMENT_BASE - builtChecksum;
     assertEquals(headerAdjustment, header.checkSumAdjustment());
   }
 }

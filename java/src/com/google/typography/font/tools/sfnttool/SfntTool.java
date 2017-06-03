@@ -113,6 +113,7 @@ public class SfntTool {
     } else {
       printUsage();
     }
+
   }
 
   private static String charsFromRegex(Pattern pattern) {
@@ -148,17 +149,14 @@ public class SfntTool {
   public void subsetFontFile(File fontFile, File outputFile, int nIters)
       throws IOException {
     FontFactory fontFactory = FontFactory.getInstance();
-    FileInputStream fis = null;
+    FileInputStream fis = new FileInputStream(fontFile);
     try {
-      fis = new FileInputStream(fontFile);
       byte[] fontBytes = new byte[(int)fontFile.length()];
       fis.read(fontBytes);
-      Font[] fontArray = null;
-      fontArray = fontFactory.loadFonts(fontBytes);
+      Font[] fontArray = fontFactory.loadFonts(fontBytes);
       Font font = fontArray[0];
       List<CMapTable.CMapId> cmapIds = new ArrayList<CMapTable.CMapId>();
       cmapIds.add(CMapTable.CMapId.WINDOWS_BMP);
-      byte[] newFontData = null;
       for (int i = 0; i < nIters; i++) {
         Font newFont = font;
         if (subsetString != null) {
@@ -209,9 +207,7 @@ public class SfntTool {
         }
       }
     } finally {
-      if (fis != null) {
-        fis.close();
-      }
+      fis.close();
     }
   }
 }

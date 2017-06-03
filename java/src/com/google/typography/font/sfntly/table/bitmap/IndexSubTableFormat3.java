@@ -161,10 +161,7 @@ Offset.indexSubTable3_offsetArray.offset + i
 
       @Override
       public boolean hasNext() {
-        if (this.glyphId <= IndexSubTableFormat3.Builder.this.lastGlyphIndex()) {
-          return true;
-        }
-        return false;
+        return this.glyphId <= Builder.this.lastGlyphIndex();
       }
 
       @Override
@@ -219,10 +216,7 @@ Offset.indexSubTable3_offsetArray.offset + i
 
     @Override
     protected boolean subReadyToSerialize() {
-      if (this.offsetArray != null) {
-        return true;
-      }
-      return false;
+      return this.offsetArray != null;
     }
 
     @Override

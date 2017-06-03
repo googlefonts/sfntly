@@ -641,21 +641,20 @@ public class Font {
       this.tableBuilders = buildAllTableBuilders(this.dataBlocks);
     }
 
-    static final Builder
-    getOTFBuilder(FontFactory factory, InputStream is) throws IOException {
+    static Builder getOTFBuilder(FontFactory factory, InputStream is) throws IOException {
       Builder builder = new Builder(factory);
       builder.loadFont(is);
       return builder;
     }
 
-    static final Builder getOTFBuilder(
+    static Builder getOTFBuilder(
         FontFactory factory, WritableFontData wfd, int offsetToOffsetTable) throws IOException {
       Builder builder = new Builder(factory);
       builder.loadFont(wfd, offsetToOffsetTable);
       return builder;
     }
 
-    static final Builder getOTFBuilder(FontFactory factory) {
+    static Builder getOTFBuilder(FontFactory factory) {
       return new Builder(factory);
     }
 
@@ -680,7 +679,7 @@ public class Font {
       }
 
       for (Table.Builder<? extends Table> tableBuilder : this.tableBuilders.values()) {
-        if (tableBuilder.readyToBuild() == false) {
+        if (!tableBuilder.readyToBuild()) {
           return false;
         }
       }

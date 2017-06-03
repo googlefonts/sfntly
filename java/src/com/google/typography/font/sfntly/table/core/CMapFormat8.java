@@ -68,7 +68,7 @@ public final class CMapFormat8 extends CMap {
 
     @Override
     public boolean hasNext() {
-      if (nextCharSet == true) {
+      if (nextCharSet) {
         return true;
       }
       while (groupIndex < numberOfGroups) {

@@ -36,7 +36,7 @@ public class TestFont {
     OPENSANS("OpenSans-Regular.ttf"),
     ROBOTO("Roboto-Regular.ttf");
 
-    private String path;
+    private final String path;
 
     private TestFontNames(String path) {
       this.path = path;

@@ -50,10 +50,7 @@ public final class CMapFormat10 extends CMap {
 
     @Override
     public boolean hasNext() {
-      if (character < startCharCode + numChars) {
-        return true;
-      }
-      return false;
+      return character < startCharCode + numChars;
     }
 
     @Override
