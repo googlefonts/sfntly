@@ -47,112 +47,17 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
    * Offsets to specific elements in the underlying data. These offsets are relative to the
    * start of the table or the start of sub-blocks within the table.
    */
-  enum Offset {
-    version(0),
-    numTables(2),
-    encodingRecordStart(4),
+  private interface HeaderOffsets {
+    int version = 0;
+    int numTables = 2;
+    int SIZE = 4;
+  }
 
-    // offsets relative to the encoding record
-    encodingRecordPlatformId(0),
-    encodingRecordEncodingId(2),
-    encodingRecordOffset(4),
-    encodingRecordSize(8),
-
-    format(0),
-
-    // Format 0: Byte encoding table
-    format0Format(0),
-    format0Length(2),
-    format0Language(4),
-    format0GlyphIdArray(6),
-
-    // Format 2: High-byte mapping through table
-    format2Format(0),
-    format2Length(2),
-    format2Language(4),
-    format2SubHeaderKeys(6),
-    format2SubHeaders(518),
-    // offset relative to the subHeader structure
-    format2SubHeader_firstCode(0),
-    format2SubHeader_entryCount(2),
-    format2SubHeader_idDelta(4),
-    format2SubHeader_idRangeOffset(6),
-    format2SubHeader_structLength(8),
-
-    // Format 4: Segment mapping to delta values
-    format4Format(0),
-    format4Length(2),
-    format4Language(4),
-    format4SegCountX2(6),
-    format4SearchRange(8),
-    format4EntrySelector(10),
-    format4RangeShift(12),
-    format4EndCount(14),
-    format4FixedSize(16),
-
-    // format 6: Trimmed table mapping
-    format6Format(0),
-    format6Length(2),
-    format6Language(4),
-    format6FirstCode(6),
-    format6EntryCount(8),
-    format6GlyphIdArray(10),
-
-    // Format 8: mixed 16-bit and 32-bit coverage
-    format8Format(0),
-    format8Length(4),
-    format8Language(8),
-    format8Is32(12),
-    format8nGroups(8204),
-    format8Groups(8208),
-    // ofset relative to the group structure
-    format8Group_startCharCode(0),
-    format8Group_endCharCode(4),
-    format8Group_startGlyphId(8),
-    format8Group_structLength(12),
-
-    // Format 10: Trimmed array
-    format10Format(0),
-    format10Length(4),
-    format10Language(8),
-    format10StartCharCode(12),
-    format10NumChars(16),
-    format10Glyphs(20),
-
-    // Format 12: Segmented coverage
-    format12Format(0),
-    format12Length(4),
-    format12Language(8),
-    format12nGroups(12),
-    format12Groups(16),
-    format12Groups_structLength(12),
-    // offsets within the group structure
-    format12_startCharCode(0),
-    format12_endCharCode(4),
-    format12_startGlyphId(8),
-
-    // Format 13: Last Resort Font
-    format13Format(0),
-    format13Length(4),
-    format13Language(8),
-    format13nGroups(12),
-    format13Groups(16),
-    format13Groups_structLength(12),
-    // offsets within the group structure
-    format13_startCharCode(0),
-    format13_endCharCode(4),
-    format13_glyphId(8),
-
-    // TODO: finish support for format 14
-    // Format 14: Unicode Variation Sequences
-    format14Format(0),
-    format14Length(2);
-
-    final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
+  private interface EncodingRecord {
+    int platformId = 0;
+    int encodingId = 2;
+    int offset = 4;
+    int SIZE = 8;
   }
 
   public static final class CMapId implements Comparable<CMapId> {
@@ -219,7 +124,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
       return b.toString();
     }
   }
-  
+
   /**
    * Constructor.
    *
@@ -236,7 +141,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
    * @return table version
    */
   public int version() {
-    return this.data.readUShort(Offset.version.offset);
+    return this.data.readUShort(HeaderOffsets.version);
   }
 
   /**
@@ -245,7 +150,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
    * @return the number of cmaps
    */
   public int numCMaps() {
-    return this.data.readUShort(Offset.numTables.offset);
+    return this.data.readUShort(HeaderOffsets.numTables);
   }
 
   /**
@@ -275,7 +180,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
    * @return offset in the table data
    */
   private static int offsetForEncodingRecord(int index) {
-    return Offset.encodingRecordStart.offset + index * Offset.encodingRecordSize.offset;
+    return HeaderOffsets.SIZE + index * EncodingRecord.SIZE;
   }
 
   /**
@@ -295,8 +200,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
    * @return the platform id
    */
   public int platformId(int index) {
-    return this.data.readUShort(
-        Offset.encodingRecordPlatformId.offset + CMapTable.offsetForEncodingRecord(index));
+    return this.data.readUShort(offsetForEncodingRecord(index) + EncodingRecord.platformId);
   }
 
   /**
@@ -306,8 +210,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
    * @return the encoding id
    */
   public int encodingId(int index) {
-    return this.data.readUShort(
-        Offset.encodingRecordEncodingId.offset + CMapTable.offsetForEncodingRecord(index));
+    return this.data.readUShort(offsetForEncodingRecord(index) + EncodingRecord.encodingId);
   }
 
   /**
@@ -318,8 +221,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
    * @return the offset in the table data
    */
   public int offset(int index) {
-    return this.data.readULongAsInt(
-        Offset.encodingRecordOffset.offset + CMapTable.offsetForEncodingRecord(index));
+    return this.data.readULongAsInt(offsetForEncodingRecord(index) + EncodingRecord.offset);
   }
 
   /**
@@ -519,12 +421,9 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
       }
 
       // read from encoding records
-      int platformId = data.readUShort(
-          Offset.encodingRecordPlatformId.offset + CMapTable.offsetForEncodingRecord(index));
-      int encodingId = data.readUShort(
-          Offset.encodingRecordEncodingId.offset + CMapTable.offsetForEncodingRecord(index));
-      int offset = data.readULongAsInt(
-          Offset.encodingRecordOffset.offset + CMapTable.offsetForEncodingRecord(index));
+      int platformId = data.readUShort(offsetForEncodingRecord(index) + EncodingRecord.platformId);
+      int encodingId = data.readUShort(offsetForEncodingRecord(index) + EncodingRecord.encodingId);
+      int offset = data.readULongAsInt(offsetForEncodingRecord(index) + EncodingRecord.offset);
       CMapId cmapId = CMapId.getInstance(platformId, encodingId);
 
       CMap.Builder<? extends CMap> builder = CMap.Builder.getBuilder(data, offset, cmapId);
@@ -561,7 +460,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
       if (data == null) {
         return 0;
       }
-      return data.readUShort(Offset.numTables.offset);
+      return data.readUShort(HeaderOffsets.numTables);
     }
 
     public int numCMaps() {
@@ -575,8 +474,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
       }
 
       boolean variable = false;
-      int size = CMapTable.Offset.encodingRecordStart.offset + this.cmapBuilders.size()
-      * CMapTable.Offset.encodingRecordSize.offset;
+      int size = HeaderOffsets.SIZE + this.cmapBuilders.size() * EncodingRecord.SIZE;
 
       // calculate size of each table
       for (CMap.Builder<? extends CMap> b : this.cmapBuilders.values()) {
@@ -603,11 +501,11 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
 
     @Override
     protected int subSerialize(WritableFontData newData) {
-      int size = newData.writeUShort(CMapTable.Offset.version.offset, this.version());
-      size += newData.writeUShort(CMapTable.Offset.numTables.offset, this.cmapBuilders.size());
+      int size = newData.writeUShort(HeaderOffsets.version, this.version());
+      size += newData.writeUShort(HeaderOffsets.numTables, this.cmapBuilders.size());
 
       int indexOffset = size;
-      size += this.cmapBuilders.size() * CMapTable.Offset.encodingRecordSize.offset;
+      size += this.cmapBuilders.size() * EncodingRecord.SIZE;
       for (CMap.Builder<? extends CMap> b : this.cmapBuilders.values()) {
         // header entry
         indexOffset += newData.writeUShort(indexOffset, b.platformId());

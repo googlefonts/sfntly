@@ -3,7 +3,6 @@ package com.google.typography.font.sfntly.table.core;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
-import com.google.typography.font.sfntly.table.core.CMapTable.Offset;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -16,37 +15,51 @@ import java.util.NoSuchElementException;
 public final class CMapFormat8 extends CMap {
   private final int numberOfGroups;
 
+  private interface Header {
+    int format = 0;
+    int length = 4;
+    int language = 8;
+    int is32 = 12;
+    int nGroups = 8204;
+    int SIZE = 8208;
+  }
+
+  private interface Group {
+    int startCharCode = 0;
+    int endCharCode = 4;
+    int startGlyphId = 8;
+    int SIZE = 12;
+  }
+
   protected CMapFormat8(ReadableFontData data, CMapId cmapId) {
     super(data, CMapFormat.Format8.value, cmapId);
-    this.numberOfGroups = this.data.readULongAsInt(Offset.format8nGroups.offset);
+    this.numberOfGroups = this.data.readULongAsInt(Header.nGroups);
   }
 
   private int firstChar(int groupIndex) {
     return this.readFontData().readULongAsInt(
-        Offset.format8Groups.offset + groupIndex * Offset.format8Group_structLength.offset
-            + Offset.format8Group_startCharCode.offset);
+        Header.SIZE + groupIndex * Group.SIZE + Group.startCharCode);
   }
 
   private int endChar(int groupIndex) {
     return this.readFontData().readULongAsInt(
-        Offset.format8Groups.offset + groupIndex * Offset.format8Group_structLength.offset
-            + Offset.format8Group_endCharCode.offset);
+        Header.SIZE + groupIndex * Group.SIZE + Group.endCharCode);
   }
 
   @Override
   public int glyphId(int character) {
-    return this.readFontData().searchULong(Offset.format8Groups.offset
-        + Offset.format8Group_startCharCode.offset,
-        Offset.format8Group_structLength.offset,
-        Offset.format8Groups.offset + Offset.format8Group_endCharCode.offset,
-        Offset.format8Group_structLength.offset,
+    return this.readFontData().searchULong(
+        Header.SIZE + Group.startCharCode,
+        Group.SIZE,
+        Header.SIZE + Group.endCharCode,
+        Group.SIZE,
         numberOfGroups,
         character);
   }
 
   @Override
   public int language() {
-    return this.data.readULongAsInt(Offset.format8Language.offset);
+    return this.data.readULongAsInt(Header.language);
   }
 
   @Override
@@ -110,15 +123,13 @@ public final class CMapFormat8 extends CMap {
 
   public static class Builder extends CMap.Builder<CMapFormat8> {
     protected Builder(WritableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(
-          offset, data.readULongAsInt(offset + Offset.format8Length.offset)), CMapFormat.Format8,
-          cmapId);
+      super(data == null ? null : data.slice(offset, data.readULongAsInt(offset + Header.length)),
+          CMapFormat.Format8, cmapId);
     }
 
     protected Builder(ReadableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(
-          offset, data.readULongAsInt(offset + Offset.format8Length.offset)), CMapFormat.Format8,
-          cmapId);
+      super(data == null ? null : data.slice(offset, data.readULongAsInt(offset + Header.length)),
+          CMapFormat.Format8, cmapId);
     }
 
     @Override
