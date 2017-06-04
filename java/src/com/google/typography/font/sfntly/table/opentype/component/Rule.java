@@ -2,6 +2,7 @@ package com.google.typography.font.sfntly.table.opentype.component;
 
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.data.SfStringUtils;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
@@ -169,7 +170,7 @@ public class Rule {
 
   public static GlyphGroup glyphGroupForText(String str, CMapTable cmapTable) {
     GlyphGroup glyphGroup = new GlyphGroup();
-    Set<Integer> codes = codepointsFromStr(str);
+    Set<Integer> codes = SfStringUtils.getAllCodepoints(str);
     for (int code : codes) {
       for (CMap cmap : cmapTable) {
         if (cmap.platformId() == 3 && cmap.encodingId() == 1 || // Unicode BMP
@@ -414,14 +415,6 @@ public class Rule {
   }
 
   // Dump routines
-  private static Set<Integer> codepointsFromStr(String s) {
-    Set<Integer> list = new HashSet<Integer>();
-    for (int cp, i = 0; i < s.length(); i += Character.charCount(cp)) {
-      cp = s.codePointAt(i);
-      list.add(cp);
-    }
-    return list;
-  }
 
   private static void dumpRuleMap(Map<Integer, Set<Rule>> rulesList, PostScriptTable post) {
     for (int index : rulesList.keySet()) {
