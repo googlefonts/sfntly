@@ -185,9 +185,8 @@ public class TestUtils {
     int length = (int) file.length();
     byte[] b = new byte[length];
 
-    FileInputStream fis = null;
+    FileInputStream fis = new FileInputStream(file);
     try {
-      fis = new FileInputStream(file);
       while (length > 0) {
         length -= fis.read(b, b.length - length, length);
       }
