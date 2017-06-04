@@ -614,18 +614,18 @@ public class ReadableFontData extends FontData {
    * monotonically increasing.
    *
    * @param startIndex the position to read the first start value from
-   * @param startOffset the offset between subsequent start values
+   * @param startDelta the offset between subsequent start values
    * @param endIndex the position to read the first end value from
-   * @param endOffset the offset between subsequent end values
+   * @param endDelta the offset between subsequent end values
    * @param length the number of start-end pairs
    * @param key the value to search for
    * @return the index of the start-end pairs in which the key was found; -1
    *         otherwise
    */
   public int searchULong(int startIndex,
-      int startOffset,
+      int startDelta,
       int endIndex,
-      int endOffset,
+      int endDelta,
       int length,
       int key) {   
     int location = 0;
@@ -633,13 +633,13 @@ public class ReadableFontData extends FontData {
     int top = length;
     while (top != bottom) {
       location = (top + bottom) / 2;
-      int locationStart = this.readULongAsInt(startIndex + location * startOffset);
+      int locationStart = this.readULongAsInt(startIndex + location * startDelta);
       if (key < locationStart) {
         // location is below current location
         top = location;
       } else {
         // is key below the upper bound?
-        int locationEnd = this.readULongAsInt(endIndex + location * endOffset);
+        int locationEnd = this.readULongAsInt(endIndex + location * endDelta);
         if (key <= locationEnd) {
           return location;
         }

@@ -4,7 +4,6 @@ import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
-import com.google.typography.font.sfntly.table.core.CMapTable.Offset;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -19,10 +18,19 @@ public final class CMapFormat6 extends CMap {
   private final int firstCode;
   private final int entryCount;
 
+  private interface Header {
+    int format = 0;
+    int length = 2;
+    int language = 4;
+    int firstCode = 6;
+    int entryCount = 8;
+    int glyphIdArray = 10;
+  }
+
   protected CMapFormat6(ReadableFontData data, CMapId cmapId) {
     super(data, CMapFormat.Format6.value, cmapId);
-    this.firstCode = this.data.readUShort(Offset.format6FirstCode.offset);
-    this.entryCount = this.data.readUShort(Offset.format6EntryCount.offset);
+    this.firstCode = this.data.readUShort(Header.firstCode);
+    this.entryCount = this.data.readUShort(Header.entryCount);
   }
 
   @Override
@@ -30,13 +38,13 @@ public final class CMapFormat6 extends CMap {
     if (character < this.firstCode || character >= this.firstCode + this.entryCount) {
       return CMapTable.NOTDEF;
     }
-    return this.data.readUShort(Offset.format6GlyphIdArray.offset + (character - this.firstCode)
-        * FontData.DataSize.USHORT.size());
+    return this.data.readUShort(
+        Header.glyphIdArray + (character - this.firstCode) * FontData.DataSize.USHORT.size());
   }
 
   @Override
   public int language() {
-    return this.data.readUShort(Offset.format6Language.offset);
+    return this.data.readUShort(Header.language);
   }
 
   @Override
@@ -72,15 +80,13 @@ public final class CMapFormat6 extends CMap {
 
   public static class Builder extends CMap.Builder<CMapFormat6> {
     protected Builder(WritableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(
-          offset, data.readUShort(offset + Offset.format6Length.offset)), CMapFormat.Format6,
-          cmapId);
+      super(data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
+          CMapFormat.Format6, cmapId);
     }
 
     protected Builder(ReadableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(
-          offset, data.readUShort(offset + Offset.format6Length.offset)), CMapFormat.Format6,
-          cmapId);
+      super(data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
+          CMapFormat.Format6, cmapId);
     }
 
     @Override

@@ -3,17 +3,24 @@ package com.google.typography.font.sfntly.table.core;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
-import com.google.typography.font.sfntly.table.core.CMapTable.Offset;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * The cmap format 0 subtable maps single-byte character codes to glyph IDs.
+ * The cmap format 0 subtable maps 8-bit character codes to 8-bit glyph IDs.
  *
  * @see "ISO/IEC 14496-22:2015, section 5.2.1.3.1"
  */
 public final class CMapFormat0 extends CMap {
+
+  private interface Header {
+    int format = 0;
+    int length = 2;
+    int language = 4;
+    int glyphIdArray = 6;
+  }
+
   protected CMapFormat0(ReadableFontData data, CMapId cmapId) {
     super(data, CMapFormat.Format0.value, cmapId);
   }
@@ -23,12 +30,12 @@ public final class CMapFormat0 extends CMap {
     if (character < 0 || character > 255) {
       return CMapTable.NOTDEF;
     }
-    return this.data.readUByte(character + Offset.format0GlyphIdArray.offset);
+    return this.data.readUByte(Header.glyphIdArray + character);
   }
 
   @Override
   public int language() {
-    return this.data.readUShort(Offset.format0Language.offset);
+    return this.data.readUShort(Header.language);
   }
 
   @Override
@@ -64,15 +71,13 @@ public final class CMapFormat0 extends CMap {
 
   public static class Builder extends CMap.Builder<CMapFormat0> {
     protected Builder(WritableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(
-          offset, data.readUShort(offset + Offset.format0Length.offset)), CMapFormat.Format0,
-          cmapId);
+      super(data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
+          CMapFormat.Format0, cmapId);
     }
 
     protected Builder(ReadableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(
-          offset, data.readUShort(offset + Offset.format0Length.offset)), CMapFormat.Format0,
-          cmapId);
+      super(data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
+          CMapFormat.Format0, cmapId);
     }
 
     @Override
