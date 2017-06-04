@@ -30,21 +30,19 @@ import java.util.Map;
 
 /**
  * @author Stuart Gill
- *
  */
 public class EblcTable extends SubTableContainerTable {
   private static final boolean DEBUG = false;
 
   public static final int NOTDEF = -1;
 
+  private interface HeaderOffsets {
+    int version = 0;
+    int numSizes = 4;
+    int SIZE = 8;
+  }
+
   enum Offset {
-    // header
-    version(0),
-    numSizes(4),
-    headerLength(numSizes.offset + FontData.DataSize.ULONG.size()),
-
-    bitmapSizeTableArrayStart(headerLength.offset),
-
     // sbitLineMetrics
     sbitLineMetricsLength(SbitLineMetrics.SIZE),
 
@@ -117,11 +115,11 @@ public class EblcTable extends SubTableContainerTable {
   }
 
   public int version() {
-    return this.data.readFixed(Offset.version.offset);
+    return this.data.readFixed(HeaderOffsets.version);
   }
 
   public int numSizes() {
-    return this.data.readULongAsInt(Offset.numSizes.offset);
+    return this.data.readULongAsInt(HeaderOffsets.numSizes);
   }
 
   @Override
@@ -163,7 +161,7 @@ public class EblcTable extends SubTableContainerTable {
     for (int i = 0; i < numSizes; i++) {
       BitmapSizeTable.Builder sizeBuilder =
           BitmapSizeTable.Builder.createBuilder(data.slice(
-              Offset.bitmapSizeTableArrayStart.offset + i * BitmapSizeTable.Offset.SIZE,
+              HeaderOffsets.SIZE + i * BitmapSizeTable.Offset.SIZE,
               BitmapSizeTable.Offset.SIZE), data);
       BitmapSizeTable size = sizeBuilder.build();
       bitmapSizeTable.add(size);
@@ -252,14 +250,12 @@ public class EblcTable extends SubTableContainerTable {
       List<BitmapSizeTable.Builder> sizeBuilders = new ArrayList<BitmapSizeTable.Builder>();
 
       if (data != null) {
-        int numSizes = data.readULongAsInt(Offset.numSizes.offset);
+        int numSizes = data.readULongAsInt(HeaderOffsets.numSizes);
         for (int i = 0; i < numSizes; i++) {
-          BitmapSizeTable.Builder sizeBuilder =
-              BitmapSizeTable.Builder.createBuilder(
-                  data.slice(Offset.bitmapSizeTableArrayStart.offset + i
-                      * BitmapSizeTable.Offset.SIZE, BitmapSizeTable.Offset.SIZE),
-                  data);
-          sizeBuilders.add(sizeBuilder);
+          ReadableFontData slice = data.slice(
+              HeaderOffsets.SIZE + i * BitmapSizeTable.Offset.SIZE,
+              BitmapSizeTable.Offset.SIZE);
+          sizeBuilders.add(BitmapSizeTable.Builder.createBuilder(slice, data));
         }
       }
       return sizeBuilders;
@@ -280,7 +276,7 @@ public class EblcTable extends SubTableContainerTable {
       if (this.sizeTableBuilders == null) {
         return 0;
       }
-      int size = Offset.headerLength.offset;
+      int size = HeaderOffsets.SIZE;
       boolean variable = false;
       int sizeIndex = 0;
       for (BitmapSizeTable.Builder sizeBuilder : this.sizeTableBuilders) {
