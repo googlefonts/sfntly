@@ -46,19 +46,7 @@ public class EblcTable extends SubTableContainerTable {
     bitmapSizeTableArrayStart(headerLength.offset),
 
     // sbitLineMetrics
-    sbitLineMetricsLength(12),
-    sbitLineMetrics_ascender(0),
-    sbitLineMetrics_descender(1),
-    sbitLineMetrics_widthMax(2),
-    sbitLineMetrics_caretSlopeNumerator(3),
-    sbitLineMetrics__caretSlopeDenominator(4),
-    sbitLineMetrics_caretOffset(5),
-    sbitLineMetrics_minOriginSB(6),
-    sbitLineMetrics_minAdvanceSB(7),
-    sbitLineMetrics_maxBeforeBL(8),
-    sbitLineMetrics_minAfterBL(9),
-    sbitLineMetrics_pad1(10),
-    sbitLineMetrics_pad2(11),
+    sbitLineMetricsLength(SbitLineMetrics.SIZE),
 
     // indexSubTable
     indexSubTableEntryLength(8),
