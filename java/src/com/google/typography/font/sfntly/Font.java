@@ -621,9 +621,8 @@ public class Font {
       if (is == null) {
         throw new IOException("No input stream for font.");
       }
-      FontInputStream fontIS = null;
+      FontInputStream fontIS = new FontInputStream(is);
       try {
-        fontIS = new FontInputStream(is);
         SortedSet<Header> records = readHeader(fontIS);
         this.dataBlocks = loadTableData(records, fontIS);
         this.tableBuilders = buildAllTableBuilders(this.dataBlocks);

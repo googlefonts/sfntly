@@ -41,14 +41,11 @@ public class HtmlViewer {
   public static Font[] loadFont(File file) throws IOException {
     FontFactory fontFactory = FontFactory.getInstance();
     fontFactory.fingerprintFont(true);
-    FileInputStream is = null;
+    FileInputStream is = new FileInputStream(file);
     try {
-      is = new FileInputStream(file);
       return fontFactory.loadFonts(is);
     } finally {
-      if (is != null) {
-        is.close();
-      }
+      is.close();
     }
   }
 }

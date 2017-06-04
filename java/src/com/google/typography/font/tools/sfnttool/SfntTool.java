@@ -117,9 +117,8 @@ public class SfntTool {
   public void subsetFontFile(File fontFile, File outputFile, int nIters)
       throws IOException {
     FontFactory fontFactory = FontFactory.getInstance();
-    FileInputStream fis = null;
+    FileInputStream fis = new FileInputStream(fontFile);
     try {
-      fis = new FileInputStream(fontFile);
       byte[] fontBytes = new byte[(int)fontFile.length()];
       fis.read(fontBytes);
       Font[] fontArray = null;
@@ -178,9 +177,7 @@ public class SfntTool {
         }
       }
     } finally {
-      if (fis != null) {
-        fis.close();
-      }
+      fis.close();
     }
   }
 }

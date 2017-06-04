@@ -356,10 +356,9 @@ public class SfntDump {
   public void dumpFont(File fontFile) throws IOException {
     boolean canDumpGlyphs = true;
 
-    FileInputStream fis = null;
     System.out.println(fontFile + " ============================");
+    FileInputStream fis = new FileInputStream(fontFile);
     try {
-      fis = new FileInputStream(fontFile);
       Font[] fontArray = fontFactory.loadFonts(fis);
 
       for (int fontNumber = 0; fontNumber < fontArray.length; fontNumber++) {
@@ -461,9 +460,7 @@ public class SfntDump {
         }
       }
     } finally {
-      if (fis != null) {
-        fis.close();
-      }
+      fis.close();
     }
   }
 
