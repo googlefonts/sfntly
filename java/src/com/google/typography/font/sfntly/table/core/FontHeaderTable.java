@@ -16,6 +16,7 @@
 
 package com.google.typography.font.sfntly.table.core;
 
+import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
@@ -26,9 +27,11 @@ import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import java.util.EnumSet;
 
 /**
- * A Font Header table.
+ * A Font Header table ('head').
  *
  * @author Stuart Gill
+ * @see Tag#head
+ * @see "ISO/IEC 14496-22:2015, section 5.2.2"
  */
 public final class FontHeaderTable extends Table {
 
