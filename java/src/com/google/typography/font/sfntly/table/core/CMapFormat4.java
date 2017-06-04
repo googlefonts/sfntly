@@ -472,22 +472,22 @@ public final class CMapFormat4 extends CMap {
       int rangeShift = 2 * segCount - searchRange;
       index += newData.writeUShort(index, rangeShift);
 
-      for (int i = 0; i < segCount; i++) {
-        index += newData.writeUShort(index, this.segments.get(i).getEndCount());
+      for (Segment segment : this.segments) {
+        index += newData.writeUShort(index, segment.getEndCount());
       }
-      index += FontData.DataSize.USHORT.size(); // reserved UShort
-      for (int i = 0; i < segCount; i++) {
-        index += newData.writeUShort(index, this.segments.get(i).getStartCount());
+      index += FontData.DataSize.USHORT.size(); // reservedPad
+      for (Segment segment : this.segments) {
+        index += newData.writeUShort(index, segment.getStartCount());
       }
-      for (int i = 0; i < segCount; i++) {
-        index += newData.writeShort(index, this.segments.get(i).getIdDelta());
+      for (Segment segment : this.segments) {
+        index += newData.writeShort(index, segment.getIdDelta());
       }
-      for (int i = 0; i < segCount; i++) {
-        index += newData.writeUShort(index, this.segments.get(i).getIdRangeOffset());
+      for (Segment segment : this.segments) {
+        index += newData.writeUShort(index, segment.getIdRangeOffset());
       }
 
-      for (int i = 0; i < this.glyphIdArray.size(); i++) {
-        index += newData.writeUShort(index, this.glyphIdArray.get(i));
+      for (Integer glyphId : this.glyphIdArray) {
+        index += newData.writeUShort(index, glyphId);
       }
 
       newData.writeUShort(Header.length, index);
