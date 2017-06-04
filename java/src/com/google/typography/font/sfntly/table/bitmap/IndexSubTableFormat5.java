@@ -52,7 +52,7 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
 
   public BigGlyphMetrics bigMetrics() {
     return new BigGlyphMetrics(this.data.slice(
-        Offset.indexSubTable5_bigGlyphMetrics.offset, BigGlyphMetrics.Offset.metricsLength.offset));
+        Offset.indexSubTable5_bigGlyphMetrics.offset, BigGlyphMetrics.SIZE));
   }
 
   @Override
@@ -129,7 +129,7 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
       if (this.metrics == null) {
         WritableFontData data =
             this.internalWriteData().slice(Offset.indexSubTable5_bigGlyphMetrics.offset,
-                BigGlyphMetrics.Offset.metricsLength.offset);
+                BigGlyphMetrics.SIZE);
         this.metrics = new BigGlyphMetrics.Builder(data);
         this.setModelChanged();
       }
