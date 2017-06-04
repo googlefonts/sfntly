@@ -132,13 +132,14 @@ public abstract class IndexSubTable extends SubTable {
 
   @Override
   public String toString() {
-    String s = "IndexSubTable: " + "[0x" + Integer.toHexString(this.firstGlyphIndex()) + " : Ox"
-        + Integer.toHexString(this.lastGlyphIndex()) + "]" + ", format = " + this.indexFormat
-        + ", image format = " + this.imageFormat() + ", imageOff = "
-        + Integer.toHexString(this.imageDataOffset()) + "\n";
+    String s = String.format(
+        "IndexSubTable: [%#x : %#x], format = %d, image format = %s, imageOff = %#x%n",
+        this.firstGlyphIndex(), this.lastGlyphIndex(),
+        this.indexFormat, this.imageFormat(), this.imageDataOffset());
+
     if (DEBUG) {
       for (int g = this.firstGlyphIndex(); g < this.lastGlyphIndex(); g++) {
-        s += "\tgid = " + g + ", offset = " + this.glyphStartOffset(g) + "\n";
+        s += String.format("\tgid = %d, offset = %d%n", g, this.glyphStartOffset(g));
       }
     }
     return s;
@@ -383,14 +384,14 @@ public abstract class IndexSubTable extends SubTable {
 
     @Override
     public String toString() {
-      String s =
-          "IndexSubTable: " + "[0x" + Integer.toHexString(this.firstGlyphIndex()) + " : Ox"
-              + Integer.toHexString(this.lastGlyphIndex()) + "]" + ", format = " + this.indexFormat
-              + ", image format = " + this.imageFormat() + ", imageOff = 0x"
-              + Integer.toHexString(this.imageDataOffset()) + "\n";
+      String s = String.format(
+          "IndexSubTable: [%#x : %#x], format = %d, image format = %s, imageOff = %#x%n",
+          this.firstGlyphIndex(), this.lastGlyphIndex(),
+          this.indexFormat, this.imageFormat(), this.imageDataOffset());
+
       if (DEBUG) {
         for (int g = this.firstGlyphIndex(); g < this.lastGlyphIndex(); g++) {
-          s += "\tgid = " + g + ", offset = " + this.glyphStartOffset(g) + "\n";
+          s += String.format("\tgid = %d, offset = %d%n", g, this.glyphStartOffset(g));
         }
       }
       return s;
