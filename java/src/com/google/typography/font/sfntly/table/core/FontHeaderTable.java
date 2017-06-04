@@ -27,17 +27,17 @@ import java.util.EnumSet;
 
 /**
  * A Font Header table.
- * 
+ *
  * @author Stuart Gill
  */
 public final class FontHeaderTable extends Table {
-  
+
   /**
    * Checksum adjustment base value. To compute the checksum adjustment: 
    * 1) set it to 0; 2) sum the entire font as ULONG, 3) then store 0xB1B0AFBA - sum.
    */
   public static final long CHECKSUM_ADJUSTMENT_BASE = 0xB1B0AFBAL;
-  
+
   /**
    * Magic number value stored in the magic number field.
    */
@@ -46,37 +46,30 @@ public final class FontHeaderTable extends Table {
   /**
    * The ranges to use for checksum calculation.
    */
-  private static final int[] CHECKSUM_RANGES = 
-    new int[] {0, Offset.checkSumAdjustment.offset, Offset.magicNumber.offset};
-  
-  /**
-   * Offsets to specific elements in the underlying data. These offsets are relative to the
-   * start of the table or the start of sub-blocks within the table.
-   */
-  private enum Offset {
-    tableVersion(0),
-    fontRevision(4),
-    checkSumAdjustment(8),
-    magicNumber(12),
-    flags(16),
-    unitsPerEm(18),
-    created(20),
-    modified(28),
-    xMin(36),
-    yMin(38),
-    xMax(40),
-    yMax(42),
-    macStyle(44),
-    lowestRecPPEM(46),
-    fontDirectionHint(48),
-    indexToLocFormat(50),
-    glyphDataFormat(52);
+  private static final int[] CHECKSUM_RANGES =
+    new int[] {0, Offset.checkSumAdjustment, Offset.magicNumber};
 
-    private final int offset;
-    
-    private Offset(int offset) {
-      this.offset = offset;
-    }
+  /**
+   * Offsets to specific elements in the underlying data, relative to the start of the table.
+   */
+  private interface Offset {
+    int tableVersion = 0;
+    int fontRevision = 4;
+    int checkSumAdjustment = 8;
+    int magicNumber = 12;
+    int flags = 16;
+    int unitsPerEm = 18;
+    int created = 20;
+    int modified = 28;
+    int xMin = 36;
+    int yMin = 38;
+    int xMax = 40;
+    int yMax = 42;
+    int macStyle = 44;
+    int lowestRecPPEM = 46;
+    int fontDirectionHint = 48;
+    int indexToLocFormat = 50;
+    int glyphDataFormat = 52;
   }
 
   /**
@@ -87,7 +80,7 @@ public final class FontHeaderTable extends Table {
    */
   private FontHeaderTable(Header header, ReadableFontData data) {
     super(header, data);
-    data.setCheckSumRanges(0, Offset.checkSumAdjustment.offset, Offset.magicNumber.offset);
+    data.setCheckSumRanges(0, Offset.checkSumAdjustment, Offset.magicNumber);
   }
 
   /**
@@ -96,7 +89,7 @@ public final class FontHeaderTable extends Table {
    * @return the table version
    */
   public int tableVersion() {
-    return this.data.readFixed(Offset.tableVersion.offset);
+    return this.data.readFixed(Offset.tableVersion);
   }
 
   /**
@@ -105,7 +98,7 @@ public final class FontHeaderTable extends Table {
    * @return the font revision
    */
   public int fontRevision() {
-    return this.data.readFixed(Offset.fontRevision.offset);
+    return this.data.readFixed(Offset.fontRevision);
   }
 
   /**
@@ -115,7 +108,7 @@ public final class FontHeaderTable extends Table {
    * @return checksum adjustment
    */
   public long checkSumAdjustment() {
-    return this.data.readULong(Offset.checkSumAdjustment.offset);
+    return this.data.readULong(Offset.checkSumAdjustment);
   }
 
   /**
@@ -124,7 +117,7 @@ public final class FontHeaderTable extends Table {
    * @return the magic number
    */
   public long magicNumber() {
-    return this.data.readULong(Offset.magicNumber.offset);
+    return this.data.readULong(Offset.magicNumber);
   }
 
   /**
@@ -187,7 +180,7 @@ public final class FontHeaderTable extends Table {
    * @return the flags
    */
   public int flagsAsInt() {
-    return this.data.readUShort(Offset.flags.offset);
+    return this.data.readUShort(Offset.flags);
   }
 
   /**
@@ -205,7 +198,7 @@ public final class FontHeaderTable extends Table {
    * @return the units per em
    */
   public int unitsPerEm() {
-    return this.data.readUShort(Offset.unitsPerEm.offset);
+    return this.data.readUShort(Offset.unitsPerEm);
   }
 
   /**
@@ -215,7 +208,7 @@ public final class FontHeaderTable extends Table {
    * @return created date
    */
   public long created() {
-    return this.data.readDateTimeAsLong(Offset.created.offset);
+    return this.data.readDateTimeAsLong(Offset.created);
   }
 
   /**
@@ -225,7 +218,7 @@ public final class FontHeaderTable extends Table {
    * @return created date
    */
   public long modified() {
-    return this.data.readDateTimeAsLong(Offset.modified.offset);
+    return this.data.readDateTimeAsLong(Offset.modified);
   }
 
   /**
@@ -234,7 +227,7 @@ public final class FontHeaderTable extends Table {
    * @return the x min
    */
   public int xMin() {
-    return this.data.readShort(Offset.xMin.offset);
+    return this.data.readShort(Offset.xMin);
   }
 
   /**
@@ -243,7 +236,7 @@ public final class FontHeaderTable extends Table {
    * @return the y min
    */
   public int yMin() {
-    return this.data.readShort(Offset.yMin.offset);
+    return this.data.readShort(Offset.yMin);
   }
 
   /**
@@ -252,7 +245,7 @@ public final class FontHeaderTable extends Table {
    * @return the xmax
    */
   public int xMax() {
-    return this.data.readShort(Offset.xMax.offset);
+    return this.data.readShort(Offset.xMax);
   }
 
   /**
@@ -261,7 +254,7 @@ public final class FontHeaderTable extends Table {
    * @return the ymax
    */
   public int yMax() {
-    return this.data.readShort(Offset.yMax.offset);
+    return this.data.readShort(Offset.yMax);
   }
 
   /**
@@ -314,7 +307,7 @@ public final class FontHeaderTable extends Table {
       return value(clean);
     }
 
-    private static final EnumSet<MacStyle> reserved = 
+    private static final EnumSet<MacStyle> reserved =
       EnumSet.range(MacStyle.Reserved7, MacStyle.Reserved15);
   }
 
@@ -324,7 +317,7 @@ public final class FontHeaderTable extends Table {
    * @return the Mac style bits
    */
   public int macStyleAsInt() {
-    return this.data.readUShort(Offset.macStyle.offset);
+    return this.data.readUShort(Offset.macStyle);
   }
 
   /**
@@ -337,7 +330,7 @@ public final class FontHeaderTable extends Table {
   }
 
   public int lowestRecPPEM() {
-    return this.data.readUShort(Offset.lowestRecPPEM.offset);
+    return this.data.readUShort(Offset.lowestRecPPEM);
   }
 
   /**
@@ -376,7 +369,7 @@ public final class FontHeaderTable extends Table {
   }
 
   public int fontDirectionHintAsInt() {
-    return this.data.readShort(Offset.fontDirectionHint.offset);
+    return this.data.readShort(Offset.fontDirectionHint);
   }
 
   public FontDirectionHint fontDirectionHint() {
@@ -393,7 +386,7 @@ public final class FontHeaderTable extends Table {
     longOffset(1);
 
     private final int value;
-    
+
     private IndexToLocFormat(int value) {
       this.value = value;
     }
@@ -417,7 +410,7 @@ public final class FontHeaderTable extends Table {
   }
 
   public int indexToLocFormatAsInt() {
-    return this.data.readShort(Offset.indexToLocFormat.offset);
+    return this.data.readShort(Offset.indexToLocFormat);
   }
 
   public IndexToLocFormat indexToLocFormat() {
@@ -425,13 +418,13 @@ public final class FontHeaderTable extends Table {
   }
 
   public int glyphdataFormat() {
-    return this.data.readShort(Offset.glyphDataFormat.offset);
+    return this.data.readShort(Offset.glyphDataFormat);
   }
 
   public static class Builder extends TableBasedTableBuilder<FontHeaderTable> {
     private boolean fontChecksumSet = false;
     private long fontChecksum = 0;
-    
+
     /**
      * Create a new builder using the header information and data provided.
      *
@@ -442,10 +435,10 @@ public final class FontHeaderTable extends Table {
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
-    
+
     protected Builder(Header header, WritableFontData data) {
       super(header, data);
-      data.setCheckSumRanges(0, Offset.checkSumAdjustment.offset, Offset.magicNumber.offset);
+      data.setCheckSumRanges(0, Offset.checkSumAdjustment, Offset.magicNumber);
     }
 
     protected Builder(Header header, ReadableFontData data) {
@@ -462,7 +455,7 @@ public final class FontHeaderTable extends Table {
       if (this.fontChecksumSet) {
         ReadableFontData data = this.internalReadData();
         data.setCheckSumRanges(FontHeaderTable.CHECKSUM_RANGES);
-        long checksumAdjustment = 
+        long checksumAdjustment =
           FontHeaderTable.CHECKSUM_ADJUSTMENT_BASE - (this.fontChecksum + data.checksum());
         this.setCheckSumAdjustment(checksumAdjustment);
       }
@@ -477,14 +470,14 @@ public final class FontHeaderTable extends Table {
     /**
      * Sets the font checksum to be used when calculating the the checksum
      * adjustment for the header table during build time.
-     * 
+     *
      * The font checksum is the sum value of all tables but the font header
      * table. If the font checksum has been set then further setting will be
      * ignored until the font check sum has been cleared with
      * {@link #clearFontChecksum()}. Most users will never need to set this. It
      * is used when the font is being built. If set by a client it can interfere
      * with that process.
-     * 
+     *
      * @param checksum
      *          the font checksum
      */
@@ -495,15 +488,15 @@ public final class FontHeaderTable extends Table {
       this.fontChecksumSet = true;
       this.fontChecksum = checksum;
     }
-    
+
     /**
      * Clears the font checksum to be used when calculating the the checksum
      * adjustment for the header table during build time.
-     * 
+     *
      * The font checksum is the sum value of all tables but the font header
      * table. If the font checksum has been set then further setting will be
      * ignored until the font check sum has been cleared.
-     * 
+     *
      */
     public void clearFontChecksum() {
       this.fontChecksumSet = false;
@@ -514,7 +507,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setTableVersion(int version) {
-      this.internalWriteData().writeFixed(Offset.tableVersion.offset, version);
+      this.internalWriteData().writeFixed(Offset.tableVersion, version);
     }
 
     public int fontRevision() {
@@ -522,7 +515,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setFontRevision(int revision) {
-      this.internalWriteData().writeFixed(Offset.fontRevision.offset, revision);
+      this.internalWriteData().writeFixed(Offset.fontRevision, revision);
     }
 
     public long checkSumAdjustment() {
@@ -530,7 +523,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setCheckSumAdjustment(long adjustment) {
-      this.internalWriteData().writeULong(Offset.checkSumAdjustment.offset, adjustment);
+      this.internalWriteData().writeULong(Offset.checkSumAdjustment, adjustment);
     }
 
     public long magicNumber() {
@@ -538,7 +531,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setMagicNumber(long magicNumber) {
-      this.internalWriteData().writeULong(Offset.magicNumber.offset, magicNumber);
+      this.internalWriteData().writeULong(Offset.magicNumber, magicNumber);
     }
 
     public int flagsAsInt() {
@@ -550,9 +543,9 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setFlagsAsInt(int flags) {
-      this.internalWriteData().writeUShort(Offset.flags.offset, flags);
+      this.internalWriteData().writeUShort(Offset.flags, flags);
     }
-    
+
     public void setFlags(EnumSet<Flags> flags) {
       setFlagsAsInt(Flags.cleanValue(flags));
     }
@@ -562,7 +555,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setUnitsPerEm(int units) {
-      this.internalWriteData().writeUShort(Offset.unitsPerEm.offset, units);
+      this.internalWriteData().writeUShort(Offset.unitsPerEm, units);
     }
 
     public long created() {
@@ -570,7 +563,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setCreated(long date) {
-      this.internalWriteData().writeDateTime(Offset.created.offset, date);
+      this.internalWriteData().writeDateTime(Offset.created, date);
     }
 
     public long modified() {
@@ -578,7 +571,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setModified(long date) {
-      this.internalWriteData().writeDateTime(Offset.modified.offset, date);
+      this.internalWriteData().writeDateTime(Offset.modified, date);
     }
 
     public int xMin() {
@@ -586,7 +579,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setXMin(int xmin) {
-      this.internalWriteData().writeShort(Offset.xMin.offset, xmin);
+      this.internalWriteData().writeShort(Offset.xMin, xmin);
     }
 
     public int yMin() {
@@ -594,7 +587,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setYMin(int ymin) {
-      this.internalWriteData().writeShort(Offset.yMin.offset, ymin);
+      this.internalWriteData().writeShort(Offset.yMin, ymin);
     }
 
     public int xMax() {
@@ -602,7 +595,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setXMax(int xmax) {
-      this.internalWriteData().writeShort(Offset.xMax.offset, xmax);
+      this.internalWriteData().writeShort(Offset.xMax, xmax);
     }
 
     public int yMax() {
@@ -610,7 +603,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setYMax(int ymax) {
-      this.internalWriteData().writeShort(Offset.yMax.offset, ymax);
+      this.internalWriteData().writeShort(Offset.yMax, ymax);
     }
 
     public int macStyleAsInt() {
@@ -618,7 +611,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setMacStyleAsInt(int style) {
-      this.internalWriteData().writeUShort(Offset.macStyle.offset, style);
+      this.internalWriteData().writeUShort(Offset.macStyle, style);
     }
 
     public EnumSet<MacStyle> macStyle() {
@@ -634,7 +627,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setLowestRecPPEM(int size) {
-      this.internalWriteData().writeUShort(Offset.lowestRecPPEM.offset, size);
+      this.internalWriteData().writeUShort(Offset.lowestRecPPEM, size);
     }
 
     public int fontDirectionHintAsInt() {
@@ -642,7 +635,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setFontDirectionHintAsInt(int hint) {
-      this.internalWriteData().writeShort(Offset.fontDirectionHint.offset, hint);
+      this.internalWriteData().writeShort(Offset.fontDirectionHint, hint);
     }
 
     public FontDirectionHint fontDirectionHint() {
@@ -658,7 +651,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setIndexToLocFormatAsInt(int format) {
-      this.internalWriteData().writeShort(Offset.indexToLocFormat.offset, format);
+      this.internalWriteData().writeShort(Offset.indexToLocFormat, format);
     }
 
     public IndexToLocFormat indexToLocFormat() {
@@ -674,7 +667,7 @@ public final class FontHeaderTable extends Table {
     }
 
     public void setGlyphdataFormat(int format) {
-      this.internalWriteData().writeShort(Offset.glyphDataFormat.offset, format);
+      this.internalWriteData().writeShort(Offset.glyphDataFormat, format);
     }
   }
 }
