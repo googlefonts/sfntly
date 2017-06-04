@@ -39,6 +39,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
   /**
    * CMap subtable formats.
    *
+   * @see "ISO/IEO 14496-22:2015, section 5.2.1"
    */
   public enum CMapFormat {
     Format0(0),

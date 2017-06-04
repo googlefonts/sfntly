@@ -9,8 +9,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * A cmap format 12 sub table.
+ * The cmap format 12 subtable maps segmented ranges of 32-bit character codes to glyph IDs.
  *
+ * @see "ISO/IEC 14496-22:2015, section 5.2.1.3.7"
  */
 public final class CMapFormat12 extends CMap {
   private final int numberOfGroups;

@@ -8,7 +8,9 @@ import com.google.typography.font.sfntly.table.core.CMapTable.Offset;
 import java.util.Iterator;
 
 /**
- * A cmap format 14 sub table.
+ * The cmap format 14 subtable maps Unicode Variation Sequences to glyph IDs.
+ *
+ * @see "ISO/IEC 14496-22:2015, section 5.2.1.3.9"
  */
 // TODO(stuartg): completely unsupported yet
 public final class CMapFormat14 extends CMap {
