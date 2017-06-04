@@ -9,10 +9,11 @@ import com.google.typography.font.sfntly.table.core.CMapTable.Offset;
 import java.util.Iterator;
 
 /**
- * A cmap format 2 sub table.
+ * The cmap format 2 subtable maps multi-byte character codes to glyph IDs.
+ * <p>
+ * This format is typically used for encodings such as SJIS, EUC-JP/KR/CN, Big5, etc.
  *
- * The format 2 cmap is used for multi-byte encodings such as SJIS,
- * EUC-JP/KR/CN, Big5, etc.
+ * @see "ISO/IEC 14496-22:2015, section 5.2.1.3.2"
  */
 public final class CMapFormat2 extends CMap {
 

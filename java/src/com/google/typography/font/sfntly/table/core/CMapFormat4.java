@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
- * A cmap format 4 sub table.
+ * The cmap format 4 subtable maps segmented ranges of 16-bit character codes to glyph IDs.
+ *
+ * @see "ISO/IEC 14496-22:2015, section 5.2.1.3.3"
  */
 public final class CMapFormat4 extends CMap {
   private final int segCount;

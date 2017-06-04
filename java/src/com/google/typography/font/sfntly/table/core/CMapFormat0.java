@@ -9,8 +9,9 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * A cmap format 0 sub table.
+ * The cmap format 0 subtable maps single-byte character codes to glyph IDs.
  *
+ * @see "ISO/IEC 14496-22:2015, section 5.2.1.3.1"
  */
 public final class CMapFormat0 extends CMap {
   protected CMapFormat0(ReadableFontData data, CMapId cmapId) {
