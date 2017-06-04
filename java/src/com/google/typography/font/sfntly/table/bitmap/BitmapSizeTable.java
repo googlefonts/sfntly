@@ -21,7 +21,6 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.math.FontMath;
 import com.google.typography.font.sfntly.table.SubTable;
-import com.google.typography.font.sfntly.table.bitmap.EblcTable.Offset;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,20 +37,36 @@ public final class BitmapSizeTable extends SubTable {
   private final Object indexSubTablesLock = new Object();
   private volatile List<IndexSubTable> indexSubTables = null;
 
+  interface Offset {
+    int indexSubTableArrayOffset = 0;
+    int indexTableSize = 4;
+    int numberOfIndexSubTables = 8;
+    int colorRef = 12;
+    int hori = 16;
+    int vert = 28;
+    int startGlyphIndex = 40;
+    int endGlyphIndex = 42;
+    int ppemX = 44;
+    int ppemY = 45;
+    int bitDepth = 46;
+    int flags = 47;
+    int SIZE = 48;
+  }
+
   protected BitmapSizeTable(ReadableFontData data, ReadableFontData masterData) {
     super(data, masterData);
   }
 
   public int indexSubTableArrayOffset() {
-    return this.data.readULongAsInt(Offset.bitmapSizeTable_indexSubTableArrayOffset.offset);
+    return this.data.readULongAsInt(Offset.indexSubTableArrayOffset);
   }
 
   public int indexTableSize() {
-    return this.data.readULongAsInt(Offset.bitmapSizeTable_indexTableSize.offset);
+    return this.data.readULongAsInt(Offset.indexTableSize);
   }
 
   private static int numberOfIndexSubTables(ReadableFontData data, int tableOffset) {
-    return data.readULongAsInt(tableOffset + Offset.bitmapSizeTable_numberOfIndexSubTables.offset);
+    return data.readULongAsInt(tableOffset + Offset.numberOfIndexSubTables);
   }
 
   public int numberOfIndexSubTables() {
@@ -59,7 +74,7 @@ public final class BitmapSizeTable extends SubTable {
   }
 
   public int colorRef() {
-    return this.data.readULongAsInt(Offset.bitmapSizeTable_colorRef.offset);
+    return this.data.readULongAsInt(Offset.colorRef);
   }
 
   // TODO(stuartg): implement later
@@ -73,27 +88,27 @@ public final class BitmapSizeTable extends SubTable {
   }
 
   public int startGlyphIndex() {
-    return this.data.readUShort(Offset.bitmapSizeTable_startGlyphIndex.offset);
+    return this.data.readUShort(Offset.startGlyphIndex);
   }
 
   public int endGlyphIndex() {
-    return this.data.readUShort(Offset.bitmapSizeTable_endGlyphIndex.offset);
+    return this.data.readUShort(Offset.endGlyphIndex);
   }
 
   public int ppemX() {
-    return this.data.readByte(Offset.bitmapSizeTable_ppemX.offset);
+    return this.data.readByte(Offset.ppemX);
   }
 
   public int ppemY() {
-    return this.data.readByte(Offset.bitmapSizeTable_ppemY.offset);
+    return this.data.readByte(Offset.ppemY);
   }
 
   public int bitDepth() {
-    return this.data.readByte(Offset.bitmapSizeTable_bitDepth.offset);
+    return this.data.readByte(Offset.bitDepth);
   }
 
   public int flagsAsInt() {
-    return this.data.readChar(Offset.bitmapSizeTable_flags.offset);
+    return this.data.readChar(Offset.flags);
   }
 
   public IndexSubTable indexSubTable(int index) {
@@ -246,7 +261,7 @@ public final class BitmapSizeTable extends SubTable {
      */
     public int indexSubTableArrayOffset() {
       return this.internalReadData().readULongAsInt(
-          Offset.bitmapSizeTable_indexSubTableArrayOffset.offset);
+          Offset.indexSubTableArrayOffset);
     }
 
     /**
@@ -257,7 +272,7 @@ public final class BitmapSizeTable extends SubTable {
      */
     void setIndexSubTableArrayOffset(int offset) {
       this.internalWriteData().writeULong(
-          Offset.bitmapSizeTable_indexSubTableArrayOffset.offset, offset);
+          Offset.indexSubTableArrayOffset, offset);
     }
 
     /**
@@ -268,7 +283,7 @@ public final class BitmapSizeTable extends SubTable {
      * @return the subtable array size
      */
     public int indexTableSize() {
-      return this.internalReadData().readULongAsInt(Offset.bitmapSizeTable_indexTableSize.offset);
+      return this.internalReadData().readULongAsInt(Offset.indexTableSize);
     }
 
     /**
@@ -278,7 +293,7 @@ public final class BitmapSizeTable extends SubTable {
      * @param size the offset to the index subtable array
      */
     void setIndexTableSize(int size) {
-      this.internalWriteData().writeULong(Offset.bitmapSizeTable_indexTableSize.offset, size);
+      this.internalWriteData().writeULong(Offset.indexTableSize, size);
     }
 
     public int numberOfIndexSubTables() {
@@ -287,11 +302,11 @@ public final class BitmapSizeTable extends SubTable {
 
     private void setNumberOfIndexSubTables(int numberOfIndexSubTables) {
       this.internalWriteData().writeULong(
-          Offset.bitmapSizeTable_numberOfIndexSubTables.offset, numberOfIndexSubTables);
+          Offset.numberOfIndexSubTables, numberOfIndexSubTables);
     }
 
     public int colorRef() {
-      return this.internalReadData().readULongAsInt(Offset.bitmapSizeTable_colorRef.offset);
+      return this.internalReadData().readULongAsInt(Offset.colorRef);
     }
 
     // TODO(stuartg): implement later
@@ -305,27 +320,27 @@ public final class BitmapSizeTable extends SubTable {
     }
 
     public int startGlyphIndex() {
-      return this.internalReadData().readUShort(Offset.bitmapSizeTable_startGlyphIndex.offset);
+      return this.internalReadData().readUShort(Offset.startGlyphIndex);
     }
 
     public int endGlyphIndex() {
-      return this.internalReadData().readUShort(Offset.bitmapSizeTable_endGlyphIndex.offset);
+      return this.internalReadData().readUShort(Offset.endGlyphIndex);
     }
 
     public int ppemX() {
-      return this.internalReadData().readByte(Offset.bitmapSizeTable_ppemX.offset);
+      return this.internalReadData().readByte(Offset.ppemX);
     }
 
     public int ppemY() {
-      return this.internalReadData().readByte(Offset.bitmapSizeTable_ppemY.offset);
+      return this.internalReadData().readByte(Offset.ppemY);
     }
 
     public int bitDepth() {
-      return this.internalReadData().readByte(Offset.bitmapSizeTable_bitDepth.offset);
+      return this.internalReadData().readByte(Offset.bitDepth);
     }
 
     public int flagsAsInt() {
-      return this.internalReadData().readChar(Offset.bitmapSizeTable_flags.offset);
+      return this.internalReadData().readChar(Offset.flags);
     }
 
     public IndexSubTable.Builder<? extends IndexSubTable> indexSubTableBuilder(int index) {
@@ -511,10 +526,10 @@ public final class BitmapSizeTable extends SubTable {
       if (this.indexSubTableBuilders() == null) {
         return 0;
       }
-      int size = Offset.bitmapSizeTableLength.offset;
+      int size = Offset.SIZE;
       boolean variable = false;
       for (IndexSubTable.Builder<? extends IndexSubTable> subTableBuilder : this.indexSubTables) {
-        size += Offset.indexSubTableEntryLength.offset;
+        size += EblcTable.Offset.indexSubTableEntryLength.offset;
         int subTableSize = subTableBuilder.subDataSizeToSerialize();
         int padding =
             FontMath.paddingRequired(Math.abs(subTableSize), FontData.DataSize.ULONG.size());
