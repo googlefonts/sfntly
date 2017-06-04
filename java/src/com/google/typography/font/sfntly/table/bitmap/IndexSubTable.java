@@ -164,9 +164,8 @@ public abstract class IndexSubTable extends SubTable {
         case 5:
           return IndexSubTableFormat5.Builder.createBuilder();
         default:
-          // unknown format and unable to process
-          throw new IllegalArgumentException(String.format("Invalid Index SubTable Format %i%n",
-              indexFormat));
+          throw new IllegalArgumentException(
+              String.format("Invalid index subtable format %d", indexFormat));
       }
     }
 
@@ -203,9 +202,8 @@ public abstract class IndexSubTable extends SubTable {
           return IndexSubTableFormat5.Builder.createBuilder(
               data, indexSubTableOffset, firstGlyphIndex, lastGlyphIndex);
         default:
-          // unknown format and unable to process
           throw new IllegalArgumentException(
-              String.format("Invalid Index SubTable Foramt %i%n", indexFormat));
+              String.format("Invalid index subtable format %d", indexFormat));
       }
     }
 
