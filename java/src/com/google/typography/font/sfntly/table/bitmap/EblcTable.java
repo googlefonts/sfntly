@@ -43,21 +43,7 @@ public class EblcTable extends SubTableContainerTable {
     numSizes(4),
     headerLength(numSizes.offset + FontData.DataSize.ULONG.size()),
 
-    // bitmapSizeTable
     bitmapSizeTableArrayStart(headerLength.offset),
-    bitmapSizeTableLength(48),
-    bitmapSizeTable_indexSubTableArrayOffset(0),
-    bitmapSizeTable_indexTableSize(4),
-    bitmapSizeTable_numberOfIndexSubTables(8),
-    bitmapSizeTable_colorRef(12),
-    bitmapSizeTable_hori(16),
-    bitmapSizeTable_vert(28),
-    bitmapSizeTable_startGlyphIndex(40),
-    bitmapSizeTable_endGlyphIndex(42),
-    bitmapSizeTable_ppemX(44),
-    bitmapSizeTable_ppemY(45),
-    bitmapSizeTable_bitDepth(46),
-    bitmapSizeTable_flags(47),
 
     // sbitLineMetrics
     sbitLineMetricsLength(12),
@@ -194,8 +180,8 @@ public class EblcTable extends SubTableContainerTable {
     for (int i = 0; i < numSizes; i++) {
       BitmapSizeTable.Builder sizeBuilder =
           BitmapSizeTable.Builder.createBuilder(data.slice(
-              Offset.bitmapSizeTableArrayStart.offset + i * Offset.bitmapSizeTableLength.offset,
-              Offset.bitmapSizeTableLength.offset), data);
+              Offset.bitmapSizeTableArrayStart.offset + i * BitmapSizeTable.Offset.SIZE,
+              BitmapSizeTable.Offset.SIZE), data);
       BitmapSizeTable size = sizeBuilder.build();
       bitmapSizeTable.add(size);
     }
@@ -288,7 +274,7 @@ public class EblcTable extends SubTableContainerTable {
           BitmapSizeTable.Builder sizeBuilder =
               BitmapSizeTable.Builder.createBuilder(
                   data.slice(Offset.bitmapSizeTableArrayStart.offset + i
-                      * Offset.bitmapSizeTableLength.offset, Offset.bitmapSizeTableLength.offset),
+                      * BitmapSizeTable.Offset.SIZE, BitmapSizeTable.Offset.SIZE),
                   data);
           sizeBuilders.add(sizeBuilder);
         }
@@ -354,7 +340,7 @@ public class EblcTable extends SubTableContainerTable {
 
       // offset to the start of the whole index subtable block
       int subTableBlockStartOffset =
-          sizeTableOffset + this.sizeTableBuilders.size() * Offset.bitmapSizeTableLength.offset;
+          sizeTableOffset + this.sizeTableBuilders.size() * BitmapSizeTable.Offset.SIZE;
       // walking offset in the index subtable
       // points to the start of the current subtable block
       int currentSubTableBlockStartOffset = subTableBlockStartOffset;
