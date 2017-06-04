@@ -37,7 +37,7 @@ public class EblcTable extends SubTableContainerTable {
 
   public static final int NOTDEF = -1;
 
-  static enum Offset {
+  enum Offset {
     // header
     version(0),
     numSizes(4),
@@ -56,9 +56,6 @@ public class EblcTable extends SubTableContainerTable {
 
     // indexSubHeader
     indexSubHeaderLength(8),
-    indexSubHeader_indexFormat(0),
-    indexSubHeader_imageFormat(2),
-    indexSubHeader_imageDataOffset(4),
 
     // indexSubTable - all offset relative to the subtable start
 
@@ -98,10 +95,9 @@ public class EblcTable extends SubTableContainerTable {
     codeOffsetPair_glyphCode(0),
     codeOffsetPair_offset(FontData.DataSize.USHORT.size());
 
-
     final int offset;
 
-    private Offset(int offset) {
+    Offset(int offset) {
       this.offset = offset;
     }
   }
