@@ -34,9 +34,7 @@ import com.ibm.icu.lang.UCharacter;
 import com.ibm.icu.lang.UScript;
 import com.ibm.icu.text.UnicodeSet;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -53,8 +51,6 @@ import java.util.TreeSet;
 // TODO Make abstract FontInfo class with nonstatic functions and subclass this
 // as TrueTypeFontInfo
 public class FontInfo {
-  private static final int CHECKSUM_LENGTH = 8;
-  private static final DecimalFormat twoDecimalPlaces = new DecimalFormat("#.##");
 
   /**
    * @param font
@@ -78,40 +74,26 @@ public class FontInfo {
    * @return a list of dimensional information about the font
    */
   public static DataDisplayTable listFontMetrics(Font font) {
-    String[] header = { "Name", "Value" };
-    Align[] displayAlignment = { Align.Left, Align.Left };
-    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
-    table.setAlignment(Arrays.asList(displayAlignment));
+    DataDisplayTable table = new DataDisplayTable("Name", "Value");
+    table.setAlignment(Align.Left, Align.Left);
 
     // Retrieve necessary tables
     FontHeaderTable headTable = (FontHeaderTable) FontUtils.getTable(font, Tag.head);
     HorizontalHeaderTable hheaTable = (HorizontalHeaderTable) FontUtils.getTable(font, Tag.hhea);
     OS2Table os2Table = (OS2Table) FontUtils.getTable(font, Tag.OS_2);
 
-    table.add(Arrays.asList(
-        new String[] { "Units per em", String.format("%d", headTable.unitsPerEm()) }));
-    table.add(Arrays.asList(new String[] {
-        "[xMin, xMax]", String.format("[%d, %d]", headTable.xMin(), headTable.xMax()) }));
-    table.add(Arrays.asList(new String[] {
-        "[yMin, yMax]", String.format("[%d, %d]", headTable.yMin(), headTable.yMax()) }));
-    table.add(Arrays.asList(new String[] {
-        "Smallest readable size (px per em)", String.format("%d", headTable.lowestRecPPEM()) }));
-    table.add(
-        Arrays.asList(new String[] { "hhea ascender", String.format("%d", hheaTable.ascender()) }));
-    table.add(Arrays.asList(
-        new String[] { "hhea descender", String.format("%d", hheaTable.descender()) }));
-    table.add(Arrays.asList(
-        new String[] { "hhea typographic line gap", String.format("%d", hheaTable.lineGap()) }));
-    table.add(Arrays.asList(
-        new String[] { "OS/2 Windows ascender", String.format("%d", os2Table.usWinAscent()) }));
-    table.add(Arrays.asList(
-        new String[] { "OS/2 Windows descender", String.format("%d", os2Table.usWinDescent()) }));
-    table.add(Arrays.asList(new String[] {
-        "OS/2 typographic ascender", String.format("%d", os2Table.sTypoAscender()) }));
-    table.add(Arrays.asList(new String[] {
-        "OS/2 typographic ascender", String.format("%d", os2Table.sTypoDescender()) }));
-    table.add(Arrays.asList(new String[] {
-        "OS/2 typographic line gap", String.format("%d", os2Table.sTypoLineGap()) }));
+    addTwoColumn(table, "Units per em", "%d", headTable.unitsPerEm());
+    addTwoColumn(table, "[xMin, xMax]", "[%d, %d]", headTable.xMin(), headTable.xMax());
+    addTwoColumn(table, "[yMin, yMax]", "[%d, %d]", headTable.yMin(), headTable.yMax());
+    addTwoColumn(table, "Smallest readable size (px per em)", "%d", headTable.lowestRecPPEM());
+    addTwoColumn(table, "hhea ascender", "%d", hheaTable.ascender());
+    addTwoColumn(table, "hhea descender", "%d", hheaTable.descender());
+    addTwoColumn(table, "hhea typographic line gap", "%d", hheaTable.lineGap());
+    addTwoColumn(table, "OS/2 Windows ascender", "%d", os2Table.usWinAscent());
+    addTwoColumn(table, "OS/2 Windows descender", "%d", os2Table.usWinDescent());
+    addTwoColumn(table, "OS/2 typographic ascender", "%d", os2Table.sTypoAscender());
+    addTwoColumn(table, "OS/2 typographic ascender", "%d", os2Table.sTypoDescender());
+    addTwoColumn(table, "OS/2 typographic line gap", "%d", os2Table.sTypoLineGap());
 
     return table;
   }
@@ -128,36 +110,33 @@ public class FontInfo {
    * @return a list of information about tables in the font provided
    */
   public static DataDisplayTable listTables(Font font) {
-    String[] header = { "tag", "checksum", "length", "offset" };
-    Align[] displayAlignment = { Align.Left, Align.Right, Align.Right, Align.Right };
-    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
-    table.setAlignment(Arrays.asList(displayAlignment));
+    DataDisplayTable table = new DataDisplayTable("tag", "checksum", "length", "offset");
+    table.setAlignment(Align.Left, Align.Right, Align.Right, Align.Right);
 
     // Total size of font
     int fontSize = 0;
 
     // Calculate font size
-    Iterator<? extends Table> fontTableIter = font.iterator();
-    while (fontTableIter.hasNext()) {
-      Table fontTable = fontTableIter.next();
+    for (Iterator<? extends Table> it = font.iterator(); it.hasNext(); ) {
+      Table fontTable = it.next();
       fontSize += fontTable.headerLength();
     }
 
     // Add table data to output string
-    fontTableIter = font.iterator();
-    while (fontTableIter.hasNext()) {
-      Table fontTable = fontTableIter.next();
+    for (Iterator<? extends Table> it = font.iterator(); it.hasNext(); ) {
+      Table fontTable = it.next();
       String name = Tag.stringValue(fontTable.headerTag());
-      String checksum = String.format("0x%0" + CHECKSUM_LENGTH + "X", fontTable.headerChecksum());
+      String checksum = String.format("0x%08X", fontTable.headerChecksum());
       int length = fontTable.headerLength();
       double lengthPercent = length * 100.0 / fontSize;
       int offset = fontTable.headerOffset();
 
       // Add table data
-      String[] data = { name, checksum,
-          String.format("%s (%s%%)", length, twoDecimalPlaces.format(lengthPercent)),
-          String.format("%d", offset) };
-      table.add(Arrays.asList(data));
+      table.add(
+          name,
+          checksum,
+          String.format("%d (%.2f%%)", length, lengthPercent),
+          String.format("%d", offset));
     }
 
     return table;
@@ -173,10 +152,9 @@ public class FontInfo {
    * @return a list of entries in the name table of the font
    */
   public static DataDisplayTable listNameEntries(Font font) {
-    String[] header = { "Platform", "Encoding", "Language", "Name", "Value" };
-    Align[] displayAlignment = { Align.Left, Align.Left, Align.Left, Align.Left, Align.Left };
-    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
-    table.setAlignment(Arrays.asList(displayAlignment));
+    DataDisplayTable table = new DataDisplayTable(
+        "Platform", "Encoding", "Language", "Name", "Value");
+    table.setAlignment(Align.Left, Align.Left, Align.Left, Align.Left, Align.Left);
 
     NameTable nameTable = (NameTable) FontUtils.getTable(font, Tag.name);
     for (NameEntry entry : nameTable) {
@@ -201,12 +179,12 @@ public class FontInfo {
         break;
       }
 
-      String[] data = { String.format(
-          "%s (id=%d)", PlatformId.valueOf(entry.platformId()).toString(), entry.platformId()),
+      table.add(
+          String.format("%s (id=%d)", PlatformId.valueOf(entry.platformId()), entry.platformId()),
           String.format("%s (id=%d)", eidEntry, entry.encodingId()),
           String.format("%s (id=%d)", lidEntry, entry.languageId()),
-          NameId.valueOf(entry.nameId()).toString(), entry.name() };
-      table.add(Arrays.asList(data));
+          NameId.valueOf(entry.nameId()).toString(),
+          entry.name());
     }
 
     return table;
@@ -221,17 +199,16 @@ public class FontInfo {
    * @return a list of information about the cmaps in the font
    */
   public static DataDisplayTable listCmaps(Font font) {
-    String[] header = { "Platform ID", "Encoding ID", "Format" };
-    Align[] displayAlignment = { Align.Right, Align.Right, Align.Right };
-    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
-    table.setAlignment(Arrays.asList(displayAlignment));
+    DataDisplayTable table = new DataDisplayTable("Platform ID", "Encoding ID", "Format");
+    table.setAlignment(Align.Right, Align.Right, Align.Right);
 
     // Add information about each individual cmap in the table
     CMapTable cmapTable = FontUtils.getCMapTable(font);
     for (CMap cmap : cmapTable) {
-      String[] data = { String.format("%d", cmap.platformId()),
-          String.format("%d", cmap.encodingId()), String.format("%d", cmap.format()) };
-      table.add(Arrays.asList(data));
+      table.add(
+          String.format("%d", cmap.platformId()),
+          String.format("%d", cmap.encodingId()),
+          String.format("%d", cmap.format()));
     }
 
     return table;
@@ -273,19 +250,19 @@ public class FontInfo {
    *           if font does not contain a UCS-4 or UCS-2 cmap
    */
   public static DataDisplayTable listChars(Font font) {
-    String[] header = { "Code point", "Glyph ID", "Unicode-designated name for code point" };
-    Align[] displayAlignment = { Align.Right, Align.Right, Align.Left };
-    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
-    table.setAlignment(Arrays.asList(displayAlignment));
+    DataDisplayTable table = new DataDisplayTable(
+        "Code point", "Glyph ID", "Unicode-designated name for code point");
+    table.setAlignment(Align.Right, Align.Right, Align.Left);
 
     // Iterate through all code points
     CMap cmap = FontUtils.getUCSCMap(font);
     for (int charId : cmap) {
       int glyphId = cmap.glyphId(charId);
       if (glyphId != CMapTable.NOTDEF) {
-        String[] data = { FontUtils.getFormattedCodePointString(charId),
-            String.format("%d", glyphId), UCharacter.getExtendedName(charId) };
-        table.add(Arrays.asList(data));
+        table.add(
+            FontUtils.getFormattedCodePointString(charId),
+            String.format("%d", glyphId),
+            UCharacter.getExtendedName(charId));
       }
     }
 
@@ -306,17 +283,15 @@ public class FontInfo {
    */
   // FIXME Find more elegant method of retrieving block data
   public static DataDisplayTable listCharBlockCoverage(Font font) {
-    String[] header = { "Block", "Coverage" };
-    Align[] displayAlignment = { Align.Left, Align.Right };
-    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
-    table.setAlignment(Arrays.asList(displayAlignment));
+    DataDisplayTable table = new DataDisplayTable("Block", "Coverage");
+    table.setAlignment(Align.Left, Align.Right);
 
     // Iterate through each block to check for coverage
     CMap cmap = FontUtils.getUCSCMap(font);
     int totalCount = 0;
     for (int i = 0; i < UnicodeBlockData.numBlocks(); i++) {
       String block = UnicodeBlockData.getBlockName(i);
-      UnicodeSet set = null;
+      UnicodeSet set;
       try {
         set = new UnicodeSet("[[:Block=" + block + ":]-[:gc=Unassigned:]-[:gc=Control:]]");
       } catch (IllegalIcuArgumentException e) {
@@ -329,9 +304,12 @@ public class FontInfo {
         }
       }
       if (count > 0) {
-        table.add(Arrays.asList(new String[] { String.format(
-            "%s [%s, %s]", block, UnicodeBlockData.getBlockStartCode(i),
-            UnicodeBlockData.getBlockEndCode(i)), String.format("%d / %d", count, set.size()) }));
+        table.add(
+            String.format("%s [%s, %s]",
+                block,
+                UnicodeBlockData.getBlockStartCode(i),
+                UnicodeBlockData.getBlockEndCode(i)),
+            String.format("%d / %d", count, set.size()));
       }
       totalCount += count;
     }
@@ -346,7 +324,7 @@ public class FontInfo {
     }
     int nonUnicodeCount = numChars(font) - totalCount;
     if (nonUnicodeCount > 0) {
-      table.add(Arrays.asList(new String[] { "Unknown", String.format("%d", nonUnicodeCount) }));
+      addTwoColumn(table, "Unknown", "%d", nonUnicodeCount);
     }
 
     return table;
@@ -361,10 +339,8 @@ public class FontInfo {
    * @return a list of scripts covered by the font
    */
   public static DataDisplayTable listScriptCoverage(Font font) {
-    String[] header = { "Script", "Coverage" };
-    Align[] displayAlignment = { Align.Left, Align.Right };
-    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
-    table.setAlignment(Arrays.asList(displayAlignment));
+    DataDisplayTable table = new DataDisplayTable("Script", "Coverage");
+    table.setAlignment(Align.Left, Align.Right);
     HashMap<Integer, Integer> coveredScripts = new HashMap<Integer, Integer>();
 
     // Add to script count for the script each code point belongs to
@@ -385,7 +361,7 @@ public class FontInfo {
     Set<Integer> sortedScripts = new TreeSet<Integer>(coveredScripts.keySet());
     int unknown = 0;
     for (Integer scriptCode : sortedScripts) {
-      UnicodeSet scriptSet = null;
+      UnicodeSet scriptSet;
       String scriptName = UScript.getName(scriptCode);
       try {
         scriptSet = new UnicodeSet("[[:" + scriptName + ":]]");
@@ -394,11 +370,10 @@ public class FontInfo {
         continue;
       }
 
-      table.add(Arrays.asList(new String[] { scriptName,
-          String.format("%d / %d", coveredScripts.get(scriptCode), scriptSet.size()) }));
+      addTwoColumn(table, scriptName, "%d / %d", coveredScripts.get(scriptCode), scriptSet.size());
     }
     if (unknown > 0) {
-      table.add(Arrays.asList(new String[] { "Unsupported script", String.format("%d", unknown) }));
+      addTwoColumn(table, "Unsupported script", "%d", unknown);
     }
 
     return table;
@@ -414,10 +389,8 @@ public class FontInfo {
    *         scripts
    */
   public static DataDisplayTable listCharsNeededToCoverScript(Font font) {
-    String[] header = { "Script", "Code Point", "Name" };
-    Align[] displayAlignment = { Align.Left, Align.Right, Align.Left };
-    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
-    table.setAlignment(Arrays.asList(displayAlignment));
+    DataDisplayTable table = new DataDisplayTable("Script", "Code Point", "Name");
+    table.setAlignment(Align.Left, Align.Right, Align.Left);
     HashMap<Integer, UnicodeSet> coveredScripts = new HashMap<Integer, UnicodeSet>();
 
     // Iterate through each set
@@ -429,7 +402,7 @@ public class FontInfo {
           continue;
         }
 
-        UnicodeSet scriptSet = null;
+        UnicodeSet scriptSet;
         if (!coveredScripts.containsKey(scriptCode)) {
           // New covered script found, create set
           try {
@@ -453,9 +426,10 @@ public class FontInfo {
       UnicodeSet uSet = coveredScripts.get(scriptCode);
       for (String charStr : uSet) {
         int codePoint = UCharacter.codePointAt(charStr, 0);
-        table.add(Arrays.asList(new String[] { String.format("%s", UScript.getName(scriptCode)),
+        table.add(
+            String.format("%s", UScript.getName(scriptCode)),
             FontUtils.getFormattedCodePointString(codePoint),
-            UCharacter.getExtendedName(codePoint) }));
+            UCharacter.getExtendedName(codePoint));
       }
     }
 
@@ -485,10 +459,8 @@ public class FontInfo {
    * @return a list of glyph dimensions for the font
    */
   public static DataDisplayTable listGlyphDimensionBounds(Font font) {
-    String[] header = { "Dimension", "Value" };
-    Align[] displayAlignment = { Align.Left, Align.Right };
-    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
-    table.setAlignment(Arrays.asList(displayAlignment));
+    DataDisplayTable table = new DataDisplayTable("Dimension", "Value");
+    table.setAlignment(Align.Left, Align.Right);
 
     LocaTable locaTable = FontUtils.getLocaTable(font);
     GlyphTable glyfTable = FontUtils.getGlyphTable(font);
@@ -503,25 +475,19 @@ public class FontInfo {
     for (int i = 0; i < locaTable.numGlyphs(); i++) {
       Glyph glyph = glyfTable.glyph(locaTable.glyphOffset(i), locaTable.glyphLength(i));
       if (glyph.dataLength() != 0) {
-        if (glyph.xMin() < xMin) {
-          xMin = glyph.xMin();
-        }
-        if (glyph.yMin() < yMin) {
-          yMin = glyph.yMin();
-        }
-        if (glyph.xMax() > xMax) {
-          xMax = glyph.xMax();
-        }
-        if (glyph.yMax() > yMax) {
-          yMax = glyph.yMax();
+        if (glyph.dataLength() > 0) {
+          xMin = Math.min(xMin, glyph.xMin());
+          yMin = Math.min(yMin, glyph.yMin());
+          xMax = Math.max(xMax, glyph.xMax());
+          yMax = Math.max(yMax, glyph.yMax());
         }
       }
     }
 
-    table.add(Arrays.asList(new String[] { "xMin", String.format("%d", xMin) }));
-    table.add(Arrays.asList(new String[] { "xMax", String.format("%d", xMax) }));
-    table.add(Arrays.asList(new String[] { "yMin", String.format("%d", yMin) }));
-    table.add(Arrays.asList(new String[] { "yMax", String.format("%d", yMax) }));
+    addTwoColumn(table, "xMin", "%d", xMin);
+    addTwoColumn(table, "xMax", "%d", xMax);
+    addTwoColumn(table, "yMin", "%d", yMin);
+    addTwoColumn(table, "yMax", "%d", yMax);
 
     return table;
   }
@@ -547,8 +513,7 @@ public class FontInfo {
     }
 
     double percentage = instrSize * 100.0 / glyfTable.headerLength();
-    return String.format(
-        "%d bytes (%s%% of glyf table)", instrSize, twoDecimalPlaces.format(percentage));
+    return String.format("%d bytes (%.2f%% of glyf table)", instrSize, percentage);
   }
 
   /**
@@ -561,16 +526,14 @@ public class FontInfo {
    *         other glyphs more than once
    */
   public static DataDisplayTable listSubglyphFrequency(Font font) {
-    Map<Integer, Integer> subglyphFreq = new HashMap<Integer, Integer>();
-    String[] header = { "Glyph ID", "Frequency" };
-    Align[] displayAlignment = { Align.Right, Align.Right };
-    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
-    table.setAlignment(Arrays.asList(displayAlignment));
+    DataDisplayTable table = new DataDisplayTable("Glyph ID", "Frequency");
+    table.setAlignment(Align.Right, Align.Right);
 
     LocaTable locaTable = FontUtils.getLocaTable(font);
     GlyphTable glyfTable = FontUtils.getGlyphTable(font);
 
     // Add subglyphs of all composite glyphs to hashmap
+    Map<Integer, Integer> subglyphFreq = new HashMap<Integer, Integer>();
     for (int i = 0; i < locaTable.numGlyphs(); i++) {
       Glyph glyph = glyfTable.glyph(locaTable.glyphOffset(i), locaTable.glyphLength(i));
       if (glyph.glyphType() == GlyphType.Composite) {
@@ -589,11 +552,9 @@ public class FontInfo {
     }
 
     // Add frequency data to table
-    int numSubglyphs = 0;
     Set<Integer> sortedKeySet = new TreeSet<Integer>(subglyphFreq.keySet());
     for (Integer key : sortedKeySet) {
-      String[] data = { key.toString(), subglyphFreq.get(key).toString() };
-      table.add(Arrays.asList(data));
+      table.add(key.toString(), subglyphFreq.get(key).toString());
     }
 
     return table;
@@ -607,10 +568,8 @@ public class FontInfo {
    * @return a list of unmapped glyphs
    */
   public static DataDisplayTable listUnmappedGlyphs(Font font) {
-    String[] header = { "Glyph ID" };
-    Align[] displayAlignment = { Align.Right };
-    DataDisplayTable table = new DataDisplayTable(Arrays.asList(header));
-    table.setAlignment(Arrays.asList(displayAlignment));
+    DataDisplayTable table = new DataDisplayTable("Glyph ID");
+    table.setAlignment(Align.Right);
 
     // Get a set of all mapped glyph IDs
     Set<Integer> mappedGlyphs = new HashSet<Integer>();
@@ -625,11 +584,16 @@ public class FontInfo {
     LocaTable locaTable = FontUtils.getLocaTable(font);
     for (int i = 0; i < locaTable.numGlyphs(); i++) {
       if (!mappedGlyphs.contains(i)) {
-        table.add(Arrays.asList(new String[] { String.format("%d", i) }));
+        table.add(String.format("%s", i));
       }
     }
 
     return table;
+  }
+
+  private static void addTwoColumn(
+      DataDisplayTable table, String label, String format, Object... args) {
+    table.add(label, String.format(format, args));
   }
 
   // TODO Calculate savings of subglyphs
