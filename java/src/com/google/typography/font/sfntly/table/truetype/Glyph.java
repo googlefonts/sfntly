@@ -125,25 +125,9 @@ public abstract class Glyph extends SubTable {
 
   @Override
   public String toString() {
-    return this.toString(0);
-  }
-
-  public String toString(int length) {
-    StringBuilder sb = new StringBuilder();
-    sb.append(this.glyphType());
-    sb.append(", contours=");
-    sb.append(this.numberOfContours());
-    sb.append(", [xmin=");
-    sb.append(this.xMin());
-    sb.append(", ymin=");
-    sb.append(this.yMin());
-    sb.append(", xmax=");
-    sb.append(this.xMax());
-    sb.append(", ymax=");
-    sb.append(this.yMax());
-    sb.append("]");
-    sb.append("\n");
-    return sb.toString();
+    return String.format("%s, contours=%d, [xmin=%d, ymin=%d, xmax=%d, ymax=%d]\n",
+        this.glyphType(), this.numberOfContours(),
+        this.xMin(), this.yMin(), this.xMax(), this.yMax());
   }
 
   // TODO(stuartg): interface? need methods from Composite?
