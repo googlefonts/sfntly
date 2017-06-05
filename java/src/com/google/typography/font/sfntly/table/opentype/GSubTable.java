@@ -24,7 +24,10 @@ import com.google.typography.font.sfntly.table.Table;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * A GSub table.
+ * The 'GSUB' table handles glyph substitutions such as ligatures and
+ * context-dependent display variants, such as Arabic.
+ *
+ * @see "ISO/IEC 14496-22:2015, section 6.3.4"
  */
 public class GSubTable extends Table {
   private final GsubCommonTable gsub;
