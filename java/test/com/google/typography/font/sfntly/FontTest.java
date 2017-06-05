@@ -12,7 +12,7 @@ public class FontTest extends TestCase {
     Font[] fonts = TestFontUtils.loadFont(TestFont.TestFontNames.OPENSANS.getFile());
 
     assertEquals(""
-            + "digest = 72de46254f757565bdb0558839e84c8623366041\n"
+            + "digest = 3564ed0b5363df5cf277c16e0c6bedc5a682217f\n"
             + "[1.0, 19]\n"
             + "\t[DSIG, cs=0x9e12441d, offset=0x00033b9c, size=0x00001574]\n"
             + "\t[GDEF, cs=0x002603af, offset=0x0003377c, size=0x0000001e]\n"
