@@ -502,17 +502,19 @@ public class FontInfo {
     // Find boundaries
     for (int i = 0; i < locaTable.numGlyphs(); i++) {
       Glyph glyph = glyfTable.glyph(locaTable.glyphOffset(i), locaTable.glyphLength(i));
-      if (glyph.xMin() < xMin) {
-        xMin = glyph.xMin();
-      }
-      if (glyph.yMin() < yMin) {
-        yMin = glyph.yMin();
-      }
-      if (glyph.xMax() > xMax) {
-        xMax = glyph.xMax();
-      }
-      if (glyph.yMax() > yMax) {
-        yMax = glyph.yMax();
+      if (glyph.dataLength() != 0) {
+        if (glyph.xMin() < xMin) {
+          xMin = glyph.xMin();
+        }
+        if (glyph.yMin() < yMin) {
+          yMin = glyph.yMin();
+        }
+        if (glyph.xMax() > xMax) {
+          xMax = glyph.xMax();
+        }
+        if (glyph.yMax() > yMax) {
+          yMax = glyph.yMax();
+        }
       }
     }
 
