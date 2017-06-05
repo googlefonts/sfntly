@@ -112,7 +112,7 @@ public final class SimpleGlyph extends Glyph {
       // get the flag for the current point
       if (flagRepeat == 0) {
         flag = this.flagAsInt(flagIndex++);
-        if ((flag & FLAG_REPEAT) == FLAG_REPEAT) {
+        if ((flag & FLAG_REPEAT) != 0) {
           flagRepeat = flagAsInt(flagIndex++);
         }
       } else {
@@ -121,21 +121,20 @@ public final class SimpleGlyph extends Glyph {
 
       // on the curve?
       if (fillArrays) {
-        this.onCurve[pointIndex] = ((flag & FLAG_ONCURVE) == FLAG_ONCURVE) ? true : false;
+        this.onCurve[pointIndex] = (flag & FLAG_ONCURVE) != 0;
       }
       // get the x coordinate
-      if ((flag & FLAG_XSHORT) == FLAG_XSHORT) {
+      if ((flag & FLAG_XSHORT) != 0) {
         // single byte x coord value
         if (fillArrays) {
-          this.xCoordinates[pointIndex] =
-              this.data.readUByte(this.xCoordinatesOffset + xByteIndex);
-          this.xCoordinates[pointIndex] *=
-              ((flag & FLAG_XREPEATSIGN) == FLAG_XREPEATSIGN) ? 1 : -1;
+          int sign = ((flag & FLAG_XREPEATSIGN) != 0) ? 1 : -1;
+          int magnitude = this.data.readUByte(this.xCoordinatesOffset + xByteIndex);
+          this.xCoordinates[pointIndex] = sign * magnitude;
         }
         xByteIndex++;
       } else {
         // double byte coord value
-        if (!((flag & FLAG_XREPEATSIGN) == FLAG_XREPEATSIGN)) {
+        if ((flag & FLAG_XREPEATSIGN) == 0) {
           if (fillArrays) {
             this.xCoordinates[pointIndex] =
                 this.data.readShort(this.xCoordinatesOffset + xByteIndex);
@@ -148,16 +147,15 @@ public final class SimpleGlyph extends Glyph {
       }
 
       // get the y coordinate
-      if ((flag & FLAG_YSHORT) == FLAG_YSHORT) {
+      if ((flag & FLAG_YSHORT) != 0) {
         if (fillArrays) {
           this.yCoordinates[pointIndex] =
               this.data.readUByte(this.yCoordinatesOffset + yByteIndex);
-          this.yCoordinates[pointIndex] *=
-              ((flag & FLAG_YREPEATSIGN) == FLAG_YREPEATSIGN) ? 1 : -1;
+          this.yCoordinates[pointIndex] *= ((flag & FLAG_YREPEATSIGN) != 0) ? 1 : -1;
         }
         yByteIndex++;
       } else {
-        if (!((flag & FLAG_YREPEATSIGN) == FLAG_YREPEATSIGN)) {
+        if ((flag & FLAG_YREPEATSIGN) == 0) {
           if (fillArrays) {
             this.yCoordinates[pointIndex] =
                 this.data.readShort(this.yCoordinatesOffset + yByteIndex);
