@@ -5,7 +5,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * The cmap format 13 subtable maps ranges of 32-bit character codes to one glyph ID each.
@@ -72,56 +71,19 @@ public final class CMapFormat13 extends CMap {
     return new CharacterIterator();
   }
 
-  private final class CharacterIterator implements Iterator<Integer> {
-    private int groupIndex = 0;
-    private int groupEndChar;
-
-    private boolean nextSet = false;
-    private int nextChar;
-
-    private CharacterIterator() {
-      nextChar = groupStartChar(groupIndex);
-      groupEndChar = groupEndChar(groupIndex);
-      nextSet = true;
+  private class CharacterIterator extends CMap.CharacterRangesIterator {
+    CharacterIterator() {
+      super(CMapFormat13.this.numberOfGroups);
     }
 
     @Override
-    public boolean hasNext() {
-      if (nextSet) {
-        return true;
-      }
-      if (groupIndex >= numberOfGroups) {
-        return false;
-      }
-      if (nextChar < groupEndChar) {
-        nextChar++;
-        nextSet = true;
-        return true;
-      }
-      groupIndex++;
-      if (groupIndex < numberOfGroups) {
-        nextSet = true;
-        nextChar = groupStartChar(groupIndex);
-        groupEndChar = groupEndChar(groupIndex);
-        return true;
-      }
-      return false;
+    protected int getRangeStart(int rangeIndex) {
+      return CMapFormat13.this.groupStartChar(rangeIndex);
     }
 
     @Override
-    public Integer next() {
-      if (!this.nextSet) {
-        if (!hasNext()) {
-          throw new NoSuchElementException("No more characters to iterate.");
-        }
-      }
-      this.nextSet = false;
-      return nextChar;
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException("Unable to remove a character from cmap.");
+    protected int getRangeEnd(int rangeIndex) {
+      return CMapFormat13.this.groupEndChar(rangeIndex);
     }
   }
 

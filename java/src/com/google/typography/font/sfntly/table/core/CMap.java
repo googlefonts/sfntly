@@ -129,13 +129,29 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     return this.cmapId().encodingId();
   }
 
-  // TODO(stuartg): simple implementation until all subclasses define their
-  // own more efficient version
-  protected class CharacterIterator implements Iterator<Integer> {
-    private int character = 0;
+  abstract static class CharIterator implements Iterator<Integer> {
+
+    @Override
+    public final void remove() {
+      throw new UnsupportedOperationException("Unable to remove a character from cmap.");
+    }
+
+    @Override
+    public final Integer next() {
+      if (!hasNext()) {
+        throw new NoSuchElementException();
+      }
+      return doNext();
+    }
+
+    protected abstract Integer doNext();
+  }
+
+  static class CharacterRangeIterator extends CharIterator {
+    private int character;
     private final int maxCharacter;
 
-    CharacterIterator(int start, int end) {
+    CharacterRangeIterator(int start, int end) {
       this.character = start;
       this.maxCharacter = end;
     }
@@ -146,19 +162,48 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     }
 
     @Override
-    public Integer next() {
-      if (!hasNext()) {
-        throw new NoSuchElementException("No more characters to iterate.");
-      }
+    public Integer doNext() {
       return this.character++;
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException("Unable to remove a character from cmap.");
     }
   }
 
+  /** Iterates over a sequence of character ranges. */
+  abstract static class CharacterRangesIterator extends CharIterator {
+    private final int nRanges;
+
+    private int range = -1;
+    private int curr;
+    private int end;
+
+    CharacterRangesIterator(int nRanges) {
+      this.nRanges = nRanges;
+    }
+
+    @Override
+    public boolean hasNext() {
+      while (this.range < this.nRanges) {
+        if (this.curr < this.end) {
+          return true;
+        }
+        this.range++;
+        if (this.range >= this.nRanges) {
+          return false;
+        }
+        this.curr = this.getRangeStart(this.range);
+        this.end = this.getRangeEnd(this.range);
+      }
+      return false;
+    }
+
+    @Override
+    protected Integer doNext() {
+      return this.curr++;
+    }
+
+    protected abstract int getRangeStart(int rangeIndex);
+
+    protected abstract int getRangeEnd(int rangeIndex);
+  }
 
    @Override
   public int hashCode() {

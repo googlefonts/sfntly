@@ -35,7 +35,7 @@ public final class CMapFormat14 extends CMap {
 
   @Override
   public Iterator<Integer> iterator() {
-    return null;
+    throw new UnsupportedOperationException("Not yet implemented.");
   }
 
   public static class Builder extends CMap.Builder<CMapFormat14> {

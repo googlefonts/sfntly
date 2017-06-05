@@ -5,7 +5,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * The cmap format 0 subtable maps 8-bit character codes to 8-bit glyph IDs.
@@ -40,33 +39,7 @@ public final class CMapFormat0 extends CMap {
 
   @Override
   public Iterator<Integer> iterator() {
-    return new CharacterIterator();
-  }
-
-  private class CharacterIterator implements Iterator<Integer> {
-    int character = 0;
-    protected static final int MAX_CHARACTER = 0xff;
-
-    private CharacterIterator() {
-    }
-
-    @Override
-    public boolean hasNext() {
-      return character <= MAX_CHARACTER;
-    }
-
-    @Override
-    public Integer next() {
-      if (!hasNext()) {
-        throw new NoSuchElementException("No more characters to iterate.");
-      }
-      return this.character++;
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException("Unable to remove a character from cmap.");
-    }
+    return new CharacterRangeIterator(0, 256);
   }
 
   public static class Builder extends CMap.Builder<CMapFormat0> {
