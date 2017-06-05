@@ -5,10 +5,9 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
- * The cmap format 12 subtable maps segmented ranges of 32-bit character codes to glyph IDs.
+ * The cmap format 12 subtable maps segmented ranges of 32-bit character codes to 32-bit glyph IDs.
  *
  * @see "ISO/IEC 14496-22:2015, section 5.2.1.3.7"
  */
@@ -73,56 +72,19 @@ public final class CMapFormat12 extends CMap {
     return new CharacterIterator();
   }
 
-  private final class CharacterIterator implements Iterator<Integer> {
-    private int groupIndex = 0;
-    private int groupEndChar;
-
-    private boolean nextSet = false;
-    private int nextChar;
-
-    private CharacterIterator() {
-      nextChar = groupStartChar(groupIndex);
-      groupEndChar = groupEndChar(groupIndex);
-      nextSet = true;
+  private final class CharacterIterator extends CMap.CharacterRangesIterator {
+    CharacterIterator() {
+      super(CMapFormat12.this.numberOfGroups);
     }
 
     @Override
-    public boolean hasNext() {
-      if (nextSet) {
-        return true;
-      }
-      if (groupIndex >= numberOfGroups) {
-        return false;
-      }
-      if (nextChar < groupEndChar) {
-        nextChar++;
-        nextSet = true;
-        return true;
-      }
-      groupIndex++;
-      if (groupIndex < numberOfGroups) {
-        nextSet = true;
-        nextChar = groupStartChar(groupIndex);
-        groupEndChar = groupEndChar(groupIndex);
-        return true;
-      }
-      return false;
+    protected int getRangeStart(int rangeIndex) {
+      return CMapFormat12.this.groupStartChar(rangeIndex);
     }
 
     @Override
-    public Integer next() {
-      if (!this.nextSet) {
-        if (!hasNext()) {
-          throw new NoSuchElementException("No more characters to iterate.");
-        }
-      }
-      this.nextSet = false;
-      return nextChar;
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException("Unable to remove a character from cmap.");
+    protected int getRangeEnd(int rangeIndex) {
+      return CMapFormat12.this.groupEndChar(rangeIndex);
     }
   }
 

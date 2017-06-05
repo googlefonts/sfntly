@@ -126,7 +126,7 @@ public final class CMapFormat2 extends CMap {
 
   @Override
   public Iterator<Integer> iterator() {
-    return new CharacterIterator(0, 0xffff);
+    return new CharacterRangeIterator(0, 0x10000);
   }
 
   public static class Builder extends CMap.Builder<CMapFormat2> {

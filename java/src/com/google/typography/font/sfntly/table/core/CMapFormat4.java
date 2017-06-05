@@ -9,10 +9,9 @@ import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
- * The cmap format 4 subtable maps segmented ranges of 16-bit character codes to glyph IDs.
+ * The cmap format 4 subtable maps segmented ranges of 16-bit character codes to 16-bit glyph IDs.
  *
  * @see "ISO/IEC 14496-22:2015, section 5.2.1.3.3"
  */
@@ -205,57 +204,19 @@ public final class CMapFormat4 extends CMap {
     return new CharacterIterator();
   }
 
-  private class CharacterIterator implements Iterator<Integer> {
-    private int segmentIndex;
-    private int firstCharInSegment;
-    private int lastCharInSegment;
-
-    private int nextChar;
-    private boolean nextCharSet;
-
-    private CharacterIterator() {
-      segmentIndex = 0;
-      firstCharInSegment = -1;
+  private class CharacterIterator extends CMap.CharacterRangesIterator {
+    CharacterIterator() {
+      super(CMapFormat4.this.segCount);
     }
 
     @Override
-    public boolean hasNext() {
-      if (nextCharSet) {
-        return true;
-      }
-      while (segmentIndex < segCount) {
-        if (firstCharInSegment < 0) {
-          firstCharInSegment = startCode(segmentIndex);
-          lastCharInSegment = endCode(segmentIndex);
-          nextChar = firstCharInSegment;
-          nextCharSet = true;
-          return true;
-        }
-        if (nextChar < lastCharInSegment) {
-          nextChar++;
-          nextCharSet = true;
-          return true;
-        }
-        segmentIndex++;
-        firstCharInSegment = -1;
-      }
-      return false;
+    protected int getRangeStart(int rangeIndex) {
+      return CMapFormat4.this.startCode(rangeIndex);
     }
 
     @Override
-    public Integer next() {
-      if (!nextCharSet) {
-        if (!hasNext()) {
-          throw new NoSuchElementException("No more characters to iterate.");
-        }
-      }
-      nextCharSet = false;
-      return nextChar;
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException("Unable to remove a character from cmap.");
+    protected int getRangeEnd(int rangeIndex) {
+      return CMapFormat4.this.endCode(rangeIndex);
     }
   }
 
