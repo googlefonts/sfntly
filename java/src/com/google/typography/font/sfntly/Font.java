@@ -22,7 +22,6 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.math.Fixed1616;
 import com.google.typography.font.sfntly.math.FontMath;
-import com.google.typography.font.sfntly.table.FontDataTable;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.core.CMapTable;
@@ -422,9 +421,9 @@ public class Font {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("digest = ");
     byte[] digest = this.digest();
     if (digest != null) {
+      sb.append("digest = ");
       for (int i = 0; i < digest.length; i++) {
         int d = 0xff & digest[i];
         if (d < 0x10) {
@@ -432,15 +431,16 @@ public class Font {
         }
         sb.append(Integer.toHexString(d));
       }
+      sb.append("\n");
     }
-    sb.append("\n[");
-    sb.append(Fixed1616.toString(sfntVersion));
+
+    sb.append("[");
+    sb.append(Fixed1616.toString(this.sfntVersion));
     sb.append(", ");
     sb.append(this.numTables());
     sb.append("]\n");
-    Iterator<? extends Table> iter = this.iterator();
-    while (iter.hasNext()) {
-      FontDataTable table = iter.next();
+
+    for (Table table : this.tables.values()) {
       sb.append("\t");
       sb.append(table);
       sb.append("\n");
