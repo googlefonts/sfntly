@@ -25,9 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A Glyph table.
+ * The 'glyf' table contains the glyph data.
  *
  * @author Stuart Gill
+ * @see LocaTable
+ * @see "ISO/IEC 14496-22:2015, section 5.3.3"
  */
 public final class GlyphTable extends SubTableContainerTable {
 
@@ -68,6 +70,13 @@ public final class GlyphTable extends SubTableContainerTable {
     super(header, data);
   }
 
+  /**
+   * Get the glyph data from a particular offset in the table.
+   *
+   * @param offset the offset, as returned by {@link LocaTable#glyphOffset(int)}
+   * @param length the length, as returned by {@link LocaTable#glyphLength(int)}
+   * @return the glyph from the given offset
+   */
   public Glyph glyph(int offset, int length) {
     return Glyph.getGlyph(this, this.data, offset, length);
   }
