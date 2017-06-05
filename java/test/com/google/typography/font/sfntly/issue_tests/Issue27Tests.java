@@ -12,9 +12,9 @@ import java.io.File;
 import java.io.FileInputStream;
 
 /*
- * Test for Issue 27.
+ * Test for <a href="https://github.com/googlei18n/sfntly/issues/27">Issue 27</a>.
+ * <p>
  * Adding a zero length name that sorts at the end of the name table.
- * http://code.google.com/p/sfntly/issues/detail?id=27
  */
 public class Issue27Tests extends TestCase {
 
