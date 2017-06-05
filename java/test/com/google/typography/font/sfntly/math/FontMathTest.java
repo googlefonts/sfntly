@@ -15,4 +15,11 @@ public class FontMathTest extends TestCase {
     assertEquals(31, FontMath.log2(-1));
   }
 
+  public void testPaddingRequired() {
+    assertEquals(0, FontMath.paddingRequired(4, 4));
+    assertEquals(3, FontMath.paddingRequired(5, 4));
+    assertEquals(1, FontMath.paddingRequired(7, 4));
+    assertEquals(0, FontMath.paddingRequired(8, 4));
+    assertEquals(0, FontMath.paddingRequired(17, 1));
+  }
 }

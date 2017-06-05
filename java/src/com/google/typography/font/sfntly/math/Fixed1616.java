@@ -21,7 +21,9 @@ package com.google.typography.font.sfntly.math;
  * 
  * @author Stuart Gill
  */
-public final class Fixed1616 {
+public enum Fixed1616 {
+  ;
+
   public static int integral(int fixed) {
     return (fixed >> 16) & 0xffff;
   }

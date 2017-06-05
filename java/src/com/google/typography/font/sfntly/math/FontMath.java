@@ -21,10 +21,8 @@ package com.google.typography.font.sfntly.math;
  * 
  * @author Stuart Gill
  */
-public final class FontMath {
-  private FontMath() {
-    // Prevent construction.
-  }
+public enum FontMath {
+  ;
 
   public static int log2(int a) {
     return 31 - Integer.numberOfLeadingZeros(a);
