@@ -632,7 +632,7 @@ class ViewableTaggedData {
     private final Map<Integer, Integer> widthUsage = new HashMap<Integer, Integer>();
     private int width;
     private int src;
-    static private final WidthUsageRecord EMPTY = new WidthUsageRecord();
+    private static final WidthUsageRecord EMPTY = new WidthUsageRecord();
 
     private static WidthUsageRecord copyWithWidthAdded(WidthUsageRecord other, int width, int src) {
       WidthUsageRecord current = new WidthUsageRecord();
@@ -674,7 +674,7 @@ class ViewableTaggedData {
 
   private static class RefWidthFinder {
     private final TreeMap<Integer, WidthUsageRecord> tgt2widthUsage;
-    static private final int MAX_WIDTH = 600;
+    private static final int MAX_WIDTH = 600;
 
     private RefWidthFinder() {
       tgt2widthUsage = new TreeMap<Integer, WidthUsageRecord>();
@@ -713,7 +713,7 @@ class ViewableTaggedData {
     }
   }
 
-  private static abstract class Marker implements Comparable<Marker> {
+  private abstract static class Marker implements Comparable<Marker> {
     final int position;
 
     private Marker(int position) {

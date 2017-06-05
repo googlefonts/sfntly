@@ -58,7 +58,7 @@ abstract class LookupList extends SubTable {
 
   protected abstract LookupTable createLookup(ReadableFontData data);
 
-  static abstract class Builder extends SubTable.Builder<LookupList> {
+  abstract static class Builder extends SubTable.Builder<LookupList> {
     private List<LookupTable.Builder> builders;
     private boolean dataIsCanonical;
     private int serializedCount;
