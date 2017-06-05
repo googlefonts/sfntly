@@ -192,7 +192,7 @@ public final class FontFactory {
     return loadCollectionForBuilding(wfd);
   }
 
-  static private boolean isCollection(PushbackInputStream pbis) throws IOException {
+  private static boolean isCollection(PushbackInputStream pbis) throws IOException {
     byte[] tag = new byte[4];
     pbis.read(tag);
     pbis.unread(tag);
@@ -280,7 +280,7 @@ public final class FontFactory {
     return builders;
   }
 
-  static private boolean isCollection(ReadableFontData rfd) {
+  private static boolean isCollection(ReadableFontData rfd) {
     byte[] tag = new byte[4];
     rfd.readBytes(0, tag, 0, tag.length);
     return Tag.ttcf == Tag.intValue(tag);

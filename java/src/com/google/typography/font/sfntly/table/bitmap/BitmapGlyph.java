@@ -101,7 +101,7 @@ public abstract class BitmapGlyph extends SubTable {
     return this.format;
   }
   
-  public static abstract class Builder<T extends BitmapGlyph> extends SubTable.Builder<T> {
+  public abstract static class Builder<T extends BitmapGlyph> extends SubTable.Builder<T> {
 
     private final int format;
     

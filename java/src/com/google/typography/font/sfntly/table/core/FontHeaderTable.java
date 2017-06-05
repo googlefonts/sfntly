@@ -161,7 +161,7 @@ public final class FontHeaderTable extends Table {
       return set;
     }
 
-    static public int value(EnumSet<Flags> set) {
+    public static int value(EnumSet<Flags> set) {
       int value = 0;
       for (Flags flag : set) {
         value |= flag.mask();
@@ -169,7 +169,7 @@ public final class FontHeaderTable extends Table {
       return value;
     }
 
-    static public int cleanValue(EnumSet<Flags> set) {
+    public static int cleanValue(EnumSet<Flags> set) {
       EnumSet<Flags> clean = EnumSet.copyOf(set);
       clean.remove(Flags.Reserved14);
       clean.remove(Flags.Reserved15);

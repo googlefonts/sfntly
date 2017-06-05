@@ -37,14 +37,14 @@ public class EOTWriter {
   
   private final FontFactory factory = FontFactory.getInstance();
 
-  private final static long RESERVED = 0;
-  private final static short PADDING = 0;
-  private final static long VERSION = 0x00020002;
-  private final static short MAGIC_NUMBER = 0x504c;
-  private final static long DEFAULT_FLAGS = 0;
-  private final static long FLAGS_TT_COMPRESSED = 0x4;
-  private final static byte DEFAULT_CHARSET = 1;
-  private final static long CS_XORKEY = 0x50475342;
+  private static final long RESERVED = 0;
+  private static final short PADDING = 0;
+  private static final long VERSION = 0x00020002;
+  private static final short MAGIC_NUMBER = 0x504c;
+  private static final long DEFAULT_FLAGS = 0;
+  private static final long FLAGS_TT_COMPRESSED = 0x4;
+  private static final byte DEFAULT_CHARSET = 1;
+  private static final long CS_XORKEY = 0x50475342;
 
   public EOTWriter() {
     compressed = false;
