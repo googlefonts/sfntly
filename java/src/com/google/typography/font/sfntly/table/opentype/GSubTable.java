@@ -38,14 +38,6 @@ public class GSubTable extends Table {
   private final AtomicReference<LookupListTable>
       lookupListTable = new AtomicReference<LookupListTable>();
 
-  /**
-   * Constructor.
-   *
-   * @param header
-   *          header for the table
-   * @param data
-   *          data for the table
-   */
   private GSubTable(Header header, ReadableFontData data, boolean dataIsCanonical) {
     super(header, data);
     gsub = new GsubCommonTable(data, dataIsCanonical);
