@@ -47,10 +47,10 @@ public class SFLint {
     SFLint dumper = new SFLint();
     File fontFile = null;
 
-    for (int i = 0; i < args.length; i++) {
+    for (String arg : args) {
       String option = null;
-      if (args[i].charAt(0) == '-') {
-        option = args[i].substring(1);
+      if (arg.charAt(0) == '-') {
+        option = arg.substring(1);
       }
 
       if (option != null) {
@@ -59,7 +59,7 @@ public class SFLint {
           System.exit(0);
         }
       } else {
-        fontFile = new File (args[i]);
+        fontFile = new File(arg);
         break;
       }
     }

@@ -101,8 +101,7 @@ abstract class LookupList extends SubTable {
       newData.writeUShort(LOOKUP_COUNT_OFFSET, serializedCount);
       int rpos = LOOKUP_OFFSET_BASE;
       int spos = rpos + serializedCount * LOOKUP_OFFSET_SIZE;
-      for (int i = 0; i < builders.size(); ++i) {
-        LookupTable.Builder builder = builders.get(i);
+      for (LookupTable.Builder builder : builders) {
         int s = builder.subDataSizeToSerialize();
         if (s > 0) {
           newData.writeUShort(rpos, spos);
@@ -135,8 +134,8 @@ abstract class LookupList extends SubTable {
     private int computeSerializedSizeFromBuilders() {
       int size = 0;
       int count = 0;
-      for (int i = 0; i < builders.size(); ++i) {
-        int s = builders.get(i).subDataSizeToSerialize();
+      for (LookupTable.Builder builder : builders) {
+        int s = builder.subDataSizeToSerialize();
         if (s > 0) {
           ++count;
           size += s;

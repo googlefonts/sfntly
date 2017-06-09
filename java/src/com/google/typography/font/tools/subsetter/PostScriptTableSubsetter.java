@@ -44,8 +44,8 @@ public class PostScriptTableSubsetter extends TableSubsetterImpl {
     postBuilder.initV1From(post);
     if (post.version() == 0x10000 || post.version() == 0x20000) {
       List<String> names = new ArrayList<String>();
-      for (int i = 0; i < permutationTable.size(); i++) {
-        names.add(post.glyphName(permutationTable.get(i)));
+      for (Integer glyphId : permutationTable) {
+        names.add(post.glyphName(glyphId));
       }
       postBuilder.setNames(names);
     }

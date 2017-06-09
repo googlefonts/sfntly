@@ -23,7 +23,6 @@ import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.TableBasedTableBuilder;
 
 import java.util.EnumSet;
-import java.util.Iterator;
 
 /**
  * An OS/2 table - 'OS/2'.
@@ -502,9 +501,7 @@ public final class OS2Table extends Table {
 
     public static long[] asArray(EnumSet<UnicodeRange> rangeSet) {
       long[] range = new long[4];
-      Iterator<UnicodeRange> iter = rangeSet.iterator();
-      while (iter.hasNext()) {
-        UnicodeRange ur = iter.next();
+      for (UnicodeRange ur : rangeSet) {
         int urSegment = ur.ordinal() / 32;
         long urFlag = 1 << (ur.ordinal() % 32);
         range[urSegment] |= urFlag;
@@ -557,9 +554,7 @@ public final class OS2Table extends Table {
 
     public static int asInt(EnumSet<FsSelection> fsSelectionSet) {
       int value = 0;
-      Iterator<FsSelection> iter = fsSelectionSet.iterator();
-      while (iter.hasNext()) {
-        FsSelection fsSelection = iter.next();
+      for (FsSelection fsSelection : fsSelectionSet) {
         value |= fsSelection.mask();
       }
       return value;
@@ -700,9 +695,7 @@ public final class OS2Table extends Table {
 
     public static long[] asArray(EnumSet<CodePageRange> rangeSet) {
       long[] range = new long[4];
-      Iterator<CodePageRange> iter = rangeSet.iterator();
-      while (iter.hasNext()) {
-        CodePageRange ur = iter.next();
+      for (CodePageRange ur : rangeSet) {
         int urSegment = ur.ordinal() / 32;
         long urFlag = 1 << (ur.ordinal() % 32);
         range[urSegment] |= urFlag;
