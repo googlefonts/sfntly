@@ -1299,9 +1299,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
       if (data != null) {
         NameTable table = new NameTable(this.header(), data);
 
-        Iterator<NameEntry> nameIter = table.iterator();
-        while (nameIter.hasNext()) {
-          NameEntry nameEntry = nameIter.next();
+        for (NameEntry nameEntry : table) {
           NameEntryBuilder nameEntryBuilder = new NameEntryBuilder(nameEntry);
           this.nameEntryMap.put(nameEntryBuilder.getNameEntryId(), nameEntryBuilder);
         }

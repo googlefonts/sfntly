@@ -89,9 +89,8 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
       return recordsToWrite.contains(record);
     }
 
-    Iterator<T> iterator = iterator();
-    while (iterator.hasNext()) {
-      if (record.equals(iterator.next())) {
+    for (T t : this) {
+      if (record.equals(t)) {
         return true;
       }
     }
@@ -147,9 +146,8 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
   private void copyFromRead() {
     if (recordsToWrite == null) {
       recordsToWrite = new ArrayList<T>(count);
-      Iterator<T> iterator = iterator();
-      while (iterator.hasNext()) {
-        recordsToWrite.add(iterator.next());
+      for (T t : this) {
+        recordsToWrite.add(t);
       }
     }
   }

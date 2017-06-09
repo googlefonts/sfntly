@@ -424,8 +424,8 @@ public class Font {
     byte[] digest = this.digest();
     if (digest != null) {
       sb.append("digest = ");
-      for (int i = 0; i < digest.length; i++) {
-        int d = 0xff & digest[i];
+      for (byte b : digest) {
+        int d = 0xff & b;
         if (d < 0x10) {
           sb.append("0");
         }

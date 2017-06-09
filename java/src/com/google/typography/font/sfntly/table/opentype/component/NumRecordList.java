@@ -3,8 +3,6 @@ package com.google.typography.font.sfntly.table.opentype.component;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
-import java.util.Iterator;
-
 public class NumRecordList extends RecordList<NumRecord> {
   public NumRecordList(WritableFontData data) {
     super(data);
@@ -36,9 +34,7 @@ public class NumRecordList extends RecordList<NumRecord> {
   }
 
   public boolean contains(int value) {
-    Iterator<NumRecord> iterator = iterator();
-    while (iterator.hasNext()) {
-      NumRecord record = iterator.next();
+    for (NumRecord record : this) {
       if (record.value == value) {
         return true;
       }
