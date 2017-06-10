@@ -116,12 +116,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
 
     @Override
     public String toString() {
-      StringBuilder b = new StringBuilder();
-      b.append("pid = ");
-      b.append(this.platformId);
-      b.append(", eid = ");
-      b.append(this.encodingId);
-      return b.toString();
+      return String.format("pid = %d, eid = %d", this.platformId, this.encodingId);
     }
   }
 

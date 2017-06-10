@@ -208,16 +208,7 @@ public final class Header {
 
   @Override
   public String toString() {
-    StringBuilder builder = new StringBuilder();
-    builder.append("[");
-    builder.append(Tag.stringValue(this.tag));
-    builder.append(", ");
-    builder.append(Long.toHexString(this.checksum));
-    builder.append(", ");
-    builder.append(Integer.toHexString(this.offset));
-    builder.append(", ");
-    builder.append(Integer.toHexString(this.length));
-    builder.append("]");
-    return builder.toString();
+    return String.format("[%s, %x, %x, %x]",
+        Tag.stringValue(this.tag), this.checksum, this.offset, this.length);
   }
 }

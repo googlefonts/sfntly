@@ -250,14 +250,8 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
 
   @Override
   public String toString() {
-    StringBuilder builder = new StringBuilder();
-    builder.append("cmap: ");
-    builder.append(this.cmapId());
-    builder.append(", ");
-    builder.append(CMapFormat.valueOf(this.format()));
-    builder.append(", Data Size=0x");
-    builder.append(Integer.toHexString(this.data.length()));
-    return builder.toString();
+    return String.format("cmap: %s, %s, Data Size=%#x",
+        this.cmapId(), CMapFormat.valueOf(this.format()), this.data.length());
   }
 
   public abstract static class Builder<T extends CMap> extends SubTable.Builder<T> {

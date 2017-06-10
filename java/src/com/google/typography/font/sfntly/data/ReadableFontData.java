@@ -182,10 +182,9 @@ public class ReadableFontData extends FontData {
    * @return String representation of the object
    */
   public String toString(int length) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("[l=" + this.length() + ", cs=" + this.checksum() + "]\n");
-    sb.append(this.array.toString(this.boundOffset(0), this.boundLength(0, length)));
-    return sb.toString();
+    return String.format("[l=%d, cs=%d]\n%s",
+        this.length(), this.checksum(),
+        this.array.toString(this.boundOffset(0), this.boundLength(0, length)));
   }
 
   @Override

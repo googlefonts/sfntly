@@ -211,25 +211,15 @@ public final class BitmapSizeTable extends SubTable {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder("BitmapSizeTable: ");
-    List<IndexSubTable> indexSubTableList = this.getIndexSubTableList();
-    sb.append("[s=0x");
-    sb.append(Integer.toHexString(this.startGlyphIndex()));
-    sb.append(", e=0x");
-    sb.append(Integer.toHexString(this.endGlyphIndex()));
-    sb.append(", ppemx=");
-    sb.append(this.ppemX());
-    sb.append(", index subtables count=");
-    sb.append(this.numberOfIndexSubTables());
-    sb.append("]");
-    for (int index = 0; index < indexSubTableList.size(); index++) {
-      sb.append("\n\t");
-      sb.append(index);
-      sb.append(": ");
-      sb.append(indexSubTableList.get(index));
-      sb.append(", ");
+    List<IndexSubTable> subtables = this.getIndexSubTableList();
+
+    StringBuilder sb = new StringBuilder();
+    sb.append(String.format("BitmapSizeTable: [s=%#x, e=%#x, ppemx=%d, index subtables count=%d]\n",
+        this.startGlyphIndex(), this.endGlyphIndex(), this.ppemX(), this.numberOfIndexSubTables()));
+
+    for (int i = 0; i < subtables.size(); i++) {
+      sb.append(String.format("\t%d: %s\n", i, subtables.get(i)));
     }
-    sb.append("\n");
     return sb.toString();
   }
 

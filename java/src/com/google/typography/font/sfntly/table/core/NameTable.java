@@ -851,28 +851,15 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("P=");
-      sb.append(PlatformId.valueOf(this.platformId));
-      sb.append(", E=0x");
-      sb.append(Integer.toHexString(this.encodingId));
-      sb.append(", L=0x");
-      sb.append(Integer.toHexString(this.languageId));
-      sb.append(", N=");
       NameId nameId = NameId.valueOf(this.nameId);
-      if (nameId != null) {
-        sb.append(NameId.valueOf(this.nameId));
-      } else {
-        sb.append("0x");
-        sb.append(Integer.toHexString(this.nameId));
-      }
-      return sb.toString();
+      String nameIdStr = nameId != null ? nameId.toString() : Integer.toHexString(this.nameId);
+      return String.format("P=%s, E=%#x, L=%#x, N=%s",
+          PlatformId.valueOf(this.platformId), this.encodingId, this.languageId, nameIdStr);
     }
   }
 
   /**
    * Class to represent a name entry in the name table.
-   *
    */
   public static class NameEntry {
     NameEntryId nameEntryId;
@@ -947,14 +934,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("[");
-      sb.append(this.nameEntryId);
-      sb.append(", \"");
-      String name = this.name();
-      sb.append(this.name());
-      sb.append("\"]");
-      return sb.toString();
+      return String.format("[%s, \"%s\"]", this.nameEntryId, this.name());
     }
 
     @Override
