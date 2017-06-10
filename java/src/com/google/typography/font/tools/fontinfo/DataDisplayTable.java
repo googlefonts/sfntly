@@ -277,15 +277,7 @@ public class DataDisplayTable {
 
   @Override
   public String toString() {
-    StringBuilder debugString = new StringBuilder();
-    debugString.append(numRows).append("x").append(numCols).append(" table, ");
-    debugString.append("header=[").append(header.get(0));
-    for (int i = 1; i < numCols; i++) {
-      debugString.append(", ").append(header.get(i));
-    }
-    debugString.append("]");
-
-    return debugString.toString();
+    return String.format("%dx%d table, header=%s", numRows, numCols, header);
   }
 
   /**
@@ -348,10 +340,8 @@ public class DataDisplayTable {
    * @return a string that is a character repeated a specified number of times
    */
   private static String repeatCharacter(char c, int frequency) {
-    StringBuilder output = new StringBuilder(frequency);
-    for (int i = 0; i < frequency; i++) {
-      output.append(c);
-    }
-    return output.toString();
+    char[] chars = new char[frequency];
+    Arrays.fill(chars, c);
+    return new String(chars);
   }
 }
