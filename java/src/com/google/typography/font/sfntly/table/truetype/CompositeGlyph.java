@@ -48,25 +48,25 @@ public final class CompositeGlyph extends Glyph {
 
       int index = 5 * FontData.SizeOf.USHORT; // header
       int flags = FLAG_MORE_COMPONENTS;
-      while ((flags & FLAG_MORE_COMPONENTS) == FLAG_MORE_COMPONENTS) {
+      while ((flags & FLAG_MORE_COMPONENTS) != 0) {
         contourIndex.add(index);
         flags = this.data.readUShort(index);
         index += 2 * FontData.SizeOf.USHORT; // flags and glyphIndex
-        if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) == FLAG_ARG_1_AND_2_ARE_WORDS) {
+        if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
           index += 2 * FontData.SizeOf.SHORT;
         } else {
           index += 2 * FontData.SizeOf.BYTE;
         }
-        if ((flags & FLAG_WE_HAVE_A_SCALE) == FLAG_WE_HAVE_A_SCALE) {
+        if ((flags & FLAG_WE_HAVE_A_SCALE) != 0) {
           index += FontData.SizeOf.F2DOT14;
-        } else if ((flags & FLAG_WE_HAVE_AN_X_AND_Y_SCALE) == FLAG_WE_HAVE_AN_X_AND_Y_SCALE) {
+        } else if ((flags & FLAG_WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
           index += 2 * FontData.SizeOf.F2DOT14;
-        } else if ((flags & FLAG_WE_HAVE_A_TWO_BY_TWO) == FLAG_WE_HAVE_A_TWO_BY_TWO) {
+        } else if ((flags & FLAG_WE_HAVE_A_TWO_BY_TWO) != 0) {
           index += 4 * FontData.SizeOf.F2DOT14;
         }
       }
       int nonPaddedDataLength = index;
-      if ((flags & FLAG_WE_HAVE_INSTRUCTIONS) == FLAG_WE_HAVE_INSTRUCTIONS) {
+      if ((flags & FLAG_WE_HAVE_INSTRUCTIONS) != 0) {
         this.instructionSize = this.data.readUShort(index);
         index += FontData.SizeOf.USHORT;
         this.instructionsOffset = index;
@@ -91,7 +91,7 @@ public final class CompositeGlyph extends Glyph {
   public int argument1(int contour) {
     int index = 2 * FontData.SizeOf.USHORT + this.contourIndex.get(contour);
     int flags = this.flags(contour);
-    if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) == FLAG_ARG_1_AND_2_ARE_WORDS) {
+    if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
       return this.data.readUShort(index);
     }
     return this.data.readByte(index);
@@ -100,7 +100,7 @@ public final class CompositeGlyph extends Glyph {
   public int argument2(int contour) {
     int index = 2 * FontData.SizeOf.USHORT + this.contourIndex.get(contour);
     int flags = this.flags(contour);
-    if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) == FLAG_ARG_1_AND_2_ARE_WORDS) {
+    if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
       return this.data.readUShort(index + FontData.SizeOf.USHORT);
     }
     return this.data.readByte(index + FontData.SizeOf.BYTE);
@@ -108,11 +108,11 @@ public final class CompositeGlyph extends Glyph {
 
   public int transformationSize(int contour) {
     int flags = this.flags(contour);
-    if ((flags & FLAG_WE_HAVE_A_SCALE) == FLAG_WE_HAVE_A_SCALE) {
+    if ((flags & FLAG_WE_HAVE_A_SCALE) != 0) {
       return FontData.SizeOf.F2DOT14;
-    } else if ((flags & FLAG_WE_HAVE_AN_X_AND_Y_SCALE) == FLAG_WE_HAVE_AN_X_AND_Y_SCALE) {
+    } else if ((flags & FLAG_WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
       return 2 * FontData.SizeOf.F2DOT14;
-    } else if ((flags & FLAG_WE_HAVE_A_TWO_BY_TWO) == FLAG_WE_HAVE_A_TWO_BY_TWO) {
+    } else if ((flags & FLAG_WE_HAVE_A_TWO_BY_TWO) != 0) {
       return 4 * FontData.SizeOf.F2DOT14;
     }
     return 0;
@@ -121,7 +121,7 @@ public final class CompositeGlyph extends Glyph {
   public byte[] transformation(int contour) {
     int flags = this.flags(contour);
     int index = this.contourIndex.get(contour) + 2 * FontData.SizeOf.USHORT;
-    if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) == FLAG_ARG_1_AND_2_ARE_WORDS) {
+    if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
       index += 2 * FontData.SizeOf.SHORT;
     } else {
       index += 2 * FontData.SizeOf.BYTE;
