@@ -522,7 +522,7 @@ public final class BitmapSizeTable extends SubTable {
         size += EblcTable.Offset.indexSubTableEntryLength.offset;
         int subTableSize = subTableBuilder.subDataSizeToSerialize();
         int padding =
-            FontMath.paddingRequired(Math.abs(subTableSize), FontData.DataSize.ULONG.size());
+            FontMath.paddingRequired(Math.abs(subTableSize), FontData.SizeOf.ULONG);
         variable = subTableSize > 0 ? variable : true;
         size += Math.abs(subTableSize) + padding;
       }

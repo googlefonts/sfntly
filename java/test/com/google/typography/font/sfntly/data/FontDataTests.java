@@ -53,28 +53,28 @@ public class FontDataTests extends TestCase {
   // offset and start index data for searching data
   // array data size, lowerStartIndex, lowerOffset, upperStartIndex, upperOffset
   private static final int[][] SEARCH_TEST_OFFSETS = {
-  // lower[], upper[]
+      // lower[], upper[]
       {
           (LOWER_BYTE_ARRAY_FOR_SEARCHING.length + UPPER_BYTE_ARRAY_FOR_SEARCHING.length)
-              * FontData.DataSize.USHORT.size(), 0, FontData.DataSize.USHORT.size(),
-          LOWER_BYTE_ARRAY_FOR_SEARCHING.length * FontData.DataSize.USHORT.size(),
-          FontData.DataSize.USHORT.size()},
+              * FontData.SizeOf.USHORT, 0, FontData.SizeOf.USHORT,
+          LOWER_BYTE_ARRAY_FOR_SEARCHING.length * FontData.SizeOf.USHORT,
+          FontData.SizeOf.USHORT},
       // {lower, upper} []
       {
           (LOWER_BYTE_ARRAY_FOR_SEARCHING.length + UPPER_BYTE_ARRAY_FOR_SEARCHING.length)
-              * FontData.DataSize.USHORT.size(), 0, 2 * FontData.DataSize.USHORT.size(),
-          FontData.DataSize.USHORT.size(), 2 * FontData.DataSize.USHORT.size()},
+              * FontData.SizeOf.USHORT, 0, 2 * FontData.SizeOf.USHORT,
+          FontData.SizeOf.USHORT, 2 * FontData.SizeOf.USHORT},
       // upper[], lower[]
       {
           (LOWER_BYTE_ARRAY_FOR_SEARCHING.length + UPPER_BYTE_ARRAY_FOR_SEARCHING.length)
-              * FontData.DataSize.USHORT.size(),
-          LOWER_BYTE_ARRAY_FOR_SEARCHING.length * FontData.DataSize.USHORT.size(),
-          FontData.DataSize.USHORT.size(), 0, FontData.DataSize.USHORT.size()},
+              * FontData.SizeOf.USHORT,
+          LOWER_BYTE_ARRAY_FOR_SEARCHING.length * FontData.SizeOf.USHORT,
+          FontData.SizeOf.USHORT, 0, FontData.SizeOf.USHORT},
       // {upper, lower} []
       {
           (LOWER_BYTE_ARRAY_FOR_SEARCHING.length + UPPER_BYTE_ARRAY_FOR_SEARCHING.length)
-              * FontData.DataSize.USHORT.size(), FontData.DataSize.USHORT.size(),
-          2 * FontData.DataSize.USHORT.size(), 0, 2 * FontData.DataSize.USHORT.size()},};
+              * FontData.SizeOf.USHORT, FontData.SizeOf.USHORT,
+          2 * FontData.SizeOf.USHORT, 0, 2 * FontData.SizeOf.USHORT}};
 
   // for sizing the slicing increments on the buffer used in read and write tests 
   private static final int SLICING_READWRITE_TEST_BUFFER_TRIM_FRACTION_DENOMINATOR = 21;

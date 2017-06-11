@@ -19,7 +19,7 @@ package com.google.typography.font.tools.conversion.eot;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
-import com.google.typography.font.sfntly.data.ReadableFontData;
+import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 import com.google.typography.font.sfntly.table.core.NameTable;
@@ -129,15 +129,15 @@ public class EOTWriter {
 
   private long computeEotSize(int familyNameSize, int styleNameSize, int versionNameSize,
       int fullNameSize, int fontDataSize) {
-    return 16 * ReadableFontData.DataSize.ULONG.size() +
-        12 * ReadableFontData.DataSize.BYTE.size() +
-        12 * ReadableFontData.DataSize.USHORT.size() +
-        familyNameSize * ReadableFontData.DataSize.BYTE.size() +
-        styleNameSize * ReadableFontData.DataSize.BYTE.size() +
-        versionNameSize * ReadableFontData.DataSize.BYTE.size() +
-        fullNameSize * ReadableFontData.DataSize.BYTE.size() +
-        fontDataSize * ReadableFontData.DataSize.BYTE.size() +
-        (VERSION > 0x20001 ? 5 * ReadableFontData.DataSize.ULONG.size() : 0);
+    return 16 * FontData.SizeOf.ULONG +
+        12 * FontData.SizeOf.BYTE +
+        12 * FontData.SizeOf.USHORT +
+        familyNameSize * FontData.SizeOf.BYTE +
+        styleNameSize * FontData.SizeOf.BYTE +
+        versionNameSize * FontData.SizeOf.BYTE +
+        fullNameSize * FontData.SizeOf.BYTE +
+        fontDataSize * FontData.SizeOf.BYTE +
+        (VERSION > 0x20001 ? 5 * FontData.SizeOf.ULONG : 0);
   }
 
   private int writeFontPANOSE(int index, OS2Table os2Table, WritableFontData writableFontData) {

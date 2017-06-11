@@ -66,21 +66,19 @@ public final class SimpleGlyph extends Glyph {
       }
       this.instructionSize =
           this.data.readUShort(Offset.simpleEndPtsOfCountours.offset + this.numberOfContours()
-              * FontData.DataSize.USHORT.size());
+              * FontData.SizeOf.USHORT);
       this.instructionsOffset =
           Offset.simpleEndPtsOfCountours.offset + (this.numberOfContours() + 1)
-              * FontData.DataSize.USHORT.size();
+              * FontData.SizeOf.USHORT;
       this.flagsOffset =
-          this.instructionsOffset + this.instructionSize * FontData.DataSize.BYTE.size();
+          this.instructionsOffset + this.instructionSize * FontData.SizeOf.BYTE;
       this.numberOfPoints = this.contourEndPoint(this.numberOfContours() - 1) + 1;
       this.xCoordinates = new int[this.numberOfPoints];
       this.yCoordinates = new int[this.numberOfPoints];
       this.onCurve = new boolean[this.numberOfPoints];
       parseData(false);
-      this.xCoordinatesOffset =
-          this.flagsOffset + this.flagByteCount * FontData.DataSize.BYTE.size();
-      this.yCoordinatesOffset =
-          this.xCoordinatesOffset + this.xByteCount * FontData.DataSize.BYTE.size();
+      this.xCoordinatesOffset = this.flagsOffset + this.flagByteCount * FontData.SizeOf.BYTE;
+      this.yCoordinatesOffset = this.xCoordinatesOffset + this.xByteCount * FontData.SizeOf.BYTE;
       this.contourIndex = new int[this.numberOfContours() + 1];
       contourIndex[0] = 0;
       for (int contour = 0; contour < this.contourIndex.length - 1; contour++) {
@@ -88,13 +86,13 @@ public final class SimpleGlyph extends Glyph {
       }
       parseData(true);
       int nonPaddedDataLength =
-          5 * FontData.DataSize.SHORT.size()
-              + (this.numberOfContours() * FontData.DataSize.USHORT.size())
-              + FontData.DataSize.USHORT.size()
-              + (this.instructionSize * FontData.DataSize.BYTE.size())
-              + (flagByteCount * FontData.DataSize.BYTE.size())
-              + (xByteCount * FontData.DataSize.BYTE.size())
-              + (yByteCount * FontData.DataSize.BYTE.size());
+          5 * FontData.SizeOf.SHORT
+              + (this.numberOfContours() * FontData.SizeOf.USHORT)
+              + FontData.SizeOf.USHORT
+              + (this.instructionSize * FontData.SizeOf.BYTE)
+              + (flagByteCount * FontData.SizeOf.BYTE)
+              + (xByteCount * FontData.SizeOf.BYTE)
+              + (yByteCount * FontData.SizeOf.BYTE);
       this.setPadding(this.dataLength() - nonPaddedDataLength);
       this.initialized = true;
     }
@@ -173,12 +171,12 @@ public final class SimpleGlyph extends Glyph {
   }
 
   private int flagAsInt(int index) {
-    return this.data.readUByte(this.flagsOffset + index * FontData.DataSize.BYTE.size());
+    return this.data.readUByte(this.flagsOffset + index * FontData.SizeOf.BYTE);
   }
 
   public int contourEndPoint(int contour) {
     return this.data.readUShort(
-        contour * FontData.DataSize.USHORT.size() + Offset.simpleEndPtsOfCountours.offset);
+        contour * FontData.SizeOf.USHORT + Offset.simpleEndPtsOfCountours.offset);
   }
 
   @Override

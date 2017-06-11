@@ -54,17 +54,15 @@ public abstract class BitmapGlyph extends SubTable {
 
     // format 8
     glyphFormat8_numComponents(Offset.smallGlyphMetricsLength.offset + 1),
-    glyphFormat8_componentArray(glyphFormat8_numComponents.offset
-        + FontData.DataSize.USHORT.size()),
+    glyphFormat8_componentArray(glyphFormat8_numComponents.offset + FontData.SizeOf.USHORT),
 
     // format 9
     glyphFormat9_numComponents(Offset.bigGlyphMetricsLength.offset),
-    glyphFormat9_componentArray(glyphFormat9_numComponents.offset
-        + FontData.DataSize.USHORT.size()),
+    glyphFormat9_componentArray(glyphFormat9_numComponents.offset + FontData.SizeOf.USHORT),
 
 
     // ebdtComponent
-    ebdtComponentLength(FontData.DataSize.USHORT.size() + 2 * FontData.DataSize.CHAR.size()),
+    ebdtComponentLength(FontData.SizeOf.USHORT + 2 * FontData.SizeOf.CHAR),
     ebdtComponent_glyphCode(0),
     ebdtComponent_xOffset(2),
     ebdtComponent_yOffset(3);

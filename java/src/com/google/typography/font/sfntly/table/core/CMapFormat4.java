@@ -41,9 +41,9 @@ public final class CMapFormat4 extends CMap {
   public int glyphId(int character) {
     int segment = this.data.searchUShort(
         startCodeOffset(this.segCount),
-        FontData.DataSize.USHORT.size(),
+        FontData.SizeOf.USHORT,
         Header.SIZE,
-        FontData.DataSize.USHORT.size(),
+        FontData.SizeOf.USHORT,
         this.segCount,
         character);
     if (segment == -1) {
@@ -107,37 +107,37 @@ public final class CMapFormat4 extends CMap {
   }
 
   private static int startCode(ReadableFontData data, int segCount, int index) {
-    return data.readUShort(startCodeOffset(segCount) + index * FontData.DataSize.USHORT.size());
+    return data.readUShort(startCodeOffset(segCount) + index * FontData.SizeOf.USHORT);
   }
 
   private static int startCodeOffset(int segCount) {
-    return Header.SIZE + (segCount + 1) * FontData.DataSize.USHORT.size();
+    return Header.SIZE + (segCount + 1) * FontData.SizeOf.USHORT;
   }
 
   private static int endCode(ReadableFontData data, int segCount, int index) {
-    return data.readUShort(Header.SIZE + index * FontData.DataSize.USHORT.size());
+    return data.readUShort(Header.SIZE + index * FontData.SizeOf.USHORT);
   }
 
   private static int idDelta(ReadableFontData data, int segCount, int index) {
-    return data.readShort(idDeltaOffset(segCount) + index * FontData.DataSize.SHORT.size());
+    return data.readShort(idDeltaOffset(segCount) + index * FontData.SizeOf.SHORT);
   }
 
   private static int idDeltaOffset(int segCount) {
-    return Header.SIZE + ((2 * segCount) + 1) * FontData.DataSize.USHORT.size();
+    return Header.SIZE + ((2 * segCount) + 1) * FontData.SizeOf.USHORT;
   }
 
   private static int idRangeOffset(ReadableFontData data, int segCount, int index) {
-    return data.readUShort(idRangeOffsetOffset(segCount) + index * FontData.DataSize.USHORT.size());
+    return data.readUShort(idRangeOffsetOffset(segCount) + index * FontData.SizeOf.USHORT);
   }
 
   private static int idRangeOffsetOffset(int segCount) {
-    return Header.SIZE + ((2 * segCount) + 1) * FontData.DataSize.USHORT.size()
-        + segCount * FontData.DataSize.SHORT.size();
+    return Header.SIZE + ((2 * segCount) + 1) * FontData.SizeOf.USHORT
+        + segCount * FontData.SizeOf.SHORT;
   }
 
   private static int glyphIdArrayOffset(int segCount) {
-    return Header.SIZE + ((3 * segCount) + 1) * FontData.DataSize.USHORT.size()
-        + segCount * FontData.DataSize.SHORT.size();
+    return Header.SIZE + ((3 * segCount) + 1) * FontData.SizeOf.USHORT
+        + segCount * FontData.SizeOf.SHORT;
   }
 
   /**
@@ -186,12 +186,12 @@ public final class CMapFormat4 extends CMap {
    */
   public int idRangeOffsetLocation(int segment) {
     isValidIndex(segment);
-    return idRangeOffsetOffset(this.segCount) + segment * FontData.DataSize.USHORT.size();
+    return idRangeOffsetOffset(this.segCount) + segment * FontData.SizeOf.USHORT;
   }
 
   @SuppressWarnings("unused")
   private int glyphIdArray(int index) {
-    return this.data.readUShort(this.glyphIdArrayOffset + index * FontData.DataSize.USHORT.size());
+    return this.data.readUShort(this.glyphIdArrayOffset + index * FontData.SizeOf.USHORT);
   }
 
   @Override
@@ -348,7 +348,7 @@ public final class CMapFormat4 extends CMap {
       // build glyph id array
       int glyphIdArrayLength =
           CMapFormat4.length(data) - CMapFormat4.glyphIdArrayOffset(segCount);
-      for (int index = 0; index < glyphIdArrayLength; index += FontData.DataSize.USHORT.size()) {
+      for (int index = 0; index < glyphIdArrayLength; index += FontData.SizeOf.USHORT) {
         this.glyphIdArray.add(data.readUShort(index + CMapFormat4.glyphIdArrayOffset(segCount)));
       }
     }
@@ -398,9 +398,9 @@ public final class CMapFormat4 extends CMap {
       }
 
       int size = Header.SIZE
-          + FontData.DataSize.USHORT.size() // reservedPad
-          + this.segments.size() * 4 * FontData.DataSize.USHORT.size()
-          + this.glyphIdArray.size() * FontData.DataSize.USHORT.size();
+          + FontData.SizeOf.USHORT // reservedPad
+          + this.segments.size() * 4 * FontData.SizeOf.USHORT
+          + this.glyphIdArray.size() * FontData.SizeOf.USHORT;
       return size;
     }
 
@@ -421,7 +421,7 @@ public final class CMapFormat4 extends CMap {
 
       int index = 0;
       index += newData.writeUShort(index, CMapFormat.Format4.value());
-      index += FontData.DataSize.USHORT.size(); // length - write this at the end
+      index += FontData.SizeOf.USHORT; // length - write this at the end
       index += newData.writeUShort(index, this.language());
       int segCount = this.segments.size();
       index += newData.writeUShort(index, segCount * 2);
@@ -436,7 +436,7 @@ public final class CMapFormat4 extends CMap {
       for (Segment segment : this.segments) {
         index += newData.writeUShort(index, segment.getEndCount());
       }
-      index += FontData.DataSize.USHORT.size(); // reservedPad
+      index += FontData.SizeOf.USHORT; // reservedPad
       for (Segment segment : this.segments) {
         index += newData.writeUShort(index, segment.getStartCount());
       }
