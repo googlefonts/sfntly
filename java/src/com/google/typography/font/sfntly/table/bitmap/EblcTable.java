@@ -49,21 +49,6 @@ public class EblcTable extends SubTableContainerTable {
     int SIZE = 8;
   }
 
-  enum Offset {
-    // indexSubTable2
-    indexSubTable2Length(HeaderOffsets.SIZE + FontData.SizeOf.ULONG
-        + BitmapGlyph.Offset.bigGlyphMetricsLength.offset),
-    indexSubTable2_imageSize(HeaderOffsets.SIZE),
-    indexSubTable2_bigGlyphMetrics(indexSubTable2_imageSize.offset + FontData.SizeOf.ULONG),
-    indexSubTable2_builderDataSize(indexSubTable2_bigGlyphMetrics.offset + BigGlyphMetrics.SIZE);
-
-    final int offset;
-
-    Offset(int offset) {
-      this.offset = offset;
-    }
-  }
-
   /**
    * Lock on all operations that will affect the value of the bitmapSizeTable.
    */
