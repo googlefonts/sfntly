@@ -34,6 +34,13 @@ import java.util.NoSuchElementException;
  * 
  */
 public final class IndexSubTableFormat4 extends IndexSubTable {
+
+  interface CodeOffsetPairOffset {
+    int glyphCode = 0;
+    int offset = 2;
+    int SIZE = 4;
+  }
+
   private IndexSubTableFormat4(ReadableFontData data, int firstGlyphIndex, int lastGlyphIndex) {
     super(data, firstGlyphIndex, lastGlyphIndex);
   }
@@ -56,8 +63,8 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
       return -1;
     }
     return this.data.readUShort(
-        Offset.indexSubTable4_glyphArray.offset + pairIndex * Offset.codeOffsetPairLength.offset
-            + Offset.codeOffsetPair_offset.offset);
+        Offset.indexSubTable4_glyphArray.offset + pairIndex * CodeOffsetPairOffset.SIZE
+            + CodeOffsetPairOffset.offset);
   }
 
   @Override
@@ -67,15 +74,18 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
     if (pairIndex < 0) {
       return -1;
     }
-    return (this.data.readUShort(Offset.indexSubTable4_glyphArray.offset + (pairIndex + 1)
-        * Offset.codeOffsetPairLength.offset + Offset.codeOffsetPair_offset.offset))
-        - this.data.readUShort(Offset.indexSubTable4_glyphArray.offset + (pairIndex)
-            * Offset.codeOffsetPairLength.offset + Offset.codeOffsetPair_offset.offset);
+
+    int offset = Offset.indexSubTable4_glyphArray.offset
+        + pairIndex * CodeOffsetPairOffset.SIZE
+        + CodeOffsetPairOffset.offset;
+    int us1 = this.data.readUShort(offset + CodeOffsetPairOffset.SIZE);
+    int us2 = this.data.readUShort(offset);
+    return us1 - us2;
   }
 
   protected int findCodeOffsetPair(int glyphId) {
     return this.data.searchUShort(Offset.indexSubTable4_glyphArray.offset,
-        Offset.codeOffsetPairLength.offset, this.numGlyphs(), glyphId);
+        CodeOffsetPairOffset.SIZE, this.numGlyphs(), glyphId);
   }
   
   public static class CodeOffsetPair {
