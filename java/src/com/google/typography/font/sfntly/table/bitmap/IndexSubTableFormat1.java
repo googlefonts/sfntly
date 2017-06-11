@@ -80,7 +80,7 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
 
     private static int dataLength(
         ReadableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
-      return Offset.indexSubHeaderLength.offset + (lastGlyphIndex - firstGlyphIndex + 1 + 1)
+      return EblcTable.HeaderOffsets.SIZE + (lastGlyphIndex - firstGlyphIndex + 1 + 1)
           * FontData.SizeOf.ULONG;
     }
 
@@ -206,7 +206,7 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
       if (this.offsetArray == null) {
         return this.internalReadData().length();
       }
-      return Offset.indexSubHeaderLength.offset + this.offsetArray.size() * FontData.SizeOf.ULONG;
+      return EblcTable.HeaderOffsets.SIZE + this.offsetArray.size() * FontData.SizeOf.ULONG;
     }
 
     @Override
