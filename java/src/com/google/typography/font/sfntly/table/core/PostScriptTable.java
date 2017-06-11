@@ -38,34 +38,25 @@ public final class PostScriptTable extends Table {
   private static final int VERSION_2 = 0x20000;
   private static final int NUM_STANDARD_NAMES = 258;
 
-  /**
-   * Offsets to specific elements in the underlying data. These offsets are relative to the
-   * start of the table or the start of sub-blocks within the table.
-   */
-  private enum Offset {
-    version(0),
-    italicAngle(4),
-    underlinePosition(8),
-    underlineThickness(10),
-    isFixedPitch(12),
-    minMemType42(16),
-    maxMemType42(20),
-    minMemType1(24),
-    maxMemType1(28),
+  private interface Offset {
+    int version = 0;
+    int italicAngle = 4;
+    int underlinePosition = 8;
+    int underlineThickness = 10;
+    int isFixedPitch = 12;
+    int minMemType42 = 16;
+    int maxMemType42 = 20;
+    int minMemType1 = 24;
+    int maxMemType1 = 28;
 
     // TODO: add support for these versions of the table?
     // Version 2.0 table
-    numberOfGlyphs(32),
-    glyphNameIndex(34);  // start of table
+    int numberOfGlyphs = 32;
+    int glyphNameIndex = 34;  // start of table
 
     // Version 2.5 table
 
     // Version 4.0 table
-
-    private final int offset;
-    private Offset(int offset) {
-      this.offset = offset;
-    }
   }
 
   private AtomicReference<List<String>> names = new AtomicReference<List<String>>();
@@ -337,19 +328,19 @@ public final class PostScriptTable extends Table {
 
   // TODO: version enum
   public int version() {
-    return this.data.readFixed(Offset.version.offset);
+    return this.data.readFixed(Offset.version);
   }
 
   public int italicAngle() {
-    return this.data.readFixed(Offset.italicAngle.offset);
+    return this.data.readFixed(Offset.italicAngle);
   }
 
   public int underlinePosition() {
-    return this.data.readFWord(Offset.underlinePosition.offset);
+    return this.data.readFWord(Offset.underlinePosition);
   }
 
   public long isFixedPitchRaw() {
-    return this.data.readULong(Offset.isFixedPitch.offset);
+    return this.data.readULong(Offset.isFixedPitch);
   }
 
   public boolean isFixedPitch() {
@@ -357,26 +348,26 @@ public final class PostScriptTable extends Table {
   }
 
   public long minMemType42() {
-    return this.data.readULong(Offset.minMemType42.offset);
+    return this.data.readULong(Offset.minMemType42);
   }
 
   public long maxMemType42() {
-    return this.data.readULong(Offset.maxMemType42.offset);
+    return this.data.readULong(Offset.maxMemType42);
   }
 
   public long minMemType1() {
-    return this.data.readULong(Offset.minMemType1.offset);
+    return this.data.readULong(Offset.minMemType1);
   }
 
   public long maxMemType1() {
-    return this.data.readULong(Offset.maxMemType1.offset);
+    return this.data.readULong(Offset.maxMemType1);
   }
 
   public int numberOfGlyphs() {
     if (version() == VERSION_1) {
       return NUM_STANDARD_NAMES;
     } else if (version() == VERSION_2) {
-      return this.data.readUShort(Offset.numberOfGlyphs.offset);
+      return this.data.readUShort(Offset.numberOfGlyphs);
     } else {
       // TODO: should probably be better at signaling unsupported format
       return -1;
@@ -392,7 +383,7 @@ public final class PostScriptTable extends Table {
     if (version() == VERSION_1) {
       glyphNameIndex = glyphNum;
     } else if (version() == VERSION_2) {
-      glyphNameIndex = this.data.readUShort(Offset.glyphNameIndex.offset + 2 * glyphNum);
+      glyphNameIndex = this.data.readUShort(Offset.glyphNameIndex + 2 * glyphNum);
     } else {
       return null;
     }
@@ -431,7 +422,7 @@ public final class PostScriptTable extends Table {
     List<String> names = null;
     if (version() == VERSION_2) {
       names = new ArrayList<String>();
-      int index = Offset.glyphNameIndex.offset + 2 * numberOfGlyphs();
+      int index = Offset.glyphNameIndex + 2 * numberOfGlyphs();
       while (index < dataLength()) {
         int strLen = this.data.readUByte(index);
         byte[] nameBytes = new byte[strLen];
