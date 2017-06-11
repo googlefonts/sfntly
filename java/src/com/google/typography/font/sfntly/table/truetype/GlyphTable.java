@@ -33,37 +33,27 @@ import java.util.List;
  */
 public final class GlyphTable extends SubTableContainerTable {
 
-  /**
-   * Offsets to specific elements in the underlying data. These offsets are relative to the
-   * start of the table or the start of sub-blocks within the table.
-   */
-  public enum Offset {
+  public interface Offset {
     // header
-    numberOfContours(0),
-    xMin(2),
-    yMin(4),
-    xMax(6),
-    yMax(8),
+    int numberOfContours = 0;
+    int xMin = 2;
+    int yMin = 4;
+    int xMax = 6;
+    int yMax = 8;
 
     // Simple Glyph Description
-    simpleEndPtsOfCountours(10),
+    int simpleEndPtsOfCountours = 10;
     // offset from the end of the contours array
-    simpleInstructionLength(0),
-    simpleInstructions(2),
+    int simpleInstructionLength = 0;
+    int simpleInstructions = 2;
     // flags
     // xCoordinates
     // yCoordinates
 
     // Composite Glyph Description
-    compositeFlags(0),
-    compositeGyphIndexWithoutFlag(0),
-    compositeGlyphIndexWithFlag(2);
-
-    final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
+    int compositeFlags = 0;
+    int compositeGlyphIndexWithoutFlag = 0;
+    int compositeGlyphIndexWithFlag = 2;
   }
 
   private GlyphTable(Header header, ReadableFontData data) {

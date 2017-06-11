@@ -64,14 +64,11 @@ public final class SimpleGlyph extends Glyph {
         this.yCoordinatesOffset = 0;
         return;
       }
-      this.instructionSize =
-          this.data.readUShort(Offset.simpleEndPtsOfCountours.offset + this.numberOfContours()
-              * FontData.SizeOf.USHORT);
-      this.instructionsOffset =
-          Offset.simpleEndPtsOfCountours.offset + (this.numberOfContours() + 1)
-              * FontData.SizeOf.USHORT;
-      this.flagsOffset =
-          this.instructionsOffset + this.instructionSize * FontData.SizeOf.BYTE;
+      this.instructionSize = this.data.readUShort(Offset.simpleEndPtsOfCountours
+          + this.numberOfContours() * FontData.SizeOf.USHORT);
+      this.instructionsOffset = Offset.simpleEndPtsOfCountours
+          + (this.numberOfContours() + 1) * FontData.SizeOf.USHORT;
+      this.flagsOffset = this.instructionsOffset + this.instructionSize * FontData.SizeOf.BYTE;
       this.numberOfPoints = this.contourEndPoint(this.numberOfContours() - 1) + 1;
       this.xCoordinates = new int[this.numberOfPoints];
       this.yCoordinates = new int[this.numberOfPoints];
@@ -175,8 +172,7 @@ public final class SimpleGlyph extends Glyph {
   }
 
   public int contourEndPoint(int contour) {
-    return this.data.readUShort(
-        contour * FontData.SizeOf.USHORT + Offset.simpleEndPtsOfCountours.offset);
+    return this.data.readUShort(contour * FontData.SizeOf.USHORT + Offset.simpleEndPtsOfCountours);
   }
 
   @Override
