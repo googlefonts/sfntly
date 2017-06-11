@@ -243,20 +243,9 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
     StringBuilder sb = new StringBuilder(super.toString());
     sb.append(" = { ");
     for (int i = 0; i < this.numCMaps(); i++) {
-      CMap cmap;
-      try {
-        cmap = this.cmap(i);
-      } catch (IOException e) {
-        continue;
-      }
-      sb.append("[0x");
-      sb.append(Integer.toHexString(this.offset(i)));
-      sb.append(" = ");
-      sb.append(cmap);
+      sb.append(String.format("[%#x = %s]", this.offset(i), this.cmap(i)));
       if (i < this.numCMaps() - 1) {
-        sb.append("], ");
-      } else {
-        sb.append("]");
+        sb.append(", ");
       }
     }
     sb.append(" }");
@@ -306,14 +295,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
       if (!hasNext()) {
         throw new NoSuchElementException();
       }
-      try {
-        return cmap(this.tableIndex++);
-      } catch (IOException e) {
-        NoSuchElementException newException =
-            new NoSuchElementException("Error during the creation of the CMap.");
-        newException.initCause(e);
-        throw newException;
-      }
+      return cmap(this.tableIndex++);
     }
 
     @Override
@@ -327,9 +309,8 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
    *
    * @param index the index of the cmap
    * @return the cmap at the index
-   * @throws IOException
    */
-  public CMap cmap(int index) throws IOException {
+  public CMap cmap(int index) {
     CMap.Builder<? extends CMap> builder =
         CMapTable.Builder.cmapBuilder(this.readFontData(), index);
     return builder.build();
