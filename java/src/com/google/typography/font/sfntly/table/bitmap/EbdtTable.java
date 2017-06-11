@@ -16,7 +16,6 @@
 
 package com.google.typography.font.sfntly.table.bitmap;
 
-import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
@@ -30,19 +29,12 @@ import java.util.TreeMap;
 
 /**
  * @author Stuart Gill
- *
  */
 public final class EbdtTable extends SubTableContainerTable {
-  protected static enum Offset {
-    // header
-    version(0), headerLength(FontData.DataSize.Fixed.size());
 
-
-    protected final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
+  private interface HeaderOffsets {
+    int version = 0;
+    int SIZE = 4;
   }
 
   protected EbdtTable(Header header, ReadableFontData data) {
@@ -50,7 +42,7 @@ public final class EbdtTable extends SubTableContainerTable {
   }
 
   public int version() {
-    return this.data.readFixed(Offset.version.offset);
+    return this.data.readFixed(HeaderOffsets.version);
   }
 
   public BitmapGlyph glyph(int offset, int length, int format) {
@@ -109,7 +101,7 @@ public final class EbdtTable extends SubTableContainerTable {
       List<Map<Integer, BitmapGlyphInfo>> newLocaList =
           new ArrayList<Map<Integer, BitmapGlyphInfo>>(this.glyphBuilders.size());
 
-      int startOffset = Offset.headerLength.offset;
+      int startOffset = HeaderOffsets.SIZE;
       for (Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> builderMap :
           this.glyphBuilders) {
         Map<Integer, BitmapGlyphInfo> newLocaMap = new TreeMap<Integer, BitmapGlyphInfo>();
@@ -219,7 +211,7 @@ public final class EbdtTable extends SubTableContainerTable {
       }
 
       boolean fixed = true;
-      int size = Offset.headerLength.offset;
+      int size = HeaderOffsets.SIZE;
       for (Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> builderMap :
           this.glyphBuilders) {
         Map<Integer, BitmapGlyphInfo> newLocaMap = new TreeMap<Integer, BitmapGlyphInfo>();
@@ -242,7 +234,7 @@ public final class EbdtTable extends SubTableContainerTable {
     @Override
     protected int subSerialize(WritableFontData newData) {
       int size = 0;
-      size += newData.writeFixed(Offset.version.offset, this.version);
+      size += newData.writeFixed(HeaderOffsets.version, this.version);
 
       for (Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> builderMap :
           this.glyphBuilders) {
