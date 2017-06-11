@@ -19,7 +19,6 @@ package com.google.typography.font.sfntly.table.bitmap;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
-import com.google.typography.font.sfntly.table.bitmap.EblcTable.Offset;
 
 import java.util.Iterator;
 
@@ -173,15 +172,14 @@ public abstract class IndexSubTable extends SubTable {
     static Builder<? extends IndexSubTable> createBuilder(
         ReadableFontData data, int offsetToIndexSubTableArray, int arrayIndex) {
 
-      int indexSubTableEntryOffset =
-          offsetToIndexSubTableArray + arrayIndex * Offset.indexSubTableEntryLength.offset;
+      int entryOffset = offsetToIndexSubTableArray + arrayIndex * EblcTable.IndexSubTableEntry.SIZE;
 
       int firstGlyphIndex = data.readUShort(
-          indexSubTableEntryOffset + Offset.indexSubTableEntry_firstGlyphIndex.offset);
+          entryOffset + EblcTable.IndexSubTableEntry.firstGlyphIndex);
       int lastGlyphIndex = data.readUShort(
-          indexSubTableEntryOffset + Offset.indexSubTableEntry_lastGlyphIndex.offset);
-      int additionOffsetToIndexSubtable = data.readULongAsInt(indexSubTableEntryOffset
-          + Offset.indexSubTableEntry_additionalOffsetToIndexSubtable.offset);
+          entryOffset + EblcTable.IndexSubTableEntry.lastGlyphIndex);
+      int additionOffsetToIndexSubtable = data.readULongAsInt(
+          entryOffset + EblcTable.IndexSubTableEntry.additionalOffsetToIndexSubtable);
 
       int indexSubTableOffset = offsetToIndexSubTableArray + additionOffsetToIndexSubtable;
 
