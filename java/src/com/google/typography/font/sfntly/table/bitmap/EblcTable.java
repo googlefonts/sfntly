@@ -36,7 +36,7 @@ public class EblcTable extends SubTableContainerTable {
 
   public static final int NOTDEF = -1;
 
-  private interface HeaderOffsets {
+  interface HeaderOffsets {
     int version = 0;
     int numSizes = 4;
     int SIZE = 8;
@@ -50,28 +50,23 @@ public class EblcTable extends SubTableContainerTable {
   }
 
   enum Offset {
-    // indexSubHeader
-    indexSubHeaderLength(8),
-
-    // indexSubTable - all offset relative to the subtable start
-
     // indexSubTable1
-    indexSubTable1_offsetArray(indexSubHeaderLength.offset),
-    indexSubTable1_builderDataSize(indexSubHeaderLength.offset),
+    indexSubTable1_offsetArray(HeaderOffsets.SIZE),
+    indexSubTable1_builderDataSize(HeaderOffsets.SIZE),
 
     // indexSubTable2
-    indexSubTable2Length(indexSubHeaderLength.offset + FontData.SizeOf.ULONG
+    indexSubTable2Length(HeaderOffsets.SIZE + FontData.SizeOf.ULONG
         + BitmapGlyph.Offset.bigGlyphMetricsLength.offset),
-    indexSubTable2_imageSize(indexSubHeaderLength.offset),
+    indexSubTable2_imageSize(HeaderOffsets.SIZE),
     indexSubTable2_bigGlyphMetrics(indexSubTable2_imageSize.offset + FontData.SizeOf.ULONG),
     indexSubTable2_builderDataSize(indexSubTable2_bigGlyphMetrics.offset + BigGlyphMetrics.SIZE),
 
     // indexSubTable3
-    indexSubTable3_offsetArray(indexSubHeaderLength.offset),
+    indexSubTable3_offsetArray(HeaderOffsets.SIZE),
     indexSubTable3_builderDataSize(indexSubTable3_offsetArray.offset),
 
     // indexSubTable5
-    indexSubTable5_imageSize(indexSubHeaderLength.offset),
+    indexSubTable5_imageSize(HeaderOffsets.SIZE),
     indexSubTable5_bigGlyphMetrics(indexSubTable5_imageSize.offset + FontData.SizeOf.ULONG),
     indexSubTable5_numGlyphs(indexSubTable5_bigGlyphMetrics.offset
         + BitmapGlyph.Offset.bigGlyphMetricsLength.offset),
@@ -318,8 +313,8 @@ public class EblcTable extends SubTableContainerTable {
         // walking offset within the current subTable array
         int indexSubTableArrayOffset = currentSubTableBlockStartOffset;
         // walking offset within the subTable entries
-        int indexSubTableOffset = indexSubTableArrayOffset + indexSubTableBuilderList.size()
-            * Offset.indexSubHeaderLength.offset;
+        int indexSubTableOffset = indexSubTableArrayOffset
+            + indexSubTableBuilderList.size() * HeaderOffsets.SIZE;
 
         if (DEBUG) {
           System.out.printf(

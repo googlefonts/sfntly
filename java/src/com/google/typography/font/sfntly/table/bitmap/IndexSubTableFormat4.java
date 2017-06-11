@@ -34,7 +34,7 @@ import java.util.NoSuchElementException;
 public final class IndexSubTableFormat4 extends IndexSubTable {
 
   private interface Offset {
-    int numGlyphs = EblcTable.Offset.indexSubHeaderLength.offset;
+    int numGlyphs = EblcTable.HeaderOffsets.SIZE;
     int glyphArray = numGlyphs + FontData.SizeOf.ULONG;
     int builderDataSize = glyphArray;
   }
@@ -315,7 +315,7 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
       if (this.offsetPairArray == null) {
         return this.internalReadData().length();
       }
-      return EblcTable.Offset.indexSubHeaderLength.offset + FontData.SizeOf.ULONG
+      return EblcTable.HeaderOffsets.SIZE + FontData.SizeOf.ULONG
           + this.offsetPairArray.size() * PairOffset.SIZE;
     }
 
