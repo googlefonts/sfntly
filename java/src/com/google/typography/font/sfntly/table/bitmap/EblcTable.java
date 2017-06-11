@@ -70,14 +70,6 @@ public class EblcTable extends SubTableContainerTable {
     indexSubTable3_offsetArray(indexSubHeaderLength.offset),
     indexSubTable3_builderDataSize(indexSubTable3_offsetArray.offset),
 
-    // indexSubTable4
-    indexSubTable4_numGlyphs(indexSubHeaderLength.offset),
-    indexSubTable4_glyphArray(indexSubTable4_numGlyphs.offset + FontData.SizeOf.ULONG),
-    indexSubTable4_codeOffsetPairLength(2 * FontData.SizeOf.USHORT),
-    indexSubTable4_codeOffsetPair_glyphCode(0),
-    indexSubTable4_codeOffsetPair_offset(FontData.SizeOf.USHORT),
-    indexSubTable4_builderDataSize(indexSubTable4_glyphArray.offset),
-
     // indexSubTable5
     indexSubTable5_imageSize(indexSubHeaderLength.offset),
     indexSubTable5_bigGlyphMetrics(indexSubTable5_imageSize.offset + FontData.SizeOf.ULONG),
