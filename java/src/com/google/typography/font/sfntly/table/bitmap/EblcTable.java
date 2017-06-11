@@ -42,16 +42,14 @@ public class EblcTable extends SubTableContainerTable {
     int SIZE = 8;
   }
 
+  interface IndexSubTableEntry {
+    int firstGlyphIndex = 0;
+    int lastGlyphIndex = 2;
+    int additionalOffsetToIndexSubtable = 4;
+    int SIZE = 8;
+  }
+
   enum Offset {
-    // sbitLineMetrics
-    sbitLineMetricsLength(SbitLineMetrics.SIZE),
-
-    // indexSubTable
-    indexSubTableEntryLength(8),
-    indexSubTableEntry_firstGlyphIndex(0),
-    indexSubTableEntry_lastGlyphIndex(2),
-    indexSubTableEntry_additionalOffsetToIndexSubtable(4),
-
     // indexSubHeader
     indexSubHeaderLength(8),
 
