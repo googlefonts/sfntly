@@ -90,11 +90,11 @@ public class CompositeBitmapGlyph extends BitmapGlyph {
    */
   private void initialize(int format) {
     if (format == 8) {
-      this.numComponentsOffset = Offset.glyphFormat8_numComponents.offset;
-      this.componentArrayOffset = Offset.glyphFormat8_componentArray.offset;
+      this.numComponentsOffset = Offset.glyphFormat8_numComponents;
+      this.componentArrayOffset = Offset.glyphFormat8_componentArray;
     } else if (format == 9) {
-      this.numComponentsOffset = Offset.glyphFormat9_numComponents.offset;
-      this.componentArrayOffset = Offset.glyphFormat9_componentArray.offset;
+      this.numComponentsOffset = Offset.glyphFormat9_numComponents;
+      this.componentArrayOffset = Offset.glyphFormat9_componentArray;
     } else {
       throw new IllegalStateException(
           "Attempt to create a Composite Bitmap Glyph with a non-composite format.");
@@ -107,11 +107,11 @@ public class CompositeBitmapGlyph extends BitmapGlyph {
 
   public Component component(int componentNum) {
     int componentOffset =
-        this.componentArrayOffset + componentNum * Offset.ebdtComponentLength.offset;
+        this.componentArrayOffset + componentNum * Offset.ebdtComponentLength;
     return new Component(
-        this.data.readUShort(componentOffset + Offset.ebdtComponent_glyphCode.offset),
-        this.data.readChar(componentOffset + Offset.ebdtComponent_xOffset.offset),
-        this.data.readChar(componentOffset + Offset.ebdtComponent_yOffset.offset));
+        this.data.readUShort(componentOffset + Offset.ebdtComponent_glyphCode),
+        this.data.readChar(componentOffset + Offset.ebdtComponent_xOffset),
+        this.data.readChar(componentOffset + Offset.ebdtComponent_yOffset));
   }
   
   public static class Builder extends BitmapGlyph.Builder<CompositeBitmapGlyph> {

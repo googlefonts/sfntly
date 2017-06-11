@@ -37,7 +37,7 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
   private interface Offset {
     int imageSize = EblcTable.HeaderOffsets.SIZE;
     int bigGlyphMetrics = imageSize + FontData.SizeOf.ULONG;
-    int numGlyphs = bigGlyphMetrics + BitmapGlyph.Offset.bigGlyphMetricsLength.offset;
+    int numGlyphs = bigGlyphMetrics + BitmapGlyph.Offset.bigGlyphMetricsLength;
     int glyphArray = numGlyphs + FontData.SizeOf.ULONG;
     int builderDataSize = glyphArray;
   }
