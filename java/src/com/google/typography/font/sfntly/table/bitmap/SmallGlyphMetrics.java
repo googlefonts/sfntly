@@ -24,38 +24,37 @@ import com.google.typography.font.sfntly.data.WritableFontData;
  */
 public class SmallGlyphMetrics extends GlyphMetrics {
 
-  static enum Offset {
-    metricsLength(5), height(0), width(1), BearingX(2), BearingY(3), Advance(4);
-
-    final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
+  private interface Offset {
+    int height = 0;
+    int width = 1;
+    int BearingX = 2;
+    int BearingY = 3;
+    int Advance = 4;
+    int SIZE = 5;
   }
-  
+
   private SmallGlyphMetrics(ReadableFontData data) {
     super(data);
   }
   
   public int height() {
-    return this.data.readByte(Offset.height.offset);
+    return this.data.readByte(Offset.height);
   }
   
   public int width() {
-    return this.data.readByte(Offset.width.offset);
+    return this.data.readByte(Offset.width);
   }
 
   public int bearingX() {
-    return this.data.readChar(Offset.BearingX.offset);
+    return this.data.readChar(Offset.BearingX);
   }
 
   public int bearingY() {
-    return this.data.readChar(Offset.BearingY.offset);
+    return this.data.readChar(Offset.BearingY);
   }
 
   public int advance() {
-    return this.data.readByte(Offset.Advance.offset);
+    return this.data.readByte(Offset.Advance);
   }
 
   public static class Builder extends GlyphMetrics.Builder<SmallGlyphMetrics> {
@@ -79,43 +78,43 @@ public class SmallGlyphMetrics extends GlyphMetrics {
     }
 
     public int height() {
-      return this.internalReadData().readByte(Offset.height.offset);
+      return this.internalReadData().readByte(Offset.height);
     }
 
     public void setHeight(byte height) {
-      this.internalWriteData().writeByte(Offset.height.offset, height);
+      this.internalWriteData().writeByte(Offset.height, height);
     }
 
     public int width() {
-      return this.internalReadData().readByte(Offset.width.offset);
+      return this.internalReadData().readByte(Offset.width);
     }
 
     public void setWidth(byte width) {
-      this.internalWriteData().writeByte(Offset.width.offset, width);
+      this.internalWriteData().writeByte(Offset.width, width);
     }
 
     public int bearingX() {
-      return this.internalReadData().readChar(Offset.BearingX.offset);
+      return this.internalReadData().readChar(Offset.BearingX);
     }
 
     public void setBearingX(byte bearing) {
-      this.internalWriteData().writeChar(Offset.BearingX.offset, bearing);
+      this.internalWriteData().writeChar(Offset.BearingX, bearing);
     }
 
     public int bearingY() {
-      return this.internalReadData().readChar(Offset.BearingY.offset);
+      return this.internalReadData().readChar(Offset.BearingY);
     }
 
     public void setBearingY(byte bearing) {
-      this.internalWriteData().writeChar(Offset.BearingY.offset, bearing);
+      this.internalWriteData().writeChar(Offset.BearingY, bearing);
     }
 
     public int advance() {
-      return this.internalReadData().readByte(Offset.Advance.offset);
+      return this.internalReadData().readByte(Offset.Advance);
     }
 
     public void setAdvance(byte advance) {
-      this.internalWriteData().writeByte(Offset.Advance.offset, advance);
+      this.internalWriteData().writeByte(Offset.Advance, advance);
     }
 
     @Override
