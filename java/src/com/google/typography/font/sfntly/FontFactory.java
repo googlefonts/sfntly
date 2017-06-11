@@ -46,28 +46,20 @@ public final class FontFactory {
   // font serialization settings
   List<Integer> tableOrdering;
 
-  /**
-   * Offsets to specific elements in the underlying data. These offsets are relative to the
-   * start of the table or the start of sub-blocks within the table.
-   */
-  private enum Offset {
-    // Offsets within the main directory
-    TTCTag(0),
-    Version(4),
-    numFonts(8),
-    OffsetTable(12),
+  // Offsets within the main directory
+  private interface Offset {
+    int TTCTag = 0;
+    int Version = 4;
+    int numFonts = 8;
+    int OffsetTable = 12;
+  }
 
-    // TTC Version 2.0 extensions
-    // offsets from end of OffsetTable
-    ulDsigTag(0),
-    ulDsigLength(4),
-    ulDsigOffset(8);
-
-    private final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
+  // TTC Version 2.0 extensions
+  // offsets from end of OffsetTable
+  private interface DsigOffset {
+    int ulDsigTag = 0;
+    int ulDsigLength = 4;
+    int ulDsigOffset = 8;
   }
 
   /**
@@ -266,12 +258,12 @@ public final class FontFactory {
   }
 
   private Font.Builder[] loadCollectionForBuilding(WritableFontData wfd) throws IOException {
-    int ttcTag = wfd.readULongAsInt(Offset.TTCTag.offset);
-    long version = wfd.readFixed(Offset.Version.offset);
-    int numFonts = wfd.readULongAsInt(Offset.numFonts.offset);
+    int ttcTag = wfd.readULongAsInt(Offset.TTCTag);
+    long version = wfd.readFixed(Offset.Version);
+    int numFonts = wfd.readULongAsInt(Offset.numFonts);
 
     Font.Builder[] builders = new Font.Builder[numFonts];
-    int offsetTableOffset = Offset.OffsetTable.offset;
+    int offsetTableOffset = Offset.OffsetTable;
     for (int fontNumber = 0; fontNumber < numFonts; fontNumber++,
         offsetTableOffset += FontData.SizeOf.ULONG) {
       int offset = wfd.readULongAsInt(offsetTableOffset);
