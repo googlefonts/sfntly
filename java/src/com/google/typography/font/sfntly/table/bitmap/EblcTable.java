@@ -84,12 +84,7 @@ public class EblcTable extends SubTableContainerTable {
     indexSubTable5_numGlyphs(indexSubTable5_bigGlyphMetrics.offset
         + BitmapGlyph.Offset.bigGlyphMetricsLength.offset),
     indexSubTable5_glyphArray(indexSubTable5_numGlyphs.offset + FontData.SizeOf.ULONG),
-    indexSubTable5_builderDataSize(indexSubTable5_glyphArray.offset),
-
-    // codeOffsetPair
-    codeOffsetPairLength(2 * FontData.SizeOf.USHORT),
-    codeOffsetPair_glyphCode(0),
-    codeOffsetPair_offset(FontData.SizeOf.USHORT);
+    indexSubTable5_builderDataSize(indexSubTable5_glyphArray.offset);
 
     final int offset;
 
