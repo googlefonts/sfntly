@@ -145,12 +145,10 @@ public final class CompositeGlyph extends Glyph {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder(super.toString());
-    sb.append("\ncontourOffset.length = ");
-    sb.append(this.contourIndex.size());
-    sb.append("\ninstructionSize = ");
-    sb.append(this.instructionSize);
-    sb.append("\n\tcontour index = [");
+    StringBuilder sb = new StringBuilder();
+    sb.append(String.format("%s\ncontourOffset.length = %d\ninstructionSize = %d\n",
+        super.toString(), this.contourIndex.size(), this.instructionSize));
+    sb.append("\tcontour index = [");
     for (int contour = 0; contour < this.contourIndex.size(); contour++) {
       if (contour != 0) {
         sb.append(", ");
@@ -159,8 +157,8 @@ public final class CompositeGlyph extends Glyph {
     }
     sb.append("]\n");
     for (int contour = 0; contour < this.contourIndex.size(); contour++) {
-      sb.append("\t" + contour + " = [gid = " + this.glyphIndex(contour) + ", arg1 = "
-          + this.argument1(contour) + ", arg2 = " + this.argument2(contour) + "]\n");
+      sb.append(String.format("\t%d = [gid = %d, arg1 = %d, arg2 = %d]\n",
+          contour, this.glyphIndex(contour), this.argument1(contour), this.argument2(contour)));
     }
     return sb.toString();
   }
