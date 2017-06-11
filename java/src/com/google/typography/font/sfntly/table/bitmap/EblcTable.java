@@ -50,10 +50,6 @@ public class EblcTable extends SubTableContainerTable {
   }
 
   enum Offset {
-    // indexSubTable1
-    indexSubTable1_offsetArray(HeaderOffsets.SIZE),
-    indexSubTable1_builderDataSize(HeaderOffsets.SIZE),
-
     // indexSubTable2
     indexSubTable2Length(HeaderOffsets.SIZE + FontData.SizeOf.ULONG
         + BitmapGlyph.Offset.bigGlyphMetricsLength.offset),
