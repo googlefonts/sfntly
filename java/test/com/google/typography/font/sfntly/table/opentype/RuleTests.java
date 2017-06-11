@@ -8,6 +8,7 @@ import com.google.typography.font.sfntly.table.opentype.component.GlyphGroup;
 import com.google.typography.font.sfntly.table.opentype.component.Rule;
 import com.google.typography.font.sfntly.table.opentype.testing.FontLoader;
 
+import org.junit.Assume;
 import org.junit.Test;
 
 import java.io.File;
@@ -32,10 +33,11 @@ public class RuleTests {
       "/usr/local/google/home/cibu/sfntly/adv_layout/data/testdata/wiki_words_hb_closure";
   private static final int TEST_COUNT = 4000;
   private static final String DEBUG_SPECIFIC_FONT = "";
-  private static final Map<String, List<String>> LANG_WORDS_MAP = langWordsMap();
 
   @Test
   public void allFonts() throws IOException {
+    Map<String, List<String>> langWordsMap = langWordsMap();
+
     List<File> fontFiles = FontLoader.getFontFiles(FONTS_DIR);
     for (File fontFile : fontFiles) {
       Font font = FontLoader.getFont(fontFile);
@@ -69,14 +71,18 @@ public class RuleTests {
           continue; // for .svn
         }
         List<GlyphGroup> hbClosure = hbClosure(hbOutFile);
-        assertClosure(cmapTable, glyphRulesMap, LANG_WORDS_MAP.get(lang), hbClosure);
+        assertClosure(cmapTable, glyphRulesMap, langWordsMap.get(lang), hbClosure);
       }
     }
   }
 
   @Test
   public void aFont() throws IOException {
-    Font font = FontLoader.getFont(new File("/usr/local/google/home/cibu/sfntly/fonts/noto/NotoSansBengali-Regular.ttf"));
+    File fontFile = new File("/usr/local/google/home/cibu/sfntly/fonts/noto/" +
+        "NotoSansBengali-Regular.ttf");
+    Assume.assumeTrue(fontFile.exists());
+
+    Font font = FontLoader.getFont(fontFile);
     CMapTable cmap = font.getTable(Tag.cmap);
     PostScriptTable post = font.getTable(Tag.post);
     Map<Integer, Set<Rule>> glyphRulesMap = Rule.glyphRulesMap(font);
@@ -106,6 +112,8 @@ public class RuleTests {
   }
 
   private static Map<String, List<String>> langWordsMap() {
+    Assume.assumeTrue(new File(WORDS_DIR).exists());
+
     Map<String, List<String>> langWordsMap = new HashMap<String, List<String>>();
     for (File wordsFile : new File(WORDS_DIR).listFiles()) {
       String lang = wordsFile.getName();
