@@ -4,6 +4,7 @@ import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.core.NameTable;
+import com.google.typography.font.sfntly.table.opentype.GSubTable;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 
@@ -30,13 +31,7 @@ class FontNode extends AbstractNode {
     List<AbstractNode> tableNodes = new ArrayList<AbstractNode>();
     for (Iterator<? extends Table> it = font.iterator(); it.hasNext(); ) {
       Table table = it.next();
-      if (table instanceof LocaTable) {
-        tableNodes.add(new LocaTableNode((LocaTable) table, Tag.stringValue(table.headerTag())));
-      } else if (table instanceof GlyphTable) {
-        tableNodes.add(new GlyfTableNode((GlyphTable) table, (LocaTable) font.getTable(Tag.loca)));
-      } else {
-        tableNodes.add(new SubTableNode(table, Tag.stringValue(table.headerTag())));
-      }
+      tableNodes.add(nodeFor(font, table));
     }
     Collections.sort(tableNodes, new Comparator<AbstractNode>() {
       @Override
@@ -45,6 +40,19 @@ class FontNode extends AbstractNode {
       }
     });
     return tableNodes;
+  }
+
+  private static AbstractNode nodeFor(Font font, Table table) {
+    int tag = table.headerTag();
+    if (tag == Tag.loca) {
+      return new LocaTableNode((LocaTable) table, Tag.stringValue(table.headerTag()));
+    } else if (tag == Tag.glyf) {
+      return new GlyfTableNode((GlyphTable) table, (LocaTable) font.getTable(Tag.loca));
+    } else if (tag == Tag.GSUB) {
+      return new GsubTableNode((GSubTable) table);
+    } else {
+      return new SubTableNode(table, Tag.stringValue(table.headerTag()));
+    }
   }
 
   @Override
