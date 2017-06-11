@@ -309,7 +309,7 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
       if (this.offsetPairArray == null) {
         return this.internalReadData().length();
       }
-      return Offset.indexSubHeaderLength.offset + FontData.DataSize.ULONG.size()
+      return Offset.indexSubHeaderLength.offset + FontData.SizeOf.ULONG
           + this.offsetPairArray.size() * Offset.indexSubTable4_codeOffsetPairLength.offset;
     }
 

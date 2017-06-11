@@ -55,10 +55,8 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
   }
 
   private int loca(int loca) {
-    int readLocation =
-        Offset.indexSubTable3_offsetArray.offset + loca * FontData.DataSize.USHORT.size();
-    int readOffset = this.data.readUShort(
-        Offset.indexSubTable3_offsetArray.offset + loca * FontData.DataSize.USHORT.size());
+    int readLocation = Offset.indexSubTable3_offsetArray.offset + loca * FontData.SizeOf.USHORT;
+    int readOffset = this.data.readUShort(readLocation);
     return readOffset;
   }
   
@@ -84,7 +82,7 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
     private static int dataLength(
         ReadableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
       return Offset.indexSubHeaderLength.offset + (lastGlyphIndex - firstGlyphIndex + 1 + 1)
-          * FontData.DataSize.USHORT.size();
+          * FontData.SizeOf.USHORT;
     }
       
     private Builder() {
@@ -141,8 +139,7 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
         int numOffsets = (this.lastGlyphIndex() - this.firstGlyphIndex() + 1) + 1;
         for (int i = 0; i < numOffsets; i++) {
           this.offsetArray.add(data.readUShort(
-Offset.indexSubTable3_offsetArray.offset + i
-              * FontData.DataSize.USHORT.size()));
+              Offset.indexSubTable3_offsetArray.offset + i * FontData.SizeOf.USHORT));
         }
       }
     }
@@ -210,8 +207,7 @@ Offset.indexSubTable3_offsetArray.offset + i
       if (this.offsetArray == null) {
         return this.internalReadData().length();
       }
-      return Offset.indexSubHeaderLength.offset + this.offsetArray.size()
-          * FontData.DataSize.ULONG.size();
+      return Offset.indexSubHeaderLength.offset + this.offsetArray.size() * FontData.SizeOf.ULONG;
     }
 
     @Override

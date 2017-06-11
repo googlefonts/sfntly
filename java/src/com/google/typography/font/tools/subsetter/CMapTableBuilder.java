@@ -134,7 +134,7 @@ public class CMapTableBuilder {
       if (segment.isContiguous()) {
         idRangeOffset = 0;
       } else {
-        idRangeOffset = (idOffset - i) * FontData.DataSize.USHORT.size();
+        idRangeOffset = (idOffset - i) * FontData.SizeOf.USHORT;
         glyphIdArray.addAll(segment.getGlyphIds());
         idOffset += segment.getGlyphIds().size();
       }

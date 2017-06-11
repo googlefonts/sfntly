@@ -38,7 +38,7 @@ public final class CMapFormat6 extends CMap {
       return CMapTable.NOTDEF;
     }
     return this.data.readUShort(
-        Header.glyphIdArray + (character - this.firstCode) * FontData.DataSize.USHORT.size());
+        Header.glyphIdArray + (character - this.firstCode) * FontData.SizeOf.USHORT);
   }
 
   @Override

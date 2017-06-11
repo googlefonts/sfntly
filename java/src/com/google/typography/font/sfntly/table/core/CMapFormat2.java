@@ -36,7 +36,7 @@ public final class CMapFormat2 extends CMap {
 
   private int subHeaderOffset(int subHeaderIndex) {
     return this.data.readUShort(
-        Header.subHeaderKeys + subHeaderIndex * FontData.DataSize.USHORT.size());
+        Header.subHeaderKeys + subHeaderIndex * FontData.SizeOf.USHORT);
   }
 
   private int firstCode(int subHeaderIndex) {
@@ -106,7 +106,7 @@ public final class CMapFormat2 extends CMap {
     // position of idRangeOffset + value of idRangeOffset + index for low byte
     // = firstcode
     int pLocation = (offset + SubHeader.idRangeOffset) + idRangeOffset
-        + (lowByte - firstCode) * FontData.DataSize.USHORT.size();
+        + (lowByte - firstCode) * FontData.SizeOf.USHORT;
     int p = this.data.readUShort(pLocation);
     if (p == 0) {
       return CMapTable.NOTDEF;

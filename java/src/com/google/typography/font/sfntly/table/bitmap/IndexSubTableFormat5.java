@@ -65,7 +65,7 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
     this.checkGlyphRange(glyphId);
     int loca =
         this.readFontData().searchUShort(Offset.indexSubTable5_glyphArray.offset,
-            FontData.DataSize.USHORT.size(), this.numGlyphs(), glyphId);
+            FontData.SizeOf.USHORT, this.numGlyphs(), glyphId);
     if (loca == -1) {
       return loca;
     }
@@ -101,7 +101,7 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
     private static int dataLength(
         ReadableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
       int numGlyphs = IndexSubTableFormat5.numGlyphs(data, indexSubTableOffset);
-      return Offset.indexSubTable5_glyphArray.offset + numGlyphs * FontData.DataSize.USHORT.size();
+      return Offset.indexSubTable5_glyphArray.offset + numGlyphs * FontData.SizeOf.USHORT;
     }
 
     private Builder() {
@@ -180,7 +180,7 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
         int numGlyphs = IndexSubTableFormat5.numGlyphs(data, 0);
         for (int i = 0; i < numGlyphs; i++) {
           this.glyphArray.add(data.readUShort(
-              Offset.indexSubTable5_glyphArray.offset + i * FontData.DataSize.USHORT.size()));
+              Offset.indexSubTable5_glyphArray.offset + i * FontData.SizeOf.USHORT));
         }
       }
     }
@@ -249,7 +249,7 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
         return this.internalReadData().length();
       }
       return Offset.indexSubTable5_builderDataSize.offset + this.glyphArray.size()
-          * FontData.DataSize.USHORT.size();
+          * FontData.SizeOf.USHORT;
     }
 
     @Override

@@ -112,9 +112,9 @@ public final class LocaTable extends Table {
       throw new IndexOutOfBoundsException("Glyph ID is out of bounds.");
     }
     if (this.version == IndexToLocFormat.shortOffset) {
-      return 2 * this.data.readUShort(index * FontData.DataSize.USHORT.size());
+      return 2 * this.data.readUShort(index * FontData.SizeOf.USHORT);
     }
-    return this.data.readULongAsInt(index * FontData.DataSize.ULONG.size());
+    return this.data.readULongAsInt(index * FontData.SizeOf.ULONG);
   }
 
   /**
@@ -406,9 +406,9 @@ public final class LocaTable extends Table {
         return 0;
       }
       if (this.formatVersion == IndexToLocFormat.longOffset) {
-        return this.loca.size() * FontData.DataSize.ULONG.size();
+        return this.loca.size() * FontData.SizeOf.ULONG;
       }
-      return this.loca.size() * FontData.DataSize.USHORT.size();
+      return this.loca.size() * FontData.SizeOf.USHORT;
     }
 
     @Override

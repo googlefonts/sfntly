@@ -56,7 +56,7 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
 
   private int loca(int loca) {
     return this.imageDataOffset() + this.data.readULongAsInt(
-        Offset.indexSubTable1_offsetArray.offset + loca * FontData.DataSize.ULONG.size());    
+        Offset.indexSubTable1_offsetArray.offset + loca * FontData.SizeOf.ULONG);
   }
 
   public static final class Builder extends IndexSubTable.Builder<IndexSubTableFormat1> {
@@ -81,7 +81,7 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
     private static int dataLength(
         ReadableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
       return Offset.indexSubHeaderLength.offset + (lastGlyphIndex - firstGlyphIndex + 1 + 1)
-          * FontData.DataSize.ULONG.size();
+          * FontData.SizeOf.ULONG;
     }
 
     private Builder() {
@@ -138,7 +138,7 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
         int numOffsets = (this.lastGlyphIndex() - this.firstGlyphIndex() + 1) + 1;
         for (int i = 0; i < numOffsets; i++) {
           this.offsetArray.add(data.readULongAsInt(
-              Offset.indexSubTable1_offsetArray.offset + i * FontData.DataSize.ULONG.size()));
+              Offset.indexSubTable1_offsetArray.offset + i * FontData.SizeOf.ULONG));
         }
       }
     }
@@ -206,8 +206,7 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
       if (this.offsetArray == null) {
         return this.internalReadData().length();
       }
-      return Offset.indexSubHeaderLength.offset + this.offsetArray.size()
-          * FontData.DataSize.ULONG.size();
+      return Offset.indexSubHeaderLength.offset + this.offsetArray.size() * FontData.SizeOf.ULONG;
     }
 
     @Override

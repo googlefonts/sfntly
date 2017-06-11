@@ -32,8 +32,8 @@ public class EbscTable extends Table {
   enum Offset {
     // header
     version(0),
-    numSizes(FontData.DataSize.Fixed.size()),
-    headerLength(numSizes.offset + FontData.DataSize.ULONG.size()),
+    numSizes(FontData.SizeOf.Fixed),
+    headerLength(numSizes.offset + FontData.SizeOf.ULONG),
     bitmapScaleTableStart(headerLength.offset),
 
     // bitmapScaleTable
@@ -41,11 +41,11 @@ public class EbscTable extends Table {
     bitmapScaleTable_vert(EblcTable.Offset.sbitLineMetricsLength.offset),
     bitmapScaleTable_ppemX(bitmapScaleTable_vert.offset
         + EblcTable.Offset.sbitLineMetricsLength.offset),
-    bitmapScaleTable_ppemY(bitmapScaleTable_ppemX.offset + FontData.DataSize.BYTE.size()),
-    bitmapScaleTable_substitutePpemX(bitmapScaleTable_ppemY.offset + FontData.DataSize.BYTE.size()),
+    bitmapScaleTable_ppemY(bitmapScaleTable_ppemX.offset + FontData.SizeOf.BYTE),
+    bitmapScaleTable_substitutePpemX(bitmapScaleTable_ppemY.offset + FontData.SizeOf.BYTE),
     bitmapScaleTable_substitutePpemY(bitmapScaleTable_substitutePpemX.offset
-        + FontData.DataSize.BYTE.size()),
-    bitmapScaleTableLength(bitmapScaleTable_substitutePpemY.offset + FontData.DataSize.BYTE.size());
+        + FontData.SizeOf.BYTE),
+    bitmapScaleTableLength(bitmapScaleTable_substitutePpemY.offset + FontData.SizeOf.BYTE);
 
     final int offset;
 

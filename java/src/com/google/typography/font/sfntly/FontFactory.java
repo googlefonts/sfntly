@@ -273,7 +273,7 @@ public final class FontFactory {
     Font.Builder[] builders = new Font.Builder[numFonts];
     int offsetTableOffset = Offset.OffsetTable.offset;
     for (int fontNumber = 0; fontNumber < numFonts; fontNumber++,
-        offsetTableOffset += FontData.DataSize.ULONG.size()) {
+        offsetTableOffset += FontData.SizeOf.ULONG) {
       int offset = wfd.readULongAsInt(offsetTableOffset);
       builders[fontNumber] = this.loadSingleOTFForBuilding(wfd, offset);
     }
