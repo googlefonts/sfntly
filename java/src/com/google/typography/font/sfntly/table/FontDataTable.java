@@ -107,8 +107,7 @@ public abstract class FontDataTable {
      * Gets a snapshot copy of the internal data of the builder.
      *
      *  This causes any internal data structures to be serialized to a new data
-     * object. This data object belongs to the caller and must be properly
-     * disposed of. No changes are made to the builder and any changes to the
+     * object. No changes are made to the builder and any changes to the
      * data directly do not affect the internal state. To do that a subsequent
      * call must be made to {@link #setData(WritableFontData)}.
      *
