@@ -28,7 +28,7 @@ public abstract class Glyph extends SubTable {
       this.numberOfContours = 0;
     } else {
       // -1 if composite
-      this.numberOfContours = this.data.readShort(Offset.numberOfContours.offset);
+      this.numberOfContours = this.data.readShort(Offset.numberOfContours);
     }
   }
 
@@ -40,7 +40,7 @@ public abstract class Glyph extends SubTable {
       this.numberOfContours = 0;
     } else {
       // -1 if composite
-      this.numberOfContours = this.data.readShort(Offset.numberOfContours.offset);
+      this.numberOfContours = this.data.readShort(Offset.numberOfContours);
     }
   }
 
@@ -104,19 +104,19 @@ public abstract class Glyph extends SubTable {
   }
 
   public int xMin() {
-    return this.data.readShort(Offset.xMin.offset);
+    return this.data.readShort(Offset.xMin);
   }
 
   public int xMax() {
-    return this.data.readShort(Offset.xMax.offset);
+    return this.data.readShort(Offset.xMax);
   }
 
   public int yMin() {
-    return this.data.readShort(Offset.yMin.offset);
+    return this.data.readShort(Offset.yMin);
   }
 
   public int yMax() {
-    return this.data.readShort(Offset.yMax.offset);
+    return this.data.readShort(Offset.yMax);
   }
 
   public abstract int instructionSize();
