@@ -17,11 +17,11 @@
 package com.google.typography.font.sfntly.table.bitmap;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
+import com.google.typography.font.sfntly.data.SfObjects;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
 /**
  * @author Stuart Gill
- *
  */
 public class CompositeBitmapGlyph extends BitmapGlyph {
 
@@ -50,10 +50,7 @@ public class CompositeBitmapGlyph extends BitmapGlyph {
 
     @Override
     public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + glyphCode;
-      return result;
+      return SfObjects.hash(glyphCode);
     }
 
     @Override
@@ -68,10 +65,7 @@ public class CompositeBitmapGlyph extends BitmapGlyph {
         return false;
       }
       Component other = (Component) obj;
-      if (glyphCode != other.glyphCode) {
-        return false;
-      }
-      return true;
+      return glyphCode == other.glyphCode;
     }
   }
   
