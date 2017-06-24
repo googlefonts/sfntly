@@ -16,6 +16,8 @@
 
 package com.google.typography.font.sfntly.table.bitmap;
 
+import com.google.typography.font.sfntly.data.SfObjects;
+
 import java.util.Comparator;
 
 /**
@@ -98,14 +100,7 @@ public final class BitmapGlyphInfo {
   
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + blockOffset;
-    result = prime * result + format;
-    result = prime * result + glyphId;
-    result = prime * result + length;
-    result = prime * result + startOffset;
-    return result;
+    return SfObjects.hash(blockOffset, format, glyphId, length, startOffset);
   }
 
   @Override
@@ -113,26 +108,14 @@ public final class BitmapGlyphInfo {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
     if (!(obj instanceof BitmapGlyphInfo)) {
       return false;
     }
     BitmapGlyphInfo other = (BitmapGlyphInfo) obj;
-    if (this.format != other.format) {
-      return false;
-    }
-    if (this.glyphId != other.glyphId) {
-      return false;
-    }
-    if (this.length != other.length) {
-      return false;
-    }
-    if (this.offset() != other.offset()) {
-      return false;
-    }
-    return true;
+    return this.format == other.format
+        && this.glyphId == other.glyphId
+        && this.length == other.length
+        && this.offset() == other.offset();
   }
 
   public static final Comparator<BitmapGlyphInfo> StartOffsetComparator =

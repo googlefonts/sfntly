@@ -97,11 +97,9 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
       if (!(obj instanceof CMapId)) {
         return false;
       }
-      CMapId otherKey = (CMapId) obj;
-      if ((otherKey.platformId == this.platformId) && (otherKey.encodingId == this.encodingId)) {
-        return true;
-      }
-      return false;
+      CMapId other = (CMapId) obj;
+      return this.platformId == other.platformId
+          && this.encodingId == other.encodingId;
     }
 
     @Override

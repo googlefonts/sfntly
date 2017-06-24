@@ -21,6 +21,7 @@ import com.google.typography.font.sfntly.Font.PlatformId;
 import com.google.typography.font.sfntly.Font.UnicodeEncodingId;
 import com.google.typography.font.sfntly.Font.WindowsEncodingId;
 import com.google.typography.font.sfntly.data.ReadableFontData;
+import com.google.typography.font.sfntly.data.SfObjects;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.SubTableContainerTable;
@@ -808,8 +809,10 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
         return false;
       }
       NameEntryId other = (NameEntryId) obj;
-      return (this.encodingId == other.encodingId) && (this.languageId == other.languageId)
-          && (this.platformId == other.platformId) && (this.nameId == other.nameId);
+      return this.encodingId == other.encodingId
+          && this.languageId == other.languageId
+          && this.platformId == other.platformId
+          && this.nameId == other.nameId;
     }
 
     @Override
@@ -943,29 +946,13 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
         return false;
       }
       NameEntry other = (NameEntry) obj;
-      if (!this.nameEntryId.equals(other.nameEntryId)) {
-        return false;
-      }
-      if (this.nameBytes.length != other.nameBytes.length) {
-        return false;
-      }
-      for (int i = 0; i < this.nameBytes.length; i++) {
-        if (this.nameBytes[i] != other.nameBytes[i]) {
-          return false;
-        }
-      }
-      return true;
+      return SfObjects.equals(this.nameEntryId, other.nameEntryId)
+          && Arrays.equals(this.nameBytes, other.nameBytes);
     }
 
     @Override
     public int hashCode() {
-      int hash = this.nameEntryId.hashCode();
-      for (int i = 0; i < this.nameBytes.length; i+=4) {
-        for (int j = 0; j < 4 && j + i < this.nameBytes.length; j++) {
-          hash |= this.nameBytes[j] << j * 8;
-        }
-      }
-      return hash;
+      return SfObjects.hash(this.nameEntryId, Arrays.hashCode(this.nameBytes));
     }
   }
 
