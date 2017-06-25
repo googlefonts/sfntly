@@ -1,0 +1,22 @@
+package com.google.typography.font.tools.fontviewer;
+
+import javax.swing.table.AbstractTableModel;
+
+abstract class ColumnTableModel extends AbstractTableModel {
+
+  private final String[] columnNames;
+
+  ColumnTableModel(String... columnNames) {
+    this.columnNames = columnNames;
+  }
+
+  @Override
+  public int getColumnCount() {
+    return this.columnNames.length;
+  }
+
+  @Override
+  public String getColumnName(int column) {
+    return this.columnNames[column];
+  }
+}

@@ -4,7 +4,6 @@ import com.google.typography.font.sfntly.table.truetype.LocaTable;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
 
 class LocaTableNode extends AbstractNode {
 
@@ -22,30 +21,22 @@ class LocaTableNode extends AbstractNode {
 
   @Override
   public JComponent render() {
-    JTable table = new JTable(new LocaTableModel());
+    JTable table = new JTable(new Model());
     JTableUtils.setNumberColumn(table, 0);
     JTableUtils.setNumberColumn(table, 1);
     JTableUtils.setNumberColumn(table, 2);
     return table;
   }
 
-  private class LocaTableModel extends AbstractTableModel {
+  private class Model extends ColumnTableModel {
 
-    private final String[] columnNames = { "ID", "Glyph offset", "Glyph length" };
-
-    @Override
-    public String getColumnName(int column) {
-      return this.columnNames[column];
+    Model() {
+      super("ID", "Glyph offset", "Glyph length");
     }
 
     @Override
     public int getRowCount() {
       return LocaTableNode.this.loca.numGlyphs();
-    }
-
-    @Override
-    public int getColumnCount() {
-      return 3;
     }
 
     @Override
