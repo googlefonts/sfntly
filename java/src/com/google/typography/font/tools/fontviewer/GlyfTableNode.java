@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
 
 class GlyfTableNode extends AbstractNode {
 
@@ -45,30 +44,22 @@ class GlyfTableNode extends AbstractNode {
 
   @Override
   JComponent render() {
-    JTable table = new JTable(new GlyfTableModel());
+    JTable table = new JTable(new Model());
     JTableUtils.setNumberColumn(table, 0);
     JTableUtils.setNumberColumn(table, 1);
     JTableUtils.setNumberColumn(table, 2);
     return table;
   }
 
-  private class GlyfTableModel extends AbstractTableModel {
+  private class Model extends ColumnTableModel {
 
-    private final String[] columnNames = { "Glyph ID", "Offset", "Length", "Glyph data" };
-
-    @Override
-    public String getColumnName(int column) {
-      return this.columnNames[column];
+    Model() {
+      super("Glyph ID", "Offset", "Length", "Glyph data");
     }
 
     @Override
     public int getRowCount() {
       return GlyfTableNode.this.loca.numGlyphs();
-    }
-
-    @Override
-    public int getColumnCount() {
-      return 4;
     }
 
     @Override

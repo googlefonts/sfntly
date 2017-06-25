@@ -15,7 +15,7 @@ public class GsubTableNode extends AbstractNode {
 
   public GsubTableNode(GSubTable gsub) {
     this.gsub = gsub;
-    this.children.add(new SubTableNode(gsub.scriptList(), "script"));
+    this.children.add(new ScriptListTableNode(gsub.scriptList()));
     this.children.add(new SubTableNode(gsub.featureList(), "feature"));
     this.children.add(new SubTableNode(gsub.lookupList(), "lookup"));
   }
