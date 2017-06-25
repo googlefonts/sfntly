@@ -7,6 +7,7 @@ abstract class ColumnTableModel extends AbstractTableModel {
   private final String[] columnNames;
 
   ColumnTableModel(String... columnNames) {
+    assert columnNames.length > 0;
     this.columnNames = columnNames;
   }
 
