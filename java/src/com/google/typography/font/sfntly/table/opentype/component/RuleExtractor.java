@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-class RuleExtractor {
+public class RuleExtractor {
   private static Set<Rule> extract(LigatureSubst table) {
     Set<Rule> allRules = new LinkedHashSet<Rule>();
     List<Integer> prefixChars = extract(table.coverage());
@@ -501,7 +501,7 @@ class RuleExtractor {
     return result;
   }
 
-  static Map<Integer, Set<Rule>> extract(LookupListTable table) {
+  public static Map<Integer, Set<Rule>> extract(LookupListTable table) {
     Map<Integer, Set<Rule>> allRules = new TreeMap<Integer, Set<Rule>>();
     for (int i = 0; i < table.subTableCount(); i++) {
       extract(table, allRules, i);
