@@ -3,13 +3,18 @@ package com.google.typography.font.tools.fontviewer;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Polygon;
+import java.awt.RenderingHints;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
 public class GlyphNode extends AbstractNode {
@@ -23,70 +28,94 @@ public class GlyphNode extends AbstractNode {
 
   @Override
   protected String getNodeName() {
-    return String.valueOf(glyphId);
+    return String.valueOf(this.glyphId);
   }
 
   @Override
   JComponent render() {
-    if (glyph instanceof SimpleGlyph) {
+    if (this.glyph instanceof SimpleGlyph) {
       GlyphRenderer renderer = new GlyphRenderer();
-      JTextArea text = new JTextArea(glyph.toString());
-      JPanel panel = new JPanel();
-      panel.setLayout(new BorderLayout());
-      panel.add(renderer, BorderLayout.NORTH);
-      panel.add(text, BorderLayout.CENTER);
-      return panel;
+      JComponent text = new JScrollPane(new JTextArea(this.glyph.toString()));
+      text.setPreferredSize(new Dimension(500, 200));
+      final JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, renderer, text);
+      pane.addPropertyChangeListener(
+          JSplitPane.DIVIDER_LOCATION_PROPERTY,
+          new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+              AppState.glyphRendererHeight = (Integer) evt.getNewValue() - pane.getInsets().top;
+            }
+          });
+      pane.setPreferredSize(new Dimension(500, 500));
+      return pane;
     } else {
-      return new JTextArea(glyph.toString());
+      return new JTextArea(this.glyph.toString());
     }
+  }
+
+  @Override
+  boolean renderInScrollPane() {
+    return !(this.glyph instanceof SimpleGlyph);
   }
 
   private class GlyphRenderer extends JComponent {
 
     private static final int MARGIN = 10;
-    private static final int SIZE = 100;
+
+    private final int minX = GlyphNode.this.glyph.xMin();
+    private final int minY = GlyphNode.this.glyph.yMin();
+    private final int maxX = GlyphNode.this.glyph.xMax();
+    private final int maxY = GlyphNode.this.glyph.yMax();
+
+    private double scale;
+
+    private void updateScale() {
+      int size = Math.min(this.getWidth(), this.getHeight()) - MARGIN - MARGIN;
+      this.scale = (double) size / Math.max(this.maxX - this.minX, this.maxY - this.minY);
+    }
 
     @Override
     public Dimension getPreferredSize() {
-      return new Dimension(MARGIN + SIZE + MARGIN, MARGIN + SIZE + MARGIN);
+      return new Dimension(500, AppState.glyphRendererHeight);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
       super.paintComponent(g);
 
-      int minX = glyph.xMin(), minY = glyph.yMin();
-      int maxX = glyph.xMax(), maxY = glyph.yMax();
+      ((Graphics2D) g).setRenderingHint(
+          RenderingHints.KEY_ANTIALIASING,
+          RenderingHints.VALUE_ANTIALIAS_ON);
 
-      double scale = (double) SIZE / Math.max(maxX - minX, maxY - minY);
+      updateScale();
 
       SimpleGlyph glyph = (SimpleGlyph) GlyphNode.this.glyph;
-      int firstScreenX = 0, firstScreenY = 0;
-      int lastScreenX = 0, lastScreenY = 0;
       for (int c = 0, cmax = glyph.numberOfContours(); c < cmax; c++) {
+        Polygon polygon = new Polygon();
+        for (int p = 0, pmax = glyph.numberOfPoints(c); p < pmax; p++) {
+          int x = glyph.xCoordinate(c, p);
+          int y = glyph.yCoordinate(c, p);
+          polygon.addPoint(screenX(x), screenY(y));
+        }
+        g.setColor(Color.BLUE);
+        g.drawPolygon(polygon);
+
         for (int p = 0, pmax = glyph.numberOfPoints(c); p < pmax; p++) {
           int x = glyph.xCoordinate(c, p);
           int y = glyph.yCoordinate(c, p);
           boolean on = glyph.onCurve(c, p);
-          int screenX = MARGIN + (int) (scale * (x - minX));
-          int screenY = MARGIN + SIZE - (int) (scale * (y - minY));
           g.setColor(on ? Color.BLACK : Color.GREEN);
-          g.drawOval(screenX - 2, screenY - 2, 4, 4);
-          if (p != 0) {
-            g.setColor(Color.BLUE);
-            g.drawLine(lastScreenX, lastScreenY, screenX, screenY);
-          } else {
-            firstScreenX = screenX;
-            firstScreenY = screenY;
-          }
-          if (p == pmax - 1) {
-            g.setColor(Color.BLUE);
-            g.drawLine(screenX, screenY, firstScreenX, firstScreenY);
-          }
-          lastScreenX = screenX;
-          lastScreenY = screenY;
+          g.drawOval(screenX(x) - 2, screenY(y) - 2, 4, 4);
         }
       }
+    }
+
+    private int screenX(int x) {
+      return MARGIN + (int) Math.round(this.scale * (x - this.minX));
+    }
+
+    private int screenY(int y) {
+      return MARGIN + (int) Math.round(this.scale * (this.maxY - y));
     }
   }
 }

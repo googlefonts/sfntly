@@ -36,7 +36,7 @@ class FontNode extends AbstractNode {
     Collections.sort(tableNodes, new Comparator<AbstractNode>() {
       @Override
       public int compare(AbstractNode o1, AbstractNode o2) {
-        return o1.getNodeName().compareTo(o2.getNodeName());
+        return o1.getNodeName().compareToIgnoreCase(o2.getNodeName());
       }
     });
     return tableNodes;

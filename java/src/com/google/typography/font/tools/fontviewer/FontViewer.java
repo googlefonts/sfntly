@@ -3,7 +3,6 @@ package com.google.typography.font.tools.fontviewer;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 
-import java.awt.Container;
 import java.awt.Dimension;
 import java.io.FileInputStream;
 
@@ -27,12 +26,13 @@ import javax.swing.tree.TreeModel;
 public class FontViewer {
 
   private final JFrame frame;
-  private final JScrollPane mainScrollPane;
+  private final JScrollPane contentScrollPane;
+  private JSplitPane framePane;
 
   FontViewer(Font font) {
     JScrollPane fontPane = createFontTree(font);
-    this.mainScrollPane = createMainPane();
-    this.frame = createFrame(fontPane, this.mainScrollPane);
+    this.contentScrollPane = createContentPane();
+    this.frame = createFrame(fontPane, this.contentScrollPane);
   }
 
   private JScrollPane createFontTree(Font font) {
@@ -51,7 +51,7 @@ public class FontViewer {
     return fontPane;
   }
 
-  private static JScrollPane createMainPane() {
+  private static JScrollPane createContentPane() {
     JScrollPane pane = new JScrollPane();
     pane.add(new JTextArea());
     pane.setPreferredSize(new Dimension(500, 500));
@@ -61,9 +61,8 @@ public class FontViewer {
   private JFrame createFrame(JScrollPane fontPane, JScrollPane mainPane) {
     JFrame frame = new JFrame("Font Viewer");
     frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-    Container content = frame.getContentPane();
-    JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, fontPane, mainPane);
-    content.add(pane);
+    this.framePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, fontPane, mainPane);
+    frame.getContentPane().add(this.framePane);
     frame.pack();
     frame.setLocationRelativeTo(null);
     return frame;
@@ -72,9 +71,14 @@ public class FontViewer {
   private void render(AbstractNode node) {
     JComponent mainComponent = node.render();
     mainComponent.setBorder(new EmptyBorder(3, 3, 3, 3));
-    this.mainScrollPane.setViewportView(mainComponent);
-    this.mainScrollPane.revalidate();
-    this.mainScrollPane.repaint();
+    if (node.renderInScrollPane()) {
+      this.contentScrollPane.setViewportView(mainComponent);
+      this.contentScrollPane.revalidate();
+      this.contentScrollPane.repaint();
+      this.framePane.setRightComponent(this.contentScrollPane);
+    } else {
+      this.framePane.setRightComponent(mainComponent);
+    }
   }
 
   public static void main(String[] args) throws Exception {

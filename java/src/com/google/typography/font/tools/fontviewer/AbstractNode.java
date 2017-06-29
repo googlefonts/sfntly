@@ -14,6 +14,10 @@ abstract class AbstractNode extends DefaultMutableTreeNode {
 
   abstract JComponent render();
 
+  boolean renderInScrollPane() {
+    return true;
+  }
+
   @Override
   public AbstractNode getChildAt(int index) {
     throw new UnsupportedOperationException();
