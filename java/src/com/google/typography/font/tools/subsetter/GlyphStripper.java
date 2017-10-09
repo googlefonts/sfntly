@@ -16,6 +16,7 @@
 
 package com.google.typography.font.tools.subsetter;
 
+import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
@@ -74,17 +75,17 @@ public class GlyphStripper {
         writeHeaderAndContoursSize(newGlyf, 0, originalGlyfData, 0, simpleGlyph);
     dataWritten += writeZeroInstructionLength(newGlyf, dataWritten);
     dataWritten +=
-        writeEndSimpleGlyph(newGlyf, dataWritten, originalGlyfData, dataWritten
-            + (simpleGlyph.instructionSize() * ReadableFontData.DataSize.BYTE.size()), size
-            - dataWritten);
+        writeEndSimpleGlyph(newGlyf, dataWritten, originalGlyfData,
+            dataWritten + (simpleGlyph.instructionSize() * FontData.SizeOf.BYTE),
+            size - dataWritten);
     return newGlyf;
   }
 
   private int writeHeaderAndContoursSize(WritableFontData newGlyf, int newGlyfOffset,
       ReadableFontData originalGlyfData, int glyphOffset, SimpleGlyph simpleGlyph) {
     int headerAndNumberOfContoursSize =
-        (ReadableFontData.DataSize.SHORT.size() * 5)
-            + (simpleGlyph.numberOfContours() * ReadableFontData.DataSize.USHORT.size());
+        (FontData.SizeOf.SHORT * 5)
+            + (simpleGlyph.numberOfContours() * FontData.SizeOf.USHORT);
     WritableFontData newGlyfSlice = newGlyf.slice(newGlyfOffset, headerAndNumberOfContoursSize);
 
     originalGlyfData.slice(glyphOffset, headerAndNumberOfContoursSize).copyTo(newGlyfSlice);
@@ -93,7 +94,7 @@ public class GlyphStripper {
 
   private int writeZeroInstructionLength(WritableFontData newGlyf, int offset) {
     newGlyf.writeUShort(offset, 0);
-    return ReadableFontData.DataSize.USHORT.size();
+    return FontData.SizeOf.USHORT;
   }
 
   private int writeEndSimpleGlyph(WritableFontData newGlyf, int newGlyfOffset,
@@ -119,24 +120,24 @@ public class GlyphStripper {
   }
 
   private void overrideCompositeGlyfFlags(WritableFontData slice, int dataLength) {
-    int index = 5 * ReadableFontData.DataSize.USHORT.size();
+    int index = 5 * FontData.SizeOf.USHORT;
     int flags = CompositeGlyph.FLAG_MORE_COMPONENTS;
     while ((flags & CompositeGlyph.FLAG_MORE_COMPONENTS) != 0) {
       flags = slice.readUShort(index);
       flags &= ~CompositeGlyph.FLAG_WE_HAVE_INSTRUCTIONS;
       slice.writeUShort(index, flags);
-      index += 2 * ReadableFontData.DataSize.USHORT.size();
+      index += 2 * FontData.SizeOf.USHORT;
       if ((flags & CompositeGlyph.FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
-        index += 2 * ReadableFontData.DataSize.SHORT.size();
+        index += 2 * FontData.SizeOf.SHORT;
       } else {
-        index += 2 * ReadableFontData.DataSize.BYTE.size();
+        index += 2 * FontData.SizeOf.BYTE;
       }
       if ((flags & CompositeGlyph.FLAG_WE_HAVE_A_SCALE) != 0) {
-        index += ReadableFontData.DataSize.F2DOT14.size();
+        index += FontData.SizeOf.F2DOT14;
       } else if ((flags & CompositeGlyph.FLAG_WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
-        index += 2 * ReadableFontData.DataSize.F2DOT14.size();
+        index += 2 * FontData.SizeOf.F2DOT14;
       } else if ((flags & CompositeGlyph.FLAG_WE_HAVE_A_TWO_BY_TWO) != 0) {
-        index += 4 * ReadableFontData.DataSize.F2DOT14.size();
+        index += 4 * FontData.SizeOf.F2DOT14;
       }
     }
   }
@@ -156,7 +157,7 @@ public class GlyphStripper {
   }
 
   private int computeInstructionsSize(SimpleGlyph simpleGlyph) {
-    return simpleGlyph.instructionSize() * ReadableFontData.DataSize.BYTE.size();
+    return simpleGlyph.instructionSize() * FontData.SizeOf.BYTE;
   }
 
   private int computeCompositeStrippedGlyphSize(Glyph glyph) {
@@ -166,8 +167,8 @@ public class GlyphStripper {
 
     if (instructionSize > 0) {
       return nonPaddedCompositeGlyphLength
-          - (instructionSize * ReadableFontData.DataSize.BYTE.size())
-          - ReadableFontData.DataSize.USHORT.size();
+          - (instructionSize * FontData.SizeOf.BYTE)
+          - FontData.SizeOf.USHORT;
     }
     return nonPaddedCompositeGlyphLength;
   }

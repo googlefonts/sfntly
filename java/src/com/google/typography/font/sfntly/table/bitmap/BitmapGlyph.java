@@ -27,53 +27,46 @@ import com.google.typography.font.sfntly.table.SubTable;
  */
 public abstract class BitmapGlyph extends SubTable {
 
-  protected enum Offset {
+  protected interface Offset {
     // header
-    version(0),
+    int version = 0;
 
-    smallGlyphMetricsLength(5),
-    bigGlyphMetricsLength(8),
+    int smallGlyphMetricsLength = 5;
+    int bigGlyphMetricsLength = 8;
+
     // format 1
-    glyphFormat1_imageData(smallGlyphMetricsLength.offset),
+    int glyphFormat1_imageData = smallGlyphMetricsLength;
 
     // format 2
-    glyphFormat2_imageData(smallGlyphMetricsLength.offset),
+    int glyphFormat2_imageData = smallGlyphMetricsLength;
 
     // format 3
 
     // format 4
 
     // format 5
-    glyphFormat5_imageData(0),
+    int glyphFormat5_imageData = 0;
 
     // format 6
-    glyphFormat6_imageData(bigGlyphMetricsLength.offset),
+    int glyphFormat6_imageData = bigGlyphMetricsLength;
 
     // format 7
-    glyphFormat7_imageData(bigGlyphMetricsLength.offset),
+    int glyphFormat7_imageData = bigGlyphMetricsLength;
 
     // format 8
-    glyphFormat8_numComponents(Offset.smallGlyphMetricsLength.offset + 1),
-    glyphFormat8_componentArray(glyphFormat8_numComponents.offset
-        + FontData.DataSize.USHORT.size()),
+    int glyphFormat8_numComponents = smallGlyphMetricsLength + 1;
+    int glyphFormat8_componentArray = glyphFormat8_numComponents + FontData.SizeOf.USHORT;
 
     // format 9
-    glyphFormat9_numComponents(Offset.bigGlyphMetricsLength.offset),
-    glyphFormat9_componentArray(glyphFormat9_numComponents.offset
-        + FontData.DataSize.USHORT.size()),
+    int glyphFormat9_numComponents = bigGlyphMetricsLength;
+    int glyphFormat9_componentArray = glyphFormat9_numComponents + FontData.SizeOf.USHORT;
 
 
     // ebdtComponent
-    ebdtComponentLength(FontData.DataSize.USHORT.size() + 2 * FontData.DataSize.CHAR.size()),
-    ebdtComponent_glyphCode(0),
-    ebdtComponent_xOffset(2),
-    ebdtComponent_yOffset(3);
-    
-    protected final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
+    int ebdtComponentLength = FontData.SizeOf.USHORT + 2 * FontData.SizeOf.CHAR;
+    int ebdtComponent_glyphCode = 0;
+    int ebdtComponent_xOffset = 2;
+    int ebdtComponent_yOffset = 3;
   }
 
   private int format;
@@ -101,7 +94,7 @@ public abstract class BitmapGlyph extends SubTable {
     return this.format;
   }
   
-  public static abstract class Builder<T extends BitmapGlyph> extends SubTable.Builder<T> {
+  public abstract static class Builder<T extends BitmapGlyph> extends SubTable.Builder<T> {
 
     private final int format;
     

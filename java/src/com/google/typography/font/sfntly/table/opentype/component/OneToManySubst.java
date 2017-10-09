@@ -17,7 +17,7 @@ public class OneToManySubst extends SubstSubtable implements Iterable<NumRecordT
   protected OneToManySubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     if (format != 1) {
-      throw new IllegalStateException("Subt format value is " + format + " (should be 1).");
+      throw new IllegalStateException("Subst format value is " + format + " (should be 1).");
     }
     array = new GlyphIds(data, headerSize(), dataIsCanonical);
   }

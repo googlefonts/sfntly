@@ -24,7 +24,10 @@ import com.google.typography.font.sfntly.table.Table;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * A GSub table.
+ * The 'GSUB' table handles glyph substitutions such as ligatures and
+ * context-dependent display variants, such as Arabic.
+ *
+ * @see "ISO/IEC 14496-22:2015, section 6.3.4"
  */
 public class GSubTable extends Table {
   private final GsubCommonTable gsub;
@@ -35,14 +38,6 @@ public class GSubTable extends Table {
   private final AtomicReference<LookupListTable>
       lookupListTable = new AtomicReference<LookupListTable>();
 
-  /**
-   * Constructor.
-   *
-   * @param header
-   *          header for the table
-   * @param data
-   *          data for the table
-   */
   private GSubTable(Header header, ReadableFontData data, boolean dataIsCanonical) {
     super(header, data);
     gsub = new GsubCommonTable(data, dataIsCanonical);

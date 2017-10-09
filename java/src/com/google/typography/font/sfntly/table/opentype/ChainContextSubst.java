@@ -35,7 +35,7 @@ public class ChainContextSubst extends SubstSubtable {
       fmt3Array = new InnerArraysFmt3(data, headerSize(), dataIsCanonical);
       break;
     default:
-      throw new IllegalStateException("Subt format value is " + format + " (should be 1 or 2).");
+      throw new IllegalStateException("Subst format value is " + format + " (should be 1 or 2).");
     }
   }
 

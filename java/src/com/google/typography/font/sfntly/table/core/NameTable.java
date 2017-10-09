@@ -21,11 +21,10 @@ import com.google.typography.font.sfntly.Font.PlatformId;
 import com.google.typography.font.sfntly.Font.UnicodeEncodingId;
 import com.google.typography.font.sfntly.Font.WindowsEncodingId;
 import com.google.typography.font.sfntly.data.ReadableFontData;
+import com.google.typography.font.sfntly.data.SfObjects;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.SubTableContainerTable;
-
-import com.ibm.icu.charset.CharsetICU;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -49,33 +48,28 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
     NameTable.NameEntry> {
 
   /**
-   * Offsets to specific elements in the underlying data. These offsets are relative to the
-   * start of the table or the start of sub-blocks within the table.
+   * Offsets to specific elements in the underlying data, relative to the start of the table.
    */
-  public enum Offset {
-    format(0),
-    count(2),
-    stringOffset(4),
-    nameRecordStart(6),
+  private interface HeaderOffsets {
+    int format = 0;
+    int count = 2;
+    int stringOffset = 4;
+    int nameRecordStart = 6;
 
     // format 1 - offset from the end of the name records
-    langTagCount(0),
-    langTagRecord(2),
+    int langTagCount = 0;
+    int langTagRecord = 2;
+  }
 
-    nameRecordSize(12),
+  private interface NameRecord {
+    int SIZE = 12;
     // Name Records
-    nameRecordPlatformId(0),
-    nameRecordEncodingId(2),
-    nameRecordLanguageId(4),
-    nameRecordNameId(6),
-    nameRecordStringLength(8),
-    nameRecordStringOffset(10);
-
-    private final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
+    int platformId = 0;
+    int encodingId = 2;
+    int languageId = 4;
+    int nameId = 6;
+    int stringLength = 8;
+    int stringOffset = 10;
   }
 
   public enum NameId {
@@ -545,7 +539,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
   }
 
   public int format() {
-    return this.data.readUShort(Offset.format.offset);
+    return this.data.readUShort(HeaderOffsets.format);
   }
 
   /**
@@ -553,7 +547,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
    * @return the number of names
    */
   public int nameCount() {
-    return this.data.readUShort(Offset.count.offset);
+    return this.data.readUShort(HeaderOffsets.count);
   }
 
   /**
@@ -561,7 +555,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
    * @return the string offset
    */
   private int stringOffset() {
-    return this.data.readUShort(Offset.stringOffset.offset);
+    return this.data.readUShort(HeaderOffsets.stringOffset);
   }
 
   /**
@@ -570,7 +564,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
    * @return the offset of the name record
    */
   private int offsetForNameRecord(int index) {
-    return Offset.nameRecordStart.offset + index * Offset.nameRecordSize.offset;
+    return HeaderOffsets.nameRecordStart + index * NameRecord.SIZE;
   }
 
   /**
@@ -581,8 +575,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
    * @see PlatformId
    */
   public int platformId(int index) {
-    return this.data.readUShort(
-        Offset.nameRecordPlatformId.offset + this.offsetForNameRecord(index));
+    return this.data.readUShort(NameRecord.platformId + this.offsetForNameRecord(index));
   }
 
   /**
@@ -596,8 +589,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
    * @see UnicodeEncodingId
    */
   public int encodingId(int index) {
-    return this.data.readUShort(
-        Offset.nameRecordEncodingId.offset + this.offsetForNameRecord(index));
+    return this.data.readUShort(NameRecord.encodingId + this.offsetForNameRecord(index));
   }
 
   /**
@@ -606,8 +598,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
    * @return the language id
    */
   public int languageId(int index) {
-    return this.data.readUShort(
-        Offset.nameRecordLanguageId.offset + this.offsetForNameRecord(index));
+    return this.data.readUShort(NameRecord.languageId + this.offsetForNameRecord(index));
   }
 
   /**
@@ -616,8 +607,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
    * @return the name id
    */
   public int nameId(int index) {
-    return this.data.readUShort(
-        Offset.nameRecordNameId.offset + this.offsetForNameRecord(index));
+    return this.data.readUShort(NameRecord.nameId + this.offsetForNameRecord(index));
   }
 
   /**
@@ -626,8 +616,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
    * @return the length of the string data in bytes
    */
   private int nameLength(int index) {
-    return this.data.readUShort(
-        Offset.nameRecordStringLength.offset + this.offsetForNameRecord(index));
+    return this.data.readUShort(NameRecord.stringLength + this.offsetForNameRecord(index));
   }
 
   /**
@@ -637,8 +626,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
    */
   private int nameOffset(int index) {
     return this.data.readUShort(
-        Offset.nameRecordStringOffset.offset +
-        this.offsetForNameRecord(index)) + this.stringOffset();
+        NameRecord.stringOffset + this.offsetForNameRecord(index)) + this.stringOffset();
   }
 
   /**
@@ -724,10 +712,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
     Iterator<NameEntry> nameEntryIter = this.iterator(new NameEntryFilter() {
       @Override
       public boolean accept(int pid, int eid, int lid, int nid) {
-        if (pid == platformId && eid == encodingId && lid == languageId && nid == nameId) {
-          return true;
-        }
-        return false;
+        return pid == platformId && eid == encodingId && lid == languageId && nid == nameId;
       }
     });
     // can only be one name for each set of ids
@@ -822,8 +807,10 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
         return false;
       }
       NameEntryId other = (NameEntryId) obj;
-      return (this.encodingId == other.encodingId) && (this.languageId == other.languageId)
-          && (this.platformId == other.platformId) && (this.nameId == other.nameId);
+      return this.encodingId == other.encodingId
+          && this.languageId == other.languageId
+          && this.platformId == other.platformId
+          && this.nameId == other.nameId;
     }
 
     @Override
@@ -865,28 +852,15 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("P=");
-      sb.append(PlatformId.valueOf(this.platformId));
-      sb.append(", E=0x");
-      sb.append(Integer.toHexString(this.encodingId));
-      sb.append(", L=0x");
-      sb.append(Integer.toHexString(this.languageId));
-      sb.append(", N=");
       NameId nameId = NameId.valueOf(this.nameId);
-      if (nameId != null) {
-        sb.append(NameId.valueOf(this.nameId));
-      } else {
-        sb.append("0x");
-        sb.append(Integer.toHexString(this.nameId));
-      }
-      return sb.toString();
+      String nameIdStr = nameId != null ? nameId.toString() : Integer.toHexString(this.nameId);
+      return String.format("P=%s, E=%#x, L=%#x, N=%s",
+          PlatformId.valueOf(this.platformId), this.encodingId, this.languageId, nameIdStr);
     }
   }
 
   /**
    * Class to represent a name entry in the name table.
-   *
    */
   public static class NameEntry {
     NameEntryId nameEntryId;
@@ -961,14 +935,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("[");
-      sb.append(this.nameEntryId);
-      sb.append(", \"");
-      String name = this.name();
-      sb.append(this.name());
-      sb.append("\"]");
-      return sb.toString();
+      return String.format("[%s, \"%s\"]", this.nameEntryId, this.name());
     }
 
     @Override
@@ -977,29 +944,13 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
         return false;
       }
       NameEntry other = (NameEntry) obj;
-      if (!this.nameEntryId.equals(other.nameEntryId)) {
-        return false;
-      }
-      if (this.nameBytes.length != other.nameBytes.length) {
-        return false;
-      }
-      for (int i = 0; i < this.nameBytes.length; i++) {
-        if (this.nameBytes[i] != other.nameBytes[i]) {
-          return false;
-        }
-      }
-      return true;
+      return SfObjects.equals(this.nameEntryId, other.nameEntryId)
+          && Arrays.equals(this.nameBytes, other.nameBytes);
     }
 
     @Override
     public int hashCode() {
-      int hash = this.nameEntryId.hashCode();
-      for (int i = 0; i < this.nameBytes.length; i+=4) {
-        for (int j = 0; j < 4 && j + i < this.nameBytes.length; j++) {
-          hash |= this.nameBytes[j] << j * 8;
-        }
-      }
-      return hash;
+      return SfObjects.hash(this.nameEntryId, Arrays.hashCode(this.nameBytes));
     }
   }
 
@@ -1073,10 +1024,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
     @Override
     public boolean hasNext() {
       if (this.filter == null) {
-        if (this.nameIndex < nameCount()) {
-          return true;
-        }
-        return false;
+        return this.nameIndex < nameCount();
       }
       for (; this.nameIndex < nameCount(); this.nameIndex++) {
         if (filter.accept(
@@ -1256,7 +1204,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
     }
     Charset charset = null;
     try {
-      charset = CharsetICU.forNameICU(encodingName);
+      charset = Charset.forName(encodingName);
     } catch (UnsupportedCharsetException e) {
       return null;
     }
@@ -1316,9 +1264,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
       if (data != null) {
         NameTable table = new NameTable(this.header(), data);
 
-        Iterator<NameEntry> nameIter = table.iterator();
-        while (nameIter.hasNext()) {
-          NameEntry nameEntry = nameIter.next();
+        for (NameEntry nameEntry : table) {
           NameEntryBuilder nameEntryBuilder = new NameEntryBuilder(nameEntry);
           this.nameEntryMap.put(nameEntryBuilder.getNameEntryId(), nameEntryBuilder);
         }
@@ -1393,8 +1339,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
         return 0;
       }
 
-      int size = NameTable.Offset.nameRecordStart.offset + this.nameEntryMap.size()
-          * NameTable.Offset.nameRecordSize.offset;
+      int size = HeaderOffsets.nameRecordStart + this.nameEntryMap.size() * NameRecord.SIZE;
       for (Map.Entry<NameEntryId, NameEntryBuilder> entry : this.nameEntryMap.entrySet()) {
         size += entry.getValue().nameAsBytes().length;
       }
@@ -1403,44 +1348,37 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
     @Override
     protected boolean subReadyToSerialize() {
-      if (this.nameEntryMap == null || this.nameEntryMap.size() == 0) {
-        return false;
-      }
-      return true;
+      return this.nameEntryMap != null && this.nameEntryMap.size() != 0;
     }
 
     @Override
     protected int subSerialize(WritableFontData newData) {
       int stringTableStartOffset =
-          NameTable.Offset.nameRecordStart.offset + this.nameEntryMap.size()
-              * NameTable.Offset.nameRecordSize.offset;
+          HeaderOffsets.nameRecordStart + this.nameEntryMap.size() * NameRecord.SIZE;
 
       // header
-      newData.writeUShort(NameTable.Offset.format.offset, 0);
-      newData.writeUShort(NameTable.Offset.count.offset, this.nameEntryMap.size());
-      newData.writeUShort(NameTable.Offset.stringOffset.offset, stringTableStartOffset);
-      int nameRecordOffset = NameTable.Offset.nameRecordStart.offset;
+      newData.writeUShort(HeaderOffsets.format, 0);
+      newData.writeUShort(HeaderOffsets.count, this.nameEntryMap.size());
+      newData.writeUShort(HeaderOffsets.stringOffset, stringTableStartOffset);
+      int offset = HeaderOffsets.nameRecordStart;
       int stringOffset = 0;
       for (Map.Entry<NameEntryId, NameEntryBuilder> entry : this.nameEntryMap.entrySet()) {
+        NameEntryId id = entry.getKey();
+        NameEntryBuilder builder = entry.getValue();
+
         // lookup table
-        newData.writeUShort(nameRecordOffset + NameTable.Offset.nameRecordPlatformId.offset,
-            entry.getKey().getPlatformId());
-        newData.writeUShort(nameRecordOffset + NameTable.Offset.nameRecordEncodingId.offset,
-            entry.getKey().getEncodingId());
-        newData.writeUShort(nameRecordOffset + NameTable.Offset.nameRecordLanguageId.offset,
-            entry.getKey().getLanguageId());
-        newData.writeUShort(nameRecordOffset + NameTable.Offset.nameRecordNameId.offset,
-            entry.getKey().getNameId());
-        newData.writeUShort(nameRecordOffset + NameTable.Offset.nameRecordStringLength.offset,
-            entry.getValue().nameAsBytes().length);
-        newData.writeUShort(
-            nameRecordOffset + NameTable.Offset.nameRecordStringOffset.offset, stringOffset);
-        nameRecordOffset += NameTable.Offset.nameRecordSize.offset;
+        newData.writeUShort(offset + NameRecord.platformId, id.getPlatformId());
+        newData.writeUShort(offset + NameRecord.encodingId, id.getEncodingId());
+        newData.writeUShort(offset + NameRecord.languageId, id.getLanguageId());
+        newData.writeUShort(offset + NameRecord.nameId, id.getNameId());
+        newData.writeUShort(offset + NameRecord.stringLength, builder.nameAsBytes().length);
+        newData.writeUShort(offset + NameRecord.stringOffset, stringOffset);
+        offset += NameRecord.SIZE;
         // string table
-        byte[] nameBytes = entry.getValue().nameAsBytes();
+        byte[] nameBytes = builder.nameAsBytes();
         if (nameBytes.length > 0) {
           stringOffset += newData.writeBytes(
-              stringOffset + stringTableStartOffset, entry.getValue().nameAsBytes());
+              stringOffset + stringTableStartOffset, builder.nameAsBytes());
         }
       }
       return stringOffset + stringTableStartOffset;

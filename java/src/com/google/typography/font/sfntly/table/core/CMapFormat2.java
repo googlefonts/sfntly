@@ -4,57 +4,59 @@ import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
-import com.google.typography.font.sfntly.table.core.CMapTable.Offset;
 
 import java.util.Iterator;
 
 /**
- * A cmap format 2 sub table.
+ * The cmap format 2 subtable maps multi-byte character codes to glyph IDs.
+ * <p>
+ * This format is typically used for encodings such as SJIS, EUC-JP/KR/CN, Big5, etc.
  *
- * The format 2 cmap is used for multi-byte encodings such as SJIS,
- * EUC-JP/KR/CN, Big5, etc.
+ * @see "ISO/IEC 14496-22:2015, section 5.2.1.3.2"
  */
 public final class CMapFormat2 extends CMap {
+
+  private interface Header {
+    int format = 0;
+    int length = 2;
+    int language = 4;
+    int subHeaderKeys = 6;
+  }
+
+  private interface SubHeader {
+    int firstCode = 0;
+    int entryCount = 2;
+    int idDelta = 4;
+    int idRangeOffset = 6;
+  }
 
   protected CMapFormat2(ReadableFontData data, CMapId cmapId) {
     super(data, CMapFormat.Format2.value, cmapId);
   }
 
   private int subHeaderOffset(int subHeaderIndex) {
-    int subHeaderOffset = this.data.readUShort(
-        Offset.format2SubHeaderKeys.offset + subHeaderIndex * FontData.DataSize.USHORT.size());
-    return subHeaderOffset;
+    return this.data.readUShort(
+        Header.subHeaderKeys + subHeaderIndex * FontData.SizeOf.USHORT);
   }
 
   private int firstCode(int subHeaderIndex) {
     int subHeaderOffset = subHeaderOffset(subHeaderIndex);
-    int firstCode =
-        this.data.readUShort(subHeaderOffset + Offset.format2SubHeaderKeys.offset
-            + Offset.format2SubHeader_firstCode.offset);
-    return firstCode;
+    return this.data.readUShort(Header.subHeaderKeys + subHeaderOffset + SubHeader.firstCode);
   }
 
   private int entryCount(int subHeaderIndex) {
     int subHeaderOffset = subHeaderOffset(subHeaderIndex);
-    int entryCount =
-        this.data.readUShort(subHeaderOffset + Offset.format2SubHeaderKeys.offset
-            + Offset.format2SubHeader_entryCount.offset);
-    return entryCount;
+    return this.data.readUShort(Header.subHeaderKeys + subHeaderOffset + SubHeader.entryCount);
   }
 
   private int idRangeOffset(int subHeaderIndex) {
     int subHeaderOffset = subHeaderOffset(subHeaderIndex);
-    int idRangeOffset = this.data.readUShort(subHeaderOffset + Offset.format2SubHeaderKeys.offset
-        + Offset.format2SubHeader_idRangeOffset.offset);
-    return idRangeOffset;
+    return this.data.readUShort(Header.subHeaderKeys + subHeaderOffset + SubHeader.idRangeOffset);
   }
 
   private int idDelta(int subHeaderIndex) {
     int subHeaderOffset = subHeaderOffset(subHeaderIndex);
-    int idDelta =
-        this.data.readShort(subHeaderOffset + Offset.format2SubHeaderKeys.offset
-            + Offset.format2SubHeader_idDelta.offset);
-    return idDelta;
+    return this.data.readShort(Header.subHeaderKeys + subHeaderOffset + SubHeader.idDelta);
   }
 
   /**
@@ -103,8 +105,8 @@ public final class CMapFormat2 extends CMap {
 
     // position of idRangeOffset + value of idRangeOffset + index for low byte
     // = firstcode
-    int pLocation = (offset + Offset.format2SubHeader_idRangeOffset.offset) + idRangeOffset
-        + (lowByte - firstCode) * FontData.DataSize.USHORT.size();
+    int pLocation = (offset + SubHeader.idRangeOffset) + idRangeOffset
+        + (lowByte - firstCode) * FontData.SizeOf.USHORT;
     int p = this.data.readUShort(pLocation);
     if (p == 0) {
       return CMapTable.NOTDEF;
@@ -119,25 +121,23 @@ public final class CMapFormat2 extends CMap {
 
   @Override
   public int language() {
-    return this.data.readUShort(Offset.format2Language.offset);
+    return this.data.readUShort(Header.language);
   }
 
   @Override
   public Iterator<Integer> iterator() {
-    return new CharacterIterator(0, 0xffff);
+    return new CharacterRangeIterator(0, 0x10000);
   }
 
   public static class Builder extends CMap.Builder<CMapFormat2> {
     protected Builder(WritableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(
-          offset, data.readUShort(offset + Offset.format2Length.offset)), CMapFormat.Format2,
-          cmapId);
+      super(data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
+          CMapFormat.Format2, cmapId);
     }
 
     protected Builder(ReadableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(
-          offset, data.readUShort(offset + Offset.format2Length.offset)), CMapFormat.Format2,
-          cmapId);
+      super(data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
+          CMapFormat.Format2, cmapId);
     }
 
     @Override

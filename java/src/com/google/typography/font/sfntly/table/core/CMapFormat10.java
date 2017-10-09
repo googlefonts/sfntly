@@ -3,24 +3,32 @@ package com.google.typography.font.sfntly.table.core;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
-import com.google.typography.font.sfntly.table.core.CMapTable.Offset;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
- * A cmap format 10 sub table.
+ * The cmap format 10 subtable maps a single range of 32-bit character codes to 16-bit glyph IDs.
  *
+ * @see "ISO/IEC 14496-22:2015, section 5.2.1.3.6"
  */
 public final class CMapFormat10 extends CMap {
 
   private final int startCharCode;
   private final int numChars;
 
+  private interface Header {
+    int format = 0;
+    int length = 4;
+    int language = 8;
+    int startCharCode = 12;
+    int numChars = 16;
+    int glyphs = 20;
+  }
+
   protected CMapFormat10(ReadableFontData data, CMapId cmapId) {
     super(data, CMapFormat.Format10.value, cmapId);
-    this.startCharCode = this.data.readULongAsInt(Offset.format10StartCharCode.offset);
-    this.numChars = this.data.readUShort(Offset.format10NumChars.offset);
+    this.startCharCode = this.data.readULongAsInt(Header.startCharCode);
+    this.numChars = this.data.readUShort(Header.numChars);
   }
 
   @Override
@@ -33,54 +41,22 @@ public final class CMapFormat10 extends CMap {
 
   @Override
   public int language() {
-    return this.data.readULongAsInt(Offset.format10Language.offset);
+    return this.data.readULongAsInt(Header.language);
   }
 
   @Override
   public Iterator<Integer> iterator() {
-    return new CharacterIterator();
+    return new CharacterRangeIterator(this.startCharCode, this.startCharCode + this.numChars);
   }
 
-  private class CharacterIterator implements Iterator<Integer> {
-    private int character = startCharCode;
-
-    private CharacterIterator() {
-      // Prevent construction.
-    }
-
-    @Override
-    public boolean hasNext() {
-      if (character < startCharCode + numChars) {
-        return true;
-      }
-      return false;
-    }
-
-    @Override
-    public Integer next() {
-      if (!hasNext()) {
-        throw new NoSuchElementException("No more characters to iterate.");
-      }
-      return this.character++;
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException("Unable to remove a character from cmap.");
-    }
-  }
-
-  public static class Builder extends CMap.Builder<CMapFormat10>
-  {
+  public static class Builder extends CMap.Builder<CMapFormat10> {
     protected Builder(WritableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(
-          offset, data.readULongAsInt(offset + Offset.format10Length.offset)),
+      super(data == null ? null : data.slice(offset, data.readULongAsInt(offset + Header.length)),
           CMapFormat.Format10, cmapId);
     }
 
     protected Builder(ReadableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(
-          offset, data.readULongAsInt(offset + Offset.format10Length.offset)),
+      super(data == null ? null : data.slice(offset, data.readULongAsInt(offset + Header.length)),
           CMapFormat.Format10, cmapId);
     }
 

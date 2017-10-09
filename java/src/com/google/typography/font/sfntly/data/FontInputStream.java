@@ -246,8 +246,11 @@ public class FontInputStream extends FilterInputStream {
 
   @Override
   public long skip(long n) throws IOException {
-    long skipped = super.skip(n);
-    this.position += skipped;
+    // The bytes must be read nevertheless for computing the digest.
+    long skipped = 0;
+    while (skipped < n && this.read() != -1) {
+      skipped++;
+    }
     return skipped;
   }
 }

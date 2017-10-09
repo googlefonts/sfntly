@@ -22,7 +22,6 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.math.Fixed1616;
 import com.google.typography.font.sfntly.math.FontMath;
-import com.google.typography.font.sfntly.table.FontDataTable;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.core.CMapTable;
@@ -58,42 +57,32 @@ import java.util.logging.Logger;
  */
 public class Font {
 
-  private static final Logger logger =
-    Logger.getLogger(Font.class.getCanonicalName());
+  private static final Logger logger = Logger.getLogger(Font.class.getCanonicalName());
 
-  /**
-   * Offsets to specific elements in the underlying data. These offsets are relative to the
-   * start of the table or the start of sub-blocks within the table.
-   */
-  private enum Offset {
-    // Offsets within the main directory
-    sfntVersion(0),
-    numTables(4),
-    searchRange(6),
-    entrySelector(8),
-    rangeShift(10),
-    tableRecordBegin(12),
-    sfntHeaderSize(12),
+  // Offsets within the main directory
+  private interface HeaderOffset {
+    int sfntVersion = 0;
+    int numTables = 4;
+    int searchRange = 6;
+    int entrySelector = 8;
+    int rangeShift = 10;
+    int SIZE = 12;
+  }
 
-    // Offsets within a specific table record
-    tableTag(0),
-    tableCheckSum(4),
-    tableOffset(8),
-    tableLength(12),
-    tableRecordSize(16);
-
-    private final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
+  // Offsets within a specific table record
+  private interface TableOffset {
+    int tag = 0;
+    int checkSum = 4;
+    int offset = 8;
+    int length = 12;
+    int SIZE = 16;
   }
 
   /**
    * Ordering of tables for different font types.
    */
-  private final static List<Integer> CFF_TABLE_ORDERING;
-  private final static List<Integer> TRUE_TYPE_TABLE_ORDERING;
+  private static final List<Integer> CFF_TABLE_ORDERING;
+  private static final List<Integer> TRUE_TYPE_TABLE_ORDERING;
   static {
     Integer[] cffArray = new Integer[] {Tag.head,
         Tag.hhea,
@@ -422,25 +411,26 @@ public class Font {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("digest = ");
     byte[] digest = this.digest();
     if (digest != null) {
-      for (int i = 0; i < digest.length; i++) {
-        int d = 0xff & digest[i];
+      sb.append("digest = ");
+      for (byte b : digest) {
+        int d = 0xff & b;
         if (d < 0x10) {
           sb.append("0");
         }
         sb.append(Integer.toHexString(d));
       }
+      sb.append("\n");
     }
-    sb.append("\n[");
-    sb.append(Fixed1616.toString(sfntVersion));
+
+    sb.append("[");
+    sb.append(Fixed1616.toString(this.sfntVersion));
     sb.append(", ");
     sb.append(this.numTables());
     sb.append("]\n");
-    Iterator<? extends Table> iter = this.iterator();
-    while (iter.hasNext()) {
-      FontDataTable table = iter.next();
+
+    for (Table table : this.tables.values()) {
       sb.append("\t");
       sb.append(table);
       sb.append("\n");
@@ -477,8 +467,7 @@ public class Font {
     List<Integer> finalTableOrdering = this.generateTableOrdering(tableOrdering);
 
     List<Header> tableHeaders = new ArrayList<Header>(this.numTables());
-    int tableOffset =
-        Offset.tableRecordBegin.offset + this.numTables() * Offset.tableRecordSize.offset;
+    int tableOffset = HeaderOffset.SIZE + this.numTables() * TableOffset.SIZE;
     for (Integer tag : finalTableOrdering) {
       Table table = this.tables.get(tag);
       if (table != null) {
@@ -621,9 +610,8 @@ public class Font {
       if (is == null) {
         throw new IOException("No input stream for font.");
       }
-      FontInputStream fontIS = null;
+      FontInputStream fontIS = new FontInputStream(is);
       try {
-        fontIS = new FontInputStream(is);
         SortedSet<Header> records = readHeader(fontIS);
         this.dataBlocks = loadTableData(records, fontIS);
         this.tableBuilders = buildAllTableBuilders(this.dataBlocks);
@@ -641,21 +629,20 @@ public class Font {
       this.tableBuilders = buildAllTableBuilders(this.dataBlocks);
     }
 
-    static final Builder
-    getOTFBuilder(FontFactory factory, InputStream is) throws IOException {
+    static Builder getOTFBuilder(FontFactory factory, InputStream is) throws IOException {
       Builder builder = new Builder(factory);
       builder.loadFont(is);
       return builder;
     }
 
-    static final Builder getOTFBuilder(
+    static Builder getOTFBuilder(
         FontFactory factory, WritableFontData wfd, int offsetToOffsetTable) throws IOException {
       Builder builder = new Builder(factory);
       builder.loadFont(wfd, offsetToOffsetTable);
       return builder;
     }
 
-    static final Builder getOTFBuilder(FontFactory factory) {
+    static Builder getOTFBuilder(FontFactory factory) {
       return new Builder(factory);
     }
 
@@ -680,7 +667,7 @@ public class Font {
       }
 
       for (Table.Builder<? extends Table> tableBuilder : this.tableBuilders.values()) {
-        if (tableBuilder.readyToBuild() == false) {
+        if (!tableBuilder.readyToBuild()) {
           return false;
         }
       }
@@ -821,8 +808,7 @@ public class Font {
 
     @SuppressWarnings("unused")
     private int sfntWrapperSize() {
-      return Offset.sfntHeaderSize.offset +
-      (Offset.tableRecordSize.offset * this.tableBuilders.size());
+      return HeaderOffset.SIZE + this.tableBuilders.size() * TableOffset.SIZE;
     }
 
     private Map<Integer, Table.Builder<? extends Table>> buildAllTableBuilders(
@@ -978,22 +964,21 @@ public class Font {
       SortedSet<Header> records =
           new TreeSet<Header>(Header.COMPARATOR_BY_OFFSET);
 
-      this.sfntVersion = fd.readFixed(offset + Offset.sfntVersion.offset);
-      this.numTables = fd.readUShort(offset + Offset.numTables.offset);
-      this.searchRange = fd.readUShort(offset + Offset.searchRange.offset);
-      this.entrySelector = fd.readUShort(offset + Offset.entrySelector.offset);
-      this.rangeShift = fd.readUShort(offset + Offset.rangeShift.offset);
+      this.sfntVersion = fd.readFixed(offset + HeaderOffset.sfntVersion);
+      this.numTables = fd.readUShort(offset + HeaderOffset.numTables);
+      this.searchRange = fd.readUShort(offset + HeaderOffset.searchRange);
+      this.entrySelector = fd.readUShort(offset + HeaderOffset.entrySelector);
+      this.rangeShift = fd.readUShort(offset + HeaderOffset.rangeShift);
 
-      int tableOffset = offset + Offset.tableRecordBegin.offset;
+      int tableOffset = offset + HeaderOffset.SIZE;
       for (int tableNumber = 0;
       tableNumber < this.numTables;
-      tableNumber++, tableOffset += Offset.tableRecordSize.offset) {
-        Header table =
-        // safe since the tag is ASCII
-            new Header(fd.readULongAsInt(tableOffset + Offset.tableTag.offset),
-                fd.readULong(tableOffset + Offset.tableCheckSum.offset), // checksum
-            fd.readULongAsInt(tableOffset + Offset.tableOffset.offset), // offset
-            fd.readULongAsInt(tableOffset + Offset.tableLength.offset)); // length
+      tableNumber++, tableOffset += TableOffset.SIZE) {
+        Header table = new Header(
+            fd.readULongAsInt(tableOffset + TableOffset.tag), // safe since the tag is ASCII
+            fd.readULong(tableOffset + TableOffset.checkSum),
+            fd.readULongAsInt(tableOffset + TableOffset.offset),
+            fd.readULongAsInt(tableOffset + TableOffset.length));
         records.add(table);
       }
       return records;

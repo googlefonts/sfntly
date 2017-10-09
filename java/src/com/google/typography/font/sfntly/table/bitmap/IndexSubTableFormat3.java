@@ -19,7 +19,6 @@ package com.google.typography.font.sfntly.table.bitmap;
 import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.bitmap.EblcTable.Offset;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,6 +32,12 @@ import java.util.NoSuchElementException;
  *
  */
 public final class IndexSubTableFormat3 extends IndexSubTable {
+
+  private interface Offset {
+    int offsetArray = EblcTable.HeaderOffsets.SIZE;
+    int builderDataSize = offsetArray;
+  }
+
   private IndexSubTableFormat3(ReadableFontData data, int firstGlyphIndex, int lastGlyphIndex) {
     super(data, firstGlyphIndex, lastGlyphIndex);
   }
@@ -55,16 +60,12 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
   }
 
   private int loca(int loca) {
-    int readLocation =
-        Offset.indexSubTable3_offsetArray.offset + loca * FontData.DataSize.USHORT.size();
-    int readOffset = this.data.readUShort(
-        Offset.indexSubTable3_offsetArray.offset + loca * FontData.DataSize.USHORT.size());
-    return readOffset;
+    return this.data.readUShort(Offset.offsetArray + loca * FontData.SizeOf.USHORT);
   }
-  
+
   public static final class Builder extends IndexSubTable.Builder<IndexSubTableFormat3> {
     private List<Integer> offsetArray;
-    
+
     public static Builder createBuilder() {
       return new Builder();
     }
@@ -83,12 +84,12 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
 
     private static int dataLength(
         ReadableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
-      return Offset.indexSubHeaderLength.offset + (lastGlyphIndex - firstGlyphIndex + 1 + 1)
-          * FontData.DataSize.USHORT.size();
+      return EblcTable.HeaderOffsets.SIZE + (lastGlyphIndex - firstGlyphIndex + 1 + 1)
+          * FontData.SizeOf.USHORT;
     }
-      
+
     private Builder() {
-      super(Offset.indexSubTable3_builderDataSize.offset, Format.FORMAT_3);
+      super(Offset.builderDataSize, Format.FORMAT_3);
     }
 
     private Builder(WritableFontData data, int firstGlyphIndex, int lastGlyphIndex) {
@@ -140,9 +141,7 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
       if (data != null) {
         int numOffsets = (this.lastGlyphIndex() - this.firstGlyphIndex() + 1) + 1;
         for (int i = 0; i < numOffsets; i++) {
-          this.offsetArray.add(data.readUShort(
-Offset.indexSubTable3_offsetArray.offset + i
-              * FontData.DataSize.USHORT.size()));
+          this.offsetArray.add(data.readUShort(Offset.offsetArray + i * FontData.SizeOf.USHORT));
         }
       }
     }
@@ -161,10 +160,7 @@ Offset.indexSubTable3_offsetArray.offset + i
 
       @Override
       public boolean hasNext() {
-        if (this.glyphId <= IndexSubTableFormat3.Builder.this.lastGlyphIndex()) {
-          return true;
-        }
-        return false;
+        return this.glyphId <= Builder.this.lastGlyphIndex();
       }
 
       @Override
@@ -213,24 +209,20 @@ Offset.indexSubTable3_offsetArray.offset + i
       if (this.offsetArray == null) {
         return this.internalReadData().length();
       }
-      return Offset.indexSubHeaderLength.offset + this.offsetArray.size()
-          * FontData.DataSize.ULONG.size();
+      return EblcTable.HeaderOffsets.SIZE + this.offsetArray.size() * FontData.SizeOf.ULONG;
     }
 
     @Override
     protected boolean subReadyToSerialize() {
-      if (this.offsetArray != null) {
-        return true;
-      }
-      return false;
+      return this.offsetArray != null;
     }
 
     @Override
     protected int subSerialize(WritableFontData newData) {
       int size = super.serializeIndexSubHeader(newData);
       if (!this.modelChanged()) {
-        size += this.internalReadData().slice(Offset.indexSubTable3_offsetArray.offset).copyTo(
-            newData.slice(Offset.indexSubTable3_offsetArray.offset));
+        size += this.internalReadData().slice(Offset.offsetArray)
+            .copyTo(newData.slice(Offset.offsetArray));
       } else {
 
         for (Integer loca : this.offsetArray) {

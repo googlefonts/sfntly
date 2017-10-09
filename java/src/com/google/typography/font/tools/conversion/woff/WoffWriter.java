@@ -38,7 +38,7 @@ public class WoffWriter {
 
   private static final long SIGNATURE = 0x774F4646;
   private static final int WOFF_HEADER_SIZE =
-      (9 * FontData.DataSize.ULONG.size()) + (4 * FontData.DataSize.USHORT.size());
+      (9 * FontData.SizeOf.ULONG) + (4 * FontData.SizeOf.USHORT);
 
   public WritableFontData convert(Font font) {
     List<TableDirectoryEntry> tableDirectoryEntries = createTableDirectoryEntries(font);
@@ -118,8 +118,8 @@ public class WoffWriter {
   }
 
   private int computeTableSfntHeaderLength(List<TableDirectoryEntry> tableDirectoryEntries) {
-    return FontData.DataSize.ULONG.size() + (4 * FontData.DataSize.USHORT.size())
-        + ((4 * FontData.DataSize.ULONG.size()) * tableDirectoryEntries.size());
+    return FontData.SizeOf.ULONG + (4 * FontData.SizeOf.USHORT)
+        + ((4 * FontData.SizeOf.ULONG) * tableDirectoryEntries.size());
   }
 
   private int computeUncompressedTablesLength(List<TableDirectoryEntry> tableDirectoryEntries) {
@@ -190,7 +190,7 @@ public class WoffWriter {
 
   private static class TableDirectoryEntry {
 
-    public static final int ENTRY_SIZE = 5 * FontData.DataSize.ULONG.size();
+    public static final int ENTRY_SIZE = 5 * FontData.SizeOf.ULONG;
 
     private long tag;
     private long origLength;

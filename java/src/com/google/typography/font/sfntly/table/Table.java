@@ -114,17 +114,12 @@ public class Table extends FontDataTable {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("[");
-    sb.append(Tag.stringValue(this.header.tag()));
-    sb.append(", cs=0x");
-    sb.append(Long.toHexString(this.header.checksum()));
-    sb.append(", offset=0x");
-    sb.append(Integer.toHexString(this.header.offset()));
-    sb.append(", size=0x");
-    sb.append(Integer.toHexString(this.header.length()));
-    sb.append("]");
-    return sb.toString();
+    return String.format(
+        "[%-4s, cs=0x%08x, offset=0x%08x, size=0x%08x]",
+        Tag.stringValue(this.header.tag()),
+        this.header.checksum(),
+        this.header.offset(),
+        this.header.length());
   }
 
   public abstract static class Builder<T extends Table> extends FontDataTable.Builder<T> {

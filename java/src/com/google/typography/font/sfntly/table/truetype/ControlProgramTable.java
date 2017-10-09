@@ -53,7 +53,7 @@ public final class ControlProgramTable extends Table {
    * @return the byte count
    */
   public int byteCount() {
-    return this.dataLength() / FontData.DataSize.BYTE.size();
+    return this.dataLength() / FontData.SizeOf.BYTE;
   }
 
   /**

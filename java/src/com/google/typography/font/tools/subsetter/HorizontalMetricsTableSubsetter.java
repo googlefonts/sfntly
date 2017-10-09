@@ -44,8 +44,7 @@ public class HorizontalMetricsTableSubsetter extends TableSubsetterImpl {
     HorizontalMetricsTable origMetrics = font.getTable(Tag.hmtx);
     List<HorizontalMetricsTableBuilder.LongHorMetric> metrics =
         new ArrayList<HorizontalMetricsTableBuilder.LongHorMetric>();
-    for (int i = 0; i < permutationTable.size(); i++) {
-      int origGlyphId = permutationTable.get(i);
+    for (int origGlyphId : permutationTable) {
       int advanceWidth = origMetrics.advanceWidth(origGlyphId);
       int lsb = origMetrics.leftSideBearing(origGlyphId);
       metrics.add(new HorizontalMetricsTableBuilder.LongHorMetric(advanceWidth, lsb));

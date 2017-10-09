@@ -18,8 +18,6 @@ package com.google.typography.font.sfntly.testutils;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 
-import com.ibm.icu.charset.CharsetICU;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -160,7 +158,7 @@ public class TestUtils {
     if (charsetName == null || charsetName.equals("")) {
       return null;
     }
-    Charset cs = CharsetICU.forNameICU(charsetName);
+    Charset cs = Charset.forName(charsetName);
     return cs.newEncoder();
   }
 
@@ -185,9 +183,8 @@ public class TestUtils {
     int length = (int) file.length();
     byte[] b = new byte[length];
 
-    FileInputStream fis = null;
+    FileInputStream fis = new FileInputStream(file);
     try {
-      fis = new FileInputStream(file);
       while (length > 0) {
         length -= fis.read(b, b.length - length, length);
       }

@@ -19,19 +19,24 @@ package com.google.typography.font.sfntly.table.bitmap;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
-import com.google.typography.font.sfntly.table.bitmap.EblcTable.Offset;
 
 import java.util.Iterator;
 
 public abstract class IndexSubTable extends SubTable {
   private static final boolean DEBUG = false;
 
-  public static final class Format {
-    public static final int FORMAT_1 = 1;
-    public static final int FORMAT_2 = 2;
-    public static final int FORMAT_3 = 3;
-    public static final int FORMAT_4 = 4;
-    public static final int FORMAT_5 = 5;
+  public interface Format {
+    int FORMAT_1 = 1;
+    int FORMAT_2 = 2;
+    int FORMAT_3 = 3;
+    int FORMAT_4 = 4;
+    int FORMAT_5 = 5;
+  }
+
+  private interface SubOffset {
+    int indexFormat = 0;
+    int imageFormat = 2;
+    int imageDataOffset = 4;
   }
 
   private final int firstGlyphIndex;
@@ -55,9 +60,9 @@ public abstract class IndexSubTable extends SubTable {
     super(data);
     this.firstGlyphIndex = firstGlyphIndex;
     this.lastGlyphIndex = lastGlyphIndex;
-    this.indexFormat = this.data.readUShort(Offset.indexSubHeader_indexFormat.offset);
-    this.imageFormat = this.data.readUShort(Offset.indexSubHeader_imageFormat.offset);
-    this.imageDataOffset = this.data.readULongAsInt(Offset.indexSubHeader_imageDataOffset.offset);
+    this.indexFormat = this.data.readUShort(SubOffset.indexFormat);
+    this.imageFormat = this.data.readUShort(SubOffset.imageFormat);
+    this.imageDataOffset = this.data.readULongAsInt(SubOffset.imageDataOffset);
   }
 
   public int indexFormat() {
@@ -126,13 +131,14 @@ public abstract class IndexSubTable extends SubTable {
 
   @Override
   public String toString() {
-    String s = "IndexSubTable: " + "[0x" + Integer.toHexString(this.firstGlyphIndex()) + " : Ox"
-        + Integer.toHexString(this.lastGlyphIndex()) + "]" + ", format = " + this.indexFormat
-        + ", image format = " + this.imageFormat() + ", imageOff = "
-        + Integer.toHexString(this.imageDataOffset()) + "\n";
+    String s = String.format(
+        "IndexSubTable: [%#x : %#x], format = %d, image format = %s, imageOff = %#x%n",
+        this.firstGlyphIndex(), this.lastGlyphIndex(),
+        this.indexFormat, this.imageFormat(), this.imageDataOffset());
+
     if (DEBUG) {
       for (int g = this.firstGlyphIndex(); g < this.lastGlyphIndex(); g++) {
-        s += "\tgid = " + g + ", offset = " + this.glyphStartOffset(g) + "\n";
+        s += String.format("\tgid = %d, offset = %d%n", g, this.glyphStartOffset(g));
       }
     }
     return s;
@@ -158,24 +164,22 @@ public abstract class IndexSubTable extends SubTable {
         case 5:
           return IndexSubTableFormat5.Builder.createBuilder();
         default:
-          // unknown format and unable to process
-          throw new IllegalArgumentException(String.format("Invalid Index SubTable Format %i%n",
-              indexFormat));
+          throw new IllegalArgumentException(
+              String.format("Invalid index subtable format %d", indexFormat));
       }
     }
 
     static Builder<? extends IndexSubTable> createBuilder(
         ReadableFontData data, int offsetToIndexSubTableArray, int arrayIndex) {
 
-      int indexSubTableEntryOffset =
-          offsetToIndexSubTableArray + arrayIndex * Offset.indexSubTableEntryLength.offset;
+      int entryOffset = offsetToIndexSubTableArray + arrayIndex * EblcTable.IndexSubTableEntry.SIZE;
 
       int firstGlyphIndex = data.readUShort(
-          indexSubTableEntryOffset + Offset.indexSubTableEntry_firstGlyphIndex.offset);
+          entryOffset + EblcTable.IndexSubTableEntry.firstGlyphIndex);
       int lastGlyphIndex = data.readUShort(
-          indexSubTableEntryOffset + Offset.indexSubTableEntry_lastGlyphIndex.offset);
-      int additionOffsetToIndexSubtable = data.readULongAsInt(indexSubTableEntryOffset
-          + Offset.indexSubTableEntry_additionalOffsetToIndexSubtable.offset);
+          entryOffset + EblcTable.IndexSubTableEntry.lastGlyphIndex);
+      int additionOffsetToIndexSubtable = data.readULongAsInt(
+          entryOffset + EblcTable.IndexSubTableEntry.additionalOffsetToIndexSubtable);
 
       int indexSubTableOffset = offsetToIndexSubTableArray + additionOffsetToIndexSubtable;
 
@@ -197,9 +201,8 @@ public abstract class IndexSubTable extends SubTable {
           return IndexSubTableFormat5.Builder.createBuilder(
               data, indexSubTableOffset, firstGlyphIndex, lastGlyphIndex);
         default:
-          // unknown format and unable to process
           throw new IllegalArgumentException(
-              String.format("Invalid Index SubTable Foramt %i%n", indexFormat));
+              String.format("Invalid index subtable format %d", indexFormat));
       }
     }
 
@@ -232,9 +235,9 @@ public abstract class IndexSubTable extends SubTable {
      * @param data
      */
     private void initialize(ReadableFontData data) {
-      this.indexFormat = data.readUShort(Offset.indexSubHeader_indexFormat.offset);
-      this.imageFormat = data.readUShort(Offset.indexSubHeader_imageFormat.offset);
-      this.imageDataOffset = data.readULongAsInt(Offset.indexSubHeader_imageDataOffset.offset);
+      this.indexFormat = data.readUShort(SubOffset.indexFormat);
+      this.imageFormat = data.readUShort(SubOffset.imageFormat);
+      this.imageDataOffset = data.readULongAsInt(SubOffset.imageDataOffset);
     }
 
 
@@ -338,9 +341,9 @@ public abstract class IndexSubTable extends SubTable {
     }
 
     protected int serializeIndexSubHeader(WritableFontData data) {
-      int size = data.writeUShort(Offset.indexSubHeader_indexFormat.offset, this.indexFormat);
-      size += data.writeUShort(Offset.indexSubHeader_imageFormat.offset, this.imageFormat);
-      size += data.writeULong(Offset.indexSubHeader_imageDataOffset.offset, this.imageDataOffset);
+      int size = data.writeUShort(SubOffset.indexFormat, this.indexFormat);
+      size += data.writeUShort(SubOffset.imageFormat, this.imageFormat);
+      size += data.writeULong(SubOffset.imageDataOffset, this.imageDataOffset);
       return size;
     }
 
@@ -379,14 +382,14 @@ public abstract class IndexSubTable extends SubTable {
 
     @Override
     public String toString() {
-      String s =
-          "IndexSubTable: " + "[0x" + Integer.toHexString(this.firstGlyphIndex()) + " : Ox"
-              + Integer.toHexString(this.lastGlyphIndex()) + "]" + ", format = " + this.indexFormat
-              + ", image format = " + this.imageFormat() + ", imageOff = 0x"
-              + Integer.toHexString(this.imageDataOffset()) + "\n";
+      String s = String.format(
+          "IndexSubTable: [%#x : %#x], format = %d, image format = %s, imageOff = %#x%n",
+          this.firstGlyphIndex(), this.lastGlyphIndex(),
+          this.indexFormat, this.imageFormat(), this.imageDataOffset());
+
       if (DEBUG) {
         for (int g = this.firstGlyphIndex(); g < this.lastGlyphIndex(); g++) {
-          s += "\tgid = " + g + ", offset = " + this.glyphStartOffset(g) + "\n";
+          s += String.format("\tgid = %d, offset = %d%n", g, this.glyphStartOffset(g));
         }
       }
       return s;

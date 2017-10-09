@@ -47,10 +47,10 @@ public class SFLint {
     SFLint dumper = new SFLint();
     File fontFile = null;
 
-    for (int i = 0; i < args.length; i++) {
+    for (String arg : args) {
       String option = null;
-      if (args[i].charAt(0) == '-') {
-        option = args[i].substring(1);
+      if (arg.charAt(0) == '-') {
+        option = arg.substring(1);
       }
 
       if (option != null) {
@@ -59,7 +59,7 @@ public class SFLint {
           System.exit(0);
         }
       } else {
-        fontFile = new File (args[i]);
+        fontFile = new File(arg);
         break;
       }
     }
@@ -69,7 +69,7 @@ public class SFLint {
     }
   }
 
-  private static final void printUsage() {
+  private static void printUsage() {
     System.out.println("SFLint [-?|-h|-help] fontfile");
     System.out.println("find problems with the font file");
     System.out.println("\t-?,-h,-help\tprint this help information");
@@ -80,17 +80,14 @@ public class SFLint {
   }  
 
   public void lintFontFile(File fontFile) throws IOException {
-    FileInputStream fis = null;
+    FileInputStream fis = new FileInputStream(fontFile);
     try {
-      fis = new FileInputStream(fontFile);
       Font[] fontArray = fontFactory.loadFonts(fis);
       for (Font font : fontArray) {
         lintFont(font);
       }
     } finally {
-      if (fis != null) {
-        fis.close();
-      }
+      fis.close();
     }
   }
 

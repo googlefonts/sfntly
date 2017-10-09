@@ -18,44 +18,36 @@ package com.google.typography.font.sfntly.data;
 
 /**
  * An abstract base for font data in the TrueType / OpenType spec.
- * 
+ *
  * @author Stuart Gill
  */
 public abstract class FontData {
 
-  protected final static int GROWABLE_SIZE = Integer.MAX_VALUE;
+  protected static final int GROWABLE_SIZE = Integer.MAX_VALUE;
 
   /**
-   * Note: Enum names intended to match the names used in the OpenType and sfnt specs.
+   * Note: constant names intended to match the names used in the OpenType and sfnt specs.
+   *
+   * @see "ISO/IEC 14496-22:2015, section 4.3"
    */
-  public enum DataSize {
-    BYTE(1),
-    CHAR(1),
-    USHORT(2),
-    SHORT(2),
-    UINT24(3),
-    ULONG(4),
-    LONG(4),
-    Fixed(4),
-    FUNIT(4),
-    FWORD(2),
-    UFWORD(2),
-    F2DOT14(2),
-    LONGDATETIME(8),
-    Tag(4),
-    GlyphID(2),
-    Offset(2);
-
-    private final int size;
-    
-    private DataSize(int size) {
-      this.size = size;
-    }
-
-    public int size() {
-      return this.size;
-    }
-}
+  public interface SizeOf {
+    int BYTE = 1;
+    int CHAR = 1;
+    int USHORT = 2;
+    int SHORT = 2;
+    int UINT24 = 3;
+    int ULONG = 4;
+    int LONG = 4;
+    int Fixed = 4;
+    int FUNIT = 4;
+    int FWORD = 2;
+    int UFWORD = 2;
+    int F2DOT14 = 2;
+    int LONGDATETIME = 8;
+    int Tag = 4;
+    int GlyphID = 2;
+    int Offset = 2;
+  }
 
   /**
    * The internal data.
@@ -199,7 +191,7 @@ public abstract class FontData {
 
   /**
    * Gets the length in the underlying data taking into account any bounds on the data.
-   * 
+   *
    * @param offset the offset that the length is being used at
    * @param length the length to get the bound compensated length for
    * @return the bound compensated length
@@ -207,7 +199,7 @@ public abstract class FontData {
   protected final int boundLength(int offset, int length) {
     return Math.min(length, this.boundLength - offset);
   }
-  
+
   protected final boolean boundsCheck(int offset, int length) {
     if (offset < 0 || offset >= this.boundLength) {
       return false;
