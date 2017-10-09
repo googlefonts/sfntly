@@ -10,7 +10,8 @@ import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTabl
 
 public class ReverseChainSingleSubst extends SubstSubtable {
   private static final int FIELD_COUNT = 1;
-  private static final int COVERAGE_INDEX = SubstSubtable.FIELD_SIZE;
+  private static final int COVERAGE_INDEX = 2;
+
   public final CoverageTable coverage;
   public final CoverageArray backtrackGlyphs;
   public final CoverageArray lookAheadGlyphs;
@@ -22,7 +23,7 @@ public class ReverseChainSingleSubst extends SubstSubtable {
   ReverseChainSingleSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     if (format != 1) {
-      throw new IllegalStateException("Subt format value is " + format + " (should be 1).");
+      throw new IllegalStateException("Subst format value is " + format + " (should be 1).");
     }
     int coverageOffset = getField(COVERAGE_INDEX);
     coverage = new CoverageTable(data.slice(coverageOffset), 0, dataIsCanonical);

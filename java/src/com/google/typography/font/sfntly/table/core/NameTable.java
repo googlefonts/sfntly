@@ -26,8 +26,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.SubTableContainerTable;
 
-import com.ibm.icu.charset.CharsetICU;
-
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -1206,7 +1204,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
     }
     Charset charset = null;
     try {
-      charset = CharsetICU.forNameICU(encodingName);
+      charset = Charset.forName(encodingName);
     } catch (UnsupportedCharsetException e) {
       return null;
     }
