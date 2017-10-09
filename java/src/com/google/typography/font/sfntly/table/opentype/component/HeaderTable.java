@@ -10,8 +10,9 @@ import java.util.Map.Entry;
 
 public abstract class HeaderTable extends SubTable {
   protected static final int FIELD_SIZE = 2;
-  protected boolean dataIsCanonical = false;
-  protected int base = 0;
+
+  protected final boolean dataIsCanonical;
+  protected final int base;
 
   protected HeaderTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data);
