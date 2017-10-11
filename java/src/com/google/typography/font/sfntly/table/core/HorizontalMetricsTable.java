@@ -16,6 +16,7 @@
 
 package com.google.typography.font.sfntly.table.core;
 
+import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
@@ -26,31 +27,17 @@ import com.google.typography.font.sfntly.table.TableBasedTableBuilder;
  * A Horizontal Metrics table - 'hmtx'.
  *
  * @author Stuart Gill
+ * @see "ISO/IEC 14496-22:2015, section 5.2.4"
  */
 public final class HorizontalMetricsTable extends Table {
 
   private int numHMetrics;
   private int numGlyphs;
 
-  /**
-   * Offsets to specific elements in the underlying data. These offsets are relative to the
-   * start of the table or the start of sub-blocks within the table.
-   */
-  private enum Offset {
-    // hMetrics
-    hMetricsStart(0), hMetricsSize(4),
-
-    // Offsets within an hMetric
-    hMetricsAdvanceWidth(0),
-    hMetricsLeftSideBearing(2),
-
-    LeftSideBearingSize(2);
-
-    private final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
+  private interface MetricOffset {
+    int advanceWidth = 0;
+    int leftSideBearing = 2;
+    int SIZE = 4;
   }
 
   private HorizontalMetricsTable(
@@ -72,31 +59,22 @@ public final class HorizontalMetricsTable extends Table {
     if (entry > this.numHMetrics) {
       throw new IndexOutOfBoundsException();
     }
-    int offset = 
-      Offset.hMetricsStart.offset + 
-      (entry * Offset.hMetricsSize.offset) + Offset.hMetricsAdvanceWidth.offset;
-    return this.data.readUShort(offset);
+    return this.data.readUShort(entry * MetricOffset.SIZE + MetricOffset.advanceWidth);
   }
 
   public int hMetricLSB(int entry) {
     if (entry > this.numHMetrics) {
       throw new IndexOutOfBoundsException();
     }
-    int offset = 
-      Offset.hMetricsStart.offset + 
-      (entry * Offset.hMetricsSize.offset) + Offset.hMetricsLeftSideBearing.offset;
-    return this.data.readShort(offset);
+    return this.data.readShort(entry * MetricOffset.SIZE + MetricOffset.leftSideBearing);
   }
 
   public int lsbTableEntry(int entry) {
     if (entry > this.numberOfLSBs()) {
       throw new IndexOutOfBoundsException();
     }
-    int offset = 
-      Offset.hMetricsStart.offset + 
-      (this.numHMetrics * Offset.hMetricsSize.offset) + (entry * Offset.LeftSideBearingSize.offset);
-    return this.data.readShort(offset);
-
+    return this.data.readShort(
+        this.numHMetrics * MetricOffset.SIZE + entry * FontData.SizeOf.SHORT);
   }
 
   public int advanceWidth(int glyphId) {
@@ -115,10 +93,8 @@ public final class HorizontalMetricsTable extends Table {
 
   /**
    * Builder for a Horizontal Metrics Table - 'hmtx'.
-   *
    */
-  public static class 
-  Builder extends TableBasedTableBuilder<HorizontalMetricsTable> {
+  public static class Builder extends TableBasedTableBuilder<HorizontalMetricsTable> {
     private int numHMetrics = -1;
     private int numGlyphs = -1;
 

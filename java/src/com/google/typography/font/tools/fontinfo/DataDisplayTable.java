@@ -3,6 +3,7 @@
 package com.google.typography.font.tools.fontinfo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,20 +37,20 @@ public class DataDisplayTable {
    * @param header
    *          the header columns of the table
    */
-  public DataDisplayTable(List<String> header) {
-    if (header.size() < 1) {
-      throw new UnsupportedOperationException("Table must have at least one column");
+  public DataDisplayTable(String... header) {
+    if (header.length < 1) {
+      throw new IllegalArgumentException("Table must have at least one column");
     }
 
-    this.header = Collections.unmodifiableList(new ArrayList<String>(header));
+    this.header = Collections.unmodifiableList(new ArrayList<String>(Arrays.asList(header)));
     data = new ArrayList<List<String>>();
-    numCols = header.size();
+    numCols = header.length;
     numRows = 0;
 
     // Initialise the maximum length for each column based on the header
     maxColLengths = new ArrayList<Integer>(numCols);
     for (int i = 0; i < numCols; i++) {
-      maxColLengths.add(header.get(i).length());
+      maxColLengths.add(header[i].length());
     }
 
     // Initialise all columns to be left-aligned
@@ -64,15 +65,15 @@ public class DataDisplayTable {
    *
    * @param alignment
    *          array of values for each column alignment
-   * @throws UnsupportedOperationException
+   * @throws IllegalArgumentException
    *           if array size is different from column count
    */
-  public void setAlignment(List<Align> alignment) {
-    if (alignment.size() != numCols) {
-      throw new UnsupportedOperationException("Array is wrong size");
+  public void setAlignment(Align... alignment) {
+    if (alignment.length != numCols) {
+      throw new IllegalArgumentException("Array is wrong size");
     }
 
-    displayAlignment = Collections.unmodifiableList(new ArrayList<Align>(alignment));
+    displayAlignment = Collections.unmodifiableList(new ArrayList<Align>(Arrays.asList(alignment)));
   }
 
   /**
@@ -80,21 +81,21 @@ public class DataDisplayTable {
    *
    * @param row
    *          the row of data to insert into the table
-   * @throws UnsupportedOperationException
+   * @throws IllegalArgumentException
    *           if array size is different from column
    */
-  public void add(List<String> row) {
-    if (row.size() != numCols) {
-      throw new UnsupportedOperationException("Array is wrong size");
+  public void add(String... row) {
+    if (row.length != numCols) {
+      throw new IllegalArgumentException("Array is wrong size");
     }
 
-    data.add(Collections.unmodifiableList(new ArrayList<String>(row)));
+    data.add(Collections.unmodifiableList(new ArrayList<String>(Arrays.asList(row))));
     numRows++;
 
     // Modify the maximum size of each column
     for (int i = 0; i < numCols; i++) {
-      if (row.get(i).length() > maxColLengths.get(i)) {
-        maxColLengths.set(i, row.get(i).length());
+      if (row[i].length() > maxColLengths.get(i)) {
+        maxColLengths.set(i, row[i].length());
       }
     }
   }
@@ -276,15 +277,7 @@ public class DataDisplayTable {
 
   @Override
   public String toString() {
-    StringBuilder debugString = new StringBuilder();
-    debugString.append(numRows).append("x").append(numCols).append(" table, ");
-    debugString.append("header=[").append(header.get(0));
-    for (int i = 1; i < numCols; i++) {
-      debugString.append(", ").append(header.get(i));
-    }
-    debugString.append("]");
-
-    return debugString.toString();
+    return String.format("%dx%d table, header=%s", numRows, numCols, header);
   }
 
   /**
@@ -320,7 +313,7 @@ public class DataDisplayTable {
    * @return the padded string
    */
   private static String padLeft(String s, int minLength) {
-    return String.format("%1$" + minLength + "s", s);
+    return String.format("%" + minLength + "s", s);
   }
 
   /**
@@ -334,7 +327,7 @@ public class DataDisplayTable {
    * @return the padded string
    */
   private static String padRight(String s, int minLength) {
-    return String.format("%1$-" + minLength + "s", s);
+    return String.format("%-" + minLength + "s", s);
   }
 
   /**
@@ -347,10 +340,8 @@ public class DataDisplayTable {
    * @return a string that is a character repeated a specified number of times
    */
   private static String repeatCharacter(char c, int frequency) {
-    StringBuilder output = new StringBuilder(frequency);
-    for (int i = 0; i < frequency; i++) {
-      output.append(c);
-    }
-    return output.toString();
+    char[] chars = new char[frequency];
+    Arrays.fill(chars, c);
+    return new String(chars);
   }
 }

@@ -43,31 +43,25 @@ public class PostScriptTableBuilder {
   // Note, this is cut'n'pasted from the PostScriptTable implementation.
   // This is a temporary situation, as the actual logic will be refactored
   // to be part of a builder associated with that type.
-  private enum Offset {
-    version(0),
-    italicAngle(4),
-    underlinePosition(8),
-    underlineThickness(10),
-    isFixedPitch(12),
-    minMemType42(16),
-    maxMemType42(20),
-    minMemType1(24),
-    maxMemType1(28),
+  private interface Offset {
+    int version = 0;
+    int italicAngle = 4;
+    int underlinePosition = 8;
+    int underlineThickness = 10;
+    int isFixedPitch = 12;
+    int minMemType42 = 16;
+    int maxMemType42 = 20;
+    int minMemType1 = 24;
+    int maxMemType1 = 28;
 
     // TODO: add support for these versions of the table?
     // Version 2.0 table
-    numberOfGlyphs(32),
-    glyphNameIndex(34);  // start of table
+    int numberOfGlyphs = 32;
+    int glyphNameIndex = 34;  // start of table
 
     // Version 2.5 table
 
     // Version 4.0 table
-
-    private final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
   }
 
   /**
@@ -400,9 +394,9 @@ public class PostScriptTableBuilder {
     int newLength = 34 + 2 * nGlyphs + nameBytes.length;
     WritableFontData data = WritableFontData.createWritableFontData(newLength);
     v1Data.copyTo(data);
-    data.writeFixed(Offset.version.offset, VERSION_2);
-    data.writeUShort(Offset.numberOfGlyphs.offset, nGlyphs);
-    int index = Offset.glyphNameIndex.offset;
+    data.writeFixed(Offset.version, VERSION_2);
+    data.writeUShort(Offset.numberOfGlyphs, nGlyphs);
+    int index = Offset.glyphNameIndex;
     for (Integer glyphNameIndex : glyphNameIndices) {
       index += data.writeUShort(index, glyphNameIndex);
     }

@@ -54,7 +54,7 @@ public final class ControlValueTable extends Table {
    * @return the number of FWORDs in the data
    */
   public int fwordCount() {
-    return this.dataLength() / FontData.DataSize.FWORD.size();
+    return this.dataLength() / FontData.SizeOf.FWORD;
   }
 
   /**

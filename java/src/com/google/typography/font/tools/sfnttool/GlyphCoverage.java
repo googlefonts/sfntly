@@ -18,6 +18,7 @@ package com.google.typography.font.tools.sfnttool;
 
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.data.SfStringUtils;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMap.CMapFormat;
 import com.google.typography.font.sfntly.table.core.CMapTable;
@@ -47,10 +48,8 @@ public class GlyphCoverage {
     CMap cmap = getBestCMap(cmapTable);
     Set<Integer> coverage = new HashSet<Integer>();
     coverage.add(0);  // Always include notdef
-    // TODO: doesn't support non-BMP scripts, should use StringCharacterIterator instead
-    for (int i = 0; i < string.length(); i++) {
-      int c = (string.charAt(i)) & 0xffff;
-      int glyphId = cmap.glyphId(c);
+    for (int codepoint : SfStringUtils.getAllCodepoints(string)) {
+      int glyphId = cmap.glyphId(codepoint);
       touchGlyph(font, coverage, glyphId);
     }
     List<Integer> sortedCoverage = new ArrayList<Integer>(coverage);

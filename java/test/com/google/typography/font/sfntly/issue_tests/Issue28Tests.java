@@ -16,11 +16,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * Test for <a href="https://github.com/googlei18n/sfntly/issues/28">Issue 28</a>.
+ * <p>
  * Test class showing inconsistent behaviour between loading from a byte array
  * vs loading from a file input stream.
  */
 public class Issue28Tests extends TestCase {
-  
+
   private static byte[] readToByteArray(File file) throws IOException {
     byte[] data = new byte[(int) file.length()];
     FileInputStream fis = new FileInputStream(file);
@@ -47,7 +49,7 @@ public class Issue28Tests extends TestCase {
    * Ensure that the stream and byte array sourced fonts both throw an exception when you
    * read off the end of a sliced ReadableFontData
    */
-  public void testStreamVsBytes() throws Exception {
+  public void testStreamVsBytes() throws IOException {
     FontFactory factory = FontFactory.getInstance();
 
     byte[] data = readToByteArray(TestFont.TestFontNames.ROBOTO.getFile());
@@ -61,31 +63,26 @@ public class Issue28Tests extends TestCase {
       is.close();
     }
 
-    
     // first test for byte array sourced font
     {
-      boolean thrown = false;
       Glyph byteGlyph = getLastGlyph(byteFont);
       try {
-        int byteXMin = byteGlyph.xMin();
+        byteGlyph.xMin();
+        fail();
       } catch (IndexOutOfBoundsException e) {
-        // expected exception
-        thrown = true;
+        assertEquals("Index attempted to be read from is out of bounds: 2", e.getMessage());
       }
-      assertTrue("IndexOutOfBoundsException was expected but was not thrown.", thrown);
     }
 
     // next test for stream sourced font
     {
-      boolean thrown = false;
       Glyph streamGlyph = getLastGlyph(streamFont);
       try {
-        int streamXMin = streamGlyph.xMin();
+        streamGlyph.xMin();
+        fail();
       } catch (IndexOutOfBoundsException e) {
-        // expected exception
-        thrown = true;
+        assertEquals("Index attempted to be read from is out of bounds: 2", e.getMessage());
       }
-      assertTrue("IndexOutOfBoundsException was expected but was not thrown.", thrown);
     }
   }
 }

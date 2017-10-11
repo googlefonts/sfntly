@@ -24,7 +24,7 @@ public class SingleSubst extends SubstSubtable {
       fmt2 = new InnerArrayFmt2(data, headerSize(), dataIsCanonical);
       break;
     default:
-      throw new IllegalStateException("Subt format value is " + format + " (should be 1 or 2).");
+      throw new IllegalStateException("Subst format value is " + format + " (should be 1 or 2).");
     }
   }
 

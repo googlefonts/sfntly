@@ -86,9 +86,7 @@ public class CMapEditingTests extends TestCase {
 
     CMapTable.Builder cmapTableBuilder = (CMapTable.Builder) fontBuilder.newTableBuilder(Tag.cmap);
 
-    Iterator<CMap> cmapIter = cmapTable.iterator();
-    while (cmapIter.hasNext()) {
-      CMap cmap = cmapIter.next();
+    for (CMap cmap : cmapTable) {
       cmapTableBuilder.newCMapBuilder(cmap.cmapId(), cmap.readFontData());
     }
 

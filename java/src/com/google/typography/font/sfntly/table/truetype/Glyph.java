@@ -28,7 +28,7 @@ public abstract class Glyph extends SubTable {
       this.numberOfContours = 0;
     } else {
       // -1 if composite
-      this.numberOfContours = this.data.readShort(Offset.numberOfContours.offset);
+      this.numberOfContours = this.data.readShort(Offset.numberOfContours);
     }
   }
 
@@ -40,7 +40,7 @@ public abstract class Glyph extends SubTable {
       this.numberOfContours = 0;
     } else {
       // -1 if composite
-      this.numberOfContours = this.data.readShort(Offset.numberOfContours.offset);
+      this.numberOfContours = this.data.readShort(Offset.numberOfContours);
     }
   }
 
@@ -104,19 +104,19 @@ public abstract class Glyph extends SubTable {
   }
 
   public int xMin() {
-    return this.data.readShort(Offset.xMin.offset);
+    return this.data.readShort(Offset.xMin);
   }
 
   public int xMax() {
-    return this.data.readShort(Offset.xMax.offset);
+    return this.data.readShort(Offset.xMax);
   }
 
   public int yMin() {
-    return this.data.readShort(Offset.yMin.offset);
+    return this.data.readShort(Offset.yMin);
   }
 
   public int yMax() {
-    return this.data.readShort(Offset.yMax.offset);
+    return this.data.readShort(Offset.yMax);
   }
 
   public abstract int instructionSize();
@@ -125,25 +125,9 @@ public abstract class Glyph extends SubTable {
 
   @Override
   public String toString() {
-    return this.toString(0);
-  }
-
-  public String toString(int length) {
-    StringBuilder sb = new StringBuilder();
-    sb.append(this.glyphType());
-    sb.append(", contours=");
-    sb.append(this.numberOfContours());
-    sb.append(", [xmin=");
-    sb.append(this.xMin());
-    sb.append(", ymin=");
-    sb.append(this.yMin());
-    sb.append(", xmax=");
-    sb.append(this.xMax());
-    sb.append(", ymax=");
-    sb.append(this.yMax());
-    sb.append("]");
-    sb.append("\n");
-    return sb.toString();
+    return String.format("%s, contours=%d, [xmin=%d, ymin=%d, xmax=%d, ymax=%d]\n",
+        this.glyphType(), this.numberOfContours(),
+        this.xMin(), this.yMin(), this.xMax(), this.yMax());
   }
 
   // TODO(stuartg): interface? need methods from Composite?

@@ -2,6 +2,8 @@ package com.google.typography.font.sfntly.table.opentype.component;
 
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.data.SfObjects;
+import com.google.typography.font.sfntly.data.SfStringUtils;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
@@ -169,7 +171,7 @@ public class Rule {
 
   public static GlyphGroup glyphGroupForText(String str, CMapTable cmapTable) {
     GlyphGroup glyphGroup = new GlyphGroup();
-    Set<Integer> codes = codepointsFromStr(str);
+    Set<Integer> codes = SfStringUtils.getAllCodepoints(str);
     for (int code : codes) {
       for (CMap cmap : cmapTable) {
         if (cmap.platformId() == 3 && cmap.encodingId() == 1 || // Unicode BMP
@@ -414,14 +416,6 @@ public class Rule {
   }
 
   // Dump routines
-  private static Set<Integer> codepointsFromStr(String s) {
-    Set<Integer> list = new HashSet<Integer>();
-    for (int cp, i = 0; i < s.length(); i += Character.charCount(cp)) {
-      cp = s.codePointAt(i);
-      list.add(cp);
-    }
-    return list;
-  }
 
   private static void dumpRuleMap(Map<Integer, Set<Rule>> rulesList, PostScriptTable post) {
     for (int index : rulesList.keySet()) {
@@ -484,23 +478,11 @@ public class Rule {
       return false;
     }
     Rule other = (Rule) o;
-    if (hashCode != other.hashCode) {
-      return false;
-    }
-    RuleSegment[] these = new RuleSegment[] {input, subst, backtrack, lookAhead};
-    RuleSegment[] others = new RuleSegment[] {other.input, other.subst, other.backtrack, other.lookAhead};
-    for (int i = 0; i < these.length; i++) {
-      RuleSegment thisSeg = these[i];
-      RuleSegment otherSeg = others[i];
-      if (thisSeg != null) {
-        if (!thisSeg.equals(otherSeg)) {
-          return false;
-        }
-      } else if (otherSeg != null){
-        return false;
-      }
-    }
-    return true;
+    return hashCode == other.hashCode
+        && SfObjects.equals(input, other.input)
+        && SfObjects.equals(subst, other.subst)
+        && SfObjects.equals(backtrack, other.backtrack)
+        && SfObjects.equals(lookAhead, other.lookAhead);
   }
 
   @Override
@@ -509,10 +491,6 @@ public class Rule {
   }
 
   private int getHashCode() {
-    int hashCode = 1;
-    for (RuleSegment e : new RuleSegment[] {input, subst, backtrack, lookAhead}) {
-      hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
-    }
-    return hashCode;
+    return SfObjects.hash(input, subst, backtrack, lookAhead);
   }
 }

@@ -64,23 +64,18 @@ public final class SimpleGlyph extends Glyph {
         this.yCoordinatesOffset = 0;
         return;
       }
-      this.instructionSize =
-          this.data.readUShort(Offset.simpleEndPtsOfCountours.offset + this.numberOfContours()
-              * FontData.DataSize.USHORT.size());
-      this.instructionsOffset =
-          Offset.simpleEndPtsOfCountours.offset + (this.numberOfContours() + 1)
-              * FontData.DataSize.USHORT.size();
-      this.flagsOffset =
-          this.instructionsOffset + this.instructionSize * FontData.DataSize.BYTE.size();
+      this.instructionSize = this.data.readUShort(Offset.simpleEndPtsOfCountours
+          + this.numberOfContours() * FontData.SizeOf.USHORT);
+      this.instructionsOffset = Offset.simpleEndPtsOfCountours
+          + (this.numberOfContours() + 1) * FontData.SizeOf.USHORT;
+      this.flagsOffset = this.instructionsOffset + this.instructionSize * FontData.SizeOf.BYTE;
       this.numberOfPoints = this.contourEndPoint(this.numberOfContours() - 1) + 1;
       this.xCoordinates = new int[this.numberOfPoints];
       this.yCoordinates = new int[this.numberOfPoints];
       this.onCurve = new boolean[this.numberOfPoints];
       parseData(false);
-      this.xCoordinatesOffset =
-          this.flagsOffset + this.flagByteCount * FontData.DataSize.BYTE.size();
-      this.yCoordinatesOffset =
-          this.xCoordinatesOffset + this.xByteCount * FontData.DataSize.BYTE.size();
+      this.xCoordinatesOffset = this.flagsOffset + this.flagByteCount * FontData.SizeOf.BYTE;
+      this.yCoordinatesOffset = this.xCoordinatesOffset + this.xByteCount * FontData.SizeOf.BYTE;
       this.contourIndex = new int[this.numberOfContours() + 1];
       contourIndex[0] = 0;
       for (int contour = 0; contour < this.contourIndex.length - 1; contour++) {
@@ -88,13 +83,13 @@ public final class SimpleGlyph extends Glyph {
       }
       parseData(true);
       int nonPaddedDataLength =
-          5 * FontData.DataSize.SHORT.size()
-              + (this.numberOfContours() * FontData.DataSize.USHORT.size())
-              + FontData.DataSize.USHORT.size()
-              + (this.instructionSize * FontData.DataSize.BYTE.size())
-              + (flagByteCount * FontData.DataSize.BYTE.size())
-              + (xByteCount * FontData.DataSize.BYTE.size())
-              + (yByteCount * FontData.DataSize.BYTE.size());
+          5 * FontData.SizeOf.SHORT
+              + (this.numberOfContours() * FontData.SizeOf.USHORT)
+              + FontData.SizeOf.USHORT
+              + (this.instructionSize * FontData.SizeOf.BYTE)
+              + (flagByteCount * FontData.SizeOf.BYTE)
+              + (xByteCount * FontData.SizeOf.BYTE)
+              + (yByteCount * FontData.SizeOf.BYTE);
       this.setPadding(this.dataLength() - nonPaddedDataLength);
       this.initialized = true;
     }
@@ -112,7 +107,7 @@ public final class SimpleGlyph extends Glyph {
       // get the flag for the current point
       if (flagRepeat == 0) {
         flag = this.flagAsInt(flagIndex++);
-        if ((flag & FLAG_REPEAT) == FLAG_REPEAT) {
+        if ((flag & FLAG_REPEAT) != 0) {
           flagRepeat = flagAsInt(flagIndex++);
         }
       } else {
@@ -121,21 +116,20 @@ public final class SimpleGlyph extends Glyph {
 
       // on the curve?
       if (fillArrays) {
-        this.onCurve[pointIndex] = ((flag & FLAG_ONCURVE) == FLAG_ONCURVE) ? true : false;
+        this.onCurve[pointIndex] = (flag & FLAG_ONCURVE) != 0;
       }
       // get the x coordinate
-      if ((flag & FLAG_XSHORT) == FLAG_XSHORT) {
+      if ((flag & FLAG_XSHORT) != 0) {
         // single byte x coord value
         if (fillArrays) {
-          this.xCoordinates[pointIndex] =
-              this.data.readUByte(this.xCoordinatesOffset + xByteIndex);
-          this.xCoordinates[pointIndex] *=
-              ((flag & FLAG_XREPEATSIGN) == FLAG_XREPEATSIGN) ? 1 : -1;
+          int sign = ((flag & FLAG_XREPEATSIGN) != 0) ? 1 : -1;
+          int magnitude = this.data.readUByte(this.xCoordinatesOffset + xByteIndex);
+          this.xCoordinates[pointIndex] = sign * magnitude;
         }
         xByteIndex++;
       } else {
         // double byte coord value
-        if (!((flag & FLAG_XREPEATSIGN) == FLAG_XREPEATSIGN)) {
+        if ((flag & FLAG_XREPEATSIGN) == 0) {
           if (fillArrays) {
             this.xCoordinates[pointIndex] =
                 this.data.readShort(this.xCoordinatesOffset + xByteIndex);
@@ -148,16 +142,15 @@ public final class SimpleGlyph extends Glyph {
       }
 
       // get the y coordinate
-      if ((flag & FLAG_YSHORT) == FLAG_YSHORT) {
+      if ((flag & FLAG_YSHORT) != 0) {
         if (fillArrays) {
           this.yCoordinates[pointIndex] =
               this.data.readUByte(this.yCoordinatesOffset + yByteIndex);
-          this.yCoordinates[pointIndex] *=
-              ((flag & FLAG_YREPEATSIGN) == FLAG_YREPEATSIGN) ? 1 : -1;
+          this.yCoordinates[pointIndex] *= ((flag & FLAG_YREPEATSIGN) != 0) ? 1 : -1;
         }
         yByteIndex++;
       } else {
-        if (!((flag & FLAG_YREPEATSIGN) == FLAG_YREPEATSIGN)) {
+        if ((flag & FLAG_YREPEATSIGN) == 0) {
           if (fillArrays) {
             this.yCoordinates[pointIndex] =
                 this.data.readShort(this.yCoordinatesOffset + yByteIndex);
@@ -175,12 +168,11 @@ public final class SimpleGlyph extends Glyph {
   }
 
   private int flagAsInt(int index) {
-    return this.data.readUByte(this.flagsOffset + index * FontData.DataSize.BYTE.size());
+    return this.data.readUByte(this.flagsOffset + index * FontData.SizeOf.BYTE);
   }
 
   public int contourEndPoint(int contour) {
-    return this.data.readUShort(
-        contour * FontData.DataSize.USHORT.size() + Offset.simpleEndPtsOfCountours.offset);
+    return this.data.readUShort(contour * FontData.SizeOf.USHORT + Offset.simpleEndPtsOfCountours);
   }
 
   @Override

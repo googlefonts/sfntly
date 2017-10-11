@@ -209,7 +209,7 @@ public class FontOutputStream extends OutputStream {
    * @throws IOException
    */
   public void writeDateTime(long date) throws IOException {
-    this.writeULong((date >> 32) & 0xffffffff);
-    this.writeULong(date & 0xffffffff);
+    this.writeULong(date >> 32);
+    this.writeULong(date);
   }
 }

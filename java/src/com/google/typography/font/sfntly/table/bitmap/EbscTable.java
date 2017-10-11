@@ -16,7 +16,6 @@
 
 package com.google.typography.font.sfntly.table.bitmap;
 
-import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
@@ -29,29 +28,20 @@ import com.google.typography.font.sfntly.table.Table;
  */
 public class EbscTable extends Table {
 
-  enum Offset {
-    // header
-    version(0),
-    numSizes(FontData.DataSize.Fixed.size()),
-    headerLength(numSizes.offset + FontData.DataSize.ULONG.size()),
-    bitmapScaleTableStart(headerLength.offset),
+  private interface HeaderOffset {
+    int version = 0;
+    int numSizes = 4;
+    int SIZE = 8;
+  }
 
-    // bitmapScaleTable
-    bitmapScaleTable_hori(0),
-    bitmapScaleTable_vert(EblcTable.Offset.sbitLineMetricsLength.offset),
-    bitmapScaleTable_ppemX(bitmapScaleTable_vert.offset
-        + EblcTable.Offset.sbitLineMetricsLength.offset),
-    bitmapScaleTable_ppemY(bitmapScaleTable_ppemX.offset + FontData.DataSize.BYTE.size()),
-    bitmapScaleTable_substitutePpemX(bitmapScaleTable_ppemY.offset + FontData.DataSize.BYTE.size()),
-    bitmapScaleTable_substitutePpemY(bitmapScaleTable_substitutePpemX.offset
-        + FontData.DataSize.BYTE.size()),
-    bitmapScaleTableLength(bitmapScaleTable_substitutePpemY.offset + FontData.DataSize.BYTE.size());
-
-    final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
+  private interface BitmapScale {
+    int hori = 0;
+    int vert = 12;
+    int ppemX = 24;
+    int ppemY = 25;
+    int substitutePpemX = 26;
+    int substitutePpemY = 27;
+    int SIZE = 28;
   }
 
   /**
@@ -63,11 +53,11 @@ public class EbscTable extends Table {
   }
 
   public int version() {
-    return this.data.readFixed(Offset.version.offset);
+    return this.data.readFixed(HeaderOffset.version);
   }
 
   public int numSizes() {
-    return this.data.readULongAsInt(Offset.numSizes.offset);
+    return this.data.readULongAsInt(HeaderOffset.numSizes);
   }
 
   public BitmapScaleTable bitmapScaleTable(int index) {
@@ -75,29 +65,38 @@ public class EbscTable extends Table {
       throw new IndexOutOfBoundsException(
           "BitmapScaleTable index is outside the bounds of available tables.");
     }
-    return new BitmapScaleTable(this.data,
-        Offset.bitmapScaleTableStart.offset + index * Offset.bitmapScaleTableLength.offset);
+    return new BitmapScaleTable(this.data, HeaderOffset.SIZE + index * BitmapScale.SIZE);
   }
 
   public static class BitmapScaleTable extends SubTable {
     protected BitmapScaleTable(ReadableFontData data, int offset) {
-      super(data, offset, Offset.bitmapScaleTableLength.offset);
+      super(data, offset, BitmapScale.SIZE);
+    }
+
+    public SbitLineMetrics hori() {
+      ReadableFontData horiData = this.data.slice(BitmapScale.hori, SbitLineMetrics.SIZE);
+      return new SbitLineMetrics(horiData, this.data);
+    }
+
+    public SbitLineMetrics vert() {
+      ReadableFontData horiData = this.data.slice(BitmapScale.vert, SbitLineMetrics.SIZE);
+      return new SbitLineMetrics(horiData, this.data);
     }
 
     public int ppemX() {
-      return this.data.readByte(Offset.bitmapScaleTable_ppemX.offset);
+      return this.data.readByte(BitmapScale.ppemX);
     }
 
     public int ppemY() {
-      return this.data.readByte(Offset.bitmapScaleTable_ppemY.offset);
+      return this.data.readByte(BitmapScale.ppemY);
     }
 
     public int substitutePpemX() {
-      return this.data.readByte(Offset.bitmapScaleTable_substitutePpemX.offset);
+      return this.data.readByte(BitmapScale.substitutePpemX);
     }
 
     public int substitutePpemY() {
-      return this.data.readByte(Offset.bitmapScaleTable_substitutePpemY.offset);
+      return this.data.readByte(BitmapScale.substitutePpemY);
     }
   }
 

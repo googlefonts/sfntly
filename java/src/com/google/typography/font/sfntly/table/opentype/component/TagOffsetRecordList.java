@@ -3,8 +3,6 @@ package com.google.typography.font.sfntly.table.opentype.component;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
-import java.util.Iterator;
-
 final class TagOffsetRecordList extends RecordList<TagOffsetRecord> {
   TagOffsetRecordList(WritableFontData data) {
     super(data);
@@ -19,9 +17,7 @@ final class TagOffsetRecordList extends RecordList<TagOffsetRecord> {
   }
 
   TagOffsetRecord getRecordForTag(int tag) {
-    Iterator<TagOffsetRecord> iterator = iterator();
-    while (iterator.hasNext()) {
-      TagOffsetRecord record = iterator.next();
+    for (TagOffsetRecord record : this) {
       if (record.tag == tag) {
         return record;
       }

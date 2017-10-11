@@ -96,16 +96,14 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
     }
 
     protected Builder(TagOffsetsTable.Builder<T, S> other) {
-      super();
+      super(null, other.dataIsCanonical);
       builders = other.builders;
-      dataIsCanonical = other.dataIsCanonical;
       base = other.base;
     }
 
     protected Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
-      super(data);
+      super(data, dataIsCanonical);
       this.base = base;
-      this.dataIsCanonical = dataIsCanonical;
       if (!dataIsCanonical) {
         prepareToEdit();
       }

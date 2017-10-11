@@ -28,9 +28,10 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * A Loca table - 'loca'.
+ * The 'loca' table maps glyphIds to their location in the 'glyf' table.
  *
  * @author Stuart Gill
+ * @see "ISO/IEC 14496-22:2015, section 5.3.4"
  */
 public final class LocaTable extends Table {
 
@@ -107,13 +108,13 @@ public final class LocaTable extends Table {
    * @return the loca table value
    */
   public int loca(int index) {
-    if (index > this.numGlyphs) {
-      throw new IndexOutOfBoundsException();
+    if (index < 0 || index > this.numGlyphs) {
+      throw new IndexOutOfBoundsException("Glyph ID is out of bounds.");
     }
     if (this.version == IndexToLocFormat.shortOffset) {
-      return 2 * this.data.readUShort(index * FontData.DataSize.USHORT.size());
+      return 2 * this.data.readUShort(index * FontData.SizeOf.USHORT);
     }
-    return this.data.readULongAsInt(index * FontData.DataSize.ULONG.size());
+    return this.data.readULongAsInt(index * FontData.SizeOf.ULONG);
   }
 
   /**
@@ -139,10 +140,7 @@ public final class LocaTable extends Table {
 
     @Override
     public boolean hasNext() {
-      if (this.index <= numGlyphs) {
-        return true;
-      }
-      return false;
+      return this.index <= numGlyphs;
     }
 
     @Override
@@ -162,7 +160,7 @@ public final class LocaTable extends Table {
    */
   public static class Builder extends Table.Builder<LocaTable> {
 
-    // values that need to be set to properly passe an existing loca table
+    // values that need to be set to properly parse an existing loca table
     private IndexToLocFormat formatVersion = IndexToLocFormat.longOffset;
     private int numGlyphs = -1;
     
@@ -408,9 +406,9 @@ public final class LocaTable extends Table {
         return 0;
       }
       if (this.formatVersion == IndexToLocFormat.longOffset) {
-        return this.loca.size() * FontData.DataSize.ULONG.size();
+        return this.loca.size() * FontData.SizeOf.ULONG;
       }
-      return this.loca.size() * FontData.DataSize.USHORT.size();
+      return this.loca.size() * FontData.SizeOf.USHORT;
     }
 
     @Override

@@ -46,32 +46,31 @@ public final class CompositeGlyph extends Glyph {
         return;
       }
 
-      int index = 5 * FontData.DataSize.USHORT.size(); // header
+      int index = 5 * FontData.SizeOf.USHORT; // header
       int flags = FLAG_MORE_COMPONENTS;
-      while ((flags & FLAG_MORE_COMPONENTS) == FLAG_MORE_COMPONENTS) {
+      while ((flags & FLAG_MORE_COMPONENTS) != 0) {
         contourIndex.add(index);
         flags = this.data.readUShort(index);
-        index += 2 * FontData.DataSize.USHORT.size(); // flags and
-        // glyphIndex
-        if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) == FLAG_ARG_1_AND_2_ARE_WORDS) {
-          index += 2 * FontData.DataSize.SHORT.size();
+        index += 2 * FontData.SizeOf.USHORT; // flags and glyphIndex
+        if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
+          index += 2 * FontData.SizeOf.SHORT;
         } else {
-          index += 2 * FontData.DataSize.BYTE.size();
+          index += 2 * FontData.SizeOf.BYTE;
         }
-        if ((flags & FLAG_WE_HAVE_A_SCALE) == FLAG_WE_HAVE_A_SCALE) {
-          index += FontData.DataSize.F2DOT14.size();
-        } else if ((flags & FLAG_WE_HAVE_AN_X_AND_Y_SCALE) == FLAG_WE_HAVE_AN_X_AND_Y_SCALE) {
-          index += 2 * FontData.DataSize.F2DOT14.size();
-        } else if ((flags & FLAG_WE_HAVE_A_TWO_BY_TWO) == FLAG_WE_HAVE_A_TWO_BY_TWO) {
-          index += 4 * FontData.DataSize.F2DOT14.size();
+        if ((flags & FLAG_WE_HAVE_A_SCALE) != 0) {
+          index += FontData.SizeOf.F2DOT14;
+        } else if ((flags & FLAG_WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
+          index += 2 * FontData.SizeOf.F2DOT14;
+        } else if ((flags & FLAG_WE_HAVE_A_TWO_BY_TWO) != 0) {
+          index += 4 * FontData.SizeOf.F2DOT14;
         }
       }
       int nonPaddedDataLength = index;
-      if ((flags & FLAG_WE_HAVE_INSTRUCTIONS) == FLAG_WE_HAVE_INSTRUCTIONS) {
+      if ((flags & FLAG_WE_HAVE_INSTRUCTIONS) != 0) {
         this.instructionSize = this.data.readUShort(index);
-        index += FontData.DataSize.USHORT.size();
+        index += FontData.SizeOf.USHORT;
         this.instructionsOffset = index;
-        nonPaddedDataLength = index + (this.instructionSize * FontData.DataSize.BYTE.size());
+        nonPaddedDataLength = index + (this.instructionSize * FontData.SizeOf.BYTE);
       }
       this.setPadding(this.dataLength() - nonPaddedDataLength);
     }
@@ -86,46 +85,46 @@ public final class CompositeGlyph extends Glyph {
   }
 
   public int glyphIndex(int contour) {
-    return this.data.readUShort(FontData.DataSize.USHORT.size() + this.contourIndex.get(contour));
+    return this.data.readUShort(FontData.SizeOf.USHORT + this.contourIndex.get(contour));
   }
 
   public int argument1(int contour) {
-    int index = 2 * FontData.DataSize.USHORT.size() + this.contourIndex.get(contour);
+    int index = 2 * FontData.SizeOf.USHORT + this.contourIndex.get(contour);
     int flags = this.flags(contour);
-    if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) == FLAG_ARG_1_AND_2_ARE_WORDS) {
+    if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
       return this.data.readUShort(index);
     }
     return this.data.readByte(index);
   }
 
   public int argument2(int contour) {
-    int index = 2 * FontData.DataSize.USHORT.size() + this.contourIndex.get(contour);
+    int index = 2 * FontData.SizeOf.USHORT + this.contourIndex.get(contour);
     int flags = this.flags(contour);
-    if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) == FLAG_ARG_1_AND_2_ARE_WORDS) {
-      return this.data.readUShort(index + FontData.DataSize.USHORT.size());
+    if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
+      return this.data.readUShort(index + FontData.SizeOf.USHORT);
     }
-    return this.data.readByte(index + FontData.DataSize.BYTE.size());
+    return this.data.readByte(index + FontData.SizeOf.BYTE);
   }
 
   public int transformationSize(int contour) {
     int flags = this.flags(contour);
-    if ((flags & FLAG_WE_HAVE_A_SCALE) == FLAG_WE_HAVE_A_SCALE) {
-      return FontData.DataSize.F2DOT14.size();
-    } else if ((flags & FLAG_WE_HAVE_AN_X_AND_Y_SCALE) == FLAG_WE_HAVE_AN_X_AND_Y_SCALE) {
-      return 2 * FontData.DataSize.F2DOT14.size();
-    } else if ((flags & FLAG_WE_HAVE_A_TWO_BY_TWO) == FLAG_WE_HAVE_A_TWO_BY_TWO) {
-      return 4 * FontData.DataSize.F2DOT14.size();
+    if ((flags & FLAG_WE_HAVE_A_SCALE) != 0) {
+      return FontData.SizeOf.F2DOT14;
+    } else if ((flags & FLAG_WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
+      return 2 * FontData.SizeOf.F2DOT14;
+    } else if ((flags & FLAG_WE_HAVE_A_TWO_BY_TWO) != 0) {
+      return 4 * FontData.SizeOf.F2DOT14;
     }
     return 0;
   }
 
   public byte[] transformation(int contour) {
     int flags = this.flags(contour);
-    int index = this.contourIndex.get(contour) + 2 * FontData.DataSize.USHORT.size();
-    if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) == FLAG_ARG_1_AND_2_ARE_WORDS) {
-      index += 2 * FontData.DataSize.SHORT.size();
+    int index = this.contourIndex.get(contour) + 2 * FontData.SizeOf.USHORT;
+    if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
+      index += 2 * FontData.SizeOf.SHORT;
     } else {
-      index += 2 * FontData.DataSize.BYTE.size();
+      index += 2 * FontData.SizeOf.BYTE;
     }
 
     int tsize = transformationSize(contour);
@@ -146,12 +145,10 @@ public final class CompositeGlyph extends Glyph {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder(super.toString());
-    sb.append("\ncontourOffset.length = ");
-    sb.append(this.contourIndex.size());
-    sb.append("\ninstructionSize = ");
-    sb.append(this.instructionSize);
-    sb.append("\n\tcontour index = [");
+    StringBuilder sb = new StringBuilder();
+    sb.append(String.format("%s\ncontourOffset.length = %d\ninstructionSize = %d\n",
+        super.toString(), this.contourIndex.size(), this.instructionSize));
+    sb.append("\tcontour index = [");
     for (int contour = 0; contour < this.contourIndex.size(); contour++) {
       if (contour != 0) {
         sb.append(", ");
@@ -160,8 +157,8 @@ public final class CompositeGlyph extends Glyph {
     }
     sb.append("]\n");
     for (int contour = 0; contour < this.contourIndex.size(); contour++) {
-      sb.append("\t" + contour + " = [gid = " + this.glyphIndex(contour) + ", arg1 = "
-          + this.argument1(contour) + ", arg2 = " + this.argument2(contour) + "]\n");
+      sb.append(String.format("\t%d = [gid = %d, arg1 = %d, arg2 = %d]\n",
+          contour, this.glyphIndex(contour), this.argument1(contour), this.argument2(contour)));
     }
     return sb.toString();
   }
