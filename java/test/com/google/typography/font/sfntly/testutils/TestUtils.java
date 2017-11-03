@@ -16,8 +16,10 @@
 
 package com.google.typography.font.sfntly.testutils;
 
-import com.google.typography.font.sfntly.data.ReadableFontData;
+import static org.junit.Assert.assertEquals;
 
+import com.google.typography.font.sfntly.data.ReadableFontData;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,6 +33,9 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * @author Stuart Gill
@@ -64,9 +69,9 @@ public class TestUtils {
   }
 
   /**
-   * Creates a new file including deleting an already existing file with the same path 
+   * Creates a new file including deleting an already existing file with the same path
    * and name and creating any needed directories.
-   * 
+   *
    * @param file the file to create
    * @throws IOException
    */
@@ -90,9 +95,9 @@ public class TestUtils {
    */
   public static String dumpLongAsString(int i) {
     byte[] b = new byte[] {
-        (byte) (i >> 24 & 0xff), 
-        (byte) (i >> 16 & 0xff), 
-        (byte) (i >> 8 & 0xff), 
+        (byte) (i >> 24 & 0xff),
+        (byte) (i >> 16 & 0xff),
+        (byte) (i >> 8 & 0xff),
         (byte) (i & 0xff)};
 
     String s;
@@ -218,7 +223,7 @@ public class TestUtils {
    * Checks that both objects are equal as defined by the object itself. If one
    * is null then they are not equal. If both are null they are considered
    * equal.
-   * 
+   *
    * @param o1 first object
    * @param o2 second object
    * @return true if equal
@@ -232,5 +237,37 @@ public class TestUtils {
       return false;
     }
     return o1.equals(o2);
+  }
+
+  public static void assertSha256(String expectedSha256Hex, ReadableFontData data) {
+    try {
+      MessageDigest digest = MessageDigest.getInstance("SHA-256");
+      data.copyTo(new DigestOutputStream(new ByteArrayOutputStream(), digest));
+      byte[] hash = digest.digest();
+      assertEquals(expectedSha256Hex, hex(hash));
+    } catch (NoSuchAlgorithmException e) {
+      throw new IllegalStateException(e);
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  public static void assertSha256(String expectedSha256Hex, byte[] data) {
+    try {
+      MessageDigest digest = MessageDigest.getInstance("SHA2-256");
+      byte[] hash = digest.digest(data);
+      assertEquals(expectedSha256Hex, hex(hash));
+    } catch (NoSuchAlgorithmException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  private static String hex(byte[] data) {
+    char[] chars = new char[2 * data.length];
+    for (int i = 0; i < data.length; i++) {
+      chars[2 * i] = "0123456789abcdef".charAt((data[i] & 0xF0) >> 4);
+      chars[2 * i + 1] = "0123456789abcdef".charAt(data[i] & 0x0F);
+    }
+    return new String(chars);
   }
 }
