@@ -44,10 +44,6 @@ public class EbscTable extends Table {
     int SIZE = 28;
   }
 
-  /**
-   * @param header
-   * @param data
-   */
   private EbscTable(Header header, ReadableFontData data) {
     super(header, data);
   }
@@ -114,18 +110,10 @@ public class EbscTable extends Table {
       return new Builder(header, data);
     }
 
-    /**
-     * @param header
-     * @param data
-     */
     protected Builder(Header header, WritableFontData data) {
       super(header, data);
     }
 
-    /**
-     * @param header
-     * @param data
-     */
     protected Builder(Header header, ReadableFontData data) {
       super(header, data);
     }

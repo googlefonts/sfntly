@@ -739,7 +739,6 @@ public class Font {
      *  This new table will be added to the font and will replace any existing
      * builder for that table.
      *
-     * @param tag
      * @return new empty table of the type specified by tag; if tag is not known
      *         then a generic OpenTypeTable is returned
      */
@@ -758,8 +757,6 @@ public class Font {
      *  This new table has been added to the font and will replace any existing
      * builder for that table.
      *
-     * @param tag
-     * @param srcData
      * @return new empty table of the type specified by tag; if tag is not known
      *         then a generic OpenTypeTable is returned
      */

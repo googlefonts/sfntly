@@ -29,7 +29,6 @@ import java.util.Date;
  *
  * <p>The data types used are as listed:
  * <table>
- * <table>
  * <tr>
  * <td>BYTE</td>
  * <td>8-bit unsigned integer.</td>
@@ -544,7 +543,6 @@ public class ReadableFontData extends FontData {
    *
    * @param os the destination
    * @return number of bytes copied
-   * @throws IOException
    */
   public int copyTo(OutputStream os) throws IOException {
     return this.array.copyTo(os, this.boundOffset(0), this.length());

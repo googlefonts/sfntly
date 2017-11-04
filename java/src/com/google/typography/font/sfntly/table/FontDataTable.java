@@ -137,9 +137,6 @@ public abstract class FontDataTable {
       this.internalSetData(data, true);
     }
 
-    /**
-     * @param data
-     */
     public void setData(ReadableFontData data) {
       this.internalSetData(data, true);
     }

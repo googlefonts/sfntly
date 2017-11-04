@@ -64,7 +64,6 @@ public final class CMapFormat2 extends CMap {
    * with this cmap. This comes about because the cmap format 2 table is
    * designed around multi-byte encodings such as SJIS, EUC-JP, Big5, etc.
    *
-   * @param character
    * @return the number of bytes consumed from this "character" - either 1 or
    *         2
    */

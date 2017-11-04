@@ -62,9 +62,6 @@ public class SfntDump {
 
   /**
    * Dump a font with various options based on the command line.
-   *
-   * @param args command line arguments
-   * @throws IOException
    */
   public static void main(String[] args) throws IOException {
     SfntDump dumper = new SfntDump();

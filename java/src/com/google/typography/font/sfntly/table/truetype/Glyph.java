@@ -147,11 +147,6 @@ public abstract class Glyph extends SubTable {
       super(data);
     }
 
-    /**
-     * @param data
-     * @param offset
-     * @param length
-     */
     protected Builder(WritableFontData data, int offset, int length) {
       this(data.slice(offset, length));
     }

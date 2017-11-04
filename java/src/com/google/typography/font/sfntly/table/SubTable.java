@@ -150,8 +150,6 @@ public abstract class SubTable extends FontDataTable {
   /**
    * Sets the amount of padding that is part of the data being used by this
    * subtable.
-   *
-   * @param padding
    */
   // TODO(stuartg): move to constructor
   protected void setPadding(int padding) {

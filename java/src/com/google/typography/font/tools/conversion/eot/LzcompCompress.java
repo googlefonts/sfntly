@@ -17,10 +17,10 @@
 package com.google.typography.font.tools.conversion.eot;
 
 /**
- * Implement LZCOMP compression algorithm as defined in MicroType Express, part of the EOT
- * draft spec at {@link "http://www.w3.org/Submission/MTX/"}
+ * Implement LZCOMP compression algorithm as defined in MicroType Express,
+ * part of the EOT draft spec at <a href="http://www.w3.org/Submission/MTX/">MTX</a>.
  *
- * Java implementation based on http://www.w3.org/Submission/MTX/ reference code
+ * Based on the MTX reference code.
  *
  * @author Raph Levien
  */

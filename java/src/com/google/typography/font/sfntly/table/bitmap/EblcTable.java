@@ -55,10 +55,6 @@ public class EblcTable extends SubTableContainerTable {
   private final Object bitmapSizeTableLock = new Object();
   private volatile List<BitmapSizeTable> bitmapSizeTable;
 
-  /**
-   * @param header
-   * @param data
-   */
   protected EblcTable(Header header, ReadableFontData data) {
     super(header, data);
   }

@@ -27,36 +27,21 @@ import java.io.IOException;
  * @author Stuart Gill
  *
  */
-public abstract class ByteArrayTableBuilder<T extends Table> extends TableBasedTableBuilder<
-    T> {
+public abstract class ByteArrayTableBuilder<T extends Table>
+    extends TableBasedTableBuilder<T> {
 
-  /**
-   * Constructor.
-   *
-   * @param header
-   * @param data
-   */
   protected ByteArrayTableBuilder(Header header, WritableFontData data) {
     super(header, data);
   }
 
-  /**
-   * Constructor.
-   *
-   * @param header
-   * @param data
-   */
   protected ByteArrayTableBuilder(Header header, ReadableFontData data) {
     super(header, data);
   }
 
   /**
-   * Get the byte value at the specified index. The index is relative to the
-   * start of the table.
+   * Get the byte value at the specified index.
    *
    * @param index index relative to the start of the table
-   * @return byte value at the given index
-   * @throws IOException
    */
   public int byteValue(int index) throws IOException {
     ReadableFontData data = this.internalReadData();
@@ -67,12 +52,9 @@ public abstract class ByteArrayTableBuilder<T extends Table> extends TableBasedT
   }
 
   /**
-   * Get the byte value at the specified index. The index is relative to the
-   * start of the table.
+   * Set the byte value at the specified index.
    *
    * @param index index relative to the start of the table
-   * @param b byte value to tset
-   * @throws IOException
    */
   public void setByteValue(int index, byte b) throws IOException {
     WritableFontData data = this.internalWriteData();
@@ -85,9 +67,6 @@ public abstract class ByteArrayTableBuilder<T extends Table> extends TableBasedT
   /**
    * Get the number of bytes set for this table. It may include padding bytes at
    * the end.
-   *
-   * @return number of bytes for the table
-   * @throws IOException
    */
   public int byteCount() throws IOException {
     ReadableFontData data = this.internalReadData();

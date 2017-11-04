@@ -25,7 +25,6 @@ import java.io.InputStream;
  *
  * The data types used are as listed:
  * <table>
- * <table>
  * <tr>
  * <td>BYTE</td>
  * <td>8-bit unsigned integer.</td>
@@ -150,9 +149,6 @@ public class FontInputStream extends FilterInputStream {
 
   /**
    * Read a Char value.
-   *
-   * @return Char value
-   * @throws IOException
    */
   public int readChar() throws IOException {
     return this.read();
@@ -162,7 +158,6 @@ public class FontInputStream extends FilterInputStream {
    * Read a UShort value.
    *
    * @return UShort value
-   * @throws IOException
    */
   public int readUShort() throws IOException {
     return 0xffff & (this.read() << 8 | this.read());
@@ -172,7 +167,6 @@ public class FontInputStream extends FilterInputStream {
    * Read a Short value.
    *
    * @return Short value
-   * @throws IOException
    */
   public int readShort() throws IOException {
     return ((this.read() << 8 | this.read()) << 16) >> 16;
@@ -180,9 +174,6 @@ public class FontInputStream extends FilterInputStream {
 
   /**
    * Read a UInt24 value.
-   *
-   * @return UInt24 value
-   * @throws IOException
    */
   public int readUInt24() throws IOException {
     return 0xffffff & (this.read() << 16 | this.read() << 8 | this.read());
@@ -190,21 +181,15 @@ public class FontInputStream extends FilterInputStream {
 
   /**
    * Read a ULong value.
-   *
-   * @return ULong value
-   * @throws IOException
    */
   public long readULong() throws IOException {
     return 0xffffffffL & this.readLong();
   }
 
   /**
-   * Read a ULong value as an int. If the value is not representable as an
-   * integer an <code>ArithmeticException</code> is thrown.
+   * Read a ULong value as an int.
    *
-   * @return Ulong value
-   * @throws IOException
-   * @throws ArithmeticException
+   * @throws ArithmeticException if the value is not representable as an int
    */
   public int readULongAsInt() throws IOException {
     long ulong = this.readULong();
@@ -216,9 +201,6 @@ public class FontInputStream extends FilterInputStream {
 
   /**
    * Read a Long value.
-   *
-   * @return Long value
-   * @throws IOException
    */
   public int readLong() throws IOException {
     return this.read() << 24 | this.read() << 16 | this.read() << 8 | this.read();
@@ -226,9 +208,6 @@ public class FontInputStream extends FilterInputStream {
 
   /**
    * Read a Fixed value.
-   *
-   * @return Fixed value
-   * @throws IOException
    */
   public int readFixed() throws IOException {
     return this.readLong();
@@ -236,9 +215,6 @@ public class FontInputStream extends FilterInputStream {
 
   /**
    * Read a DateTime value as a long.
-   *
-   * @return DateTime value.
-   * @throws IOException
    */
   public long readDateTimeAsLong() throws IOException {
     return this.readULong() << 32 | this.readULong() ;

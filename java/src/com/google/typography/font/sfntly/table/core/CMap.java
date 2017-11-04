@@ -315,9 +315,6 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
       this.language = language;
     }
 
-    /**
-     * @param data
-     */
     protected Builder(WritableFontData data, CMapFormat format, CMapId cmapId) {
       super(data);
       this.format = format;

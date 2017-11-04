@@ -231,9 +231,6 @@ public abstract class IndexSubTable extends SubTable {
       this.initialize(data);
     }
 
-    /**
-     * @param data
-     */
     private void initialize(ReadableFontData data) {
       this.indexFormat = data.readUShort(SubOffset.indexFormat);
       this.imageFormat = data.readUShort(SubOffset.imageFormat);
@@ -331,7 +328,6 @@ public abstract class IndexSubTable extends SubTable {
      * Checks that the glyph id is within the correct range. If it returns the
      * offset of the glyph id from the start of the range.
      *
-     * @param glyphId
      * @return the offset of the glyphId from the start of the glyph range
      * @throws IndexOutOfBoundsException if the glyph id is not within the
      *         correct range

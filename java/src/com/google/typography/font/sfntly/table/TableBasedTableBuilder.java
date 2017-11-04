@@ -30,22 +30,10 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 public abstract class TableBasedTableBuilder<T extends Table> extends Table.Builder<T> {
   private T table;
 
-  /**
-   * Constructor.
-   *
-   * @param header
-   * @param data
-   */
   protected TableBasedTableBuilder(Header header, WritableFontData data) {
     super(header, data);
   }
 
-  /**
-   * Constructor.
-   *
-   * @param header
-   * @param data
-   */
   protected TableBasedTableBuilder(Header header, ReadableFontData data) {
     super(header, data);
   }

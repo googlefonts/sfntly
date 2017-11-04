@@ -191,8 +191,6 @@ public final class OS2Table extends Table {
     Reserved15;
 
     /**
-     * Returns the bit mask corresponding to this embedding flag.
-     *
      * @return the bit mask corresponding to this embedding flag
      */
     public int mask() {
@@ -200,11 +198,8 @@ public final class OS2Table extends Table {
     }
 
     /**
-     * Generates an EnumSet\<EmbeddingFlags\> representation of the supplied
+     * Generates an EnumSet&lt;EmbeddingFlags&gt; representation of the supplied
      * unsigned short.
-     *
-     * @param value the unsigned short
-     * @return a new EnumSet\<EmbeddingFlags\>
      */
     public static EnumSet<EmbeddingFlags> asSet(int value) {
       EnumSet<EmbeddingFlags> set = EnumSet.noneOf(EmbeddingFlags.class);
@@ -217,11 +212,7 @@ public final class OS2Table extends Table {
     }
 
     /**
-     * Generates an unsigned short representation of the provided
-     * EnumSet\<EmbeddingFlags\>.
-     *
-     * @param flagSet the set of flags
-     * @return the unsigned short representation of the provided flagSet
+     * Generates an unsigned short representation of the provided flags.
      */
     public static int asUShort(EnumSet<EmbeddingFlags> flagSet) {
       int flags = 0;
@@ -231,26 +222,12 @@ public final class OS2Table extends Table {
       return flags;
     }
 
-    /**
-     * Takes an EnumSet\<EmbeddingFlags\> representation of the fsType and
-     * returns whether or not the fsType is Installable Embedding. The fsType is
-     * Installable Editing iff none of the fsType bits are set.
-     *
-     * @param flagSet the set of flags
-     * @return true if the font has InstallableEmbedding
-     */
+    /** Tests the {@code fsType} flags. */
     public static boolean isInstallableEditing(EnumSet<EmbeddingFlags> flagSet) {
       return flagSet.isEmpty();
     }
 
-    /**
-     * Takes the unsigned short representation of the fsType and returns whether
-     * or not the fsType is Installable Embedding. The fsType is Installable
-     * Editing iff none of the fsType bits are set.
-     *
-     * @param value the value to check
-     * @return true if the font has InstallableEmbedding
-     */
+    /** Tests the {@code fsType} flags. */
     public static boolean isInstallableEditing(int value) {
       return value == 0;
     }

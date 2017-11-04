@@ -72,19 +72,18 @@ public class Subsetter {
    * font for any of the provided cmap ids which would lead to a font with no
    * cmap then an error will be thrown during subsetting.
    *
-   * The two most common cases would be: <list>
+   * The two most common cases would be:
    * <ul>
+   * <li>
    * a list of one or more cmap ids with a count setting of 1 <br>This will use
    * the list of cmap ids as an ordered priority and look for an available cmap
    * in the font that matches the requests. Only the first such match will be
    * placed in the subsetted font.
-   * </ul>
-   * <ul>
+   * <li>
    * a list of one or more cmap ids with a count setting equal to the list
    * length <br>This will use the list of cmap ids and try to place each one
    * specified into the subsetted font.
    * </ul>
-   * </list>
    *
    * @param cmapIds the cmap ids to use for the subsetted font
    * @param number the maximum number of cmaps to place in the subsetted font

@@ -114,7 +114,6 @@ public final class FontFactory {
    *
    * @param is the input stream font data
    * @return one or more fonts
-   * @throws IOException
    */
   public Font[] loadFonts(InputStream is) throws IOException {
     PushbackInputStream pbis =
@@ -135,7 +134,6 @@ public final class FontFactory {
    *
    * @param is the input stream font data
    * @return one or more font builders
-   * @throws IOException
    */
   public Builder[] loadFontsForBuilding(InputStream is) throws IOException {
     PushbackInputStream pbis =
@@ -202,7 +200,6 @@ public final class FontFactory {
    *
    * @param b the font data
    * @return one or more fonts
-   * @throws IOException
    */
   public Font[] loadFonts(byte[] b) throws IOException {
     // TODO(stuartg): make a ReadableFontData when block loading moved to
@@ -224,7 +221,6 @@ public final class FontFactory {
    *
    * @param b the byte array font data
    * @return one or more font builders
-   * @throws IOException
    */
   public Font.Builder[] loadFontsForBuilding(byte[] b) throws IOException {
     WritableFontData wfd = WritableFontData.createWritableFontData(b);
@@ -285,7 +281,6 @@ public final class FontFactory {
    *
    * @param font the font to serialize
    * @param os the destination stream for the font
-   * @throws IOException
    */
   public void serializeFont(Font font, OutputStream os) throws IOException {
     // TODO(stuartg) should have serialization options somewhere

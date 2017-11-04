@@ -55,14 +55,7 @@ public final class Header {
   };
 
   /**
-   * Constructor.
-   *
    * Make a full header as read from an existing font.
-   *
-   * @param tag
-   * @param offset
-   * @param length
-   * @param checksum
    */
   public Header(int tag, long checksum, int offset, int length) {
     this.tag = tag;
@@ -75,12 +68,7 @@ public final class Header {
   }
 
   /**
-   * Constructor.
-   *
    * Make a partial header with only the basic info for a new table.
-   *
-   * @param tag
-   * @param length
    */
   public Header(int tag, int length) {
     this.tag = tag;
@@ -93,11 +81,7 @@ public final class Header {
   }
 
   /**
-   * Constructor.
-   *
    * Make a partial header with only the basic info for an empty new table.
-   *
-   * @param tag
    */
   public Header(int tag) {
     this.tag = tag;
@@ -111,8 +95,6 @@ public final class Header {
 
   /**
    * Get the table tag.
-   *
-   * @return the tag
    */
   public int tag() {
     return tag;

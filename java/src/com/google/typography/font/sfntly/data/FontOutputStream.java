@@ -24,7 +24,6 @@ import java.io.OutputStream;
  *
  * The data types used are as listed:
  * <table>
- * <table>
  * <tr>
  * <td>BYTE</td>
  * <td>8-bit unsigned integer.</td>
@@ -128,9 +127,6 @@ public class FontOutputStream extends OutputStream {
 
   /**
    * Write a Char value.
-   *
-   * @param c Char value
-   * @throws IOException
    */
   public void writeChar(byte c) throws IOException {
     this.write(c);
@@ -138,9 +134,6 @@ public class FontOutputStream extends OutputStream {
 
   /**
    * Write a UShort value.
-   *
-   * @param us UShort value
-   * @throws IOException
    */
   public void writeUShort(int us) throws IOException {
     this.write((byte) ((us >> 8) & 0xff));
@@ -149,9 +142,6 @@ public class FontOutputStream extends OutputStream {
 
   /**
    * Write a Short value.
-   *
-   * @param s Short value
-   * @throws IOException
    */
   public void writeShort(int s) throws IOException {
     this.writeUShort(s);
@@ -159,9 +149,6 @@ public class FontOutputStream extends OutputStream {
 
   /**
    * Write a UInt24 value.
-   *
-   * @param ui UInt24 value
-   * @throws IOException
    */
   public void writeUInt24(int ui) throws IOException {
     this.write((byte) ((ui >> 16) & 0xff));
@@ -171,9 +158,6 @@ public class FontOutputStream extends OutputStream {
 
   /**
    * Write a ULong value.
-   *
-   * @param ul ULong value
-   * @throws IOException
    */
   public void writeULong(long ul) throws IOException {
     this.write((byte) ((ul >> 24) & 0xff));
@@ -184,9 +168,6 @@ public class FontOutputStream extends OutputStream {
 
   /**
    * Write a Long value.
-   *
-   * @param l Long value
-   * @throws IOException
    */
   public void writeLong(long l) throws IOException {
     this.writeULong(l);
@@ -194,9 +175,6 @@ public class FontOutputStream extends OutputStream {
 
   /**
    * Write a Fixed value.
-   *
-   * @param f Fixed value
-   * @throws IOException
    */
   public void writeFixed(int f) throws IOException {
     this.writeULong(f);
@@ -204,9 +182,6 @@ public class FontOutputStream extends OutputStream {
 
   /**
    * Write DateTime value.
-   *
-   * @param date date/time value
-   * @throws IOException
    */
   public void writeDateTime(long date) throws IOException {
     this.writeULong(date >> 32);

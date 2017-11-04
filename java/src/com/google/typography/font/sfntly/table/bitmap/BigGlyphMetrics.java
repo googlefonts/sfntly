@@ -37,9 +37,6 @@ public class BigGlyphMetrics extends GlyphMetrics {
     int vertAdvance = 7;
   }
 
-  /**
-   * @param data
-   */
   BigGlyphMetrics(ReadableFontData data) {
     super(data);
   }
@@ -83,20 +80,10 @@ public class BigGlyphMetrics extends GlyphMetrics {
       return new Builder(data);
     }
 
-    /**
-     * Constructor.
-     *
-     * @param data
-     */
     protected Builder(WritableFontData data) {
       super(data);
     }
 
-    /**
-     * Constructor.
-     *
-     * @param data
-     */
     protected Builder(ReadableFontData data) {
       super(data);
     }

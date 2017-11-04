@@ -257,8 +257,6 @@ public final class LocaTable extends Table {
     /**
      * Get the format version that will be used when the loca table is
      * generated.
-     *
-     * @return the loca table format version
      */
     public IndexToLocFormat formatVersion() {
       return this.formatVersion;
@@ -266,8 +264,6 @@ public final class LocaTable extends Table {
 
     /**
      * Set the format version to be used when generating the loca table.
-     *
-     * @param formatVersion
      */
     public void setFormatVersion(IndexToLocFormat formatVersion) {
       this.formatVersion = formatVersion;
@@ -294,7 +290,6 @@ public final class LocaTable extends Table {
      * list was already retrieved with the {@link #locaList()} method then the
      * connection of that previous list to this builder will be broken.
      *
-     * @param list
      * @see #locaList()
      */
     public void setLocaList(List<Integer> list) {

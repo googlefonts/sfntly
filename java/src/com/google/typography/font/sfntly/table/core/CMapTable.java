@@ -520,7 +520,6 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
      * @param data the data to copy for the new cmap builder
      * @return a new cmap builder initialized with the cmap id and a copy of the
      *         data
-     * @throws IOException
      */
     public CMap.Builder<? extends CMap> newCMapBuilder(CMapId cmapId, ReadableFontData data)
         throws IOException {

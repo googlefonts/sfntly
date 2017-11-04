@@ -33,7 +33,7 @@ public final class WritableFontData extends ReadableFontData {
    * is zero or less then a growable font data object will be created and the
    * size will be used as an estimate to help in allocating the original space.
    *
-   * @param length if length > 0 create a fixed length font data; otherwise
+   * @param length if length &gt; 0, create a fixed length font data; otherwise
    *        create a growable font data
    * @return a new writable font data
    */
@@ -376,7 +376,6 @@ public final class WritableFontData extends ReadableFontData {
    *
    * @param is the source
    * @param length the number of bytes to copy
-   * @throws IOException
    */
   public void copyFrom(InputStream is, int length) throws IOException {
     this.array.copyFrom(is, length);
@@ -386,7 +385,6 @@ public final class WritableFontData extends ReadableFontData {
    * Copy everything from the InputStream into this FontData.
    *
    * @param is the source
-   * @throws IOException
    */
   public void copyFrom(InputStream is) throws IOException {
     this.array.copyFrom(is);
