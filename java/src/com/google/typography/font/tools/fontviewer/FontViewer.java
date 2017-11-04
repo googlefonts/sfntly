@@ -2,11 +2,10 @@ package com.google.typography.font.tools.fontviewer;
 
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
-
 import java.awt.Dimension;
 import java.io.FileInputStream;
-
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -17,6 +16,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
@@ -84,9 +84,22 @@ public class FontViewer {
   public static void main(String[] args) throws Exception {
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
-    Font font = FontFactory.getInstance().loadFonts(new FileInputStream(args[0]))[0];
-    FontViewer viewer = new FontViewer(font);
-    viewer.frame.setVisible(true);
+    String fileName = 0 < args.length ? args[0] : getFilenameFromDialog();
+    if (fileName != null) {
+      Font font = FontFactory.getInstance().loadFonts(new FileInputStream(fileName))[0];
+      FontViewer viewer = new FontViewer(font);
+      viewer.frame.setVisible(true);
+    }
   }
 
+  private static String getFilenameFromDialog() {
+    JFileChooser chooser = new JFileChooser();
+    FileNameExtensionFilter filter = new FileNameExtensionFilter("Font files", "ttf", "otf");
+    chooser.setFileFilter(filter);
+    int returnVal = chooser.showOpenDialog(null);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      return chooser.getSelectedFile().getPath();
+    }
+    return null;
+  }
 }
