@@ -2,9 +2,10 @@ package com.google.typography.font.sfntly;
 
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
-import junit.framework.TestCase;
-
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import junit.framework.TestCase;
 
 public class FontTest extends TestCase {
 
@@ -65,4 +66,20 @@ public class FontTest extends TestCase {
         fonts[0].toString());
   }
 
+  // https://github.com/rillig/sfntly/issues/3
+  public void testReadInvalidFile() throws IOException {
+    String svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"100\" height=\"100\"></svg>";
+
+    try {
+      InputStream is = new ByteArrayInputStream(svg.getBytes("ASCII"));
+      try {
+        FontFactory.getInstance().loadFonts(is);
+        fail();
+      } finally {
+        is.close();
+      }
+    } catch (IllegalStateException e) {
+      assertEquals("Wrong sfntVersion 0x3c737667, must be 0x0x010000", e.getMessage());
+    }
+  }
 }

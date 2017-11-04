@@ -931,6 +931,11 @@ public class Font {
       this.entrySelector = is.readUShort();
       this.rangeShift = is.readUShort();
 
+      if (this.sfntVersion != SFNTVERSION_1 && this.sfntVersion != 0x4F54544F /* OTTO */) {
+        String msg = String.format("Wrong sfntVersion 0x%08x, must be 0x%#08x", this.sfntVersion, SFNTVERSION_1);
+        throw new IllegalStateException(msg);
+      }
+
       for (int tableNumber = 0; tableNumber < this.numTables; tableNumber++) {
         Header table = new Header(is.readULongAsInt(), // safe since the tag is ASCII
             is.readULong(),         // checksum
