@@ -24,7 +24,7 @@ import java.util.Arrays;
  */
 public class OpenTypeDataTests extends TestCase {
 
-  private static final byte[] testBytes = 
+  private static final byte[] testBytes =
     new byte[] {(byte) 0xff, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01};
 
   public OpenTypeDataTests(String name) {

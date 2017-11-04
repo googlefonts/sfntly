@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream;
 
 /**
  * Write a stream of values using magnitude dependent encoding, as per section 5.3 of the spec.
- * 
+ *
  * @author Raph Levien
  */
 public class MagnitudeDependentWriter {
@@ -28,13 +28,13 @@ public class MagnitudeDependentWriter {
   private final ByteArrayOutputStream buf;
   private byte byteBuf;
   private int bitCount;
-  
+
   public MagnitudeDependentWriter() {
     buf = new ByteArrayOutputStream();
     bitCount = 0;
     byteBuf = 0;
   }
-  
+
   private void writeBit(int bit) {
     byteBuf |= (bit << bitCount);
     bitCount++;
@@ -65,7 +65,7 @@ public class MagnitudeDependentWriter {
       bitCount = 0;
     }
   }
-  
+
   public byte[] toByteArray() {
     return buf.toByteArray();
   }

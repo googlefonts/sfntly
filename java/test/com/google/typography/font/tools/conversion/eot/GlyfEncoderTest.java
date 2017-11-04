@@ -32,7 +32,7 @@ public class GlyfEncoderTest extends TestCase {
       assertEquals(expected[i], actual[i]);
     }
   }
-  
+
   public void test255UShort1() throws IOException {
     ByteArrayOutputStream os = new ByteArrayOutputStream();
     GlyfEncoder.write255UShort(os, 142);
@@ -96,12 +96,12 @@ public class GlyfEncoderTest extends TestCase {
     byte[] expected = {(byte)253, (byte)0x12, (byte)0x34};
     assertEqualsByteArray(expected, actual);
   }
-  
+
   private byte[] tripletEncode(boolean onCurve, int x, int y) throws IOException {
     GlyfEncoder e = new GlyfEncoder();
     ByteArrayOutputStream os = new ByteArrayOutputStream();
     e.writeTriplet(os, onCurve, x, y);
-    
+
     byte[] flagBytes = e.getGlyfBytes();
     assertEquals(1, flagBytes.length);
     byte[] valueBytes = os.toByteArray();
@@ -110,7 +110,7 @@ public class GlyfEncoderTest extends TestCase {
     System.arraycopy(valueBytes, 0, result, flagBytes.length, valueBytes.length);
     return result;
   }
-  
+
   public void testTriplet1() throws IOException {
     byte[] expected = {(byte)1, (byte)1};
     assertEqualsByteArray(expected, tripletEncode(true, 0, 1));

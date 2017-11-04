@@ -23,18 +23,18 @@ import java.util.List;
 
 /**
  * A growable memory implementation of the ByteArray interface.
- * 
+ *
  * @author Stuart Gill
  */
 final class SegmentedGrowableMemoryByteArray extends ByteArray<SegmentedGrowableMemoryByteArray> {
   private static final int DEFAULT_BUFFER_LOW_BITS = 8;
-  
+
   private List<byte[]> buffers;
   private final int lowBits;
 
   /**
    * Constructor.
-   * 
+   *
    */
   public SegmentedGrowableMemoryByteArray() {
     this(DEFAULT_BUFFER_LOW_BITS);

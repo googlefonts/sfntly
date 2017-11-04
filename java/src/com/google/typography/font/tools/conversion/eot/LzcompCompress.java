@@ -19,7 +19,7 @@ package com.google.typography.font.tools.conversion.eot;
 /**
  * Implement LZCOMP compression algorithm as defined in MicroType Express, part of the EOT
  * draft spec at {@link "http://www.w3.org/Submission/MTX/"}
- * 
+ *
  * Java implementation based on http://www.w3.org/Submission/MTX/ reference code
  *
  * @author Raph Levien
@@ -56,12 +56,12 @@ public class LzcompCompress {
     int index;
     HashNode next;
   }
-  
+
   private LzcompCompress() {
     bits = new BitIOWriter();
     usingRunLength = false;
   }
-  
+
   private void write(byte[] dataIn) {
     bits.writeBit(usingRunLength);
     length1 = dataIn.length;
@@ -88,7 +88,7 @@ public class LzcompCompress {
     dup6 = dup4 + 1;
     numSyms = dup6 + 1;
   }
-  
+
   private void encode() {
     int maxIndex = length1 + PRELOAD_SIZE;
     initializeModel();
@@ -296,7 +296,7 @@ public class LzcompCompress {
     int distRanges = (bitsNeeded + DIST_WIDTH - 1) / DIST_WIDTH;
     return distRanges;
   }
-  
+
   private void encodeLength(int value, int dist, int numDistRanges) {
     if (dist >= MAX_2BYTE_DIST) {
       value -= LEN_MIN3;
@@ -334,7 +334,7 @@ public class LzcompCompress {
       lenEncoder.writeSymbol(symbol);
     }
   }
-  
+
   private int encodeLengthCost(int value, int dist, int numDistRanges) {
     if (dist >= MAX_2BYTE_DIST) {
       value -= LEN_MIN3;
@@ -391,7 +391,7 @@ public class LzcompCompress {
     }
     return cost;
   }
-  
+
   private void updateModel(int index) {
     byte c = buf[index];
     if (index > 0) {
@@ -407,13 +407,13 @@ public class LzcompCompress {
   private byte[] toByteArray() {
     return bits.toByteArray();
   }
-  
+
   public static byte[] compress(byte[] dataIn) {
     LzcompCompress compressor = new LzcompCompress();
     compressor.write(dataIn);
     return compressor.toByteArray();
   }
-  
+
   public static int getPreloadSize() {
     return PRELOAD_SIZE;
   }

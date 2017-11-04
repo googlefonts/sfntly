@@ -37,7 +37,7 @@ public class CvtEncoder {
   public CvtEncoder() {
     cvtStream = new ByteArrayOutputStream();
   }
-  
+
   public void encode(ControlValueTable cvtTable) {
     int numEntries = cvtTable.fwordCount();
     cvtStream.write(numEntries >> 8);
@@ -66,7 +66,7 @@ public class CvtEncoder {
       lastValue = value;
     }
   }
-  
+
   public byte[] toByteArray() {
     return cvtStream.toByteArray();
   }

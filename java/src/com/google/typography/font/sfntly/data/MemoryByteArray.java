@@ -21,7 +21,7 @@ import java.io.OutputStream;
 
 /**
  * A fixed size memory implementation of the ByteArray interface.
- * 
+ *
  * @author Stuart Gill
  */
 final class MemoryByteArray extends ByteArray<MemoryByteArray> {
@@ -88,10 +88,10 @@ final class MemoryByteArray extends ByteArray<MemoryByteArray> {
 
   @Override
   public void close() {
-   
+
     this.b = null;
   }
-  
+
   @Override
   public int copyTo(OutputStream os, int offset, int length) throws IOException {
     os.write(b, offset, length);

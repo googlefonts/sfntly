@@ -22,7 +22,7 @@ import junit.framework.TestCase;
  * @author Raph Levien
  */
 public class HuffmanEncoderTest extends TestCase {
-  
+
    public void testBitsUsed() {
      assertEquals(1, HuffmanEncoder.bitsUsed(0));
      assertEquals(1, HuffmanEncoder.bitsUsed(1));
@@ -30,7 +30,7 @@ public class HuffmanEncoderTest extends TestCase {
      assertEquals(9, HuffmanEncoder.bitsUsed(256));
      assertEquals(32, HuffmanEncoder.bitsUsed(-1));
    }
-   
+
    public void testInitConsistency() {
      BitIOWriter bits = new BitIOWriter();
      HuffmanEncoder h = new HuffmanEncoder(bits, 512);

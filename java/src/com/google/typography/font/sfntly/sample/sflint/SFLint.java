@@ -77,7 +77,7 @@ public class SFLint {
 
   public SFLint() {
     fontFactory = FontFactory.getInstance();
-  }  
+  }
 
   public void lintFontFile(File fontFile) throws IOException {
     FileInputStream fis = new FileInputStream(fontFile);
@@ -112,7 +112,7 @@ public class SFLint {
       }
     }
   }
-  
+
   private void lintWindowsClipping(Font font) {
     LocaTable loca = (LocaTable) font.getTable(Tag.loca);
     int nGlyphs = loca.numGlyphs();
@@ -152,7 +152,7 @@ public class SFLint {
       reportProblem("font is clipped on bottom by " + (-bbox_yMin - os2.usWinDescent()) + " units");
     }
   }
-  
+
   private void lintAdvanceWidths(Font font) {
     int maxAdvanceWidth = 0;
     HorizontalMetricsTable hmtx = (HorizontalMetricsTable) font.getTable(Tag.hmtx);
@@ -186,11 +186,11 @@ public class SFLint {
               glyph.argument2(i) == glyph.argument2(j)) {
             reportProblem("glyph " + glyphId + " contains duplicate references");
           }
-        } 
+        }
       }
     }
   }
-  
+
   private void lintAllGlyphs(Font font) {
     LocaTable loca = (LocaTable) font.getTable(Tag.loca);
     GlyphTable glyphTable = (GlyphTable) font.getTable(Tag.glyf);
@@ -203,10 +203,10 @@ public class SFLint {
         if (glyph.glyphType() == GlyphType.Composite) {
           lintCompositeGlyph(font, (CompositeGlyph)glyph, glyphId);
         }
-      }      
+      }
     }
   }
-  
+
   private void lintOS2Misc(Font font) {
     OS2Table os2 = (OS2Table) font.getTable(Tag.OS_2);
     int widthClass = os2.usWidthClass();
@@ -220,7 +220,7 @@ public class SFLint {
       reportProblem("weightClass must be multiple of 100, was " + weightClass);
     }
   }
-  
+
   private void lintFont(Font font) {
     problemCount = 0;
 
@@ -229,7 +229,7 @@ public class SFLint {
     lintAdvanceWidths(font);
     lintAllGlyphs(font);
     lintOS2Misc(font);
-    
+
     if (problemCount == 0) {
       System.out.println("No problems found");
     }
@@ -238,7 +238,7 @@ public class SFLint {
   /**
    * Report a problem. Right now this just prints to stdout, but we'll probably want a more
    * sophisticated reporting approach soon.
-   * 
+   *
    * @param string description of the problem
    */
   private void reportProblem(String string) {

@@ -36,7 +36,7 @@ import java.util.EnumSet;
 public final class FontHeaderTable extends Table {
 
   /**
-   * Checksum adjustment base value. To compute the checksum adjustment: 
+   * Checksum adjustment base value. To compute the checksum adjustment:
    * 1) set it to 0; 2) sum the entire font as ULONG, 3) then store 0xB1B0AFBA - sum.
    */
   public static final long CHECKSUM_ADJUSTMENT_BASE = 0xB1B0AFBAL;

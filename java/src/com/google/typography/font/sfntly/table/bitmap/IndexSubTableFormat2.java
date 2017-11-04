@@ -25,9 +25,9 @@ import java.util.NoSuchElementException;
 
 /**
  * Format 2 Index Subtable Entry.
- * 
+ *
  * @author Stuart Gill
- * 
+ *
  */
 public final class IndexSubTableFormat2 extends IndexSubTable {
   private final int imageSize;
@@ -68,7 +68,7 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
     this.checkGlyphRange(glyphId);
     return this.imageSize;
   }
-  
+
   public static final class Builder extends IndexSubTable.Builder<IndexSubTableFormat2> {
 
     private BigGlyphMetrics.Builder metrics;
@@ -93,7 +93,7 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
         ReadableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
       return Offset.SIZE;
     }
-    
+
     private Builder() {
       super(Offset.SIZE, Format.FORMAT_2);
       this.metrics = BigGlyphMetrics.Builder.createBuilder();
@@ -131,7 +131,7 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
     public void setImageSize(int imageSize) {
       this.internalWriteData().writeULong(Offset.imageSize, imageSize);
     }
-    
+
     public BigGlyphMetrics.Builder bigMetrics() {
       if (this.metrics == null) {
         WritableFontData data = this.internalWriteData()
@@ -177,7 +177,7 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
     Iterator<BitmapGlyphInfo> iterator() {
       return new BitmapGlyphInfoIterator();
     }
-    
+
     @Override
     protected IndexSubTableFormat2 subBuildTable(ReadableFontData data) {
       return new IndexSubTableFormat2(data, this.firstGlyphIndex(), this.lastGlyphIndex());

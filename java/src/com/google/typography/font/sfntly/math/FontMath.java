@@ -18,7 +18,7 @@ package com.google.typography.font.sfntly.math;
 
 /**
  * Utility math for fonts.
- * 
+ *
  * @author Stuart Gill
  */
 public enum FontMath {

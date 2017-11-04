@@ -6,7 +6,7 @@ import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable.Offset;
 
 public abstract class Glyph extends SubTable {
-  
+
   public enum GlyphType {
     Simple,
     Composite;
@@ -96,7 +96,7 @@ public abstract class Glyph extends SubTable {
    * simple glyph. If there are zero contours in the glyph then none of the
    * other data operations will return usable values. If it -1 then the glyph is
    * a composite glyph.
-   * 
+   *
    * @return number of contours
    */
   public int numberOfContours() {

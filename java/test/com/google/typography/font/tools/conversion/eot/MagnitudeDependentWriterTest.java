@@ -29,7 +29,7 @@ public class MagnitudeDependentWriterTest extends TestCase {
       assertEquals(expected[i], actual[i]);
     }
   }
-  
+
   // This is the example from section 5.3.1 of the spec.
   public void testMagnitudeDependent() {
     MagnitudeDependentWriter writer = new MagnitudeDependentWriter();

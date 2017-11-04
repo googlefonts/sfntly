@@ -25,7 +25,7 @@ import com.google.typography.font.sfntly.table.Table;
 
 /**
  * A Control Value table.
- * 
+ *
  * @author Stuart Gill
  */
 public final class ControlValueTable extends Table {

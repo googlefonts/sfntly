@@ -106,7 +106,7 @@ public class CMapEditingTests extends TestCase {
     CMap.Builder<? extends CMap> cmapBuilder =
         cmapTableBuilder.cmapBuilder(CMapId.WINDOWS_BMP);
     assertEquals(cmapBuilder.format(), CMapFormat.Format4);
-    
+
     // build and test the changed font
     Font newFont = fontBuilder.build();
     if (DEBUG) {
@@ -118,12 +118,12 @@ public class CMapEditingTests extends TestCase {
     CMap newCMap = newCMapTable.cmap(CMapId.WINDOWS_BMP);
     assertNotNull(newCMap);
   }
-  
+
   public void testCMap4Editing() throws Exception {
     Font.Builder fontBuilder = TestFontUtils.builderForFontFile(TEST_FONT_FILE);
     CMapTable.Builder cmapTableBuilder = (CMapTable.Builder) fontBuilder.getTableBuilder(Tag.cmap);
 
-    CMap.Builder<? extends CMap> cmapBuilder = 
+    CMap.Builder<? extends CMap> cmapBuilder =
       cmapTableBuilder.cmapBuilder(CMapId.WINDOWS_BMP);
     if (cmapBuilder.format() != CMapFormat.Format4) {
       fail("Windows BMP CMap is not Format 4.");
@@ -155,7 +155,7 @@ public class CMapEditingTests extends TestCase {
     cmapFormat4Builder.setSegments(segments);
 
     // build and test the changed font
-    Font newFont = fontBuilder.build();    
+    Font newFont = fontBuilder.build();
     if (DEBUG) {
       // serialize changed font for debugging
       File dstFontFile = TestFontUtils.serializeFont(newFont, ".ttf");

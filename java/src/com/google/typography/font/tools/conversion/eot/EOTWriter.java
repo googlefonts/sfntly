@@ -34,7 +34,7 @@ import java.io.IOException;
 public class EOTWriter {
 
   private final boolean compressed;
-  
+
   private final FontFactory factory = FontFactory.getInstance();
 
   private static final long RESERVED = 0;
@@ -49,7 +49,7 @@ public class EOTWriter {
   public EOTWriter() {
     compressed = false;
   }
-  
+
   public EOTWriter(boolean compressed) {
     this.compressed = compressed;
   }
@@ -64,13 +64,13 @@ public class EOTWriter {
     byte[] versionName = convertUTF16StringToLittleEndian(name.nameAsBytes(3, 1, 0x409, 5));
     byte[] fullName = convertUTF16StringToLittleEndian(name.nameAsBytes(3, 1, 0x409, 4));
     long flags = DEFAULT_FLAGS;
-    
+
     if (compressed) {
       flags |= FLAGS_TT_COMPRESSED;
       MtxWriter mtxWriter = new MtxWriter();
       fontData = mtxWriter.compress(font);
     }
-    
+
     long eotSize = computeEotSize(
       familyName.length, styleName.length, versionName.length, fullName.length, fontData.length);
 
@@ -99,7 +99,7 @@ public class EOTWriter {
     index += writePadding(index, writableFontData);
 
     // FamilyNameSize, FamilyName[FamilyNameSize]
-    index += writeUTF16String(index, familyName, writableFontData); 
+    index += writeUTF16String(index, familyName, writableFontData);
     index += writePadding(index, writableFontData);
 
     // StyleNameSize, StyleName[StyleNameSize]

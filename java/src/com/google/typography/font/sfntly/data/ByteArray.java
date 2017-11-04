@@ -39,7 +39,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
 
   /**
    * Constructor.
-   * 
+   *
    * @param filledLength the length that is "filled" and readable counting from the offset
    * @param storageLength the maximum storage size of the underlying data
    * @param growable is the storage growable - storageLength is the maximum growable size
@@ -52,7 +52,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
 
   /**
    * Constructor.
-   * 
+   *
    * @param filledLength the length that is "filled" and readable counting from the offset
    * @param storageLength the maximum storage size of the underlying data
    */
@@ -62,7 +62,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
 
   /**
    * Gets the byte from the given index.
-   * 
+   *
    * @param index the index into the byte array
    * @return the byte or -1 if reading beyond the bounds of the data
    */
@@ -74,10 +74,10 @@ abstract class ByteArray<T extends ByteArray<T>> {
   }
 
   /**
-   * Gets the bytes from the given index and fill the buffer with them. 
-   * As many bytes as will fit into the buffer are read unless that 
+   * Gets the bytes from the given index and fill the buffer with them.
+   * As many bytes as will fit into the buffer are read unless that
    * would go past the end of the array.
-   * 
+   *
    * @param index the index into the byte array
    * @param b the buffer to put the bytes read into
    * @return the number of bytes read from the buffer
@@ -89,7 +89,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
   /**
    * Gets the bytes from the given index and fill the buffer with them starting at the offset given.
    * As many bytes as the specified length are read unless that would go past the end of the array.
-   * 
+   *
    * @param index the index into the byte array
    * @param b the buffer to put the bytes read into
    * @param offset the location in the buffer to start putting the bytes
@@ -139,10 +139,10 @@ abstract class ByteArray<T extends ByteArray<T>> {
   }
 
   /**
-   * Puts the specified byte into the array at the given index unless that would 
+   * Puts the specified byte into the array at the given index unless that would
    * be beyond the length of the array and it
    * isn't growable.
-   * 
+   *
    * @param index the index into the byte array
    * @param b the byte to put into the array
    * @throws IndexOutOfBoundsException if attempt to write outside the bounds of the data
@@ -210,7 +210,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
    * @param length the maximum length in bytes to copy
    * @return the number of bytes copied
    */
-  public int 
+  public int
   copyTo(ByteArray<? extends ByteArray<?>> array, int offset, int length) {
     return this.copyTo(0, array, offset, length);
   }

@@ -163,7 +163,7 @@ public final class LocaTable extends Table {
     // values that need to be set to properly parse an existing loca table
     private IndexToLocFormat formatVersion = IndexToLocFormat.longOffset;
     private int numGlyphs = -1;
-    
+
     // parsed loca table
     private List<Integer> loca;
 
@@ -177,7 +177,7 @@ public final class LocaTable extends Table {
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
-    
+
     private Builder(Header header, WritableFontData data) {
       super(header, data);
     }
@@ -253,7 +253,7 @@ public final class LocaTable extends Table {
       }
       this.setModelChanged(false);
     }
-    
+
     /**
      * Get the format version that will be used when the loca table is
      * generated.
@@ -301,7 +301,7 @@ public final class LocaTable extends Table {
       this.loca = list;
       this.setModelChanged();
     }
-    
+
     /**
      * Return the offset for the given glyph id. Valid glyph ids are from 0 to
      * one more than the number of glyphs. The zero entry is the special entry
@@ -354,7 +354,7 @@ public final class LocaTable extends Table {
     public int numGlyphs() {
       return this.lastGlyphIndex() + 1;
     }
-    
+
     /**
      * Revert the loca table builder to the state contained in the last raw data
      * set on the builder. That raw data may be that read from a font file when
@@ -376,7 +376,7 @@ public final class LocaTable extends Table {
     public int numLocas() {
       return this.getLocaList().size();
     }
-    
+
     /**
      * Get the value from the loca table for the index specified. These are the
      * raw values from the table that are used to compute the offset and size of

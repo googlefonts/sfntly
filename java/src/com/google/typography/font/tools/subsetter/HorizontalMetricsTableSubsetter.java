@@ -34,7 +34,7 @@ public class HorizontalMetricsTableSubsetter extends TableSubsetterImpl {
     // setUpTables method of the invoking subsetter.
     super(Tag.hmtx, Tag.hhea);
   }
-  
+
   @Override
   public boolean subset(Subsetter subsetter, Font font, Builder fontBuilder) {
     List<Integer> permutationTable = subsetter.glyphMappingTable();

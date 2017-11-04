@@ -38,7 +38,7 @@ import java.util.Set;
  * A class for computing which glyphs are needed to render a given string. Currently
  * this class is quite simplistic, only using the cmap, not taking into account any
  * ligature or complex layout.
- * 
+ *
  * @author Raph Levien
  */
 public class GlyphCoverage {
@@ -56,7 +56,7 @@ public class GlyphCoverage {
     Collections.sort(sortedCoverage);
     return sortedCoverage;
   }
-  
+
   private static void touchGlyph(Font font, Set<Integer> coverage, int glyphId) {
     if (!coverage.contains(glyphId)) {
       coverage.add(glyphId);
@@ -69,7 +69,7 @@ public class GlyphCoverage {
       }
     }
   }
-  
+
   private static CMap getBestCMap(CMapTable cmapTable) {
     for (CMap cmap : cmapTable) {
       if (cmap.format() == CMapFormat.Format12.value()) {

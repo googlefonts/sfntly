@@ -21,7 +21,7 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 
 /**
  * Abstract base class for tables that have contained subtables.
- * 
+ *
  * @author Stuart Gill
  *
  */

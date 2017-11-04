@@ -24,7 +24,7 @@ package com.google.typography.font.tools.conversion.eot;
 public class HuffmanEncoder {
 
   private static final int ROOT = 1;
-  
+
   private TreeNode[] tree;
   private short[] symbolIndex;
   private int bitCount2;
@@ -38,7 +38,7 @@ public class HuffmanEncoder {
     short code;
     int weight;
   }
-  
+
   public HuffmanEncoder(BitIOWriter bits, int range) {
     this.bits = bits;
     this.range = range;
@@ -88,7 +88,7 @@ public class HuffmanEncoder {
       }
     }
   }
-  
+
   /* Check tree for internal consistency, return problem string or null if ok */
   String checkTree() {
     for (int i = ROOT; i < range; i++) {
@@ -132,7 +132,7 @@ public class HuffmanEncoder {
         return "tree[" + a + "].left != " + i + " && tree[" + a + "].right != " + i;
       }
     }
-      
+
     return null;
   }
 
@@ -196,7 +196,7 @@ public class HuffmanEncoder {
     } while (a != ROOT);
     return sp << 16;
   }
-  
+
   public void writeSymbol(int symbol) {
     int a = symbolIndex[symbol];
     int aa = a;

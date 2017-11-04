@@ -302,7 +302,7 @@ public class ReadableFontData extends FontData {
       return new int[0];
     }
   }
-  
+
   /**
    * Reads the UBYTE at the given index.
    *
@@ -356,11 +356,11 @@ public class ReadableFontData extends FontData {
    *         bounds of the font data
    */
   public int readBytes(int index, byte[] b, int offset, int length) {
-    int bytesRead = 
+    int bytesRead =
         this.array.get(this.boundOffset(index), b, offset, this.boundLength(index, length));
     if (bytesRead < 0) {
       throw new IndexOutOfBoundsException(
-          "Index attempted to be read from is out of bounds: " + Integer.toHexString(index));      
+          "Index attempted to be read from is out of bounds: " + Integer.toHexString(index));
     }
     return bytesRead;
   }
@@ -458,7 +458,7 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readLong(int index) {
-    return this.readByte(index) << 24 | this.readUByte(index + 1) << 16 | 
+    return this.readByte(index) << 24 | this.readUByte(index + 1) << 16 |
     this.readUByte(index + 2) << 8 | this.readUByte(index + 3);
   }
 
@@ -626,7 +626,7 @@ public class ReadableFontData extends FontData {
       int endIndex,
       int endDelta,
       int length,
-      int key) {   
+      int key) {
     int location = 0;
     int bottom = 0;
     int top = length;

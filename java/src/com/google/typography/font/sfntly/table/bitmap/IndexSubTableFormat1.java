@@ -52,7 +52,7 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
     int loca = this.checkGlyphRange(glyphId);
     return this.loca(loca);
   }
-  
+
   @Override
   public int glyphLength(int glyphId) {
     int loca = this.checkGlyphRange(glyphId);
@@ -66,7 +66,7 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
 
   public static final class Builder extends IndexSubTable.Builder<IndexSubTableFormat1> {
     private List<Integer> offsetArray;
-    
+
     public static Builder createBuilder() {
       return new Builder();
     }
@@ -146,7 +146,7 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
         }
       }
     }
-    
+
     public void setOffsetArray(List<Integer> array) {
       this.offsetArray = array;
       this.setModelChanged();
@@ -188,7 +188,7 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
     Iterator<BitmapGlyphInfo> iterator() {
       return new BitmapGlyphInfoIterator();
     }
-    
+
     @Override
     protected void revert() {
       super.revert();

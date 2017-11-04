@@ -23,7 +23,7 @@ import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 /**
  * Builder for "head" table. Most of the fields will be initialized from the head table of an
  * existing font, and setters are provided for fields that will change in the subsetted font.
- * 
+ *
  * @author Raph Levien
  */
 public class MtxHeadBuilder {
@@ -54,7 +54,7 @@ public class MtxHeadBuilder {
   }
 
   private final WritableFontData data;
-  
+
   public MtxHeadBuilder() {
     data = WritableFontData.createWritableFontData(HEAD_TABLE_SIZE);
   }
@@ -70,7 +70,7 @@ public class MtxHeadBuilder {
     this.data.writeUShort(Offset.indexToLocFormat, fmt);
     return this;
   }
-  
+
   public ReadableFontData build() {
     return data;
   }

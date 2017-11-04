@@ -49,7 +49,7 @@ public class FontDataTests extends TestCase {
       {256, 4},
       {257, -1},
       {0x1000, -1}};
-  
+
   // offset and start index data for searching data
   // array data size, lowerStartIndex, lowerOffset, upperStartIndex, upperOffset
   private static final int[][] SEARCH_TEST_OFFSETS = {
@@ -76,11 +76,11 @@ public class FontDataTests extends TestCase {
               * FontData.SizeOf.USHORT, FontData.SizeOf.USHORT,
           2 * FontData.SizeOf.USHORT, 0, 2 * FontData.SizeOf.USHORT}};
 
-  // for sizing the slicing increments on the buffer used in read and write tests 
+  // for sizing the slicing increments on the buffer used in read and write tests
   private static final int SLICING_READWRITE_TEST_BUFFER_TRIM_FRACTION_DENOMINATOR = 21;
   // for sizing the buffer used in buffered read and write tests as fractions of the original
   private static final int TEST_READWRITE_BUFFER_INCREMENT_FRACTION_OF_ORIGINAL = 11;
-    
+
   public void testReadableFontData() throws Exception {
     for (int size : BYTE_ARRAY_SIZES) {
       ReadableFontData rfd = fillTestWFD(WritableFontData.createWritableFontData(size), size);
@@ -107,7 +107,7 @@ public class FontDataTests extends TestCase {
             testCase[0]);
         assertEquals(testCase[1], found);
       }
-    } 
+    }
   }
 
   public void testWritableFontData() throws Exception {
@@ -118,7 +118,7 @@ public class FontDataTests extends TestCase {
       slicingReadTest(wfd);
       slicingWriteTest(wfd, WritableFontData.createWritableFontData(size));
     }
-    
+
     // test with growable byte array
     for (int size : BYTE_ARRAY_SIZES) {
       WritableFontData wfd = WritableFontData.createWritableFontData(0);
@@ -166,7 +166,7 @@ public class FontDataTests extends TestCase {
       }
     }
   }
-  
+
   private void readComparison(int offset, int length, ReadableFontData rfd1, ReadableFontData rfd2)
       throws Exception {
     byte[] b1;
@@ -269,7 +269,7 @@ public class FontDataTests extends TestCase {
     }
     return wfd;
   }
-  
+
   private static ReadableFontData fillTestFontDataWithShortsForSearching(WritableFontData wfd,
       int[] lowerData,
       int lowerStartIndex,
@@ -277,7 +277,7 @@ public class FontDataTests extends TestCase {
       int[] upperData,
       int upperStartIndex,
       int upperOffset) {
-    
+
     // lower data
     int offset = lowerStartIndex;
     for (int d : lowerData) {
@@ -291,7 +291,7 @@ public class FontDataTests extends TestCase {
       wfd.writeUShort(offset, d);
       offset += upperOffset;
     }
-    
+
    return wfd;
   }
 }

@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * A PostScript table. 
- * 
+ * A PostScript table.
+ *
  * @author Stuart Gill
  */
 public final class PostScriptTable extends Table {
@@ -60,7 +60,7 @@ public final class PostScriptTable extends Table {
   }
 
   private AtomicReference<List<String>> names = new AtomicReference<List<String>>();
-  
+
   private static final String[] STANDARD_NAMES = {
     ".notdef",
     ".null",
@@ -373,7 +373,7 @@ public final class PostScriptTable extends Table {
       return -1;
     }
   }
-  
+
   public String glyphName(int glyphNum) {
     int numberOfGlyphs = numberOfGlyphs();
     if (numberOfGlyphs > 0 && (glyphNum < 0 || glyphNum >= numberOfGlyphs)) {
@@ -400,7 +400,7 @@ public final class PostScriptTable extends Table {
    * Get a list containing the names in the table. Since parsing this list is potentially
    * expensive and may throw an exception when data is corrupted, parsing is deferred until
    * first use.
-   * 
+   *
    * Also note that the return value is only valid for version 2 tables (potentially to be
    * expanded to other versions later). A non-null value is guaranteed for version 2 (only).
    */
@@ -439,7 +439,7 @@ public final class PostScriptTable extends Table {
     }
     return names;
   }
-  
+
   public static class Builder extends TableBasedTableBuilder<PostScriptTable> {
 
     /**
@@ -452,7 +452,7 @@ public final class PostScriptTable extends Table {
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
-    
+
     protected Builder(Header header, WritableFontData data) {
       super(header, data);
     }

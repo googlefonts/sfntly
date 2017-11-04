@@ -84,7 +84,7 @@ public class NameEditingTests extends TestCase {
     neb.setName(newName);
 
     nameBuilder.revertNames();
-    
+
     // build the font
     Font font = fontBuilder.build();
 
@@ -100,7 +100,7 @@ public class NameEditingTests extends TestCase {
     assertTrue(name != null);
     assertEquals(originalName, name);
   }
-  
+
   public void testRemoveOneName() throws Exception {
     Font.Builder fontBuilder = TestFontUtils.builderForFontFile(fontFile);
     NameTable.Builder nameBuilder = (NameTable.Builder) fontBuilder.getTableBuilder(Tag.name);
@@ -126,10 +126,10 @@ public class NameEditingTests extends TestCase {
         WindowsLanguageId.English_UnitedStates.value(), NameId.FontFamilyName.value());
     assertTrue(name == null);
   }
-  
+
   public void testClearAllNamesAndSetOne() throws Exception {
     String newName = "Fred";
-    
+
     Font.Builder fontBuilder = TestFontUtils.builderForFontFile(fontFile);
     NameTable.Builder nameBuilder = (NameTable.Builder) fontBuilder.getTableBuilder(Tag.name);
 
@@ -142,7 +142,7 @@ public class NameEditingTests extends TestCase {
         nameBuilder.nameBuilder(PlatformId.Windows.value(), WindowsEncodingId.UnicodeUCS2.value(),
             WindowsLanguageId.English_UnitedStates.value(), NameId.FontFamilyName.value());
     neb.setName(newName);
-    
+
     // build the font
     Font font = fontBuilder.build();
 

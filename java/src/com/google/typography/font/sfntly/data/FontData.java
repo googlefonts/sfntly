@@ -97,7 +97,7 @@ public abstract class FontData {
   }
 
   /**
-   * Sets limits on the size of the FontData. The FontData is then only 
+   * Sets limits on the size of the FontData. The FontData is then only
    * visible within the bounds set.
    *
    * @param offset the start of the new bounds

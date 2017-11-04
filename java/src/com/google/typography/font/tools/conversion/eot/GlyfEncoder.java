@@ -39,7 +39,7 @@ import java.util.List;
 public class GlyfEncoder {
 
   private final boolean doPush;
-  
+
   private final ByteArrayOutputStream glyfStream;
   private final ByteArrayOutputStream pushStream;
   private final ByteArrayOutputStream codeStream;
@@ -81,7 +81,7 @@ public class GlyfEncoder {
       throw new RuntimeException("unexpected IOException writing glyph data", e);
     }
   }
-  
+
   private void writeInstructions(Glyph glyph) throws IOException{
     if (doPush) {
       splitPush(glyph);
@@ -122,7 +122,7 @@ public class GlyfEncoder {
         writeInstructions(glyph);
       }
   }
-  
+
   private void writeCompositeGlyph(CompositeGlyph glyph) throws IOException {
     boolean haveInstructions = false;
     writeUShort(-1);
@@ -158,7 +158,7 @@ public class GlyfEncoder {
     glyfStream.write(value >> 8);
     glyfStream.write(value & 255);
   }
-  
+
   // As per 6.1.1 of spec
   // visible for testing
   static void write255UShort(OutputStream os, int value) throws IOException {
@@ -179,7 +179,7 @@ public class GlyfEncoder {
       os.write((byte)(value & 0xff));
     }
   }
-  
+
   // As per 6.1.1 of spec
   // visible for testing
   static void write255Short(OutputStream os, int value) throws IOException {
@@ -203,7 +203,7 @@ public class GlyfEncoder {
       os.write((byte)(absValue & 0xff));
     }
   }
-  
+
   // As in section 5.11 of the spec
   // visible for testing
   void writeTriplet(OutputStream os, boolean onCurve, int x, int y) throws IOException {
@@ -213,7 +213,7 @@ public class GlyfEncoder {
     int xSignBit = (x < 0) ? 0 : 1;
     int ySignBit = (y < 0) ? 0 : 1;
     int xySignBits = xSignBit + 2 * ySignBit;
-    
+
     if (x == 0 && absY < 1280) {
       glyfStream.write(onCurveBit + ((absY & 0xf00) >> 7) + ySignBit);
       os.write(absY & 0xff);
@@ -246,9 +246,9 @@ public class GlyfEncoder {
   /**
    * Split the instructions into a push sequence and the remainder of the instructions.
    * Writes both streams, and the counts to the glyfStream.
-   * 
+   *
    * As per section 6.2.1 of the spec.
-   * 
+   *
    * @param glyph the glyph to split
    */
   private void splitPush(Glyph glyph) throws IOException {
@@ -298,7 +298,7 @@ public class GlyfEncoder {
       data.slice(i).copyTo(codeStream);
     }
   }
-  
+
   // As per section 6.2.2 of the spec.
   private void encodePushSequence(OutputStream os, List<Integer> data) throws IOException {
     int n = data.size();

@@ -26,7 +26,7 @@ import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
 
 /**
  * Strip the hints from one glyph.
- * 
+ *
  * @author Raph Levien
  */
 public class GlyphStripper {

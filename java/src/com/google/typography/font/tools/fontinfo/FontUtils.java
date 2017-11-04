@@ -62,13 +62,13 @@ public class FontUtils {
     FontFactory fontFactory = FontFactory.getInstance();
     fontFactory.fingerprintFont(true);
     Font[] fonts = null;
-  
+
     try {
       fonts = fontFactory.loadFonts(is);
     } finally {
       is.close();
     }
-  
+
     return fonts;
   }
 
@@ -116,7 +116,7 @@ public class FontUtils {
    */
   public static CMap getUCSCMap(Font font) {
     CMapTable cmapTable = getCMapTable(font);
-  
+
     // Obtain the UCS-4 cmap. If it doesn't exist, then obtain the UCS-2 cmap
     CMap cmap = null;
     cmap = cmapTable.cmap(
@@ -128,7 +128,7 @@ public class FontUtils {
     if (cmap == null) {
       throw new UnsupportedOperationException("Font has no UCS-4 or UCS-2 cmap");
     }
-  
+
     return cmap;
   }
 

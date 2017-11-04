@@ -73,11 +73,11 @@ public final class BitmapGlyphInfo {
   public int glyphId() {
     return this.glyphId;
   }
-  
+
   public boolean relative() {
     return this.relative;
   }
-  
+
   public int blockOffset() {
     return this.blockOffset;
   }
@@ -85,19 +85,19 @@ public final class BitmapGlyphInfo {
   public int offset() {
     return this.blockOffset() + this.startOffset();
   }
-  
+
   public int startOffset() {
     return this.startOffset;
   }
-  
+
   public int length() {
     return this.length;
   }
-  
+
   public int format() {
     return this.format;
   }
-  
+
   @Override
   public int hashCode() {
     return SfObjects.hash(blockOffset, format, glyphId, length, startOffset);

@@ -108,7 +108,7 @@ public final class HorizontalMetricsTable extends Table {
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
-    
+
     protected Builder(Header header, WritableFontData data) {
       super(header, data);
     }
@@ -132,7 +132,7 @@ public final class HorizontalMetricsTable extends Table {
 
     public void setNumGlyphs(int numGlyphs) {
       if (numGlyphs < 0) {
-        throw new IllegalArgumentException("Number of glyphs can't be negative.");        
+        throw new IllegalArgumentException("Number of glyphs can't be negative.");
       }
       this.numGlyphs = numGlyphs;
       this.table().numGlyphs = numGlyphs;

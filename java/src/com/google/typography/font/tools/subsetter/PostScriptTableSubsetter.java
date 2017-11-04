@@ -32,7 +32,7 @@ public class PostScriptTableSubsetter extends TableSubsetterImpl {
   protected PostScriptTableSubsetter() {
     super(Tag.post);
   }
-  
+
   @Override
   public boolean subset(Subsetter subsetter, Font font, Font.Builder fontBuilder) {
     List<Integer> permutationTable = subsetter.glyphMappingTable();

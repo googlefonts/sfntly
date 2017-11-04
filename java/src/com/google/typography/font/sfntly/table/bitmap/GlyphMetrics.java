@@ -33,7 +33,7 @@ abstract class GlyphMetrics extends SubTable {
   protected GlyphMetrics(ReadableFontData data) {
     super(data);
   }
-  
+
   abstract static class Builder<T extends GlyphMetrics> extends SubTable.Builder<T> {
     /**
      * Constructor.

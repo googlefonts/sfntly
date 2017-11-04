@@ -75,7 +75,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
       return null;
     }
   }
-  
+
   /**
    * Constructor.
    *

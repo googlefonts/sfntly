@@ -36,7 +36,7 @@ public class RenumberingCMapTableSubsetter extends TableSubsetterImpl {
   public RenumberingCMapTableSubsetter() {
     super(Tag.cmap);
   }
- 
+
   private static CMapFormat4 getCMapFormat4(Font font) {
     CMapTable cmapTable = font.getTable(Tag.cmap);
     for (CMap cmap : cmapTable) {
@@ -46,7 +46,7 @@ public class RenumberingCMapTableSubsetter extends TableSubsetterImpl {
     }
     return null;
   }
-  
+
   static Map<Integer, Integer> computeMapping(Subsetter subsetter, Font font) {
     CMapFormat4 cmap4 = getCMapFormat4(font);
     if (cmap4 == null) {
@@ -62,7 +62,7 @@ public class RenumberingCMapTableSubsetter extends TableSubsetterImpl {
     }
     return mapping;
   }
-  
+
   @Override
   public boolean subset(Subsetter subsetter, Font font, Builder fontBuilder) throws IOException {
     CMapTableBuilder cmapBuilder =

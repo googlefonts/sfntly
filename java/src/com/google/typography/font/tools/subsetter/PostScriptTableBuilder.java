@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * Builder for PostScript table. This is currently outside the main sfntly
  * builder hierarchy, but should be migrated into it.
- * 
+ *
  * @author Raph Levien
  */
 public class PostScriptTableBuilder {
@@ -328,7 +328,7 @@ public class PostScriptTableBuilder {
     "ccaron",
     "dcroat"
   };
-  
+
   private static final Map<String, Integer> INVERTED_STANDARD_NAMES = invertNameMap(STANDARD_NAMES);
 
   private static Map<String, Integer> invertNameMap(String[] names) {
@@ -349,7 +349,7 @@ public class PostScriptTableBuilder {
   /**
    * Initialize the scalar values (underline position, etc) to those from the source post
    * table.
-   * 
+   *
    * @param src The source table to initialize from.
    */
   public void initV1From(PostScriptTable src) {
@@ -361,7 +361,7 @@ public class PostScriptTableBuilder {
   public void setNames(List<String> names) {
     this.names = names;
   }
-  
+
   public ReadableFontData build() {
     // Note: we always build a version 2 table. This will be the right thing to do almost all the
     // time, as long as we're dealing with TrueType (as opposed to CFF) fonts.

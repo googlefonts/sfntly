@@ -34,8 +34,8 @@ import java.util.EnumSet;
  *
  */
 public class OS2Tests extends TestCase {
-  
-  private static final File TEST_FONT_FILE = TestFont.TestFontNames.OPENSANS.getFile();  
+
+  private static final File TEST_FONT_FILE = TestFont.TestFontNames.OPENSANS.getFile();
 
   public OS2Tests() {
   }
@@ -64,7 +64,7 @@ public class OS2Tests extends TestCase {
     assertTrue(TestUtils.equals(
         achVendId_a_pad, 0, os2TableBuilder.achVendId(), 0, achVendId_a_pad.length));
   }
-  
+
   public void testUnicodeRange() throws Exception {
     EnumSet<UnicodeRange> urSet = makeUnicodeRangeSet(false);
     long[] urArray = UnicodeRange.asArray(urSet);
@@ -79,7 +79,7 @@ public class OS2Tests extends TestCase {
     EnumSet<CodePageRange> urSetCopy = CodePageRange.asSet(cprArray[0], cprArray[1]);
     assertEquals(urSet, urSetCopy);
   }
-  
+
   private static EnumSet<UnicodeRange> makeUnicodeRangeSet(boolean odd) {
     EnumSet<UnicodeRange> rSet = EnumSet.noneOf(UnicodeRange.class);
 
@@ -103,5 +103,5 @@ public class OS2Tests extends TestCase {
     }
     return rSet;
   }
-  
+
 }

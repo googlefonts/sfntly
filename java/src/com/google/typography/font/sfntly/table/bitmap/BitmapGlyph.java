@@ -70,7 +70,7 @@ public abstract class BitmapGlyph extends SubTable {
   }
 
   private int format;
-  
+
   public static BitmapGlyph createGlyph(ReadableFontData data, int format) {
     BitmapGlyph glyph = null;
     BitmapGlyph.Builder<? extends BitmapGlyph> builder = Builder.createGlyphBuilder(data, format);
@@ -93,11 +93,11 @@ public abstract class BitmapGlyph extends SubTable {
   public int format() {
     return this.format;
   }
-  
+
   public abstract static class Builder<T extends BitmapGlyph> extends SubTable.Builder<T> {
 
     private final int format;
-    
+
     public static Builder<? extends BitmapGlyph> createGlyphBuilder(
         ReadableFontData data, int format) {
       switch (format) {
@@ -129,7 +129,7 @@ public abstract class BitmapGlyph extends SubTable {
     public int format() {
       return this.format;
     }
-    
+
     @Override
     protected void subDataSet() {
       // NOP

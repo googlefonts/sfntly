@@ -68,10 +68,10 @@ public class CompositeBitmapGlyph extends BitmapGlyph {
       return glyphCode == other.glyphCode;
     }
   }
-  
+
   private int numComponentsOffset;
   private int componentArrayOffset;
-  
+
   protected CompositeBitmapGlyph(ReadableFontData data, int format) {
     super(data, format);
     initialize(format);
@@ -107,7 +107,7 @@ public class CompositeBitmapGlyph extends BitmapGlyph {
         this.data.readChar(componentOffset + Offset.ebdtComponent_xOffset),
         this.data.readChar(componentOffset + Offset.ebdtComponent_yOffset));
   }
-  
+
   public static class Builder extends BitmapGlyph.Builder<CompositeBitmapGlyph> {
 
     protected Builder(WritableFontData data, int format) {

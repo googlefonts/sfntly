@@ -29,7 +29,7 @@ public class BitIOWriterTest extends TestCase {
       assertEquals(expected[i], actual[i]);
     }
   }
-  
+
   public void testBitIOBit() {
     BitIOWriter writer = new BitIOWriter();
     writer.writeBit(1);

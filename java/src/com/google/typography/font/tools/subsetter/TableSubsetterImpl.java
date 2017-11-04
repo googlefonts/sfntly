@@ -27,7 +27,7 @@ import java.util.Set;
 public abstract class TableSubsetterImpl implements TableSubsetter {
 
   protected final Set<Integer> tags;
-  
+
   protected TableSubsetterImpl(Integer... tags) {
     Set<Integer> temp = new HashSet<Integer>(tags.length);
     for (Integer tag : tags) {
@@ -44,5 +44,5 @@ public abstract class TableSubsetterImpl implements TableSubsetter {
   @Override
   public Set<Integer> tagsHandled() {
     return this.tags;
-  }  
+  }
 }

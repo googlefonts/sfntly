@@ -26,10 +26,10 @@ import java.util.List;
 /**
  * A builder method for the hmtx (horizontal metrics) table. The goal is for this
  * logic to go into the HorizontalMetricsTable.Builder class, but for now is separate.
- * 
+ *
  * Note that this class also computes the advanceWidthMax value, which goes into the
  * hhea table, leading to somewhat awkward plumbing.
- * 
+ *
  * @author Raph Levien
  */
 public class HorizontalMetricsTableBuilder {
@@ -37,13 +37,13 @@ public class HorizontalMetricsTableBuilder {
   public static class LongHorMetric {
     public int advanceWidth;
     public int lsb;
-    
+
     public LongHorMetric(int advanceWidth, int lsb) {
       this.advanceWidth = advanceWidth;
       this.lsb = lsb;
     }
   }
-  
+
   private final Font.Builder fontBuilder;
   private final List<LongHorMetric> metrics;
 
@@ -51,7 +51,7 @@ public class HorizontalMetricsTableBuilder {
     this.fontBuilder = fontBuilder;
     this.metrics = metrics;
   }
-  
+
   public void build() {
     int nMetrics = metrics.size();
     if (nMetrics <= 0) {

@@ -52,7 +52,7 @@ public class RenumberingSubsetTest extends TestCase {
 
   // The subsetted font - individual tests will query and validate aspects of it
   Font dstFont;
-  
+
   @Override
   public void setUp() throws IOException {
     Font srcFont = TestFontUtils.loadFont(fontFile)[0];
@@ -75,7 +75,7 @@ public class RenumberingSubsetTest extends TestCase {
 
     dstFont = dstFontBuilder.build();
   }
-  
+
   public void testNumGlyphs() {
     MaximumProfileTable maxpTable = dstFont.getTable(Tag.maxp);
     assertEquals(4, maxpTable.numGlyphs());
@@ -83,7 +83,7 @@ public class RenumberingSubsetTest extends TestCase {
     LocaTable locaTable = dstFont.getTable(Tag.loca);
     assertEquals(4, locaTable.numGlyphs());
   }
-  
+
   public void testCmap() throws IOException {
     CMapTable cmapTable = dstFont.getTable(Tag.cmap);
     assertEquals(1, cmapTable.numCMaps(), 1);
@@ -93,7 +93,7 @@ public class RenumberingSubsetTest extends TestCase {
     assertEquals(2, cmap.glyphId(0x61));
     assertEquals(3, cmap.glyphId(0xe0));
   }
-  
+
   public void testHorizontalMetrics() {
     HorizontalMetricsTable hmtxTable = dstFont.getTable(Tag.hmtx);
     assertEquals(1229, hmtxTable.advanceWidth(0));
@@ -105,13 +105,13 @@ public class RenumberingSubsetTest extends TestCase {
     assertEquals(1139, hmtxTable.advanceWidth(3));
     assertEquals(94, hmtxTable.leftSideBearing(3));
   }
-  
+
   public void testHorizontalHeader() {
     HorizontalHeaderTable hheaTable = dstFont.getTable(Tag.hhea);
     assertEquals(3, hheaTable.numberOfHMetrics());
     assertEquals(1229, hheaTable.advanceWidthMax());
   }
-  
+
   public void testPostScriptTable() {
     PostScriptTable postTable = dstFont.getTable(Tag.post);
     assertEquals(4, postTable.numberOfGlyphs());
@@ -120,7 +120,7 @@ public class RenumberingSubsetTest extends TestCase {
     assertEquals("a", postTable.glyphName(2));
     assertEquals("agrave", postTable.glyphName(3));
   }
-  
+
   public void testSimpleGlyph1() {
     // grave
     Glyph glyph = getGlyph(dstFont, 1);
@@ -170,13 +170,13 @@ public class RenumberingSubsetTest extends TestCase {
     assertEquals(8, composite.instructionSize());
     assertEquals(0, composite.padding());
   }
-  
+
   public void testTablesRemoved() {
     assertNull(dstFont.getTable(Tag.GPOS));
     assertNull(dstFont.getTable(Tag.GSUB));
     assertNull(dstFont.getTable(Tag.kern));
   }
-  
+
   // TODO: this really needs to be a utility method somewhere
   private static Glyph getGlyph(Font font, int glyphId) {
     LocaTable locaTable = font.getTable(Tag.loca);

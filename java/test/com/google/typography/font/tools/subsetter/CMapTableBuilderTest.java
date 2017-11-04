@@ -36,7 +36,7 @@ public class CMapTableBuilderTest extends TestCase {
     FontFactory fontFactory = FontFactory.getInstance();
     Font.Builder fontBuilder = fontFactory.newFontBuilder();
     new CMapTableBuilder(fontBuilder, mapping).build();
-    
+
     Font font = fontBuilder.build();
     CMapTable cmapTable = font.getTable(Tag.cmap);
     CMap cmap = cmapTable.cmap(3, 1);
@@ -48,7 +48,7 @@ public class CMapTableBuilderTest extends TestCase {
     assertEquals(CMapTable.NOTDEF, cmap.glyphId(0xffff));
     assertEquals(CMapTable.NOTDEF, cmap.glyphId(0xfffe));
   }
-  
+
   public void testCmapBuilding() {
     Map<Integer, Integer> mapping = new HashMap<Integer, Integer>();
     mapping.put(32, 0);

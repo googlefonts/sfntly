@@ -62,7 +62,7 @@ public final class WritableFontData extends ReadableFontData {
     WritableFontData wfd = new WritableFontData(ba);
     return wfd;
   }
-  
+
   /**
    * Constructs a writable font data object. The new font data object will wrap
    * a copy of the the data used by the original writable font data object passed in.
@@ -79,12 +79,12 @@ public final class WritableFontData extends ReadableFontData {
       ba = new MemoryByteArray(original.array.length());
     }
     original.array.copyTo(ba);
-    
+
     WritableFontData wfd = new WritableFontData(ba);
     wfd.setCheckSumRanges(original.checkSumRange());
     return wfd;
   }
-  
+
   /**
    * Constructor.
    *

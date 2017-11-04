@@ -33,7 +33,7 @@ import java.util.Set;
 
 /**
  * @author Stuart Gill
- * 
+ *
  */
 public class OTFBasicEditingTests extends TestCase {
 
@@ -48,7 +48,7 @@ public class OTFBasicEditingTests extends TestCase {
    * that there are no extra tables. Also does a simple modification and ensures
    * that the edit makes it through the save process and that the checksum is
    * updated.
-   * 
+   *
    * @throws Exception
    */
   public void testBuildersToTables() throws Exception {
@@ -86,7 +86,7 @@ public class OTFBasicEditingTests extends TestCase {
   /**
    * Simple test of the font level checksum generation and the header table
    * checksum offset.
-   * 
+   *
    * @throws Exception
    */
   public void testChecksum() throws Exception {
@@ -101,8 +101,8 @@ public class OTFBasicEditingTests extends TestCase {
       Table.Builder<? extends Table> tableBuilder = fontBuilder.getTableBuilder(tag);
       WritableFontData data = tableBuilder.data();
       int l = data.readULongAsInt(0);
-      
-      // add 1 to the first long in every table 
+
+      // add 1 to the first long in every table
       // => expected checksum should go up by one for each too
       data.writeULong(0, l + 1);
       tableBuilder.setData(data);

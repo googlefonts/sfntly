@@ -36,11 +36,11 @@ public class SmallGlyphMetrics extends GlyphMetrics {
   private SmallGlyphMetrics(ReadableFontData data) {
     super(data);
   }
-  
+
   public int height() {
     return this.data.readByte(Offset.height);
   }
-  
+
   public int width() {
     return this.data.readByte(Offset.width);
   }

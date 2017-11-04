@@ -31,12 +31,12 @@ import java.io.File;
 public class MetricsTests extends TestCase {
 
   private static final File TEST_FONT_FILE = TestFont.TestFontNames.OPENSANS.getFile();
-  
+
   public void testBasicHmtxValidity() throws Exception {
       Font[] fonts = TestFontUtils.loadFont(TEST_FONT_FILE);
       Font font = fonts[0];
       HorizontalMetricsTable hmtxTable = font.getTable(Tag.hmtx);
-      
+
       for (int gid = 0; gid < 100; gid++) {
         int width = hmtxTable.advanceWidth(gid);
         assertFalse(width == -1);

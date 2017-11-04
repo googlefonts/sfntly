@@ -83,7 +83,7 @@ public class GlyphTests extends TestCase {
         final int encodingId,
         final int lowChar,
         final int highChar) {
-      this(fontFile, 
+      this(fontFile,
           platformId, encodingId, "",
           lowChar, highChar);
     }
@@ -91,7 +91,7 @@ public class GlyphTests extends TestCase {
 
   private static final TestSet[] GLYPH_TESTS = {
     new TestSet(TestFont.TestFontNames.OPENSANS.getFile(),
-        PlatformId.Windows.value(), WindowsEncodingId.UnicodeUCS2.value(), 
+        PlatformId.Windows.value(), WindowsEncodingId.UnicodeUCS2.value(),
         0x20, 0x7f),
 
     // TODO: reinstate Cambria, Batang, and Arial for internal tests, or replace with open-source
@@ -130,10 +130,10 @@ public class GlyphTests extends TestCase {
 
   /**
    * Basic glyph checking.
-   * 
+   *
    * Currently only instantiates the glyph from the table and verifies that it
    * is non-null. This does ensure that the glyph data was able to be parsed correctly.
-   * 
+   *
    * @param table glyph table
    * @param offset glyph offset in table
    * @param length length of glyph data

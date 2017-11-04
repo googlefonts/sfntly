@@ -25,9 +25,9 @@ public class Issue27Tests extends TestCase {
     Font.Builder fontBuilder = fontFactory.loadFontsForBuilding(new FileInputStream(fontFile))[0];
     NameTable.Builder nameTableBuilder = (NameTable.Builder) fontBuilder.getTableBuilder(Tag.name);
     // add a name that will sort after all the other names in the table
-    nameTableBuilder.nameBuilder(Font.PlatformId.Windows.value(), 
-        Font.WindowsEncodingId.UnicodeUCS4.value(), 
-        NameTable.WindowsLanguageId.Spanish_UnitedStates.value(), 
+    nameTableBuilder.nameBuilder(Font.PlatformId.Windows.value(),
+        Font.WindowsEncodingId.UnicodeUCS4.value(),
+        NameTable.WindowsLanguageId.Spanish_UnitedStates.value(),
         NameTable.NameId.WWSSubfamilyName.value()).setName("");
     Font font = fontBuilder.build();
     assertNotNull(font);

@@ -43,7 +43,7 @@ public class PostScriptTableBuilderTest extends TestCase {
     PostScriptTableBuilder postBuilder = new PostScriptTableBuilder();
     postBuilder.setNames(names);
     fontBuilder.newTableBuilder(Tag.post, postBuilder.build());
-    
+
     Font font = fontBuilder.build();
     PostScriptTable post = font.getTable(Tag.post);
     assertEquals(0x20000, post.version());
@@ -57,6 +57,6 @@ public class PostScriptTableBuilderTest extends TestCase {
     assertEquals(79, post.dataLength());
     assertEquals(79, post.headerLength());
   }
-  
+
   // TODO: test initV1From()
 }

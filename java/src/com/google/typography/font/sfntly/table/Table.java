@@ -145,9 +145,9 @@ public class Table extends FontDataTable {
     }
 
     /***********************************************************************************
-     * 
+     *
      * Public Interface for Table Building
-     * 
+     *
      ***********************************************************************************/
 
     public final Header header() {

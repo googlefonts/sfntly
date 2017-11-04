@@ -48,7 +48,7 @@ public abstract class FontDataTable {
   public ReadableFontData readFontData() {
     return this.data;
   }
-  
+
   @Override
   public String toString() {
     return this.data.toString();
@@ -82,12 +82,12 @@ public abstract class FontDataTable {
 
     /**
      * Constructor.
-     * 
+     *
      * Construct a FontDataTable.Builder with a WritableFontData backing store
      * of size given. A positive size will create a fixed size backing store and
      * a 0 or less size is an estimate for a growable backing store with the
      * estimate being the absolute of the size.
-     * 
+     *
      * @param dataSize if positive then a fixed size; if 0 or less then an
      *        estimate for a growable size
      */
@@ -113,7 +113,7 @@ public abstract class FontDataTable {
      *
      * @return a copy of the internal data of the builder
      * @see FontDataTable.Builder#setData(WritableFontData)
-     */ 
+     */
     public WritableFontData data() {
       WritableFontData newData;
       if (this.modelChanged) {
@@ -176,20 +176,20 @@ public abstract class FontDataTable {
         this.subSerialize(newData);
         data = newData;
       }
-      
+
       if (data != null) {
         table = this.subBuildTable(data);
         this.notifyPostTableBuild(table);
       }
       this.rData = null;
       this.wData = null;
-      
+
       return table;
     }
 
     public boolean readyToBuild() {
       return true;
-    }    
+    }
 
     protected ReadableFontData internalReadData() {
       if (this.rData != null) {
@@ -209,11 +209,11 @@ public abstract class FontDataTable {
       }
       return this.wData;
     }
-    
+
     /**
-     * Determines whether the state of this builder has changed - either the data or the internal 
+     * Determines whether the state of this builder has changed - either the data or the internal
      * model representing the data.
-     * 
+     *
      * @return true if the builder has changed
      */
     public boolean changed() {
@@ -235,7 +235,7 @@ public abstract class FontDataTable {
     protected boolean containedModelChanged() {
       return this.containedModelChanged;
     }
-    
+
     protected boolean setModelChanged() {
       return this.setModelChanged(true);
     }

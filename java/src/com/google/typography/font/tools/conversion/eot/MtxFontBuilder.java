@@ -45,7 +45,7 @@ public class MtxFontBuilder {
 
   /**
    * Add a table to the font being built.
-   * 
+   *
    * @param tag 4-byte tag of the table, same format as sfntly.Tag
    * @param data ReadableFontData for table contents
    */
@@ -55,7 +55,7 @@ public class MtxFontBuilder {
 
   /**
    * Add a table to the font being built.
-   * 
+   *
    * @param tag 4-byte tag of the table, same format as sfntly.Tag
    * @param data byte[] data for table contents
    */
@@ -77,7 +77,7 @@ public class MtxFontBuilder {
 
   /**
    * Build the font, packing all tables into an OpenType (SFNT) structure.
-   * 
+   *
    * @return the binary font data
    */
   public byte[] build() {
@@ -130,7 +130,7 @@ public class MtxFontBuilder {
   static int searchRange(int x) {
     return Integer.highestOneBit(x);
   }
-  
+
   // visible for testing
   static int log2(int x) {
     return 31 - Integer.numberOfLeadingZeros(x);

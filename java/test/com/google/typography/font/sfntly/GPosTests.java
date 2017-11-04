@@ -41,7 +41,7 @@ public class GPosTests extends TestCase {
       }
     }
     assertTrue("have test gpos file", gposFontList.size() > 0);
-    
+
     for (Font font : gposFontList) {
     }
   }

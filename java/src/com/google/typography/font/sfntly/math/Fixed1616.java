@@ -18,7 +18,7 @@ package com.google.typography.font.sfntly.math;
 
 /**
  * Fixed 16.16 integer utilities.
- * 
+ *
  * @author Stuart Gill
  */
 public enum Fixed1616 {
@@ -35,7 +35,7 @@ public enum Fixed1616 {
   public static int fixed(int integral, int fractional) {
     return ((integral & 0xffff) << 16) | (fractional & 0xffff);
   }
-  
+
   /**
    * @param fixed the number to convert
    * @return a double representing the 16-16 floating point number

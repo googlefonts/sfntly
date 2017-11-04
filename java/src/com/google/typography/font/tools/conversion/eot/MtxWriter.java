@@ -32,9 +32,9 @@ import java.util.Set;
  * @author Raph Levien
  */
 public class MtxWriter {
-  
+
   private static final Set<Integer> REMOVE_TABLES = createRemoveTables();
-  
+
   private static Set<Integer> createRemoveTables() {
     Set<Integer> result = new HashSet<Integer>();
     result.add(Tag.VDMX);
@@ -73,7 +73,7 @@ public class MtxWriter {
     if (hdmxTable != null) {
       fontBuilder.addTable(Tag.hdmx, new HdmxEncoder().encode(sfntlyFont));
     }
-    
+
     byte[] block1 = fontBuilder.build();
     byte[] block2 = glyfEncoder.getPushBytes();
     byte[] block3 = glyfEncoder.getCodeBytes();

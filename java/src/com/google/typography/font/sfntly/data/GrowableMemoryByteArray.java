@@ -21,7 +21,7 @@ import java.io.OutputStream;
 
 /**
  * A growable memory implementation of the ByteArray interface.
- * 
+ *
  * @author Stuart Gill
  */
 final class GrowableMemoryByteArray extends ByteArray<GrowableMemoryByteArray> {
@@ -60,10 +60,10 @@ final class GrowableMemoryByteArray extends ByteArray<GrowableMemoryByteArray> {
 
   @Override
   public void close() {
-   
+
     this.b = null;
   }
-  
+
   @Override
   public int copyTo(OutputStream os, int offset, int length) throws IOException {
     os.write(b, offset, length);

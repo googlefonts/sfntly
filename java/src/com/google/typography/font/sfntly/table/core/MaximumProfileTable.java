@@ -73,7 +73,7 @@ public final class MaximumProfileTable extends Table {
   public int maxCompositePoints() {
     return this.data.readUShort(Offset.maxCompositePoints);
   }
-  
+
   public int maxCompositeContours() {
     return this.data.readUShort(Offset.maxCompositeContours);
   }
@@ -125,7 +125,7 @@ public final class MaximumProfileTable extends Table {
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
-    
+
     protected Builder(Header header, WritableFontData data) {
       super(header, data);
     }
@@ -178,7 +178,7 @@ public final class MaximumProfileTable extends Table {
     public void setMaxCompositePoints(int maxCompositePoints) {
       this.internalWriteData().writeUShort(Offset.maxCompositePoints, maxCompositePoints);
     }
-    
+
     public int maxCompositeContours() {
       return this.internalReadData().readUShort(Offset.maxCompositeContours);
     }

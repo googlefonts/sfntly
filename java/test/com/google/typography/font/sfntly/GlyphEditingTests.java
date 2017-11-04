@@ -175,7 +175,7 @@ public class GlyphEditingTests extends TestCase {
     locaTableBuilder.setLocaList(locaList);
 
     Font font = fontBuilder.build();
-    
+
     LocaTable locaTable = font.getTable(Tag.loca);
     GlyphTable glyphTable = font.getTable(Tag.glyf);
 
