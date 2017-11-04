@@ -612,8 +612,8 @@ public class Font {
       }
       FontInputStream fontIS = new FontInputStream(is);
       try {
-        SortedSet<Header> records = readHeader(fontIS);
-        this.dataBlocks = loadTableData(records, fontIS);
+        SortedSet<Header> headers = readHeader(fontIS);
+        this.dataBlocks = loadTableData(headers, fontIS);
         this.tableBuilders = buildAllTableBuilders(this.dataBlocks);
       } finally {
         fontIS.close();
@@ -813,7 +813,7 @@ public class Font {
 
     private Map<Integer, Table.Builder<? extends Table>> buildAllTableBuilders(
         Map<Header, WritableFontData> tableData) {
-      Map<Integer, Table.Builder<? extends Table>> builderMap = 
+      Map<Integer, Table.Builder<? extends Table>> builderMap =
         new HashMap<Integer, Table.Builder<? extends Table>>();
       Set<Header> records = tableData.keySet();
       for (Header record : records) {
@@ -838,7 +838,7 @@ public class Font {
       long fontChecksum = 0;
       boolean tablesChanged = false;
       FontHeaderTable.Builder headerTableBuilder = null;
-      
+
       // now build all the tables
       for (Table.Builder<? extends Table> builder : builderMap.values()) {
         Table table = null;
@@ -857,7 +857,7 @@ public class Font {
         fontChecksum += tableChecksum;
         tableMap.put(table.header().tag(), table);
       }
-      
+
       // now fix up the header table
       Table headerTable = null;
       if (headerTableBuilder != null) {
@@ -874,7 +874,7 @@ public class Font {
         fontChecksum += headerTable.calculatedChecksum();
         tableMap.put(headerTable.header().tag(), headerTable);
       }
-      
+
       font.checksum = fontChecksum & 0xffffffffL;
       return tableMap;
     }
@@ -918,13 +918,10 @@ public class Font {
         if (maxProfileBuilder != null) {
           hdmxTableBuilder.setNumGlyphs(maxProfileBuilder.numGlyphs());
         }
-      }      
+      }
     }
 
     private SortedSet<Header> readHeader(FontInputStream is) throws IOException {
-      SortedSet<Header> records =
-          new TreeSet<Header>(Header.COMPARATOR_BY_OFFSET);
-
       this.sfntVersion = is.readFixed();
       this.numTables = is.readUShort();
       this.searchRange = is.readUShort();
@@ -936,12 +933,13 @@ public class Font {
         throw new IllegalStateException(msg);
       }
 
+      SortedSet<Header> records = new TreeSet<Header>(Header.COMPARATOR_BY_OFFSET);
       for (int tableNumber = 0; tableNumber < this.numTables; tableNumber++) {
-        Header table = new Header(is.readULongAsInt(), // safe since the tag is ASCII
-            is.readULong(),         // checksum
-            is.readULongAsInt(),    // offset
-            is.readULongAsInt());   // length
-        records.add(table);
+        int tag = is.readULongAsInt();
+        long checksum = is.readULong();
+        int offset = is.readULongAsInt();
+        int length = is.readULongAsInt();
+        records.add(new Header(tag, checksum, offset, length));
       }
       return records;
     }
@@ -966,8 +964,6 @@ public class Font {
     }
 
     private SortedSet<Header> readHeader(ReadableFontData fd, int offset) {
-      SortedSet<Header> records =
-          new TreeSet<Header>(Header.COMPARATOR_BY_OFFSET);
 
       this.sfntVersion = fd.readFixed(offset + HeaderOffset.sfntVersion);
       this.numTables = fd.readUShort(offset + HeaderOffset.numTables);
@@ -975,16 +971,14 @@ public class Font {
       this.entrySelector = fd.readUShort(offset + HeaderOffset.entrySelector);
       this.rangeShift = fd.readUShort(offset + HeaderOffset.rangeShift);
 
+      SortedSet<Header> records = new TreeSet<Header>(Header.COMPARATOR_BY_OFFSET);
       int tableOffset = offset + HeaderOffset.SIZE;
-      for (int tableNumber = 0;
-      tableNumber < this.numTables;
-      tableNumber++, tableOffset += TableOffset.SIZE) {
-        Header table = new Header(
-            fd.readULongAsInt(tableOffset + TableOffset.tag), // safe since the tag is ASCII
-            fd.readULong(tableOffset + TableOffset.checkSum),
-            fd.readULongAsInt(tableOffset + TableOffset.offset),
-            fd.readULongAsInt(tableOffset + TableOffset.length));
-        records.add(table);
+      for (int i = 0; i < this.numTables; i++, tableOffset += TableOffset.SIZE) {
+        int tag = fd.readULongAsInt(tableOffset + TableOffset.tag);
+        long checksum = fd.readULong(tableOffset + TableOffset.checkSum);
+        int headerOffset = fd.readULongAsInt(tableOffset + TableOffset.offset);
+        int length = fd.readULongAsInt(tableOffset + TableOffset.length);
+        records.add(new Header(tag, checksum, headerOffset, length));
       }
       return records;
     }

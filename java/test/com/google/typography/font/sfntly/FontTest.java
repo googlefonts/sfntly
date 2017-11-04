@@ -3,9 +3,11 @@ package com.google.typography.font.sfntly;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import junit.framework.TestCase;
+import org.junit.Assume;
 
 public class FontTest extends TestCase {
 
@@ -80,6 +82,18 @@ public class FontTest extends TestCase {
       }
     } catch (IllegalStateException e) {
       assertEquals("Wrong sfntVersion 0x3c737667, must be 0x0x010000", e.getMessage());
+    }
+  }
+
+  // Just a smoke test to see whether the validity checks influence real-life files.
+  public void testLoadSystemFonts() throws IOException {
+    File fontsDir = new File("C:/Windows/Fonts");
+    Assume.assumeTrue(fontsDir.exists());
+
+    for (File fontFile : fontsDir.listFiles()) {
+      if (fontFile.getName().endsWith(".ttf")) {
+        TestFontUtils.loadFont(fontFile);
+      }
     }
   }
 }

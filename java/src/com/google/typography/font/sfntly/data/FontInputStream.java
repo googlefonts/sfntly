@@ -251,6 +251,9 @@ public class FontInputStream extends FilterInputStream {
     while (skipped < n && this.read() != -1) {
       skipped++;
     }
+    if (skipped < n) {
+      throw new IOException(String.format("Cannot skip %d bytes, skipped only %d", n, skipped));
+    }
     return skipped;
   }
 }
