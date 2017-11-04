@@ -1,10 +1,9 @@
 package com.google.typography.font.sfntly.testutils;
 
 import com.google.typography.font.sfntly.table.Table;
-import junit.framework.Assert;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import org.junit.Assert;
 
 public final class SfAssert {
 

@@ -20,12 +20,12 @@ public class FontInfoMain {
 
   public static void main(String[] args) {
     CommandOptions options = new CommandOptions();
-    JCommander commander = null;
+    JCommander commander = new JCommander(options);
     try {
-      commander = new JCommander(options, args);
+      commander.parse(args);
     } catch (ParameterException e) {
       System.out.println(e.getMessage());
-      commander = new JCommander(options, "--help");
+      commander.parse("--help");
     }
 
     // Display help

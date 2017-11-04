@@ -125,7 +125,6 @@ class OtTableTagger {
     tagMethodRegistry.put(m.clzz, m);
   }
 
-  @SafeVarargs
   private final void register(TagMethod m, Class<? extends FontDataTable>... clzzes) {
     tagMethodRegistry.put(m.clzz, m);
     for (Class<? extends FontDataTable> clzz : clzzes) {
