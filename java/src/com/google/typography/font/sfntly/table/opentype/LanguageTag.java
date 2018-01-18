@@ -140,7 +140,7 @@ enum LanguageTag {
   HBN("Hammer-Banna", "amf"),
   HIL("Hiligaynon", "hil"),
   HIN("Hindi", "hin"),
-  Mari("High", "HMA     mrj"),
+  HMA("High Mari", "mrj"),
   HND("Hindko", "hno,hnd"),
   HO("Ho", "hoc"),
   HRI("Harari", "har"),
