@@ -10,7 +10,7 @@ public class LanguageTagTest {
     @Test
     public void testDataConsistency() {
         for (LanguageTag languageTag : LanguageTag.values()) {
-            assertThat(languageTag.longName(), is(languageTag.longName().trim()));
+            assertThat(languageTag.languageSystem(), is(languageTag.languageSystem().trim()));
 
             for (String iso3 : languageTag.iso3List()) {
                 assertThat(iso3.replaceAll("^[a-z]{3}$", ""), is(""));
