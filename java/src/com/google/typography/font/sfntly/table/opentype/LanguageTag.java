@@ -510,7 +510,7 @@ enum LanguageTag {
   SOG("Sodo Gurage", "Kistane", "gru"),
   SOP("Songe", "Songe", "sop"),
   SOT("Sotho, Southern", "Southern Sotho", "sot"),
-  SQI("Albanian", "Swiss German", "gsw"),
+  SQI("Albanian", "Albanian", "sqi"), // Bug in ISO-14496-22:2015 (it says "gsw")
   SRB("Serbian", "Serbian", "srp"),
   SRD("Sardinian", "Sardinian", "srd"),
   SRK("Seraiki", "Saraiki", "skr"),
