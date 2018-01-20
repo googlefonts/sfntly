@@ -27,7 +27,7 @@ import java.io.UnsupportedEncodingException;
  * @author Stuart Gill
  */
 public final class Tag {
-  public static final int ttcf = Tag.intValue(new byte[]{'t', 't', 'c', 'f'});
+  public static final int ttcf = Tag.intValue("ttcf");
 
   /***********************************************************************************
    *
@@ -36,69 +36,69 @@ public final class Tag {
    ***********************************************************************************/
 
   // required tables
-  public static final int cmap = Tag.intValue(new byte[]{'c', 'm', 'a', 'p'});
-  public static final int head = Tag.intValue(new byte[]{'h', 'e', 'a', 'd'});
-  public static final int hhea = Tag.intValue(new byte[]{'h', 'h', 'e', 'a'});
-  public static final int hmtx = Tag.intValue(new byte[]{'h', 'm', 't', 'x'});
-  public static final int maxp = Tag.intValue(new byte[]{'m', 'a', 'x', 'p'});
-  public static final int name = Tag.intValue(new byte[]{'n', 'a', 'm', 'e'});
-  public static final int OS_2 = Tag.intValue(new byte[]{'O', 'S', '/', '2'});
-  public static final int post = Tag.intValue(new byte[]{'p', 'o', 's', 't'});
+  public static final int cmap = Tag.intValue("cmap");
+  public static final int head = Tag.intValue("head");
+  public static final int hhea = Tag.intValue("hhea");
+  public static final int hmtx = Tag.intValue("hmtx");
+  public static final int maxp = Tag.intValue("maxp");
+  public static final int name = Tag.intValue("name");
+  public static final int OS_2 = Tag.intValue("OS/2");
+  public static final int post = Tag.intValue("post");
 
   // truetype outline tables
-  public static final int cvt = Tag.intValue(new byte[]{'c', 'v', 't', ' '});
-  public static final int fpgm = Tag.intValue(new byte[]{'f', 'p', 'g', 'm'});
-  public static final int glyf = Tag.intValue(new byte[]{'g', 'l', 'y', 'f'});
-  public static final int loca = Tag.intValue(new byte[]{'l', 'o', 'c', 'a'});
-  public static final int prep = Tag.intValue(new byte[]{'p', 'r', 'e', 'p'});
+  public static final int cvt = Tag.intValue("cvt ");
+  public static final int fpgm = Tag.intValue("fpgm");
+  public static final int glyf = Tag.intValue("glyf");
+  public static final int loca = Tag.intValue("loca");
+  public static final int prep = Tag.intValue("prep");
 
   // postscript outline tables
-  public static final int CFF = Tag.intValue(new byte[]{'C', 'F', 'F', ' '});
-  public static final int VORG = Tag.intValue(new byte[]{'V', 'O', 'R', 'G'});
+  public static final int CFF = Tag.intValue("CFF ");
+  public static final int VORG = Tag.intValue("VORG");
 
   // opentype bitmap glyph outlines
-  public static final int EBDT = Tag.intValue(new byte[]{'E', 'B', 'D', 'T'});
-  public static final int EBLC = Tag.intValue(new byte[]{'E', 'B', 'L', 'C'});
-  public static final int EBSC = Tag.intValue(new byte[]{'E', 'B', 'S', 'C'});
+  public static final int EBDT = Tag.intValue("EBDT");
+  public static final int EBLC = Tag.intValue("EBLC");
+  public static final int EBSC = Tag.intValue("EBSC");
 
   // advanced typographic features
-  public static final int BASE = Tag.intValue(new byte[]{'B', 'A', 'S', 'E'});
-  public static final int GDEF = Tag.intValue(new byte[]{'G', 'D', 'E', 'F'});
-  public static final int GPOS = Tag.intValue(new byte[]{'G', 'P', 'O', 'S'});
-  public static final int GSUB = Tag.intValue(new byte[]{'G', 'S', 'U', 'B'});
-  public static final int JSTF = Tag.intValue(new byte[]{'J', 'S', 'T', 'F'});
+  public static final int BASE = Tag.intValue("BASE");
+  public static final int GDEF = Tag.intValue("GDEF");
+  public static final int GPOS = Tag.intValue("GPOS");
+  public static final int GSUB = Tag.intValue("GSUB");
+  public static final int JSTF = Tag.intValue("JSTF");
 
   // other
-  public static final int DSIG = Tag.intValue(new byte[]{'D', 'S', 'I', 'G'});
-  public static final int gasp = Tag.intValue(new byte[]{'g', 'a', 's', 'p'});
-  public static final int hdmx = Tag.intValue(new byte[]{'h', 'd', 'm', 'x'});
-  public static final int kern = Tag.intValue(new byte[]{'k', 'e', 'r', 'n'});
-  public static final int LTSH = Tag.intValue(new byte[]{'L', 'T', 'S', 'H'});
-  public static final int PCLT = Tag.intValue(new byte[]{'P', 'C', 'L', 'T'});
-  public static final int VDMX = Tag.intValue(new byte[]{'V', 'D', 'M', 'X'});
-  public static final int vhea = Tag.intValue(new byte[]{'v', 'h', 'e', 'a'});
-  public static final int vmtx = Tag.intValue(new byte[]{'v', 'm', 't', 'x'});
+  public static final int DSIG = Tag.intValue("DSIG");
+  public static final int gasp = Tag.intValue("gasp");
+  public static final int hdmx = Tag.intValue("hdmx");
+  public static final int kern = Tag.intValue("kern");
+  public static final int LTSH = Tag.intValue("LTSH");
+  public static final int PCLT = Tag.intValue("PCLT");
+  public static final int VDMX = Tag.intValue("VDMX");
+  public static final int vhea = Tag.intValue("vhea");
+  public static final int vmtx = Tag.intValue("vmtx");
 
   // AAT Tables
   // TODO(stuartg): some tables may be missing from this list
-  public static final int bsln = Tag.intValue(new byte[]{'b', 's', 'l', 'n'});
-  public static final int feat = Tag.intValue(new byte[]{'f', 'e', 'a', 't'});
-  public static final int lcar = Tag.intValue(new byte[]{'l', 'c', 'a', 'r'});
-  public static final int morx = Tag.intValue(new byte[]{'m', 'o', 'r', 'x'});
-  public static final int opbd = Tag.intValue(new byte[]{'o', 'p', 'b', 'd'});
-  public static final int prop = Tag.intValue(new byte[]{'p', 'r', 'o', 'p'});
+  public static final int bsln = Tag.intValue("bsln");
+  public static final int feat = Tag.intValue("feat");
+  public static final int lcar = Tag.intValue("lcar");
+  public static final int morx = Tag.intValue("morx");
+  public static final int opbd = Tag.intValue("opbd");
+  public static final int prop = Tag.intValue("prop");
 
   // Graphite tables
-  public static final int Feat = Tag.intValue(new byte[]{'F', 'e', 'a', 't'});
-  public static final int Glat = Tag.intValue(new byte[]{'G', 'l', 'a', 't'});
-  public static final int Gloc = Tag.intValue(new byte[]{'G', 'l', 'o', 'c'});
-  public static final int Sile = Tag.intValue(new byte[]{'S', 'i', 'l', 'e'});
-  public static final int Silf = Tag.intValue(new byte[]{'S', 'i', 'l', 'f'});
+  public static final int Feat = Tag.intValue("Feat");
+  public static final int Glat = Tag.intValue("Glat");
+  public static final int Gloc = Tag.intValue("Gloc");
+  public static final int Sile = Tag.intValue("Sile");
+  public static final int Silf = Tag.intValue("Silf");
 
   // truetype bitmap font tables
-  public static final int bhed = Tag.intValue(new byte[]{'b', 'h', 'e', 'd'});
-  public static final int bdat = Tag.intValue(new byte[]{'b', 'd', 'a', 't'});
-  public static final int bloc = Tag.intValue(new byte[]{'b', 'l', 'o', 'c'});
+  public static final int bhed = Tag.intValue("bhed");
+  public static final int bdat = Tag.intValue("bdat");
+  public static final int bloc = Tag.intValue("bloc");
 
   private Tag() {
     // Prevent construction.
@@ -120,21 +120,19 @@ public final class Tag {
   public static String stringValue(int tag) {
     String s;
     try {
-      s = new String(Tag.byteValue(tag), "US-ASCII");
+      s = new String(byteValue(tag), "US-ASCII");
     } catch (UnsupportedEncodingException e) {
-      // should never happen since US-ASCII is a guaranteed character set but...
-      return "";
+      throw new IllegalStateException(e);
     }
     return s;
   }
 
   public static int intValue(String s) {
-    byte[] b = null;
+    byte[] b;
     try {
       b = s.substring(0, 4).getBytes("US-ASCII");
     } catch (UnsupportedEncodingException e) {
-      // should never happen since US-ASCII is a guaranteed character set but...
-      return 0;
+      throw new IllegalStateException(e);
     }
     return intValue(b);
   }
