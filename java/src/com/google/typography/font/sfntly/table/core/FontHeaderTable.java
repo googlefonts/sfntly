@@ -425,9 +425,6 @@ public final class FontHeaderTable extends Table {
      * {@link #clearFontChecksum()}. Most users will never need to set this. It
      * is used when the font is being built. If set by a client it can interfere
      * with that process.
-     *
-     * @param checksum
-     *          the font checksum
      */
     public void setFontChecksum(long checksum) {
       if (this.fontChecksumSet) {

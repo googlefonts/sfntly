@@ -694,19 +694,8 @@ public final class OS2Table extends Table {
     return this.data.readUShort(Offset.usMaxContext);
   }
 
-  /**
-   * A builder for the OS/2 table = 'OS/2'.
-   *
-   */
   public static class Builder extends TableBasedTableBuilder<OS2Table> {
 
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }

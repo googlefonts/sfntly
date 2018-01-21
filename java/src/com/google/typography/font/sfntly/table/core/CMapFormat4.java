@@ -249,58 +249,34 @@ public final class CMapFormat4 extends CMap {
         this.idRangeOffset = idRangeOffset;
       }
 
-      /**
-       * @return the startCount
-       */
       public int getStartCount() {
         return startCount;
       }
 
-      /**
-       * @param startCount the startCount to set
-       */
       public void setStartCount(int startCount) {
         this.startCount = startCount;
       }
 
-      /**
-       * @return the endCount
-       */
       public int getEndCount() {
         return endCount;
       }
 
-      /**
-       * @param endCount the endCount to set
-       */
       public void setEndCount(int endCount) {
         this.endCount = endCount;
       }
 
-      /**
-       * @return the idDelta
-       */
       public int getIdDelta() {
         return idDelta;
       }
 
-      /**
-       * @param idDelta the idDelta to set
-       */
       public void setIdDelta(int idDelta) {
         this.idDelta = idDelta;
       }
 
-      /**
-       * @return the idRangeOffset
-       */
       public int getIdRangeOffset() {
         return idRangeOffset;
       }
 
-      /**
-       * @param idRangeOffset the idRangeOffset to set
-       */
       public void setIdRangeOffset(int idRangeOffset) {
         this.idRangeOffset = idRangeOffset;
       }

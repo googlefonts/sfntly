@@ -270,9 +270,6 @@ public final class FontFactory {
 
   /**
    * Serialize the font to the output stream.
-   *
-   * @param font the font to serialize
-   * @param os the destination stream for the font
    */
   public void serializeFont(Font font, OutputStream os) throws IOException {
     // TODO(stuartg) should have serialization options somewhere
@@ -284,8 +281,6 @@ public final class FontFactory {
    * is an ordered list of table ids and tables will be serialized in the order
    * given. Any tables whose id is not listed in the ordering will be placed in
    * an unspecified order following those listed.
-   *
-   * @param tableOrdering the table ordering
    */
   public void setSerializationTableOrdering(List<Integer> tableOrdering) {
     this.tableOrdering = new ArrayList<Integer>(tableOrdering);

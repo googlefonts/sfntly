@@ -16,6 +16,7 @@
 
 package com.google.typography.font.sfntly.table.core;
 
+import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Font.MacintoshEncodingId;
 import com.google.typography.font.sfntly.Font.PlatformId;
 import com.google.typography.font.sfntly.Font.UnicodeEncodingId;
@@ -644,11 +645,6 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
   /**
    * Get the name as bytes for the specified name. If there is no entry for the requested name
    * then <code>null</code> is returned.
-   * @param platformId the platform id
-   * @param encodingId the encoding id
-   * @param languageId the language id
-   * @param nameId the name id
-   * @return the bytes for the name
    */
   public byte[] nameAsBytes(int platformId, int encodingId, int languageId, int nameId) {
     NameEntry entry = this.nameEntry(platformId, encodingId, languageId, nameId);
@@ -673,11 +669,6 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
    * Get the name as a String for the specified name. If there is no entry for the requested name
    * then <code>null</code> is returned. If there is no encoding conversion
    * available for the name then a best attempt String will be returned.
-   * @param platformId the platform id
-   * @param encodingId the encoding id
-   * @param languageId the language id
-   * @param nameId the name id
-   * @return the name
    */
   public String name(int platformId, int encodingId, int languageId, int nameId) {
     NameEntry entry = this.nameEntry(platformId, encodingId, languageId, nameId);
@@ -701,11 +692,6 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
   /**
    * Get the name entry record for the specified name. If there is no entry for the requested name
    * then <code>null</code> is returned.
-   * @param platformId the platform id
-   * @param encodingId the encoding id
-   * @param languageId the language id
-   * @param nameId the name id
-   * @return the name entry
    */
   public NameEntry nameEntry(
       final int platformId, final int encodingId, final int languageId, final int nameId) {
@@ -735,29 +721,23 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
   }
 
   private static class NameEntryId implements Comparable<NameEntryId> {
-    /* @see Font.PlatformId
-     */
+    /** @see Font.PlatformId */
     protected int platformId;
-    /* @see Font.UnicodeEncodingId
+    /**
+     * @see Font.UnicodeEncodingId
      * @see Font.MacintoshEncodingId
      * @see Font.WindowsEncodingId
      */
     protected int encodingId;
-    /* @see NameTable.UnicodeLanguageId
+    /**
+     * @see NameTable.UnicodeLanguageId
      * @see NameTable.MacintoshLanguageId
      * @see NameTable.WindowsLanguageId
      */
     protected int languageId;
-    /* @see NameTable.NameId
-     */
+    /** @see NameTable.NameId */
     protected int nameId;
 
-    /**
-     * @param platformId
-     * @param encodingId
-     * @param languageId
-     * @param nameId
-     */
     protected NameEntryId(int platformId, int encodingId, int languageId, int nameId) {
       this.platformId = platformId;
       this.encodingId = encodingId;
@@ -997,10 +977,6 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
   public interface NameEntryFilter {
     /**
      * Callback to determine if a name entry is acceptable.
-     * @param platformId platform id
-     * @param encodingId encoding id
-     * @param languageId language id
-     * @param nameId name id
      * @return true if the name entry is acceptable; false otherwise
      */
     boolean accept(int platformId, int encodingId, int languageId, int nameId);
@@ -1236,13 +1212,6 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
     private Map<NameEntryId, NameEntryBuilder> nameEntryMap;
 
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }

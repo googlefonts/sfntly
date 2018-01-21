@@ -55,7 +55,6 @@ public class TestFontUtils {
    * In many cases this will be a single font but it may be multiple fonts.
    * @param file the file holding the font(s)
    * @return the fonts that came from the file
-   * @throws IOException
    */
   public static Font[] loadFont(File file) throws IOException {
     return loadFont(file, true);
@@ -65,9 +64,7 @@ public class TestFontUtils {
    * Open a file and read any fonts that it contains.
    * In many cases this will be a single font but it may be multiple fonts.
    * @param file the file holding the font(s)
-   * @param fingerprint fingerprinting on or off
    * @return the fonts that came from the file
-   * @throws IOException
    */
   public static Font[] loadFont(File file, boolean fingerprint) throws IOException {
     FontFactory fontFactory = FontFactory.getInstance();
@@ -114,9 +111,7 @@ public class TestFontUtils {
    * Open a file and read any fonts that it contains.
    * In many cases this will be a single font but it may be multiple fonts.
    * @param file the file holding the font(s)
-   * @param fingerprint fingerprinting on or off
    * @return the fonts that came from the file
-   * @throws IOException
    */
   public static Font[] loadFontUsingByteArray(File file, boolean fingerprint) throws IOException {
     byte[] b = TestUtils.readFile(file);

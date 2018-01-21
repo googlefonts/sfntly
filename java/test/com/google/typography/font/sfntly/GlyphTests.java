@@ -49,14 +49,6 @@ public class GlyphTests extends TestCase {
     private final int lowChar;
     private final int highChar;
 
-    /**
-     * @param fontFile
-     * @param platformId
-     * @param encodingId
-     * @param charSetName
-     * @param lowChar
-     * @param highChar
-     */
     public TestSet(final File fontFile,
         final int platformId,
         final int encodingId,
@@ -71,13 +63,6 @@ public class GlyphTests extends TestCase {
       this.highChar = highChar;
     }
 
-    /**
-     * @param fontFile
-     * @param platformId
-     * @param encodingId
-     * @param lowChar
-     * @param highChar
-     */
     public TestSet(final File fontFile,
         final int platformId,
         final int encodingId,
@@ -134,7 +119,6 @@ public class GlyphTests extends TestCase {
    * Currently only instantiates the glyph from the table and verifies that it
    * is non-null. This does ensure that the glyph data was able to be parsed correctly.
    *
-   * @param table glyph table
    * @param offset glyph offset in table
    * @param length length of glyph data
    */

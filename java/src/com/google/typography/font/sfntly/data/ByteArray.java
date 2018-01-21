@@ -191,7 +191,6 @@ abstract class ByteArray<T extends ByteArray<T>> {
    * Fully copies this ByteArray to another ByteArray to the extent that the
    * destination array has storage for the data copied.
    *
-   * @param array the destination
    * @return the number of bytes copied
    */
   public int copyTo(ByteArray<? extends ByteArray<?>> array) {
@@ -201,7 +200,6 @@ abstract class ByteArray<T extends ByteArray<T>> {
   /**
    * Copies a segment of this ByteArray to another ByteArray.
    *
-   * @param array the destination
    * @param offset the offset in this ByteArray to start copying from
    * @param length the maximum length in bytes to copy
    * @return the number of bytes copied
@@ -237,9 +235,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
 
   /**
    * Copies this ByteArray to an OutputStream.
-   * @param os the destination
    * @return the number of bytes copied
-   * @throws IOException
    */
   public int copyTo(OutputStream os) throws IOException {
     return this.copyTo(os, 0, this.length());
@@ -249,10 +245,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
    * Copies this ByteArray to an OutputStream.
    *
    * @param os the destination
-   * @param offset
-   * @param length
    * @return the number of bytes copied
-   * @throws IOException
    */
   public int copyTo(OutputStream os, int offset, int length) throws IOException {
     byte[] b = new byte[COPY_BUFFER_SIZE];
@@ -269,10 +262,6 @@ abstract class ByteArray<T extends ByteArray<T>> {
 
   /**
    * Copies from the InputStream into this ByteArray.
-   *
-   * @param is the source
-   * @param length the number of bytes to copy
-   * @throws IOException
    */
   public void copyFrom(InputStream is, int length) throws IOException {
     byte[] b = new byte[COPY_BUFFER_SIZE];
@@ -291,9 +280,6 @@ abstract class ByteArray<T extends ByteArray<T>> {
 
   /**
    * Copies everything from the InputStream into this ByteArray.
-   *
-   * @param is the source
-   * @throws IOException
    */
   public void copyFrom(InputStream is) throws IOException {
     byte[] b = new byte[COPY_BUFFER_SIZE];

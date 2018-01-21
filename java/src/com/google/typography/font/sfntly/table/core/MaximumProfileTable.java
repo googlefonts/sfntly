@@ -115,13 +115,6 @@ public final class MaximumProfileTable extends Table {
    */
   public static class Builder extends TableBasedTableBuilder<MaximumProfileTable> {
 
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }

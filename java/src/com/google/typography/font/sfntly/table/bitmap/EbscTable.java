@@ -99,13 +99,6 @@ public class EbscTable extends Table {
   // TODO(stuartg): currently the builder just builds from initial data
   // - need to make fully working but few if any examples to test with
   public static class Builder extends Table.Builder<EbscTable> {
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }

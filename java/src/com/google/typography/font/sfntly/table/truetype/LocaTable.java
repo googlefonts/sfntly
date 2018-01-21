@@ -167,13 +167,6 @@ public final class LocaTable extends Table {
     // parsed loca table
     private List<Integer> loca;
 
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
@@ -213,9 +206,6 @@ public final class LocaTable extends Table {
 
     /**
      * Checks that the glyph id is within the correct range.
-     *
-     * @param glyphId
-     * @return the glyphId
      * @throws IndexOutOfBoundsException if the glyph id is not within the
      *         correct range
      */

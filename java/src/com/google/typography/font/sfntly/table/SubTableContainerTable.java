@@ -20,17 +20,13 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
 /**
- * Abstract base class for tables that have contained subtables.
+ * A table that contains subtables.
  *
  * @author Stuart Gill
  *
  */
 public abstract class SubTableContainerTable extends Table {
 
-  /**
-   * @param header the header for the table
-   * @param data the data that contains the table
-   */
   protected SubTableContainerTable(Header header, ReadableFontData data) {
     super(header, data);
   }

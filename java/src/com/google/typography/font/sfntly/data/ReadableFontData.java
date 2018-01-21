@@ -539,7 +539,6 @@ public class ReadableFontData extends FontData {
   /**
    * Copy the FontData to an OutputStream.
    *
-   * @param os the destination
    * @return number of bytes copied
    */
   public int copyTo(OutputStream os) throws IOException {

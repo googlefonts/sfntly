@@ -212,9 +212,6 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
   /**
    * Gets an iterator over the cmaps within this CMap table using the provided
    * filter to select the cmaps returned.
-   *
-   * @param filter the filter
-   * @return iterator over cmaps
    */
   public Iterator<CMap> iterator(CMapFilter filter) {
     return new CMapIterator(filter);
@@ -240,9 +237,6 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
   public interface CMapFilter {
     /**
      * Test on whether the cmap is acceptable or not.
-     *
-     * @param cmapId the id of the cmap
-     * @return true if the cmap is acceptable; false otherwise
      */
     boolean accept(CMapId cmapId);
   }
@@ -288,9 +282,6 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
 
   /**
    * Gets the cmap for the given index.
-   *
-   * @param index the index of the cmap
-   * @return the cmap at the index
    */
   public CMap cmap(int index) {
     CMap.Builder<? extends CMap> builder =
@@ -300,10 +291,6 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
 
   /**
    * Gets the cmap with the given ids if it exists.
-   *
-   * @param platformId the platform id
-   * @param encodingId the encoding id
-   * @return the cmap if it exists; null otherwise
    */
   public CMap cmap(int platformId, int encodingId) {
     return cmap(CMapId.getInstance(platformId, encodingId));

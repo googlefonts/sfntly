@@ -108,9 +108,6 @@ public abstract class IndexSubTable extends SubTable {
 
   /**
    * Gets the offset of the glyph relative to the block for this index subtable.
-   *
-   * @param glyphId the glyph id
-   * @return the glyph offset
    */
   public abstract int glyphStartOffset(int glyphId);
 
@@ -287,9 +284,6 @@ public abstract class IndexSubTable extends SubTable {
 
     /**
      * Gets the glyph info for the specified glyph id.
-     *
-     * @param glyphId the glyph id to look up
-     * @return the glyph info
      */
     // TODO(stuartg): could be optimized by pushing down into subclasses
     public BitmapGlyphInfo glyphInfo(int glyphId) {
@@ -299,9 +293,6 @@ public abstract class IndexSubTable extends SubTable {
 
     /**
      * Gets the full offset of the glyph within the EBDT table.
-     *
-     * @param glyphId the glyph id
-     * @return the glyph offset
      */
     public final int glyphOffset(int glyphId) {
       return this.imageDataOffset() + this.glyphStartOffset(glyphId);
@@ -310,17 +301,11 @@ public abstract class IndexSubTable extends SubTable {
     /**
      * Gets the offset of the glyph relative to the block for this index
      * subtable.
-     *
-     * @param glyphId the glyph id
-     * @return the glyph offset
      */
     public abstract int glyphStartOffset(int glyphId);
 
     /**
      * Gets the length of the glyph within the EBDT table.
-     *
-     * @param glyphId the glyph id
-     * @return the glyph offset
      */
     public abstract int glyphLength(int glyphId);
 

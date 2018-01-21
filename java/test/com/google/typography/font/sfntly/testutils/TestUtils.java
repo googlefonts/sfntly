@@ -16,9 +16,8 @@
 
 package com.google.typography.font.sfntly.testutils;
 
-import static org.junit.Assert.assertEquals;
-
 import com.google.typography.font.sfntly.data.ReadableFontData;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,6 +35,8 @@ import java.nio.charset.CoderResult;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Stuart Gill
@@ -71,9 +72,6 @@ public class TestUtils {
   /**
    * Creates a new file including deleting an already existing file with the same path
    * and name and creating any needed directories.
-   *
-   * @param file the file to create
-   * @throws IOException
    */
   public static void createNewFile(File file) throws IOException {
     if (file.exists()) {
@@ -100,13 +98,11 @@ public class TestUtils {
         (byte) (i >> 8 & 0xff),
         (byte) (i & 0xff)};
 
-    String s;
     try {
-      s = new String(b, "US-ASCII");
+      return new String(b, "US-ASCII");
     } catch (UnsupportedEncodingException e) {
       throw new RuntimeException("Guaranteed encoding US-ASCII missing.");
     }
-    return s;
   }
 
   /**
@@ -156,7 +152,6 @@ public class TestUtils {
   /**
    * Get an encoder for the charset name.
    * If the name is null or the empty string then just return null.
-   * @param charsetName the charset to get an encoder for
    * @return an encoder or null if no encoder available for charset name
    */
   public static CharsetEncoder getEncoder(String charsetName) {
@@ -180,9 +175,6 @@ public class TestUtils {
 
   /**
    * Read a file fully into a new byte array.
-   * @param file the file to read
-   * @return the byte array
-   * @throws IOException
    */
   public static byte[] readFile(File file) throws IOException {
     int length = (int) file.length();
@@ -223,10 +215,6 @@ public class TestUtils {
    * Checks that both objects are equal as defined by the object itself. If one
    * is null then they are not equal. If both are null they are considered
    * equal.
-   *
-   * @param o1 first object
-   * @param o2 second object
-   * @return true if equal
    */
   public static boolean equalsNullOk(Object o1, Object o2) {
     if (o1 == o2) {

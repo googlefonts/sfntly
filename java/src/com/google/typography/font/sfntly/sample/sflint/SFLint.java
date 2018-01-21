@@ -238,11 +238,9 @@ public class SFLint {
   /**
    * Report a problem. Right now this just prints to stdout, but we'll probably want a more
    * sophisticated reporting approach soon.
-   *
-   * @param string description of the problem
    */
-  private void reportProblem(String string) {
+  private void reportProblem(String description) {
     problemCount++;
-    System.out.println(string);
+    System.out.println(description);
   }
 }

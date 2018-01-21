@@ -317,7 +317,6 @@ public class Font {
   private Map<Integer, ? extends Table> tables; // these get set in the builder
 
   /**
-   * @param sfntVersion the sfnt version
    * @param digest the computed digest for the font; null if digest was not
    *        computed
    */
@@ -389,7 +388,6 @@ public class Font {
   /**
    * Get the table in this font with the specified id.
    *
-   * @param <T> the type of the table
    * @param tag the identifier of the table
    * @return the table specified if it exists; null otherwise
    */
@@ -442,7 +440,6 @@ public class Font {
    *
    * @param os the destination for the font serialization
    * @param tableOrdering the table ordering to apply
-   * @throws IOException
    */
   void serialize(OutputStream os, List<Integer> tableOrdering) throws IOException {
     List<Integer> finalTableOrdering = this.generateTableOrdering(tableOrdering);
@@ -484,7 +481,6 @@ public class Font {
    *
    * @param fos the destination stream for the headers
    * @param tableHeaders the headers to serialize
-   * @throws IOException
    */
   private void serializeHeader(FontOutputStream fos, List<Header> tableHeaders)
       throws IOException {
@@ -512,7 +508,6 @@ public class Font {
    *
    * @param fos the destination stream for the headers
    * @param tableHeaders the headers for the tables to serialize
-   * @throws IOException
    */
   private void serializeTables(FontOutputStream fos, List<Header> tableHeaders)
       throws IOException {
@@ -676,8 +671,6 @@ public class Font {
     /**
      * Build the {@link Font}. After this call this builder will no longer be
      * usable.
-     *
-     * @return a {@link Font}
      */
     public Font build() {
       Map<Integer, ? extends Table> tables = null;
@@ -695,8 +688,6 @@ public class Font {
 
     /**
      * Set a unique fingerprint for the font object.
-     *
-     * @param digest a unique identifier for the font
      */
     public void setDigest(byte[] digest) {
       this.digest = digest;
@@ -710,24 +701,18 @@ public class Font {
     }
 
     /**
-     * Does this font builder have the specified table builder.
-     *
-     * @param tag the table builder tag
-     * @return true if there is a builder for that table; false otherwise
+     * Does this font builder have the specified table builder?
      */
-    public boolean hasTableBuilder(int tag) {
-      return this.tableBuilders.containsKey(tag);
+    public boolean hasTableBuilder(int tableBuilderTag) {
+      return this.tableBuilders.containsKey(tableBuilderTag);
     }
 
     /**
      * Get the table builder for the given tag. If there is no builder for that
      * tag then return a null.
-     *
-     * @param tag the table builder tag
-     * @return the builder for the tag; null if there is no builder for that tag
      */
-    public Table.Builder<? extends Table> getTableBuilder(int tag) {
-      Table.Builder<? extends Table> builder = this.tableBuilders.get(tag);
+    public Table.Builder<? extends Table> getTableBuilder(int tableBuilderTag) {
+      Table.Builder<? extends Table> builder = this.tableBuilders.get(tableBuilderTag);
       return builder;
     }
 
@@ -784,20 +769,12 @@ public class Font {
     }
 
     /**
-     * Remove the specified table builder from the font builder.
-     *
-     * @param tag the table builder to remove
-     * @return the table builder removed
+     * @return the removed table builder
      */
     public Table.Builder<? extends Table> removeTableBuilder(int tag) {
       return this.tableBuilders.remove(tag);
     }
 
-    /**
-     * Get the number of table builders in the font builder.
-     *
-     * @return the number of table builders
-     */
     public int tableBuilderCount() {
       return this.tableBuilders.size();
     }

@@ -171,9 +171,7 @@ public class Table extends FontDataTable {
     /**
      * Get a builder for the table type specified by the data in the header.
      *
-     * @param header the header for the table
      * @param tableData the data to be used to build the table from
-     * @return builder for the table specified
      */
     public static Table.Builder<? extends Table> getBuilder(
         Header header, WritableFontData tableData) {

@@ -264,9 +264,6 @@ public class DataDisplayTable {
    * quotation marks are added around the string if it contains new-line
    * characters, commas, or quotation marks. Each quotation mark inside the
    * string is also replaced with two quotation marks.
-   *
-   * @param s
-   * @return the formatted string
    */
   private static String csvFormat(String s) {
     if (s.contains("\"") || s.contains("\n") || s.contains(",")) {
@@ -304,13 +301,7 @@ public class DataDisplayTable {
 
   /**
    * Adds padding to the beginning of a string with a repeating character if the
-   * string's length is less than the minimum length
-   *
-   * @param s
-   *          the string to add padding to
-   * @param minLength
-   *          the length to pad the string to
-   * @return the padded string
+   * string's length is less than the minimum length.
    */
   private static String padLeft(String s, int minLength) {
     return String.format("%" + minLength + "s", s);
@@ -318,26 +309,14 @@ public class DataDisplayTable {
 
   /**
    * Adds padding to the end of a string with a repeating character if the
-   * string's length is less than the minimum length
-   *
-   * @param s
-   *          the string to add padding to
-   * @param minLength
-   *          the length to pad the string to
-   * @return the padded string
+   * string's length is less than the minimum length.
    */
   private static String padRight(String s, int minLength) {
     return String.format("%-" + minLength + "s", s);
   }
 
   /**
-   * Returns a string that is a character repeated a specified number of times
-   *
-   * @param c
-   *          the character to repeat
-   * @param frequency
-   *          the number of times to repeat the character
-   * @return a string that is a character repeated a specified number of times
+   * Returns a string that is a character repeated a specified number of times.
    */
   private static String repeatCharacter(char c, int frequency) {
     char[] chars = new char[frequency];

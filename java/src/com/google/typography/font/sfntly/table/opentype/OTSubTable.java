@@ -52,7 +52,6 @@ abstract class OTSubTable extends SubTable {
     /**
      * Create a model for editing from the data.
      * This causes <code>unedited()</code> to return false;
-     * @param data
      */
     protected abstract void readModel(ReadableFontData data, boolean dataIsCanonical);
 

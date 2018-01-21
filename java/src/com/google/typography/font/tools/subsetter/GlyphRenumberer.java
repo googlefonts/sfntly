@@ -67,9 +67,6 @@ public class GlyphRenumberer {
   /**
    * Determine whether the glyph data is a composite glyph. Should always give the same answer
    * as {@code parsedGlyph instanceof GlyphTable.CompositeGlyph}, but faster.
-   *
-   * @param glyph
-   * @return true if glyph is composite
    */
   private static boolean isCompositeGlyph(ReadableFontData glyph) {
     return glyph.length() > 0 && glyph.readShort(Offset.numberOfContours) < 0;

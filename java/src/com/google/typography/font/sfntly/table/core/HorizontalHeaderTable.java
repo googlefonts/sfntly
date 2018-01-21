@@ -108,19 +108,8 @@ public final class HorizontalHeaderTable extends Table {
     return this.data.readUShort(Offset.numberOfHMetrics);
   }
 
-  /**
-   * Builder for a Horizontal Header table - 'hhea'.
-   *
-   */
   public static class Builder extends TableBasedTableBuilder<HorizontalHeaderTable> {
 
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }

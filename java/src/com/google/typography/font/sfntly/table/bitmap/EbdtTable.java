@@ -55,24 +55,10 @@ public final class EbdtTable extends SubTableContainerTable {
     private List<Map<Integer, BitmapGlyphInfo>> glyphLoca;
     private List<Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>>> glyphBuilders;
 
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
 
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, ReadableFontData data) {
       return new Builder(header, data);
     }
