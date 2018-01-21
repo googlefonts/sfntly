@@ -37,8 +37,6 @@ public abstract class SubTable extends FontDataTable {
   private int padding = 0;
 
   /**
-   * Constructor.
-   *
    * @param data the data representing the subtable
    * @param masterData the data representing the full table containing this
    *        subtable
@@ -49,8 +47,6 @@ public abstract class SubTable extends FontDataTable {
   }
 
   /**
-   * Constructor.
-   *
    * @param data the data representing the subtable
    */
   protected SubTable(ReadableFontData data) {
@@ -58,8 +54,6 @@ public abstract class SubTable extends FontDataTable {
   }
 
   /**
-   * Constructor.
-   *
    * @param data the data object that contains the subtable
    * @param offset the offset within the data where the subtable starts
    * @param length the length of the subtable data within the data object
@@ -81,9 +75,6 @@ public abstract class SubTable extends FontDataTable {
     private ReadableFontData masterData;
 
     /**
-     * Constructor.
-     *
-     * @param data the data for the subtable being built
      * @param masterData the data for the full table
      */
     protected Builder(WritableFontData data, ReadableFontData masterData) {
@@ -92,8 +83,6 @@ public abstract class SubTable extends FontDataTable {
     }
 
     /**
-     * Constructor.
-     *
      * @param data the data for the subtable being built
      * @param masterData the data for the full table
      */
@@ -102,27 +91,15 @@ public abstract class SubTable extends FontDataTable {
       this.masterData = masterData;
     }
 
-    /**
-     * Constructor.
-     *
-     * @param data the data for the subtable being built
-     */
     protected Builder(WritableFontData data) {
       super(data);
     }
 
-    /**
-     * Constructor.
-     *
-     * @param data the data for the subtable being built
-     */
     protected Builder(ReadableFontData data) {
       super(data);
     }
 
     /**
-     * Constructor.
-     *
      * Creates a new empty sub-table.
      *
      * @param dataSize the initial size for the data; if it is positive then the

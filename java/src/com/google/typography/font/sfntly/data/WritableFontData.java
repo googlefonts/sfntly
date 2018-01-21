@@ -86,8 +86,6 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Constructor.
-   *
    * @param array byte array to wrap
    */
   private WritableFontData(ByteArray<? extends ByteArray<?>> array) {
@@ -95,8 +93,6 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Constructor with a lower bound.
-   *
    * @param data other WritableFontData object to share data with
    * @param offset offset from the other WritableFontData's data
    */
@@ -105,8 +101,6 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Constructor with lower bound and a length bound.
-   *
    * @param data other WritableFontData object to share data with
    * @param offset offset from the other WritableFontData's data
    * @param length length of other WritableFontData's data to use

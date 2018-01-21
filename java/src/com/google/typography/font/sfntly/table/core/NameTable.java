@@ -956,9 +956,6 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
   public static class NameEntryBuilder extends NameEntry {
 
-    /**
-     * Constructor.
-     */
     protected NameEntryBuilder() {
       super();
     }

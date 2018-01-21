@@ -75,31 +75,15 @@ public final class FontHeaderTable extends Table {
     int glyphDataFormat = 52;
   }
 
-  /**
-   * Constructor.
-   *
-   * @param header the table header
-   * @param data the readable data for the table
-   */
   private FontHeaderTable(Header header, ReadableFontData data) {
     super(header, data);
     data.setCheckSumRanges(0, Offset.checkSumAdjustment, Offset.magicNumber);
   }
 
-  /**
-   * Get the table version.
-   *
-   * @return the table version
-   */
   public int tableVersion() {
     return this.data.readFixed(Offset.tableVersion);
   }
 
-  /**
-   * Get the font revision.
-   *
-   * @return the font revision
-   */
   public int fontRevision() {
     return this.data.readFixed(Offset.fontRevision);
   }
@@ -107,8 +91,6 @@ public final class FontHeaderTable extends Table {
   /**
    * Get the checksum adjustment. To compute: set it to 0, sum the entire font
    * as ULONG, then store 0xB1B0AFBA - sum.
-   *
-   * @return checksum adjustment
    */
   public long checkSumAdjustment() {
     return this.data.readULong(Offset.checkSumAdjustment);
@@ -116,8 +98,6 @@ public final class FontHeaderTable extends Table {
 
   /**
    * Get the magic number. Set to 0x5F0F3CF5.
-   *
-   * @return the magic number
    */
   public long magicNumber() {
     return this.data.readULong(Offset.magicNumber);
@@ -125,7 +105,6 @@ public final class FontHeaderTable extends Table {
 
   /**
    * Flag values in the font header table.
-   *
    */
   public enum Flags {
     BaselineAtY0,
@@ -178,47 +157,34 @@ public final class FontHeaderTable extends Table {
   }
 
   /**
-   * Get the flags as an int value.
-   *
-   * @return the flags
+   * @see #flags()
    */
   public int flagsAsInt() {
     return this.data.readUShort(Offset.flags);
   }
 
   /**
-   * Get the flags as an enum set.
-   *
-   * @return the enum set of the flags
+   * @see #flagsAsInt()
    */
   public EnumSet<Flags> flags() {
     return Flags.asSet(this.flagsAsInt());
   }
 
-  /**
-   * Get the units per em.
-   *
-   * @return the units per em
-   */
   public int unitsPerEm() {
     return this.data.readUShort(Offset.unitsPerEm);
   }
 
   /**
-   * Get the created date. Number of seconds since 12:00 midnight, January 1,
-   * 1904. 64-bit integer.
-   *
-   * @return created date
+   * Get the created date.
+   * Number of seconds since 12:00 midnight, January 1, 1904.
    */
   public long created() {
     return this.data.readDateTimeAsLong(Offset.created);
   }
 
   /**
-   * Get the modified date. Number of seconds since 12:00 midnight, January 1,
-   * 1904. 64-bit integer.
-   *
-   * @return created date
+   * Get the modified date.
+   * Number of seconds since 12:00 midnight, January 1, 1904.
    */
   public long modified() {
     return this.data.readDateTimeAsLong(Offset.modified);
@@ -226,8 +192,6 @@ public final class FontHeaderTable extends Table {
 
   /**
    * Get the x min. For all glyph bounding boxes.
-   *
-   * @return the x min
    */
   public int xMin() {
     return this.data.readShort(Offset.xMin);
@@ -235,8 +199,6 @@ public final class FontHeaderTable extends Table {
 
   /**
    * Get the y min. For all glyph bounding boxes.
-   *
-   * @return the y min
    */
   public int yMin() {
     return this.data.readShort(Offset.yMin);
@@ -244,8 +206,6 @@ public final class FontHeaderTable extends Table {
 
   /**
    * Get the x max. For all glyph bounding boxes.
-   *
-   * @return the xmax
    */
   public int xMax() {
     return this.data.readShort(Offset.xMax);
@@ -253,8 +213,6 @@ public final class FontHeaderTable extends Table {
 
   /**
    * Get the y max. For all glyph bounding boxes.
-   *
-   * @return the ymax
    */
   public int yMax() {
     return this.data.readShort(Offset.yMax);
@@ -262,7 +220,6 @@ public final class FontHeaderTable extends Table {
 
   /**
    * Mac style bits set in the font header table.
-   *
    */
   public enum MacStyle {
     Bold,
@@ -316,8 +273,6 @@ public final class FontHeaderTable extends Table {
 
   /**
    * Get the Mac style bits as an int.
-   *
-   * @return the Mac style bits
    */
   public int macStyleAsInt() {
     return this.data.readUShort(Offset.macStyle);
@@ -325,8 +280,6 @@ public final class FontHeaderTable extends Table {
 
   /**
    * Get the Mac style bits as an enum set.
-   *
-   * @return the Mac style bits
    */
   public EnumSet<MacStyle> macStyle() {
     return MacStyle.asSet(this.macStyleAsInt());
@@ -338,7 +291,6 @@ public final class FontHeaderTable extends Table {
 
   /**
    * Font direction hint values in the font header table.
-   *
    */
   public enum FontDirectionHint {
     FullyMixed(0),
@@ -428,13 +380,6 @@ public final class FontHeaderTable extends Table {
     private boolean fontChecksumSet = false;
     private long fontChecksum = 0;
 
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }

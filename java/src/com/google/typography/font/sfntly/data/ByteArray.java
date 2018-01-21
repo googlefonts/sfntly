@@ -38,8 +38,6 @@ abstract class ByteArray<T extends ByteArray<T>> {
   private boolean growable;
 
   /**
-   * Constructor.
-   *
    * @param filledLength the length that is "filled" and readable counting from the offset
    * @param storageLength the maximum storage size of the underlying data
    * @param growable is the storage growable - storageLength is the maximum growable size
@@ -51,8 +49,6 @@ abstract class ByteArray<T extends ByteArray<T>> {
   }
 
   /**
-   * Constructor.
-   *
    * @param filledLength the length that is "filled" and readable counting from the offset
    * @param storageLength the maximum storage size of the underlying data
    */

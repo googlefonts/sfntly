@@ -24,10 +24,10 @@ import java.util.Date;
 
 
 /**
- * Writable font data wrapper. Supports reading of data primitives in the
+ * Readable font data wrapper. Supports reading of data primitives in the
  * TrueType / OpenType spec.
  *
- * <p>The data types used are as listed:
+ * <p>The data types used are:
  * <table>
  * <tr>
  * <td>BYTE</td>
@@ -108,8 +108,6 @@ public class ReadableFontData extends FontData {
   private volatile int[] checksumRange;
 
   /**
-   * Constructor.
-   *
    * @param array byte array to wrap
    */
   protected ReadableFontData(ByteArray<? extends ByteArray<?>> array) {
@@ -117,7 +115,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Constructor. Creates a bounded wrapper of another ReadableFontData from the
+   * Creates a bounded wrapper of another ReadableFontData from the
    * given offset until the end of the original ReadableFontData.
    *
    * @param data data to wrap
@@ -128,8 +126,8 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Constructor. Creates a bounded wrapper of another ReadableFontData from the
-   * given offset until the end of the original ReadableFontData.
+   * Creates a bounded wrapper of another ReadableFontData from the
+   * given offset and length.
    *
    * @param data data to wrap
    * @param offset the start of this data's view of the original data
@@ -141,7 +139,7 @@ public class ReadableFontData extends FontData {
 
   /**
    * Makes a slice of this FontData. The returned slice will share the data with
-   * the original <code>FontData</code>.
+   * the original {@code FontData}.
    *
    * @param offset the start of the slice
    * @param length the number of bytes in the slice

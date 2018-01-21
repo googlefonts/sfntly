@@ -62,18 +62,10 @@ public final class FontFactory {
     int ulDsigOffset = 8;
   }
 
-  /**
-   * Constructor.
-   */
   private FontFactory() {
     // Prevent construction.
   }
 
-  /**
-   * Factory method for the construction of a font factory.
-   *
-   * @return a new font factory
-   */
   public static FontFactory getInstance(/*buffer builder factory*/) {
     return new FontFactory();
   }

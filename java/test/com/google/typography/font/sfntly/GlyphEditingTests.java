@@ -43,9 +43,6 @@ public class GlyphEditingTests extends TestCase {
 
   private static final File TEST_FONT_FILE = TestFont.TestFontNames.OPENSANS.getFile();
 
-  /**
-   * Constructor.
-   */
   public GlyphEditingTests() {
     super();
   }

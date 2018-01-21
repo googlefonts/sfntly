@@ -118,30 +118,14 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
     }
   }
 
-  /**
-   * Constructor.
-   *
-   * @param header header for the table
-   * @param data data for the table
-   */
   private CMapTable(Header header, ReadableFontData data) {
     super(header, data);
   }
 
-  /**
-   * Get the table version.
-   *
-   * @return table version
-   */
   public int version() {
     return this.data.readUShort(HeaderOffsets.version);
   }
 
-  /**
-   * Gets the number of cmaps within the CMap table.
-   *
-   * @return the number of cmaps
-   */
   public int numCMaps() {
     return this.data.readUShort(HeaderOffsets.numTables);
   }
@@ -359,23 +343,12 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
       return new Builder(header, data);
     }
 
-    /**
-     * Constructor.
-     *
-     * @param header the table header
-     * @param data the writable data for the table
-     */
     protected Builder(Header header, WritableFontData data) {
       super(header, data);
     }
 
     /**
-     * Constructor. This constructor will try to maintain the data as readable
-     * but if editing operations are attempted then a writable copy will be made
-     * the readable data will be discarded.
-     *
-     * @param header the table header
-     * @param data the readable data for the table
+     * Builds a table from the data, using copy-on-write if necessary.
      */
     protected Builder(Header header, ReadableFontData data) {
       super(header, data);

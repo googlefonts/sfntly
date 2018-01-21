@@ -28,7 +28,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 public abstract class SubTableContainerTable extends Table {
 
   /**
-   * Constructor.
    * @param header the header for the table
    * @param data the data that contains the table
    */

@@ -76,33 +76,14 @@ public final class GlyphTable extends SubTableContainerTable {
     private List<Glyph.Builder<? extends Glyph>> glyphBuilders;
     private List<Integer> loca;
 
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
 
-    /**
-     * Constructor.
-     *
-     * @param header the table header
-     * @param data the data for the table
-     */
     protected Builder(Header header, WritableFontData data) {
       super(header, data);
     }
 
-    /**
-     * Constructor.
-     *
-     * @param header the table header
-     * @param data the data for the table
-     */
     protected Builder(Header header, ReadableFontData data) {
       super(header, data);
     }
@@ -178,8 +159,6 @@ public final class GlyphTable extends SubTableContainerTable {
      * List. If there is current data (i.e. data read from an existing font) and
      * the <code>loca</code> list has not been set or is null, empty, or
      * invalid, then an empty glyph builder List will be returned.
-     *
-     * @return the list of glyph builders
      */
     public List<Glyph.Builder<? extends Glyph>> glyphBuilders() {
       return this.getGlyphBuilders();
@@ -193,8 +172,6 @@ public final class GlyphTable extends SubTableContainerTable {
      * table builder are being replaced. If the glyph builder list provided from
      * the {@link GlyphTable.Builder#glyphBuilders()} is being used and modified
      * then those changes will already be reflected in the glyph table builder.
-     *
-     * @param glyphBuilders the new glyph builders
      */
     public void setGlyphBuilders(List<Glyph.Builder<? extends Glyph>> glyphBuilders) {
       this.glyphBuilders = glyphBuilders;

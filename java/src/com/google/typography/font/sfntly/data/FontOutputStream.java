@@ -88,8 +88,6 @@ public class FontOutputStream extends OutputStream {
   private long position;
 
   /**
-   * Constructor.
-   *
    * @param os output stream to wrap
    */
   public FontOutputStream(OutputStream os) {

@@ -90,8 +90,6 @@ public class FontInputStream extends FilterInputStream {
   private boolean bounded;
 
   /**
-   * Constructor.
-   *
    * @param is input stream to wrap
    */
   public FontInputStream(InputStream is) {
@@ -99,7 +97,7 @@ public class FontInputStream extends FilterInputStream {
   }
 
   /**
-   * Constructor for a bounded font input stream.
+   * Creates a bounded font input stream.
    *
    * @param is input stream to wrap
    * @param length the maximum length of bytes to read

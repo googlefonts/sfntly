@@ -32,18 +32,12 @@ final class SegmentedGrowableMemoryByteArray extends ByteArray<SegmentedGrowable
   private List<byte[]> buffers;
   private final int lowBits;
 
-  /**
-   * Constructor.
-   *
-   */
   public SegmentedGrowableMemoryByteArray() {
     this(DEFAULT_BUFFER_LOW_BITS);
   }
 
   /**
-   * Constructor.
-   *
-   *  The low bits parameter is used to set the initial size of the first
+   * The low bits parameter is used to set the initial size of the first
    * chained memory buffer used internally. That initial buffer is 2^(low bits)
    * in size and each subsequent buffer is roughly double the preceding one. If
    * this is too small then there will be a number of small buffers and the cost

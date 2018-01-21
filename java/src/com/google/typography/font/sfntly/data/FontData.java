@@ -62,18 +62,11 @@ public abstract class FontData {
    */
   private int boundLength = FontData.GROWABLE_SIZE;
 
-  /**
-   * Constructor.
-   *
-   * @param ba the byte array to use for the backing data
-   */
-  protected FontData(ByteArray<? extends ByteArray<?>> ba) {
-    this.array = ba;
+  protected FontData(ByteArray<? extends ByteArray<?>> backingArray) {
+    this.array = backingArray;
   }
 
   /**
-   * Constructor.
-   *
    * @param data the data to wrap
    * @param offset the offset to start the wrap from
    * @param length the length of the data wrapped
@@ -84,8 +77,6 @@ public abstract class FontData {
   }
 
   /**
-   * Constructor.
-   *
    * @param data the data to wrap
    * @param offset the offset to start the wrap from
    */

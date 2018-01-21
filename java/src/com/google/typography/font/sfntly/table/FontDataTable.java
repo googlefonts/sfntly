@@ -31,9 +31,8 @@ import java.io.OutputStream;
  */
 public abstract class FontDataTable {
   protected ReadableFontData data;
+
   /**
-   * Constructor.
-   *
    * @param data the data to back this table
    */
   FontDataTable(ReadableFontData data) {
@@ -81,8 +80,6 @@ public abstract class FontDataTable {
     private boolean dataChanged;
 
     /**
-     * Constructor.
-     *
      * Construct a FontDataTable.Builder with a WritableFontData backing store
      * of size given. A positive size will create a fixed size backing store and
      * a 0 or less size is an estimate for a growable backing store with the

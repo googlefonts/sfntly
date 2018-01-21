@@ -76,41 +76,21 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     }
   }
 
-  /**
-   * Constructor.
-   *
-   * @param data data for the cmap
-   * @param format the format of the cmap
-   * @param cmapId the id information of the cmap
-   */
   protected CMap(ReadableFontData data, int format, CMapId cmapId) {
     super(data);
     this.format = format;
     this.cmapId = cmapId;
   }
 
-  /**
-   * Gets the format of the cmap.
-   *
-   * @return the format
-   */
   public int format() {
     return this.format;
   }
 
-  /**
-   * Gets the cmap id for this cmap.
-   *
-   * @return cmap id
-   */
   public CMapId cmapId() {
     return this.cmapId;
   }
 
   /**
-   * Gets the platform id for this cmap.
-   *
-   * @return the platform id
    * @see PlatformId
    */
   public int platformId() {
@@ -118,9 +98,6 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
   }
 
   /**
-   * Gets the encoding id for this cmap.
-   *
-   * @return the encoding id
    * @see MacintoshEncodingId
    * @see WindowsEncodingId
    * @see UnicodeEncodingId
@@ -260,22 +237,12 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     private final CMapId cmapId;
     private int language;
 
-    /**
-     * Constructor.
-     *
-     * @param data the data for the cmap
-     * @param format cmap format
-     * @param cmapId the id for this cmap
-     */
     protected Builder(ReadableFontData data, CMapFormat format, CMapId cmapId) {
       super(data);
       this.format = format;
       this.cmapId = cmapId;
     }
 
-    /**
-     * @return the id for this cmap
-     */
     public CMapId cmapId() {
       return this.cmapId;
     }

@@ -50,8 +50,9 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 /**
- * An sfnt container font object. This object is immutable and thread safe. To
- * construct one use an instance of {@link Font.Builder}.
+ * An sfnt container font object.
+ * This object is immutable and thread safe.
+ * To construct one, use an instance of {@link Font.Builder}.
  *
  * @author Stuart Gill
  */
@@ -316,8 +317,6 @@ public class Font {
   private Map<Integer, ? extends Table> tables; // these get set in the builder
 
   /**
-   * Constructor.
-   *
    * @param sfntVersion the sfnt version
    * @param digest the computed digest for the font; null if digest was not
    *        computed

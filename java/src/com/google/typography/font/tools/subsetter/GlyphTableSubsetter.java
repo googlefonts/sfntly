@@ -35,9 +35,6 @@ public class GlyphTableSubsetter extends TableSubsetterImpl {
 
   private static final boolean DEBUG = false;
 
-  /**
-   * Constructor.
-   */
   protected GlyphTableSubsetter() {
     // Note: doesn't actually create the maxp table, that should be done in the
     // setUpTables method of the invoking subsetter.

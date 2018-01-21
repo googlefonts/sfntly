@@ -30,9 +30,9 @@ public class DataDisplayTable {
   }
 
   /**
-   * Constructor. Creates an empty table with the given header labels. The
-   * number of columns is the size of the header array, which cannot be changed
-   * after initialisation.
+   * Creates an empty table with the given header labels.
+   * The number of columns is the size of the header array
+   * and cannot be changed after initialisation.
    *
    * @param header
    *          the header columns of the table

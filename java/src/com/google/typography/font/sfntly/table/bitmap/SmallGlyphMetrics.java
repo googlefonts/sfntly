@@ -60,8 +60,6 @@ public class SmallGlyphMetrics extends GlyphMetrics {
   public static class Builder extends GlyphMetrics.Builder<SmallGlyphMetrics> {
 
     /**
-     * Constructor.
-     *
      * @param data the data for the builder
      */
     protected Builder(WritableFontData data) {
@@ -69,8 +67,6 @@ public class SmallGlyphMetrics extends GlyphMetrics {
     }
 
     /**
-     * Constructor.
-     *
      * @param data the data for the builder
      */
     protected Builder(ReadableFontData data) {

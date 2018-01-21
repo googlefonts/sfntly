@@ -54,7 +54,7 @@ public final class BitmapGlyphInfo {
 
   /**
    * Constructor for an absolute located glyph. The glyph's position in the EBDT
-   * table is only given by it's own start offset.
+   * table is only given by its own start offset.
    *
    * @param glyphId the glyph id
    * @param startOffset the offset of the glyph within the block

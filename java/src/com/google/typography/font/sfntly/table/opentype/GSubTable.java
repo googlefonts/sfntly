@@ -43,11 +43,6 @@ public class GSubTable extends Table {
     gsub = new GsubCommonTable(data, dataIsCanonical);
   }
 
-  /**
-   * Return information about the script tables in this GSUB table.
-   *
-   * @return the ScriptList
-   */
   public ScriptListTable scriptList() {
     if (scriptListTable.get() == null) {
       scriptListTable.compareAndSet(null, gsub.createScriptList());
@@ -55,11 +50,6 @@ public class GSubTable extends Table {
     return scriptListTable.get();
   }
 
-  /**
-   * Return information about the feature tables in this GSUB table.
-   *
-   * @return the FeatureList
-   */
   public FeatureListTable featureList() {
     if (featureListTable.get() == null) {
       featureListTable.compareAndSet(null, gsub.createFeatureList());
@@ -67,11 +57,6 @@ public class GSubTable extends Table {
     return featureListTable.get();
   }
 
-  /**
-   * Return information about the lookup tables in this GSUB table.
-   *
-   * @return the LookupList
-   */
   public LookupListTable lookupList() {
     if (lookupListTable.get() == null) {
       lookupListTable.compareAndSet(null, gsub.createLookupList());
@@ -79,34 +64,15 @@ public class GSubTable extends Table {
     return lookupListTable.get();
   }
 
-  /**
-   * GSUB Table Builder.
-   */
   public static class Builder extends Table.Builder<GSubTable> {
     private final GsubCommonTable.Builder gsub;
 
-    /**
-     * Creates a new builder using the header information and data provided.
-     *
-     * @param header
-     *          the header information
-     * @param data
-     *          the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
 
     /**
-     * Constructor. This constructor will try to maintain the data as readable
-     * but if editing operations are attempted then a writable copy will be made
-     * the readable data will be discarded.
-     *
-     * @param header
-     *          the table header
-     * @param data
-     *          the readable data for the table
+     * Builds a table from the data, using copy-on-write if necessary.
      */
     private Builder(Header header, ReadableFontData data) {
       super(header, data);

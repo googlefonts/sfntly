@@ -26,13 +26,9 @@ import java.io.IOException;
 
 /**
  * @author Stuart Gill
- *
  */
 public class CMapTableSubsetter extends TableSubsetterImpl {
 
-  /**
-   * Constructor.
-   */
   public CMapTableSubsetter() {
     super(Tag.cmap);
   }
