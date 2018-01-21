@@ -153,7 +153,6 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
   /**
    * Macinstosh Language IDs (platform ID = 1)
-   *
    */
   public enum MacintoshLanguageId {
     Unknown(-1),
@@ -658,7 +657,6 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
    * Get the name as a String for the given name record. If there is no encoding conversion
    * available for the name record then a best attempt String will be returned.
    * @param index the index of the name record
-   * @return the name
    */
   public String name(int index) {
     return convertFromNameBytes(
@@ -907,7 +905,6 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
     /**
      * Get the name as a String. If there is no encoding conversion
      * available for the name bytes then a best attempt String will be returned.
-     * @return the name
      */
     public String name() {
       return NameTable.convertFromNameBytes(this.nameBytes, this.platformId(), this.encodingId());

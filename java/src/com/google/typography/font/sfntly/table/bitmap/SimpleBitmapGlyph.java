@@ -21,7 +21,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 
 /**
  * @author Stuart Gill
- *
  */
 public final class SimpleBitmapGlyph extends BitmapGlyph {
 

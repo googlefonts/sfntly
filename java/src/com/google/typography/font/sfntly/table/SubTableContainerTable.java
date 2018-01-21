@@ -23,7 +23,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
  * A table that contains subtables.
  *
  * @author Stuart Gill
- *
  */
 public abstract class SubTableContainerTable extends Table {
 

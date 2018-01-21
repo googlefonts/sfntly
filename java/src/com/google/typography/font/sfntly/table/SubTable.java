@@ -26,7 +26,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
  * the glyph table (glyf).
  *
  * @author Stuart Gill
- *
  */
 public abstract class SubTable extends FontDataTable {
   /**

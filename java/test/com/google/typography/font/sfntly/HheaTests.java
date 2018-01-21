@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 
 /**
  * @author Stuart Gill
- *
  */
 public class HheaTests extends TestCase {
 

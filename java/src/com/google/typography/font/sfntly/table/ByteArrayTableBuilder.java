@@ -25,7 +25,6 @@ import java.io.IOException;
  * An abstract builder base for byte array based tables.
  *
  * @author Stuart Gill
- *
  */
 public abstract class ByteArrayTableBuilder<T extends Table>
     extends TableBasedTableBuilder<T> {

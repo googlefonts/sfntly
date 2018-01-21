@@ -27,7 +27,6 @@ import java.util.NoSuchElementException;
  * Format 2 Index Subtable Entry.
  *
  * @author Stuart Gill
- *
  */
 public final class IndexSubTableFormat2 extends IndexSubTable {
   private final int imageSize;

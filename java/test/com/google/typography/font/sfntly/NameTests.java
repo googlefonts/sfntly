@@ -29,7 +29,6 @@ import java.io.File;
 
 /**
  * @author Stuart Gill
- *
  */
 public class NameTests extends TestCase {
 

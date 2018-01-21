@@ -130,7 +130,6 @@ public final class LocaTable extends Table {
 
   /**
    * Iterator over the raw loca values.
-   *
    */
   private final class LocaIterator implements Iterator<Integer> {
     int index;
@@ -156,7 +155,6 @@ public final class LocaTable extends Table {
 
   /**
    * Builder for a loca table.
-   *
    */
   public static class Builder extends Table.Builder<LocaTable> {
 

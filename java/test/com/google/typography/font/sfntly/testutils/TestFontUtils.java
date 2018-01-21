@@ -83,7 +83,6 @@ public class TestFontUtils {
    * @param file the file holding the font(s)
    * @param expectedFingerprints array of expected fingerprints for each font in the file
    * @return the fonts that came from the file
-   * @throws IOException
    */
   public static Font[] loadFont(File file, byte[]... expectedFingerprints) throws IOException {
     Font[] fonts = loadFont(file, true);
@@ -101,7 +100,6 @@ public class TestFontUtils {
    * In many cases this will be a single font but it may be multiple fonts.
    * @param file the file holding the font(s)
    * @return the fonts that came from the file
-   * @throws IOException
    */
   public static Font[] loadFontUsingByteArray(File file) throws IOException {
     return loadFontUsingByteArray(file, true);

@@ -23,7 +23,6 @@ import com.google.typography.font.sfntly.table.SubTable;
 
 /**
  * @author Stuart Gill
- *
  */
 public abstract class BitmapGlyph extends SubTable {
 

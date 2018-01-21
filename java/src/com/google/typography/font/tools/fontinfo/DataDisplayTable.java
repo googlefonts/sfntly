@@ -12,7 +12,6 @@ import java.util.List;
  * displayed by an application.
  *
  * @author Han-Wen Yeh
- *
  */
 public class DataDisplayTable {
   private List<String> header;

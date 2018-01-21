@@ -578,7 +578,6 @@ public class Font {
    * required.
    *
    * @author Stuart Gill
-   *
    */
   public static final class Builder {
 

@@ -56,8 +56,6 @@ public class Table extends FontDataTable {
 
   /**
    * Get the calculated checksum for the data in the table.
-   *
-   * @return the checksum
    */
   public long calculatedChecksum() {
     return this.data.checksum();

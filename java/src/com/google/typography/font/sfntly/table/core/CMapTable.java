@@ -312,20 +312,12 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
 
   /**
    * CMap Table Builder.
-   *
    */
   public static class Builder extends SubTableContainerTable.Builder<CMapTable> {
 
     private int version = 0; // TODO(stuartg): make a CMapTable constant
     private Map<CMapId, CMap.Builder<? extends CMap>> cmapBuilders;
 
-    /**
-     * Creates a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }

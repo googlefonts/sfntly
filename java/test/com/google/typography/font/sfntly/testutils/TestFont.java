@@ -25,7 +25,6 @@ import java.io.File;
  * haven't been changed.
  *
  * @author Vinay Shah
- *
  */
 public class TestFont {
 

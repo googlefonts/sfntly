@@ -27,7 +27,6 @@ import java.io.OutputStream;
  * the table class hierarchy.
  *
  * @author Stuart Gill
- *
  */
 public abstract class FontDataTable {
   protected ReadableFontData data;

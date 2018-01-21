@@ -441,7 +441,6 @@ public final class FontHeaderTable extends Table {
      * The font checksum is the sum value of all tables but the font header
      * table. If the font checksum has been set then further setting will be
      * ignored until the font check sum has been cleared.
-     *
      */
     public void clearFontChecksum() {
       this.fontChecksumSet = false;

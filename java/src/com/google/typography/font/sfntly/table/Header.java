@@ -29,7 +29,6 @@ import java.util.Comparator;
  * other properties of that header are for that purpose.
  *
  * @author Stuart Gill
- *
  */
 public final class Header {
   private final int tag;
@@ -105,8 +104,6 @@ public final class Header {
    * offset value is what was read from the font file during construction of the
    * font. It may not be meaningful if the font was maninpulated through the
    * builders.
-   *
-   * @return the offset
    */
   public int offset() {
     return offset;
@@ -128,8 +125,6 @@ public final class Header {
    * building the header length will reflect the length that was initially read
    * from the font file. This may not be consistent with the current state of
    * the data.
-   *
-   * @return the length
    */
   public int length() {
     return length;
@@ -148,8 +143,6 @@ public final class Header {
 
   /**
    * Get the checksum for the table as recorded in the table record header.
-   *
-   * @return the checksum
    */
   public long checksum() {
     return checksum;

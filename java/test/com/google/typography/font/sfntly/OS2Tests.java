@@ -31,7 +31,6 @@ import java.util.EnumSet;
 
 /**
  * @author Stuart Gill
- *
  */
 public class OS2Tests extends TestCase {
 

@@ -13,7 +13,6 @@ import java.io.IOException;
  * This is the main class for the command-line version of the font info tool
  *
  * @author Han-Wen Yeh
- *
  */
 public class FontInfoMain {
   private static final String PROGRAM_NAME = "java -jar fontinfo.jar";

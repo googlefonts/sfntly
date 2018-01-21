@@ -29,7 +29,6 @@ import java.util.NoSuchElementException;
  * Format 1 Index Subtable Entry.
  *
  * @author Stuart Gill
- *
  */
 public final class IndexSubTableFormat1 extends IndexSubTable {
 

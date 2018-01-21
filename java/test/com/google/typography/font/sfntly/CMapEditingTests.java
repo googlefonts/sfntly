@@ -33,7 +33,6 @@ import java.util.List;
 
 /**
  * @author Stuart Gill
- *
  */
 public class CMapEditingTests extends TestCase {
   private static final boolean DEBUG = false;

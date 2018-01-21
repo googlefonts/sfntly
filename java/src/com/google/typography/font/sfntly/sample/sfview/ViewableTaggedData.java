@@ -125,7 +125,6 @@ class ViewableTaggedData {
    * @param zeroMetrics
    *          zero the metrics before computing (otherwise use existing cell
    *          widths and line height as minimums).
-   * @return the dimensions
    */
   Dimension measure(boolean zeroMetrics) {
     if (zeroMetrics) {

@@ -46,7 +46,6 @@ import java.util.TreeSet;
  * Class of static functions that return information about a given font
  *
  * @author Brian Stell, Han-Wen Yeh
- *
  */
 // TODO Make abstract FontInfo class with nonstatic functions and subclass this
 // as TrueTypeFontInfo

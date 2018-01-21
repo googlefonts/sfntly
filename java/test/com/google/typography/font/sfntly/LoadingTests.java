@@ -28,7 +28,6 @@ import java.util.Map;
 
 /**
  * @author Stuart Gill
- *
  */
 public class LoadingTests extends TestCase {
 

@@ -24,7 +24,6 @@ import com.google.typography.font.sfntly.table.Table;
 
 /**
  * @author Stuart Gill
- *
  */
 public class EbscTable extends Table {
 

@@ -195,8 +195,6 @@ public class ReadableFontData extends FontData {
    * the resulting value is truncated to 32 bits. If the data length in bytes is
    * not an integral multiple of 4 then any remaining bytes are treated as the
    * start of a 4 byte sequence whose remaining bytes are zero.
-   *
-   * @return the checksum
    */
   public long checksum() {
     if (!this.checksumSet) {
@@ -325,7 +323,6 @@ public class ReadableFontData extends FontData {
    * Reads the BYTE at the given index.
    *
    * @param index index into the font data
-   * @return the BYTE
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readByte(int index) {
@@ -366,7 +363,6 @@ public class ReadableFontData extends FontData {
    * Reads the CHAR at the given index.
    *
    * @param index index into the font data
-   * @return the CHAR
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readChar(int index) {
@@ -377,7 +373,6 @@ public class ReadableFontData extends FontData {
    * Reads the USHORT at the given index.
    *
    * @param index index into the font data
-   * @return the USHORT
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readUShort(int index) {
@@ -388,7 +383,6 @@ public class ReadableFontData extends FontData {
    * Reads the SHORT at the given index.
    *
    * @param index index into the font data
-   * @return the SHORT
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readShort(int index) {
@@ -399,7 +393,6 @@ public class ReadableFontData extends FontData {
    * Reads the UINT24 at the given index.
    *
    * @param index index into the font data
-   * @return the UINT24
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readUInt24(int index) {
@@ -411,7 +404,6 @@ public class ReadableFontData extends FontData {
    * Reads the ULONG at the given index.
    *
    * @param index index into the font data
-   * @return the ULONG
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public long readULong(int index) {
@@ -423,7 +415,6 @@ public class ReadableFontData extends FontData {
    * Reads the ULONG at the given index as an int.
    *
    * @param index index into the font data
-   * @return the ULONG
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    * @throws ArithmeticException if the value will not fit into an integer
    */
@@ -439,7 +430,6 @@ public class ReadableFontData extends FontData {
    * Reads the ULONG at the given index, little-endian variant.
    *
    * @param index index into the font data
-   * @return the ULONG
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public long readULongLE(int index) {
@@ -451,7 +441,6 @@ public class ReadableFontData extends FontData {
    * Reads the LONG at the given index.
    *
    * @param index index into the font data
-   * @return the LONG
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readLong(int index) {
@@ -463,7 +452,6 @@ public class ReadableFontData extends FontData {
    * Reads the Fixed at the given index.
    *
    * @param index index into the font data
-   * @return the Fixed
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readFixed(int index) {
@@ -474,7 +462,6 @@ public class ReadableFontData extends FontData {
    * Reads the F2DOT14 at the given index.
    *
    * @param index index into the font data
-   * @return the F2DOT14
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public BigDecimal readF2Dot14(int index) {
@@ -485,7 +472,6 @@ public class ReadableFontData extends FontData {
    * Reads the LONGDATETIME at the given index.
    *
    * @param index index into the font data
-   * @return the LONGDATETIME
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public long readDateTimeAsLong(int index) {
@@ -496,7 +482,6 @@ public class ReadableFontData extends FontData {
    * Reads the LONGDATETIME at the given index.
    *
    * @param index index into the font data
-   * @return the F2DOT14
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public Date readLongDateTime(int index) {
@@ -507,7 +492,6 @@ public class ReadableFontData extends FontData {
    * Reads the FUNIT at the given index.
    *
    * @param index index into the font data
-   * @return the FUNIT
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readFUnit(int index) {
@@ -518,7 +502,6 @@ public class ReadableFontData extends FontData {
    * Reads the FWORD at the given index.
    *
    * @param index index into the font data
-   * @return the FWORD
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readFWord(int index) {
@@ -529,7 +512,6 @@ public class ReadableFontData extends FontData {
    * Reads the UFWORD at the given index.
    *
    * @param index index into the font data
-   * @return the UFWORD
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readUFWord(int index) {
