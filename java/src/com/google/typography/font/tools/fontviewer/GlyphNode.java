@@ -101,26 +101,31 @@ public class GlyphNode extends AbstractNode {
           }
         }
 
-        Path2D.Double path = new Path2D.Double(Path2D.WIND_EVEN_ODD);
+        Path2D path = new Path2D.Double(Path2D.WIND_EVEN_ODD);
         path.moveTo(screen.x(firstOn), screen.y(firstOn));
 
         // XXX: This rendering is better than just connecting the dots
         // with straight lines, but the curves don't look correct.
         for (int i = 0; i < pmax; i++) {
-          int p = (firstOn + i) % pmax;
-          if (screen.onCurve(p)) {
-            path.lineTo(screen.x(p), screen.y(p));
+          int p0 = firstOn + i - 1;
+          int p1 = firstOn + i;
+          int p2 = firstOn + i + 1;
+          int p3 = firstOn + i + 2;
+          if (screen.onCurve(p1)) {
+            path.lineTo(screen.x(p1), screen.y(p1));
+          } else if (screen.onCurve(p2)) {
+            path.quadTo(
+                screen.x(p1), screen.y(p1),
+                screen.x(p2), screen.y(p2));
+            i++;
           } else {
-            int p2 = (firstOn + i + 1) % pmax;
-            if (screen.onCurve(p2)) {
-              path.quadTo(screen.x(p), screen.y(p), screen.x(p2), screen.y(p2));
-              i++;
-            } else {
-              int p3 = (firstOn + i + 2) % pmax;
-              // XXX: assuming screen.on(p3) doesn't always work.
-              path.curveTo(screen.x(p), screen.y(p), screen.x(p2), screen.y(p2), screen.x(p3), screen.y(p3));
-              i += 2;
-            }
+            // XXX: assuming screen.on(p3) doesn't always work.
+            // XXX: Curves with 3 or more off-curve points are rendered wrong.
+            path.curveTo(
+                screen.sx(p1, p0), screen.sy(p1, p0),
+                screen.sx(p2, p3), screen.sy(p2, p3),
+                screen.x(p3), screen.y(p3));
+            i += 2;
           }
         }
         path.closePath();
@@ -140,6 +145,7 @@ public class GlyphNode extends AbstractNode {
   private static class ScreenCoordinateMapper {
     private final SimpleGlyph glyph;
     private final int contour;
+    private final int points;
 
     private final int margin;
     private final double scale;
@@ -149,6 +155,8 @@ public class GlyphNode extends AbstractNode {
     ScreenCoordinateMapper(SimpleGlyph glyph, int contour, int margin, double scale, double minX, double maxY) {
       this.glyph = glyph;
       this.contour = contour;
+      this.points = glyph.numberOfPoints(contour);
+
       this.margin = margin;
       this.scale = scale;
       this.minX = minX;
@@ -156,17 +164,33 @@ public class GlyphNode extends AbstractNode {
     }
 
     int x(int point) {
-      int x = this.glyph.xCoordinate(this.contour, point);
+      int x = this.glyph.xCoordinate(this.contour, index(point));
       return this.margin + (int) Math.round(this.scale * (x - this.minX));
     }
 
     int y(int point) {
-      int y = this.glyph.yCoordinate(this.contour, point);
+      int y = this.glyph.yCoordinate(this.contour, index(point));
       return this.margin + (int) Math.round(this.scale * (this.maxY - y));
     }
 
+    int sx(int point, int from) {
+      int sxPoint = x(point);
+      int sxFrom = x(from);
+      return sxFrom + (int) (1.2 * (sxPoint - sxFrom));
+    }
+
+    int sy(int point, int from) {
+      int sxPoint = y(point);
+      int sxFrom = y(from);
+      return sxFrom + (int) (1.2 * (sxPoint - sxFrom));
+    }
+
+    private int index(int point) {
+      return (point + this.points) % this.points;
+    }
+
     boolean onCurve(int point) {
-      return this.glyph.onCurve(this.contour, point);
+      return this.glyph.onCurve(this.contour, index(point));
     }
   }
 }
