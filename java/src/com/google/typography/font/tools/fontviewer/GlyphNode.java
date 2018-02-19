@@ -2,16 +2,14 @@ package com.google.typography.font.tools.fontviewer;
 
 import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.RenderingHints;
+import java.awt.geom.Path2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -80,10 +78,11 @@ public class GlyphNode extends AbstractNode {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-      super.paintComponent(g);
+    protected void paintComponent(Graphics graphics) {
+      super.paintComponent(graphics);
 
-      ((Graphics2D) g).setRenderingHint(
+      Graphics2D g = (Graphics2D) graphics;
+      g.setRenderingHint(
           RenderingHints.KEY_ANTIALIASING,
           RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -91,31 +90,83 @@ public class GlyphNode extends AbstractNode {
 
       SimpleGlyph glyph = (SimpleGlyph) GlyphNode.this.glyph;
       for (int c = 0, cmax = glyph.numberOfContours(); c < cmax; c++) {
-        Polygon polygon = new Polygon();
-        for (int p = 0, pmax = glyph.numberOfPoints(c); p < pmax; p++) {
-          int x = glyph.xCoordinate(c, p);
-          int y = glyph.yCoordinate(c, p);
-          polygon.addPoint(screenX(x), screenY(y));
-        }
-        g.setColor(Color.BLUE);
-        g.drawPolygon(polygon);
+        ScreenCoordinateMapper screen = new ScreenCoordinateMapper(glyph, c, MARGIN, this.scale, this.minX, this.maxY);
+        int pmax = glyph.numberOfPoints(c);
 
-        for (int p = 0, pmax = glyph.numberOfPoints(c); p < pmax; p++) {
-          int x = glyph.xCoordinate(c, p);
-          int y = glyph.yCoordinate(c, p);
-          boolean on = glyph.onCurve(c, p);
-          g.setColor(on ? Color.BLACK : Color.GREEN);
-          g.drawOval(screenX(x) - 2, screenY(y) - 2, 4, 4);
+        int firstOn = 0;
+        for (int p = 0; p < pmax; p++) {
+          if (screen.onCurve(p)) {
+            firstOn = p;
+            break;
+          }
+        }
+
+        Path2D.Double path = new Path2D.Double(Path2D.WIND_EVEN_ODD);
+        path.moveTo(screen.x(firstOn), screen.y(firstOn));
+
+        // XXX: This rendering is better than just connecting the dots
+        // with straight lines, but the curves don't look correct.
+        for (int i = 0; i < pmax; i++) {
+          int p = (firstOn + i) % pmax;
+          if (screen.onCurve(p)) {
+            path.lineTo(screen.x(p), screen.y(p));
+          } else {
+            int p2 = (firstOn + i + 1) % pmax;
+            if (screen.onCurve(p2)) {
+              path.quadTo(screen.x(p), screen.y(p), screen.x(p2), screen.y(p2));
+              i++;
+            } else {
+              int p3 = (firstOn + i + 2) % pmax;
+              // XXX: assuming screen.on(p3) doesn't always work.
+              path.curveTo(screen.x(p), screen.y(p), screen.x(p2), screen.y(p2), screen.x(p3), screen.y(p3));
+              i += 2;
+            }
+          }
+        }
+        path.closePath();
+
+        g.setColor(Color.BLUE);
+        g.draw(path);
+
+        for (int p = 0; p < pmax; p++) {
+          g.setColor(screen.onCurve(p) ? Color.BLACK : Color.GREEN);
+          g.drawOval(screen.x(p) - 2, screen.y(p) - 2, 4, 4);
+          g.drawString(c + ":" + p, screen.x(p) + 5, screen.y(p) - 5);
         }
       }
     }
+  }
 
-    private int screenX(int x) {
-      return MARGIN + (int) Math.round(this.scale * (x - this.minX));
+  private static class ScreenCoordinateMapper {
+    private final SimpleGlyph glyph;
+    private final int contour;
+
+    private final int margin;
+    private final double scale;
+    private final double minX;
+    private final double maxY;
+
+    ScreenCoordinateMapper(SimpleGlyph glyph, int contour, int margin, double scale, double minX, double maxY) {
+      this.glyph = glyph;
+      this.contour = contour;
+      this.margin = margin;
+      this.scale = scale;
+      this.minX = minX;
+      this.maxY = maxY;
     }
 
-    private int screenY(int y) {
-      return MARGIN + (int) Math.round(this.scale * (this.maxY - y));
+    int x(int point) {
+      int x = this.glyph.xCoordinate(this.contour, point);
+      return this.margin + (int) Math.round(this.scale * (x - this.minX));
+    }
+
+    int y(int point) {
+      int y = this.glyph.yCoordinate(this.contour, point);
+      return this.margin + (int) Math.round(this.scale * (this.maxY - y));
+    }
+
+    boolean onCurve(int point) {
+      return this.glyph.onCurve(this.contour, point);
     }
   }
 }
