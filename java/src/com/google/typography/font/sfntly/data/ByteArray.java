@@ -353,21 +353,45 @@ abstract class ByteArray<T extends ByteArray<T>> {
     }
     length = Math.min(length, this.length());
     StringBuilder sb = new StringBuilder();
+    StringBuilder line = new StringBuilder();
 
     sb.append("[l=" + this.filledLength + ", s=" + this.size() + "]");
     if (length > 0) {
       sb.append("\n");
     }
-    for (int i = 0; i < length; i++) {
-      int r = this.get(i + offset);
-      if (r < 0x10) {
-        sb.append("0");
+    for (int i = 0; i < length; i += 16) {
+      line.setLength(0);
+      int jmax = Math.min(length - i, 16);
+
+      for (int j = 0; j < 16; j++) {
+        if (j < jmax) {
+          int r = this.get(offset + i + j);
+          line.append("0123456789abcdef".charAt((r >>> 4) & 0x0f));
+          line.append("0123456789abcdef".charAt(r & 0x0f));
+          line.append(" ");
+        } else {
+          line.append("   ");
+        }
+        if (j % 4 == 3) {
+          line.append(" ");
+        }
       }
-      sb.append(Integer.toHexString(r));
-      sb.append(" ");
-      if (i > 0 && ((i + 1) % 16) == 0) {
-        sb.append("\n");
+      line.append(" ");
+
+      for (int j = 0; j < jmax; j++) {
+        int r = this.get(offset + i + j);
+        if (0x20 <= r && r <= 0x7e) {
+          line.append((char) r);
+        } else {
+          line.append('.');
+        }
       }
+      while (line.length() > 0 && Character.isWhitespace(line.charAt(line.length() - 1))) {
+        line.setLength(line.length() - 1);
+      }
+
+      sb.append(line);
+      sb.append("\n");
     }
     return sb.toString();
   }

@@ -50,6 +50,6 @@ class SubTableNode extends AbstractNode {
 
   @Override
   JComponent render() {
-    return new JTextArea(this.table.toString());
+    return new JTextArea(this.table.readFontData().toString(4096));
   }
 }

@@ -21,7 +21,11 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 
 /**
- * Shows the hierarchy of some of the tables of a font.
+ * The FontViewer application shows the hierarchy of some of the tables of a font.
+ * <p>
+ * Each node in the left tree corresponds to an {@link AbstractNode} object,
+ * starting with the {@link FontNode} for a complete font.
+ * To navigate to the child nodes, examine {@link FontNode#getChildAt(int)}.
  */
 public class FontViewer {
 
