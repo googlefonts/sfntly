@@ -33,7 +33,7 @@ public class GlyphNode extends AbstractNode {
   JComponent render() {
     if (this.glyph instanceof SimpleGlyph) {
       GlyphRenderer renderer = new GlyphRenderer();
-      JComponent text = new JScrollPane(new JTextArea(this.glyph.toString()));
+      final JComponent text = new JScrollPane(new JTextArea(this.glyph.toString()));
       text.setPreferredSize(new Dimension(500, 200));
       final JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, renderer, text);
       pane.addPropertyChangeListener(
@@ -41,7 +41,11 @@ public class GlyphNode extends AbstractNode {
           new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-              AppState.glyphRendererHeight = (Integer) evt.getNewValue() - pane.getInsets().top;
+              // Somehow, if the text field is forced to be smaller than its preferred height,
+              // it occupies the whole height, leaving only a single pixel for the glyph drawing.
+              if (text.getHeight() >= text.getPreferredSize().height) {
+                AppState.glyphRendererHeight = (Integer) evt.getNewValue() - pane.getInsets().top;
+              }
             }
           });
       pane.setPreferredSize(new Dimension(500, 500));
