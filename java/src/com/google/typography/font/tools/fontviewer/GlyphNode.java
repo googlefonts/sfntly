@@ -104,30 +104,25 @@ public class GlyphNode extends AbstractNode {
         Path2D path = new Path2D.Double(Path2D.WIND_EVEN_ODD);
         path.moveTo(screen.x(firstOn), screen.y(firstOn));
 
-        // XXX: This rendering is better than just connecting the dots
-        // with straight lines, but the curves don't look correct.
         for (int i = 0; i < pmax; i++) {
-          int p0 = firstOn + i - 1;
-          int p1 = firstOn + i;
-          int p2 = firstOn + i + 1;
-          int p3 = firstOn + i + 2;
-          if (screen.onCurve(p1)) {
-            path.lineTo(screen.x(p1), screen.y(p1));
-          } else if (screen.onCurve(p2)) {
-            path.quadTo(
-                screen.x(p1), screen.y(p1),
-                screen.x(p2), screen.y(p2));
-            i++;
+          int icurr = firstOn + i + 1;
+          int inext = firstOn + i + 2;
+
+          int currx = screen.x(icurr);
+          int curry = screen.y(icurr);
+          if (screen.onCurve(icurr)) {
+            path.lineTo(currx, curry);
           } else {
-            // XXX: assuming screen.on(p3) doesn't always work.
-            // XXX: Curves with 3 or more off-curve points are rendered wrong.
-            path.curveTo(
-                screen.sx(p1, p0), screen.sy(p1, p0),
-                screen.sx(p2, p3), screen.sy(p2, p3),
-                screen.x(p3), screen.y(p3));
-            i += 2;
+            double nextx = screen.x(inext);
+            double nexty = screen.y(inext);
+            if (!screen.onCurve(inext)) {
+              nextx = 0.5 * (currx + nextx);
+              nexty = 0.5 * (curry + nexty);
+            }
+            path.quadTo(currx, curry, nextx, nexty);
           }
         }
+
         path.closePath();
 
         g.setColor(Color.BLUE);
