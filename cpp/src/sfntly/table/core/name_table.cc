@@ -475,8 +475,12 @@ void NameTable::NameAsBytes(int32_t index, std::vector<uint8_t>* b) {
   if (length <= 0)
     return;
 
+  int32_t offset = NameOffset(index);
+  if (offset < 0)
+    return;
+
   b->resize(length);
-  data_->ReadBytes(NameOffset(index), &((*b)[0]), 0, length);
+  data_->ReadBytes(offset, &((*b)[0]), 0, length);
 }
 
 void NameTable::NameAsBytes(int32_t platform_id,
