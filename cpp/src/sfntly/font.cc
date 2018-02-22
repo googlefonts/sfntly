@@ -525,6 +525,9 @@ void Font::Builder::ReadHeader(ReadableFontData* fd,
   entry_selector_ = fd->ReadUShort(offset + Offset::kEntrySelector);
   range_shift_ = fd->ReadUShort(offset + Offset::kRangeShift);
 
+  if (num_tables_ > fd->Size() / Offset::kTableRecordSize)
+    return;
+
   int32_t table_offset = offset + Offset::kTableRecordBegin;
   for (int32_t table_number = 0;
        table_number < num_tables_;
