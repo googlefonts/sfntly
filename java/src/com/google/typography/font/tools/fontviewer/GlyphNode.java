@@ -172,18 +172,6 @@ public class GlyphNode extends AbstractNode {
       return this.margin + (int) Math.round(this.scale * (this.maxY - y));
     }
 
-    int sx(int point, int from) {
-      int sxPoint = x(point);
-      int sxFrom = x(from);
-      return sxFrom + (int) (1.2 * (sxPoint - sxFrom));
-    }
-
-    int sy(int point, int from) {
-      int sxPoint = y(point);
-      int sxFrom = y(from);
-      return sxFrom + (int) (1.2 * (sxPoint - sxFrom));
-    }
-
     private int index(int point) {
       return (point + this.points) % this.points;
     }
