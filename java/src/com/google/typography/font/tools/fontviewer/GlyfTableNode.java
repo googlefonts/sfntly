@@ -22,7 +22,7 @@ class GlyfTableNode extends AbstractNode {
       int offset = loca.glyphOffset(i);
       int length = loca.glyphLength(i);
       if (length != 0) {
-        this.glyphNodes.add(new GlyphNode(i, glyf.glyph(offset, length)));
+        this.glyphNodes.add(new GlyphNode(i, glyf.glyph(offset, length), glyf, loca));
       }
     }
   }

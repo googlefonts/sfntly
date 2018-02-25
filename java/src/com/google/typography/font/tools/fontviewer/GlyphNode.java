@@ -1,6 +1,9 @@
 package com.google.typography.font.tools.fontviewer;
 
+import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
+import com.google.typography.font.sfntly.table.truetype.GlyphTable;
+import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,10 +21,14 @@ import javax.swing.JTextArea;
 public class GlyphNode extends AbstractNode {
   private final int glyphId;
   private final Glyph glyph;
+  private final GlyphTable glyf;
+  private final LocaTable loca;
 
-  public GlyphNode(int glyphId, Glyph glyph) {
+  public GlyphNode(int glyphId, Glyph glyph, GlyphTable glyf, LocaTable loca) {
     this.glyphId = glyphId;
     this.glyph = glyph;
+    this.glyf = glyf;
+    this.loca = loca;
   }
 
   @Override
@@ -31,33 +38,29 @@ public class GlyphNode extends AbstractNode {
 
   @Override
   JComponent render() {
-    if (this.glyph instanceof SimpleGlyph) {
-      GlyphRenderer renderer = new GlyphRenderer();
-      final JComponent text = new JScrollPane(new JTextArea(this.glyph.toString()));
-      text.setPreferredSize(new Dimension(500, 200));
-      final JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, renderer, text);
-      pane.addPropertyChangeListener(
-          JSplitPane.DIVIDER_LOCATION_PROPERTY,
-          new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-              // Somehow, if the text field is forced to be smaller than its preferred height,
-              // it occupies the whole height, leaving only a single pixel for the glyph drawing.
-              if (text.getHeight() >= text.getPreferredSize().height) {
-                AppState.glyphRendererHeight = (Integer) evt.getNewValue() - pane.getInsets().top;
-              }
+    GlyphRenderer renderer = new GlyphRenderer();
+    final JComponent text = new JScrollPane(new JTextArea(this.glyph.toString()));
+    text.setPreferredSize(new Dimension(500, 200));
+    final JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, renderer, text);
+    pane.addPropertyChangeListener(
+        JSplitPane.DIVIDER_LOCATION_PROPERTY,
+        new PropertyChangeListener() {
+          @Override
+          public void propertyChange(PropertyChangeEvent evt) {
+            // Somehow, if the text field is forced to be smaller than its preferred height,
+            // it occupies the whole height, leaving only a single pixel for the glyph drawing.
+            if (text.getHeight() >= text.getPreferredSize().height) {
+              AppState.glyphRendererHeight = (Integer) evt.getNewValue() - pane.getInsets().top;
             }
-          });
-      pane.setPreferredSize(new Dimension(500, 500));
-      return pane;
-    } else {
-      return new JTextArea(this.glyph.toString());
-    }
+          }
+        });
+    pane.setPreferredSize(new Dimension(500, 500));
+    return pane;
   }
 
   @Override
   boolean renderInScrollPane() {
-    return !(this.glyph instanceof SimpleGlyph);
+    return false;
   }
 
   private class GlyphRenderer extends JComponent {
@@ -90,11 +93,34 @@ public class GlyphNode extends AbstractNode {
           RenderingHints.KEY_ANTIALIASING,
           RenderingHints.VALUE_ANTIALIAS_ON);
 
-      updateScale();
+      this.updateScale();
 
-      SimpleGlyph glyph = (SimpleGlyph) GlyphNode.this.glyph;
+      Glyph glyph = GlyphNode.this.glyph;
+      if (glyph instanceof SimpleGlyph) {
+        this.paintSimpleGlyph(g, (SimpleGlyph) glyph, 0, 0);
+      } else {
+        this.paintCompositeGlyph(g, (CompositeGlyph) glyph);
+      }
+    }
+
+    private void paintCompositeGlyph(Graphics2D g, CompositeGlyph composite) {
+      for (int i = 0; i < composite.numGlyphs(); i++) {
+        int glyphIndex = composite.glyphIndex(i);
+        int offset = GlyphNode.this.loca.glyphOffset(glyphIndex);
+        int length = GlyphNode.this.loca.glyphLength(glyphIndex);
+        if (length != 0) {
+          SimpleGlyph simple = (SimpleGlyph) GlyphNode.this.glyf.glyph(offset, length);
+          int deltaX = composite.argument1(i);
+          int deltaY = composite.argument2(i);
+          this.paintSimpleGlyph(g, simple, deltaX, deltaY);
+        }
+      }
+    }
+
+    private void paintSimpleGlyph(Graphics2D g, SimpleGlyph glyph, int deltaX, int deltaY) {
       for (int c = 0, cmax = glyph.numberOfContours(); c < cmax; c++) {
-        ScreenCoordinateMapper screen = new ScreenCoordinateMapper(glyph, c, MARGIN, this.scale, this.minX, this.maxY);
+        ScreenCoordinateMapper screen = new ScreenCoordinateMapper(glyph, c, MARGIN, this.scale,
+            this.minX - deltaX, this.maxY - deltaY);
         int pmax = glyph.numberOfPoints(c);
 
         int firstOn = 0;
