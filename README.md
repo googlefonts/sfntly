@@ -31,3 +31,7 @@ Though the features stripped from the font are different in Chrome than in Googl
 It was made open source in June 2011 and you are welcome to use it in your projects.
 
 Have fun!
+
+# See also
+
+* https://github.com/Jolg42/awesome-typography
