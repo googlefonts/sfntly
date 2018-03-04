@@ -11,12 +11,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Path2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 
 public class GlyphNode extends AbstractNode {
   private final int glyphId;
@@ -38,22 +37,10 @@ public class GlyphNode extends AbstractNode {
 
   @Override
   JComponent render() {
-    GlyphRenderer renderer = new GlyphRenderer();
-    final JComponent text = new JScrollPane(new JTextArea(this.glyph.toString()));
-    text.setPreferredSize(new Dimension(500, 200));
-    final JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, renderer, text);
-    pane.addPropertyChangeListener(
-        JSplitPane.DIVIDER_LOCATION_PROPERTY,
-        new PropertyChangeListener() {
-          @Override
-          public void propertyChange(PropertyChangeEvent evt) {
-            // Somehow, if the text field is forced to be smaller than its preferred height,
-            // it occupies the whole height, leaving only a single pixel for the glyph drawing.
-            if (text.getHeight() >= text.getPreferredSize().height) {
-              AppState.glyphRendererHeight = (Integer) evt.getNewValue() - pane.getInsets().top;
-            }
-          }
-        });
+    final JTabbedPane pane = new JTabbedPane(SwingConstants.TOP);
+    pane.addTab("Graphical", new GlyphRenderer());
+    pane.add("Text", new JScrollPane(new JTextArea(this.glyph.toString())));
+
     pane.setPreferredSize(new Dimension(500, 500));
     return pane;
   }
@@ -77,11 +64,6 @@ public class GlyphNode extends AbstractNode {
     private void updateScale() {
       int size = Math.min(this.getWidth(), this.getHeight()) - MARGIN - MARGIN;
       this.scale = (double) size / Math.max(this.maxX - this.minX, this.maxY - this.minY);
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-      return new Dimension(500, AppState.glyphRendererHeight);
     }
 
     @Override
