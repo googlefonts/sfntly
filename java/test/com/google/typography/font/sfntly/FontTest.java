@@ -87,13 +87,41 @@ public class FontTest extends TestCase {
 
   // Just a smoke test to see whether the validity checks influence real-life files.
   public void testLoadSystemFonts() throws IOException {
-    File fontsDir = new File("C:/Windows/Fonts");
+    File fontsDir;
+    if (isWindows()) {
+      fontsDir = new File("C:/Windows/Fonts");
+    } else if (isLinux()) {
+      fontsDir = new File("/usr/share/fonts");
+    } else {
+      fail("System is not supported");
+      return;
+    }
+
     Assume.assumeTrue(fontsDir.exists());
 
-    for (File fontFile : fontsDir.listFiles()) {
-      if (fontFile.getName().endsWith(".ttf")) {
-        TestFontUtils.loadFont(fontFile);
+    int numberOfLoadedFonts = loadFontsRecursively(fontsDir);
+    Assume.assumeTrue(numberOfLoadedFonts > 0);
+  }
+
+  private int loadFontsRecursively(File fontsDir) throws IOException {
+      int numberOfLoadedFonts = 0;
+      for (File fontFile : fontsDir.listFiles()) {
+          if (fontFile.isDirectory()) {
+              numberOfLoadedFonts += loadFontsRecursively(fontFile);
+          } else if (fontFile.getName().endsWith(".ttf")) {
+              TestFontUtils.loadFont(fontFile);
+              numberOfLoadedFonts += 1;
+          }
       }
-    }
+
+      return numberOfLoadedFonts;
+  }
+
+  private boolean isLinux() {
+    return System.getProperty("os.name").contains("Linux");
+  }
+
+  private boolean isWindows() {
+    return System.getProperty("os.name").contains("Windows");
   }
 }
