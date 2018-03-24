@@ -90,7 +90,7 @@ import java.util.Date;
 public class ReadableFontData extends FontData {
 
   public static ReadableFontData createReadableFontData(byte[] b) {
-    ByteArray<?> ba = new MemoryByteArray(b);
+    ByteArray ba = new MemoryByteArray(b);
     return new ReadableFontData(ba);
   }
 
@@ -103,7 +103,7 @@ public class ReadableFontData extends FontData {
   private volatile int[] checksumRange;
 
   /** @param array byte array to wrap */
-  protected ReadableFontData(ByteArray<? extends ByteArray<?>> array) {
+  protected ReadableFontData(ByteArray array) {
     super(array);
   }
 

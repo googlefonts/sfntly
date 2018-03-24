@@ -24,7 +24,7 @@ import java.io.OutputStream;
  *
  * @author Stuart Gill
  */
-final class GrowableMemoryByteArray extends ByteArray<GrowableMemoryByteArray> {
+final class GrowableMemoryByteArray extends ByteArray {
 
   private static final int INITIAL_LENGTH = 256;
   private byte[] b;

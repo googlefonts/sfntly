@@ -41,12 +41,12 @@ public class ByteArrayTests extends TestCase {
     }
   }
 
-  private void byteArrayTester(ByteArray<? extends ByteArray<?>> ba) throws Exception {
+  private void byteArrayTester(ByteArray ba) throws Exception {
     copyTest(ba);
     // slicingCopyTest(ba);
   }
 
-  private void copyTest(ByteArray<? extends ByteArray<?>> ba) throws Exception {
+  private void copyTest(ByteArray ba) throws Exception {
     MemoryByteArray fixedCopy = new MemoryByteArray(ba.length());
     ba.copyTo(fixedCopy);
     assertEquals(ba.length(), fixedCopy.length());
@@ -59,7 +59,7 @@ public class ByteArrayTests extends TestCase {
   }
 
   private void readComparison(
-      ByteArray<? extends ByteArray<?>> ba1, ByteArray<? extends ByteArray<?>> ba2)
+      ByteArray ba1, ByteArray ba2)
       throws Exception {
     // single byte reads
     for (int i = 0; i < ba1.length(); i++) {
@@ -93,7 +93,7 @@ public class ByteArrayTests extends TestCase {
   }
 
   private static byte[] readByteArrayWithBuffer(
-      ByteArray<? extends ByteArray<?>> ba, byte[] buffer) {
+      ByteArray ba, byte[] buffer) {
     byte[] b = new byte[ba.length()];
 
     int index = 0;
@@ -106,7 +106,7 @@ public class ByteArrayTests extends TestCase {
   }
 
   private static byte[] readByteArrayWithSlidingWindow(
-      ByteArray<? extends ByteArray<?>> ba, int windowSize) {
+      ByteArray ba, int windowSize) {
     byte[] b = new byte[ba.length()];
 
     int index = 0;
@@ -118,8 +118,8 @@ public class ByteArrayTests extends TestCase {
     return b;
   }
 
-  private static ByteArray<? extends ByteArray<?>> fillTestByteArray(
-      ByteArray<? extends ByteArray<?>> ba, int size) {
+  private static ByteArray fillTestByteArray(
+      ByteArray ba, int size) {
     for (int i = 0; i < size; i++) {
       ba.put(i, (byte) (i % 256));
     }

@@ -24,7 +24,7 @@ import java.io.OutputStream;
  *
  * @author Stuart Gill
  */
-final class MemoryByteArray extends ByteArray<MemoryByteArray> {
+final class MemoryByteArray extends ByteArray {
 
   private byte[] b;
 

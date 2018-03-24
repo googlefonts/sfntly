@@ -23,10 +23,9 @@ import java.io.OutputStream;
 /**
  * An abstraction to a contiguous array of bytes.
  *
- * @param <T> the concrete sub-class of ByteArray
  * @author Stuart Gill
  */
-abstract class ByteArray<T extends ByteArray<T>> {
+abstract class ByteArray {
   private static final int COPY_BUFFER_SIZE = 8192;
 
   @SuppressWarnings("unused")
@@ -189,7 +188,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
    *
    * @return the number of bytes copied
    */
-  public int copyTo(ByteArray<? extends ByteArray<?>> array) {
+  public int copyTo(ByteArray array) {
     return copyTo(array, 0, this.length());
   }
 
@@ -200,7 +199,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
    * @param length the maximum length in bytes to copy
    * @return the number of bytes copied
    */
-  public int copyTo(ByteArray<? extends ByteArray<?>> array, int offset, int length) {
+  public int copyTo(ByteArray array, int offset, int length) {
     return this.copyTo(0, array, offset, length);
   }
 
@@ -214,7 +213,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
    * @return the number of bytes copied
    */
   public int copyTo(
-      int dstOffset, ByteArray<? extends ByteArray<?>> array, int srcOffset, int length) {
+      int dstOffset, ByteArray array, int srcOffset, int length) {
     byte[] b = new byte[COPY_BUFFER_SIZE];
     int bytesRead = 0;
     int index = 0;

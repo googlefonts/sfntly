@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author Stuart Gill
  */
-final class SegmentedGrowableMemoryByteArray extends ByteArray<SegmentedGrowableMemoryByteArray> {
+final class SegmentedGrowableMemoryByteArray extends ByteArray {
   private static final int DEFAULT_BUFFER_LOW_BITS = 8;
 
   private List<byte[]> buffers;

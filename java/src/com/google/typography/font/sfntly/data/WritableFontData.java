@@ -37,7 +37,7 @@ public final class WritableFontData extends ReadableFontData {
    * @return a new writable font data
    */
   public static WritableFontData createWritableFontData(int length) {
-    ByteArray<?> ba = null;
+    ByteArray ba = null;
     if (length > 0) {
       ba = new MemoryByteArray(length);
       ba.setFilledLength(length);
@@ -57,7 +57,7 @@ public final class WritableFontData extends ReadableFontData {
    * @return a new writable font data
    */
   public static WritableFontData createWritableFontData(byte[] b) {
-    ByteArray<?> ba = new MemoryByteArray(b);
+    ByteArray ba = new MemoryByteArray(b);
     WritableFontData wfd = new WritableFontData(ba);
     return wfd;
   }
@@ -70,7 +70,7 @@ public final class WritableFontData extends ReadableFontData {
    * @return a new writable font data
    */
   public static WritableFontData createWritableFontData(ReadableFontData original) {
-    ByteArray<?> ba = null;
+    ByteArray ba = null;
     // TODO(stuartg): push this down into the BAs - maybe remove the difference between growable and
     // fixed
     if (original.array.growable()) {
@@ -86,7 +86,7 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /** @param array byte array to wrap */
-  private WritableFontData(ByteArray<? extends ByteArray<?>> array) {
+  private WritableFontData(ByteArray array) {
     super(array);
   }
 

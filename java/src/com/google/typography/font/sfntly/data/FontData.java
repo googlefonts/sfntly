@@ -50,13 +50,13 @@ public abstract class FontData {
   }
 
   /** The internal data. */
-  protected final ByteArray<? extends ByteArray<?>> array;
+  protected final ByteArray array;
   /** Offset to apply as a lower bound on the internal byte array. */
   private int boundOffset;
   /** The length of the bound on the internal byte array. */
   private int boundLength = FontData.GROWABLE_SIZE;
 
-  protected FontData(ByteArray<? extends ByteArray<?>> backingArray) {
+  protected FontData(ByteArray backingArray) {
     this.array = backingArray;
   }
 
