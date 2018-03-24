@@ -18,7 +18,7 @@ public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
   }
 
   public ScriptTag scriptAt(int index) {
-    return ScriptTag.fromTag(this.tagAt(index));
+    return ScriptTag.fromTag(tagAt(index));
   }
 
   public Map<ScriptTag, ScriptTable> map() {

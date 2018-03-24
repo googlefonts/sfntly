@@ -47,15 +47,15 @@ public final class SimpleGlyph extends Glyph {
 
   @Override
   protected void initialize() {
-    if (this.initialized) {
+    if (initialized) {
       return;
     }
-    synchronized (this.initializationLock) {
-      if (this.initialized) {
+    synchronized (initializationLock) {
+      if (initialized) {
         return;
       }
 
-      if (this.readFontData().length() == 0) {
+      if (readFontData().length() == 0) {
         this.instructionSize = 0;
         this.numberOfPoints = 0;
         this.instructionsOffset = 0;
@@ -65,33 +65,33 @@ public final class SimpleGlyph extends Glyph {
         return;
       }
       this.instructionSize =
-          this.data.readUShort(
-              Offset.simpleEndPtsOfCountours + this.numberOfContours() * FontData.SizeOf.USHORT);
+          data.readUShort(
+              Offset.simpleEndPtsOfCountours + numberOfContours() * FontData.SizeOf.USHORT);
       this.instructionsOffset =
-          Offset.simpleEndPtsOfCountours + (this.numberOfContours() + 1) * FontData.SizeOf.USHORT;
-      this.flagsOffset = this.instructionsOffset + this.instructionSize * FontData.SizeOf.BYTE;
-      this.numberOfPoints = this.contourEndPoint(this.numberOfContours() - 1) + 1;
-      this.xCoordinates = new int[this.numberOfPoints];
-      this.yCoordinates = new int[this.numberOfPoints];
-      this.onCurve = new boolean[this.numberOfPoints];
+          Offset.simpleEndPtsOfCountours + (numberOfContours() + 1) * FontData.SizeOf.USHORT;
+      this.flagsOffset = instructionsOffset + instructionSize * FontData.SizeOf.BYTE;
+      this.numberOfPoints = contourEndPoint(numberOfContours() - 1) + 1;
+      this.xCoordinates = new int[numberOfPoints];
+      this.yCoordinates = new int[numberOfPoints];
+      this.onCurve = new boolean[numberOfPoints];
       parseData(false);
-      this.xCoordinatesOffset = this.flagsOffset + this.flagByteCount * FontData.SizeOf.BYTE;
-      this.yCoordinatesOffset = this.xCoordinatesOffset + this.xByteCount * FontData.SizeOf.BYTE;
-      this.contourIndex = new int[this.numberOfContours() + 1];
+      this.xCoordinatesOffset = flagsOffset + flagByteCount * FontData.SizeOf.BYTE;
+      this.yCoordinatesOffset = xCoordinatesOffset + xByteCount * FontData.SizeOf.BYTE;
+      this.contourIndex = new int[numberOfContours() + 1];
       contourIndex[0] = 0;
-      for (int contour = 0; contour < this.contourIndex.length - 1; contour++) {
-        contourIndex[contour + 1] = this.contourEndPoint(contour) + 1;
+      for (int contour = 0; contour < contourIndex.length - 1; contour++) {
+        contourIndex[contour + 1] = contourEndPoint(contour) + 1;
       }
       parseData(true);
       int nonPaddedDataLength =
           5 * FontData.SizeOf.SHORT
-              + (this.numberOfContours() * FontData.SizeOf.USHORT)
+              + (numberOfContours() * FontData.SizeOf.USHORT)
               + FontData.SizeOf.USHORT
-              + (this.instructionSize * FontData.SizeOf.BYTE)
+              + (instructionSize * FontData.SizeOf.BYTE)
               + (flagByteCount * FontData.SizeOf.BYTE)
               + (xByteCount * FontData.SizeOf.BYTE)
               + (yByteCount * FontData.SizeOf.BYTE);
-      this.setPadding(this.dataLength() - nonPaddedDataLength);
+      setPadding(dataLength() - nonPaddedDataLength);
       this.initialized = true;
     }
   }
@@ -104,10 +104,10 @@ public final class SimpleGlyph extends Glyph {
     int xByteIndex = 0;
     int yByteIndex = 0;
 
-    for (int pointIndex = 0; pointIndex < this.numberOfPoints; pointIndex++) {
+    for (int pointIndex = 0; pointIndex < numberOfPoints; pointIndex++) {
       // get the flag for the current point
       if (flagRepeat == 0) {
-        flag = this.flagAsInt(flagIndex++);
+        flag = flagAsInt(flagIndex++);
         if ((flag & FLAG_REPEAT) != 0) {
           flagRepeat = flagAsInt(flagIndex++);
         }
@@ -117,49 +117,49 @@ public final class SimpleGlyph extends Glyph {
 
       // on the curve?
       if (fillArrays) {
-        this.onCurve[pointIndex] = (flag & FLAG_ONCURVE) != 0;
+        onCurve[pointIndex] = (flag & FLAG_ONCURVE) != 0;
       }
       // get the x coordinate
       if ((flag & FLAG_XSHORT) != 0) {
         // single byte x coord value
         if (fillArrays) {
           int sign = ((flag & FLAG_XREPEATSIGN) != 0) ? 1 : -1;
-          int magnitude = this.data.readUByte(this.xCoordinatesOffset + xByteIndex);
-          this.xCoordinates[pointIndex] = sign * magnitude;
+          int magnitude = data.readUByte(xCoordinatesOffset + xByteIndex);
+          xCoordinates[pointIndex] = sign * magnitude;
         }
         xByteIndex++;
       } else {
         // double byte coord value
         if ((flag & FLAG_XREPEATSIGN) == 0) {
           if (fillArrays) {
-            this.xCoordinates[pointIndex] =
-                this.data.readShort(this.xCoordinatesOffset + xByteIndex);
+            xCoordinates[pointIndex] =
+                data.readShort(xCoordinatesOffset + xByteIndex);
           }
           xByteIndex += 2;
         }
       }
       if (fillArrays && pointIndex > 0) {
-        this.xCoordinates[pointIndex] += this.xCoordinates[pointIndex - 1];
+        xCoordinates[pointIndex] += xCoordinates[pointIndex - 1];
       }
 
       // get the y coordinate
       if ((flag & FLAG_YSHORT) != 0) {
         if (fillArrays) {
-          this.yCoordinates[pointIndex] = this.data.readUByte(this.yCoordinatesOffset + yByteIndex);
-          this.yCoordinates[pointIndex] *= ((flag & FLAG_YREPEATSIGN) != 0) ? 1 : -1;
+          yCoordinates[pointIndex] = data.readUByte(yCoordinatesOffset + yByteIndex);
+          yCoordinates[pointIndex] *= ((flag & FLAG_YREPEATSIGN) != 0) ? 1 : -1;
         }
         yByteIndex++;
       } else {
         if ((flag & FLAG_YREPEATSIGN) == 0) {
           if (fillArrays) {
-            this.yCoordinates[pointIndex] =
-                this.data.readShort(this.yCoordinatesOffset + yByteIndex);
+            yCoordinates[pointIndex] =
+                data.readShort(yCoordinatesOffset + yByteIndex);
           }
           yByteIndex += 2;
         }
       }
       if (fillArrays && pointIndex > 0) {
-        this.yCoordinates[pointIndex] += this.yCoordinates[pointIndex - 1];
+        yCoordinates[pointIndex] += yCoordinates[pointIndex - 1];
       }
     }
     this.flagByteCount = flagIndex;
@@ -168,66 +168,66 @@ public final class SimpleGlyph extends Glyph {
   }
 
   private int flagAsInt(int index) {
-    return this.data.readUByte(this.flagsOffset + index * FontData.SizeOf.BYTE);
+    return data.readUByte(flagsOffset + index * FontData.SizeOf.BYTE);
   }
 
   public int contourEndPoint(int contour) {
-    return this.data.readUShort(contour * FontData.SizeOf.USHORT + Offset.simpleEndPtsOfCountours);
+    return data.readUShort(contour * FontData.SizeOf.USHORT + Offset.simpleEndPtsOfCountours);
   }
 
   @Override
   public int instructionSize() {
-    this.initialize();
-    return this.instructionSize;
+    initialize();
+    return instructionSize;
   }
 
   @Override
   public ReadableFontData instructions() {
-    this.initialize();
-    return this.data.slice(this.instructionsOffset, this.instructionSize());
+    initialize();
+    return data.slice(instructionsOffset, instructionSize());
   }
 
   public int numberOfPoints(int contour) {
-    this.initialize();
-    if (contour >= this.numberOfContours()) {
+    initialize();
+    if (contour >= numberOfContours()) {
       return 0;
     }
-    return this.contourIndex[contour + 1] - this.contourIndex[contour];
+    return contourIndex[contour + 1] - contourIndex[contour];
   }
 
   public int xCoordinate(int contour, int point) {
-    this.initialize();
-    return this.xCoordinates[this.contourIndex[contour] + point];
+    initialize();
+    return xCoordinates[contourIndex[contour] + point];
   }
 
   public int yCoordinate(int contour, int point) {
-    this.initialize();
-    return this.yCoordinates[this.contourIndex[contour] + point];
+    initialize();
+    return yCoordinates[contourIndex[contour] + point];
   }
 
   public boolean onCurve(int contour, int point) {
-    this.initialize();
-    return this.onCurve[this.contourIndex[contour] + point];
+    initialize();
+    return onCurve[contourIndex[contour] + point];
   }
 
   @Override
   public String toString() {
-    this.initialize();
+    initialize();
     StringBuilder sb = new StringBuilder(super.toString());
-    sb.append("\tinstruction bytes = " + this.instructionSize() + "\n");
-    for (int contour = 0; contour < this.numberOfContours(); contour++) {
-      for (int point = 0; point < this.numberOfPoints(contour); point++) {
+    sb.append("\tinstruction bytes = " + instructionSize() + "\n");
+    for (int contour = 0; contour < numberOfContours(); contour++) {
+      for (int point = 0; point < numberOfPoints(contour); point++) {
         sb.append(
             "\t"
                 + contour
                 + ":"
                 + point
                 + " = ["
-                + this.xCoordinate(contour, point)
+                + xCoordinate(contour, point)
                 + ", "
-                + this.yCoordinate(contour, point)
+                + yCoordinate(contour, point)
                 + ", "
-                + this.onCurve(contour, point)
+                + onCurve(contour, point)
                 + "]\n");
       }
     }

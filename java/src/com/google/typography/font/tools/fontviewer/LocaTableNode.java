@@ -9,13 +9,13 @@ class LocaTableNode extends AbstractNode {
   private final LocaTable loca;
 
   LocaTableNode(LocaTable loca, String name) {
-    this.setUserObject(name);
+    setUserObject(name);
     this.loca = loca;
   }
 
   @Override
   protected String getNodeName() {
-    return (String) this.getUserObject();
+    return (String) getUserObject();
   }
 
   @Override
@@ -35,7 +35,7 @@ class LocaTableNode extends AbstractNode {
 
     @Override
     public int getRowCount() {
-      return LocaTableNode.this.loca.numGlyphs();
+      return loca.numGlyphs();
     }
 
     @Override
@@ -44,9 +44,9 @@ class LocaTableNode extends AbstractNode {
         case 0:
           return rowIndex;
         case 1:
-          return LocaTableNode.this.loca.glyphOffset(rowIndex);
+          return loca.glyphOffset(rowIndex);
         case 2:
-          return LocaTableNode.this.loca.glyphLength(rowIndex);
+          return loca.glyphLength(rowIndex);
         default:
           throw new IllegalStateException();
       }

@@ -109,7 +109,7 @@ public class FontInputStream extends FilterInputStream {
 
   @Override
   public int read() throws IOException {
-    if (this.bounded && this.position >= this.length) {
+    if (bounded && position >= length) {
       return -1;
     }
     int b = super.read();
@@ -121,10 +121,10 @@ public class FontInputStream extends FilterInputStream {
 
   @Override
   public int read(byte[] b, int off, int len) throws IOException {
-    if (this.bounded && this.position >= this.length) {
+    if (bounded && position >= length) {
       return -1;
     }
-    int bytesToRead = bounded ? (int) Math.min(len, this.length - this.position) : len;
+    int bytesToRead = bounded ? (int) Math.min(len, length - position) : len;
     int bytesRead = super.read(b, off, bytesToRead);
     this.position += bytesRead;
     return bytesRead;
@@ -132,7 +132,7 @@ public class FontInputStream extends FilterInputStream {
 
   @Override
   public int read(byte[] b) throws IOException {
-    return this.read(b, 0, b.length);
+    return read(b, 0, b.length);
   }
 
   /**
@@ -141,12 +141,12 @@ public class FontInputStream extends FilterInputStream {
    * @return the current position in bytes
    */
   public long position() {
-    return this.position;
+    return position;
   }
 
   /** Read a Char value. */
   public int readChar() throws IOException {
-    return this.read();
+    return read();
   }
 
   /**
@@ -155,7 +155,7 @@ public class FontInputStream extends FilterInputStream {
    * @return UShort value
    */
   public int readUShort() throws IOException {
-    return 0xffff & (this.read() << 8 | this.read());
+    return 0xffff & (read() << 8 | read());
   }
 
   /**
@@ -164,17 +164,17 @@ public class FontInputStream extends FilterInputStream {
    * @return Short value
    */
   public int readShort() throws IOException {
-    return ((this.read() << 8 | this.read()) << 16) >> 16;
+    return ((read() << 8 | read()) << 16) >> 16;
   }
 
   /** Read a UInt24 value. */
   public int readUInt24() throws IOException {
-    return 0xffffff & (this.read() << 16 | this.read() << 8 | this.read());
+    return 0xffffff & (read() << 16 | read() << 8 | read());
   }
 
   /** Read a ULong value. */
   public long readULong() throws IOException {
-    return 0xffffffffL & this.readLong();
+    return 0xffffffffL & readLong();
   }
 
   /**
@@ -183,7 +183,7 @@ public class FontInputStream extends FilterInputStream {
    * @throws ArithmeticException if the value is not representable as an int
    */
   public int readULongAsInt() throws IOException {
-    long ulong = this.readULong();
+    long ulong = readULong();
     if ((ulong & 0x80000000) == 0x80000000) {
       throw new ArithmeticException("Long value too large to fit into an integer.");
     }
@@ -192,24 +192,24 @@ public class FontInputStream extends FilterInputStream {
 
   /** Read a Long value. */
   public int readLong() throws IOException {
-    return this.read() << 24 | this.read() << 16 | this.read() << 8 | this.read();
+    return read() << 24 | read() << 16 | read() << 8 | read();
   }
 
   /** Read a Fixed value. */
   public int readFixed() throws IOException {
-    return this.readLong();
+    return readLong();
   }
 
   /** Read a DateTime value as a long. */
   public long readDateTimeAsLong() throws IOException {
-    return this.readULong() << 32 | this.readULong();
+    return readULong() << 32 | readULong();
   }
 
   @Override
   public long skip(long n) throws IOException {
     // The bytes must be read nevertheless for computing the digest.
     long skipped = 0;
-    while (skipped < n && this.read() != -1) {
+    while (skipped < n && read() != -1) {
       skipped++;
     }
     if (skipped < n) {

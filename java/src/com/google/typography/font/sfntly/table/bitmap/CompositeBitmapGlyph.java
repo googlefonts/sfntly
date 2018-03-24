@@ -35,15 +35,15 @@ public class CompositeBitmapGlyph extends BitmapGlyph {
     }
 
     public int glyphCode() {
-      return this.glyphCode;
+      return glyphCode;
     }
 
     public int xOffset() {
-      return this.xOffset;
+      return xOffset;
     }
 
     public int yOffset() {
-      return this.yOffset;
+      return yOffset;
     }
 
     @Override
@@ -94,15 +94,15 @@ public class CompositeBitmapGlyph extends BitmapGlyph {
   }
 
   public int numComponents() {
-    return this.data.readUShort(this.numComponentsOffset);
+    return data.readUShort(numComponentsOffset);
   }
 
   public Component component(int componentNum) {
-    int componentOffset = this.componentArrayOffset + componentNum * Offset.ebdtComponentLength;
+    int componentOffset = componentArrayOffset + componentNum * Offset.ebdtComponentLength;
     return new Component(
-        this.data.readUShort(componentOffset + Offset.ebdtComponent_glyphCode),
-        this.data.readChar(componentOffset + Offset.ebdtComponent_xOffset),
-        this.data.readChar(componentOffset + Offset.ebdtComponent_yOffset));
+        data.readUShort(componentOffset + Offset.ebdtComponent_glyphCode),
+        data.readChar(componentOffset + Offset.ebdtComponent_xOffset),
+        data.readChar(componentOffset + Offset.ebdtComponent_yOffset));
   }
 
   public static class Builder extends BitmapGlyph.Builder<CompositeBitmapGlyph> {
@@ -117,7 +117,7 @@ public class CompositeBitmapGlyph extends BitmapGlyph {
 
     @Override
     protected CompositeBitmapGlyph subBuildTable(ReadableFontData data) {
-      return new CompositeBitmapGlyph(data, this.format());
+      return new CompositeBitmapGlyph(data, format());
     }
   }
 }

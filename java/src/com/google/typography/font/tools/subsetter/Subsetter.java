@@ -87,7 +87,7 @@ public class Subsetter {
    */
   public void setCMaps(List<CMapTable.CMapId> cmapIds, int number) {
     this.cmapIds = new ArrayList<>();
-    CMapTable cmapTable = this.font.getTable(Tag.cmap);
+    CMapTable cmapTable = font.getTable(Tag.cmap);
     if (cmapTable == null) {
       throw new InvalidParameterException("Font has no cmap table.");
     }
@@ -113,23 +113,23 @@ public class Subsetter {
   }
 
   public Font.Builder subset() throws IOException {
-    Font.Builder fontBuilder = this.fontFactory.newFontBuilder();
+    Font.Builder fontBuilder = fontFactory.newFontBuilder();
 
     setUpTables(fontBuilder);
 
-    Set<Integer> tableTags = new TreeSet<>(this.font.tableMap().keySet());
-    if (this.removeTables != null) {
-      tableTags.removeAll(this.removeTables);
+    Set<Integer> tableTags = new TreeSet<>(font.tableMap().keySet());
+    if (removeTables != null) {
+      tableTags.removeAll(removeTables);
     }
 
-    for (TableSubsetter tableSubsetter : this.tableSubsetters) {
-      boolean handled = tableSubsetter.subset(this, this.font, fontBuilder);
+    for (TableSubsetter tableSubsetter : tableSubsetters) {
+      boolean handled = tableSubsetter.subset(this, font, fontBuilder);
       if (handled) {
         tableTags.removeAll(tableSubsetter.tagsHandled());
       }
     }
     for (Integer tag : tableTags) {
-      Table table = this.font.getTable(tag);
+      Table table = font.getTable(tag);
       if (table != null) {
         fontBuilder.newTableBuilder(tag, table.readFontData());
       }
@@ -143,7 +143,7 @@ public class Subsetter {
    * @return the permutation table
    */
   List<Integer> glyphMappingTable() {
-    return this.newToOldGlyphs;
+    return newToOldGlyphs;
   }
 
   /**
@@ -163,7 +163,7 @@ public class Subsetter {
   }
 
   List<CMapTable.CMapId> cmapId() {
-    return this.cmapIds;
+    return cmapIds;
   }
 
   // A hook for subclasses to override, to set up tables.

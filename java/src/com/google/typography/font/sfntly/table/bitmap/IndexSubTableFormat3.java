@@ -42,23 +42,23 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
 
   @Override
   public int numGlyphs() {
-    return this.lastGlyphIndex() - this.firstGlyphIndex() + 1;
+    return lastGlyphIndex() - firstGlyphIndex() + 1;
   }
 
   @Override
   public int glyphStartOffset(int glyphId) {
-    int loca = this.checkGlyphRange(glyphId);
-    return this.loca(loca);
+    int loca = checkGlyphRange(glyphId);
+    return loca(loca);
   }
 
   @Override
   public int glyphLength(int glyphId) {
-    int loca = this.checkGlyphRange(glyphId);
-    return this.loca(loca + 1) - this.loca(loca);
+    int loca = checkGlyphRange(glyphId);
+    return loca(loca + 1) - loca(loca);
   }
 
   private int loca(int loca) {
-    return this.data.readUShort(Offset.offsetArray + loca * FontData.SizeOf.USHORT);
+    return data.readUShort(Offset.offsetArray + loca * FontData.SizeOf.USHORT);
   }
 
   public static final class Builder extends IndexSubTable.Builder<IndexSubTableFormat3> {
@@ -100,65 +100,65 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
 
     @Override
     public int numGlyphs() {
-      return this.getOffsetArray().size() - 1;
+      return getOffsetArray().size() - 1;
     }
 
     @Override
     public int glyphLength(int glyphId) {
-      int loca = this.checkGlyphRange(glyphId);
-      List<Integer> offsetArray = this.getOffsetArray();
+      int loca = checkGlyphRange(glyphId);
+      List<Integer> offsetArray = getOffsetArray();
       return offsetArray.get(loca + 1) - offsetArray.get(loca);
     }
 
     @Override
     public int glyphStartOffset(int glyphId) {
-      int loca = this.checkGlyphRange(glyphId);
-      List<Integer> offsetArray = this.getOffsetArray();
+      int loca = checkGlyphRange(glyphId);
+      List<Integer> offsetArray = getOffsetArray();
       return offsetArray.get(loca);
     }
 
     public List<Integer> offsetArray() {
-      return this.getOffsetArray();
+      return getOffsetArray();
     }
 
     private List<Integer> getOffsetArray() {
-      if (this.offsetArray == null) {
-        this.initialize(super.internalReadData());
+      if (offsetArray == null) {
+        initialize(super.internalReadData());
         super.setModelChanged();
       }
-      return this.offsetArray;
+      return offsetArray;
     }
 
     private void initialize(ReadableFontData data) {
-      if (this.offsetArray == null) {
+      if (offsetArray == null) {
         this.offsetArray = new ArrayList<>();
       } else {
-        this.offsetArray.clear();
+        offsetArray.clear();
       }
 
       if (data != null) {
-        int numOffsets = (this.lastGlyphIndex() - this.firstGlyphIndex() + 1) + 1;
+        int numOffsets = (lastGlyphIndex() - firstGlyphIndex() + 1) + 1;
         for (int i = 0; i < numOffsets; i++) {
-          this.offsetArray.add(data.readUShort(Offset.offsetArray + i * FontData.SizeOf.USHORT));
+          offsetArray.add(data.readUShort(Offset.offsetArray + i * FontData.SizeOf.USHORT));
         }
       }
     }
 
     public void setOffsetArray(List<Integer> array) {
       this.offsetArray = array;
-      this.setModelChanged();
+      setModelChanged();
     }
 
     private class BitmapGlyphInfoIterator implements Iterator<BitmapGlyphInfo> {
       private int glyphId;
 
       public BitmapGlyphInfoIterator() {
-        this.glyphId = IndexSubTableFormat3.Builder.this.firstGlyphIndex();
+        this.glyphId = firstGlyphIndex();
       }
 
       @Override
       public boolean hasNext() {
-        return this.glyphId <= Builder.this.lastGlyphIndex();
+        return glyphId <= lastGlyphIndex();
       }
 
       @Override
@@ -168,11 +168,11 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
         }
         BitmapGlyphInfo info =
             new BitmapGlyphInfo(
-                this.glyphId,
-                IndexSubTableFormat3.Builder.this.imageDataOffset(),
-                IndexSubTableFormat3.Builder.this.glyphStartOffset(this.glyphId),
-                IndexSubTableFormat3.Builder.this.glyphLength(this.glyphId),
-                IndexSubTableFormat3.Builder.this.imageFormat());
+                glyphId,
+                imageDataOffset(),
+                glyphStartOffset(glyphId),
+                glyphLength(glyphId),
+                imageFormat());
         this.glyphId++;
         return info;
       }
@@ -196,38 +196,38 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
 
     @Override
     protected IndexSubTableFormat3 subBuildTable(ReadableFontData data) {
-      return new IndexSubTableFormat3(data, this.firstGlyphIndex(), this.lastGlyphIndex());
+      return new IndexSubTableFormat3(data, firstGlyphIndex(), lastGlyphIndex());
     }
 
     @Override
     protected void subDataSet() {
-      this.revert();
+      revert();
     }
 
     @Override
     protected int subDataSizeToSerialize() {
-      if (this.offsetArray == null) {
-        return this.internalReadData().length();
+      if (offsetArray == null) {
+        return internalReadData().length();
       }
-      return EblcTable.HeaderOffsets.SIZE + this.offsetArray.size() * FontData.SizeOf.ULONG;
+      return EblcTable.HeaderOffsets.SIZE + offsetArray.size() * FontData.SizeOf.ULONG;
     }
 
     @Override
     protected boolean subReadyToSerialize() {
-      return this.offsetArray != null;
+      return offsetArray != null;
     }
 
     @Override
     protected int subSerialize(WritableFontData newData) {
       int size = super.serializeIndexSubHeader(newData);
-      if (!this.modelChanged()) {
+      if (!modelChanged()) {
         size +=
-            this.internalReadData()
+            internalReadData()
                 .slice(Offset.offsetArray)
                 .copyTo(newData.slice(Offset.offsetArray));
       } else {
 
-        for (Integer loca : this.offsetArray) {
+        for (Integer loca : offsetArray) {
           size += newData.writeUShort(size, loca);
         }
       }

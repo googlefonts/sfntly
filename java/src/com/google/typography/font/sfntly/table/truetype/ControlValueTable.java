@@ -36,12 +36,12 @@ public final class ControlValueTable extends Table {
 
   /** Get the data value at the specified index. */
   public int fword(int index) {
-    return this.data.readFWord(index);
+    return data.readFWord(index);
   }
 
   /** Get the number of FWORDs in the data. */
   public int fwordCount() {
-    return this.dataLength() / FontData.SizeOf.FWORD;
+    return dataLength() / FontData.SizeOf.FWORD;
   }
 
   public static class Builder extends ByteArrayTableBuilder<ControlValueTable> {
@@ -60,7 +60,7 @@ public final class ControlValueTable extends Table {
 
     @Override
     protected ControlValueTable subBuildTable(ReadableFontData data) {
-      return new ControlValueTable(this.header(), data);
+      return new ControlValueTable(header(), data);
     }
   }
 }

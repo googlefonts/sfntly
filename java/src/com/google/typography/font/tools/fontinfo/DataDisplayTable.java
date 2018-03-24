@@ -221,7 +221,7 @@ public class DataDisplayTable {
    * @return an array of CSV strings
    */
   public String[] csvStringArray() {
-    String[] output = new String[this.numRows + 1];
+    String[] output = new String[numRows + 1];
 
     // Add header to output
     StringBuilder rowString = new StringBuilder(csvFormat(header.get(0)));

@@ -39,11 +39,11 @@ public final class EbdtTable extends SubTableContainerTable {
   }
 
   public int version() {
-    return this.data.readFixed(HeaderOffsets.version);
+    return data.readFixed(HeaderOffsets.version);
   }
 
   public BitmapGlyph glyph(int offset, int length, int format) {
-    ReadableFontData glyphData = this.data.slice(offset, length);
+    ReadableFontData glyphData = data.slice(offset, length);
     return BitmapGlyph.createGlyph(glyphData, format);
   }
 
@@ -69,23 +69,23 @@ public final class EbdtTable extends SubTableContainerTable {
     }
 
     public void setLoca(List<Map<Integer, BitmapGlyphInfo>> locaList) {
-      this.revert();
+      revert();
       this.glyphLoca = locaList;
     }
 
     public List<Map<Integer, BitmapGlyphInfo>> generateLocaList() {
-      if (this.glyphBuilders == null) {
-        if (this.glyphLoca == null) {
+      if (glyphBuilders == null) {
+        if (glyphLoca == null) {
           return new ArrayList<>(0);
         }
-        return this.glyphLoca;
+        return glyphLoca;
       }
 
-      List<Map<Integer, BitmapGlyphInfo>> newLocaList = new ArrayList<>(this.glyphBuilders.size());
+      List<Map<Integer, BitmapGlyphInfo>> newLocaList = new ArrayList<>(glyphBuilders.size());
 
       int startOffset = HeaderOffsets.SIZE;
       for (Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> builderMap :
-          this.glyphBuilders) {
+          glyphBuilders) {
         Map<Integer, BitmapGlyphInfo> newLocaMap = new TreeMap<>();
         int glyphOffset = 0;
         for (Map.Entry<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> glyphEntry :
@@ -116,7 +116,7 @@ public final class EbdtTable extends SubTableContainerTable {
      * @return the list of glyph builders
      */
     public List<Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>>> glyphBuilders() {
-      return this.getGlyphBuilders();
+      return getGlyphBuilders();
     }
 
     /**
@@ -133,24 +133,24 @@ public final class EbdtTable extends SubTableContainerTable {
     public void setGlyphBuilders(
         List<Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>>> glyphBuilders) {
       this.glyphBuilders = glyphBuilders;
-      this.setModelChanged();
+      setModelChanged();
     }
 
     private List<Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>>> getGlyphBuilders() {
-      if (this.glyphBuilders == null) {
-        if (this.glyphLoca == null) {
+      if (glyphBuilders == null) {
+        if (glyphLoca == null) {
           throw new IllegalStateException("Loca values not set - unable to parse glyph data.");
         }
-        this.glyphBuilders = Builder.initialize(this.internalReadData(), this.glyphLoca);
-        this.setModelChanged();
+        this.glyphBuilders = Builder.initialize(internalReadData(), glyphLoca);
+        setModelChanged();
       }
-      return this.glyphBuilders;
+      return glyphBuilders;
     }
 
     public void revert() {
       this.glyphLoca = null;
       this.glyphBuilders = null;
-      this.setModelChanged(false);
+      setModelChanged(false);
     }
 
     private static List<Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>>> initialize(
@@ -177,24 +177,24 @@ public final class EbdtTable extends SubTableContainerTable {
 
     @Override
     protected EbdtTable subBuildTable(ReadableFontData data) {
-      return new EbdtTable(this.header(), data);
+      return new EbdtTable(header(), data);
     }
 
     @Override
     protected void subDataSet() {
-      this.revert();
+      revert();
     }
 
     @Override
     protected int subDataSizeToSerialize() {
-      if (this.glyphBuilders == null || this.glyphBuilders.size() == 0) {
+      if (glyphBuilders == null || glyphBuilders.size() == 0) {
         return 0;
       }
 
       boolean fixed = true;
       int size = HeaderOffsets.SIZE;
       for (Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> builderMap :
-          this.glyphBuilders) {
+          glyphBuilders) {
         Map<Integer, BitmapGlyphInfo> newLocaMap = new TreeMap<>();
         for (Map.Entry<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> glyphEntry :
             builderMap.entrySet()) {
@@ -209,16 +209,16 @@ public final class EbdtTable extends SubTableContainerTable {
 
     @Override
     protected boolean subReadyToSerialize() {
-      return this.glyphBuilders != null;
+      return glyphBuilders != null;
     }
 
     @Override
     protected int subSerialize(WritableFontData newData) {
       int size = 0;
-      size += newData.writeFixed(HeaderOffsets.version, this.version);
+      size += newData.writeFixed(HeaderOffsets.version, version);
 
       for (Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> builderMap :
-          this.glyphBuilders) {
+          glyphBuilders) {
         Map<Integer, BitmapGlyphInfo> newLocaMap = new TreeMap<>();
         for (Map.Entry<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> glyphEntry :
             builderMap.entrySet()) {

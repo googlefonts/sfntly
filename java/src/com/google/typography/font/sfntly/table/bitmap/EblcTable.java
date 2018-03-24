@@ -56,30 +56,30 @@ public class EblcTable extends SubTableContainerTable {
   }
 
   public int version() {
-    return this.data.readFixed(HeaderOffsets.version);
+    return data.readFixed(HeaderOffsets.version);
   }
 
   public int numSizes() {
-    return this.data.readULongAsInt(HeaderOffsets.numSizes);
+    return data.readULongAsInt(HeaderOffsets.numSizes);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder(super.toString());
     sb.append("\nnum sizes = ");
-    sb.append(this.numSizes());
+    sb.append(numSizes());
     sb.append("\n");
-    for (int i = 0; i < this.numSizes(); i++) {
+    for (int i = 0; i < numSizes(); i++) {
       sb.append(i);
       sb.append(": ");
-      BitmapSizeTable size = this.bitmapSizeTable(i);
+      BitmapSizeTable size = bitmapSizeTable(i);
       sb.append(size.toString());
     }
     return sb.toString();
   }
 
   public BitmapSizeTable bitmapSizeTable(int index) {
-    if (index < 0 || index > this.numSizes()) {
+    if (index < 0 || index > numSizes()) {
       throw new IndexOutOfBoundsException("Size table index is outside of the range of tables.");
     }
     List<BitmapSizeTable> bitmapSizeTableList = getBitmapSizeTableList();
@@ -87,14 +87,14 @@ public class EblcTable extends SubTableContainerTable {
   }
 
   private List<BitmapSizeTable> getBitmapSizeTableList() {
-    if (this.bitmapSizeTable == null) {
-      synchronized (this.bitmapSizeTableLock) {
-        if (this.bitmapSizeTable == null) {
-          this.bitmapSizeTable = createBitmapSizeTable(this.data, this.numSizes());
+    if (bitmapSizeTable == null) {
+      synchronized (bitmapSizeTableLock) {
+        if (bitmapSizeTable == null) {
+          this.bitmapSizeTable = createBitmapSizeTable(data, numSizes());
         }
       }
     }
-    return this.bitmapSizeTable;
+    return bitmapSizeTable;
   }
 
   private static List<BitmapSizeTable> createBitmapSizeTable(ReadableFontData data, int numSizes) {
@@ -133,12 +133,12 @@ public class EblcTable extends SubTableContainerTable {
     }
 
     public List<BitmapSizeTable.Builder> bitmapSizeBuilders() {
-      return this.getSizeList();
+      return getSizeList();
     }
 
     protected void revert() {
       this.sizeTableBuilders = null;
-      this.setModelChanged(false);
+      setModelChanged(false);
     }
 
     /**
@@ -150,7 +150,7 @@ public class EblcTable extends SubTableContainerTable {
      * @return the list of loca maps with one for each size table builder
      */
     public List<Map<Integer, BitmapGlyphInfo>> generateLocaList() {
-      List<BitmapSizeTable.Builder> sizeBuilderList = this.getSizeList();
+      List<BitmapSizeTable.Builder> sizeBuilderList = getSizeList();
 
       List<Map<Integer, BitmapGlyphInfo>> locaList = new ArrayList<>(sizeBuilderList.size());
       int sizeIndex = 0;
@@ -166,11 +166,11 @@ public class EblcTable extends SubTableContainerTable {
     }
 
     private List<BitmapSizeTable.Builder> getSizeList() {
-      if (this.sizeTableBuilders == null) {
-        this.sizeTableBuilders = this.initialize(this.internalReadData());
+      if (sizeTableBuilders == null) {
+        this.sizeTableBuilders = initialize(internalReadData());
         super.setModelChanged();
       }
-      return this.sizeTableBuilders;
+      return sizeTableBuilders;
     }
 
     private List<BitmapSizeTable.Builder> initialize(ReadableFontData data) {
@@ -191,23 +191,23 @@ public class EblcTable extends SubTableContainerTable {
 
     @Override
     protected EblcTable subBuildTable(ReadableFontData data) {
-      return new EblcTable(this.header(), data);
+      return new EblcTable(header(), data);
     }
 
     @Override
     protected void subDataSet() {
-      this.revert();
+      revert();
     }
 
     @Override
     protected int subDataSizeToSerialize() {
-      if (this.sizeTableBuilders == null) {
+      if (sizeTableBuilders == null) {
         return 0;
       }
       int size = HeaderOffsets.SIZE;
       boolean variable = false;
       int sizeIndex = 0;
-      for (BitmapSizeTable.Builder sizeBuilder : this.sizeTableBuilders) {
+      for (BitmapSizeTable.Builder sizeBuilder : sizeTableBuilders) {
         int sizeBuilderSize = sizeBuilder.subDataSizeToSerialize();
         if (DEBUG) {
           System.out.printf(
@@ -221,10 +221,10 @@ public class EblcTable extends SubTableContainerTable {
 
     @Override
     protected boolean subReadyToSerialize() {
-      if (this.sizeTableBuilders == null) {
+      if (sizeTableBuilders == null) {
         return false;
       }
-      for (BitmapSizeTable.Builder sizeBuilder : this.sizeTableBuilders) {
+      for (BitmapSizeTable.Builder sizeBuilder : sizeTableBuilders) {
         if (!sizeBuilder.subReadyToSerialize()) {
           return false;
         }
@@ -235,8 +235,8 @@ public class EblcTable extends SubTableContainerTable {
     @Override
     protected int subSerialize(WritableFontData newData) {
       // header
-      int size = newData.writeFixed(0, this.version);
-      size += newData.writeULong(size, this.sizeTableBuilders.size());
+      int size = newData.writeFixed(0, version);
+      size += newData.writeULong(size, sizeTableBuilders.size());
 
       // calculate the offsets
 
@@ -247,13 +247,13 @@ public class EblcTable extends SubTableContainerTable {
 
       // offset to the start of the whole index subtable block
       int subTableBlockStartOffset =
-          sizeTableOffset + this.sizeTableBuilders.size() * BitmapSizeTable.Offset.SIZE;
+          sizeTableOffset + sizeTableBuilders.size() * BitmapSizeTable.Offset.SIZE;
       // walking offset in the index subtable
       // points to the start of the current subtable block
       int currentSubTableBlockStartOffset = subTableBlockStartOffset;
 
       int sizeIndex = 0;
-      for (BitmapSizeTable.Builder sizeBuilder : this.sizeTableBuilders) {
+      for (BitmapSizeTable.Builder sizeBuilder : sizeTableBuilders) {
         sizeBuilder.setIndexSubTableArrayOffset(currentSubTableBlockStartOffset);
         List<IndexSubTable.Builder<? extends IndexSubTable>> indexSubTableBuilderList =
             sizeBuilder.indexSubTableBuilders();

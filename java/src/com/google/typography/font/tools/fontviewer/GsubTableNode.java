@@ -13,10 +13,10 @@ public class GsubTableNode extends AbstractNode {
 
   public GsubTableNode(GSubTable gsub) {
     this.gsub = gsub;
-    this.children.add(new ScriptListTableNode(gsub.scriptList()));
-    this.children.add(new SubTableNode(gsub.featureList(), "feature"));
-    this.children.add(new SubTableNode(gsub.lookupList(), "lookup"));
-    this.children.add(new GsubRuleSetsNode(gsub));
+    children.add(new ScriptListTableNode(gsub.scriptList()));
+    children.add(new SubTableNode(gsub.featureList(), "feature"));
+    children.add(new SubTableNode(gsub.lookupList(), "lookup"));
+    children.add(new GsubRuleSetsNode(gsub));
   }
 
   @Override
@@ -36,6 +36,6 @@ public class GsubTableNode extends AbstractNode {
 
   @Override
   JComponent render() {
-    return new JTextArea(this.gsub.toString());
+    return new JTextArea(gsub.toString());
   }
 }

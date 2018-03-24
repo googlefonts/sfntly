@@ -49,7 +49,7 @@ final class GrowableMemoryByteArray extends ByteArray {
 
   @Override
   protected int internalGet(int index) {
-    return this.b[index];
+    return b[index];
   }
 
   @Override

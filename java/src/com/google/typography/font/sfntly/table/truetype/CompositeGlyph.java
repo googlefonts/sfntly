@@ -37,11 +37,11 @@ public final class CompositeGlyph extends Glyph {
 
   @Override
   protected void initialize() {
-    if (this.initialized) {
+    if (initialized) {
       return;
     }
-    synchronized (this.initializationLock) {
-      if (this.initialized) {
+    synchronized (initializationLock) {
+      if (initialized) {
         return;
       }
 
@@ -49,7 +49,7 @@ public final class CompositeGlyph extends Glyph {
       int flags = FLAG_MORE_COMPONENTS;
       while ((flags & FLAG_MORE_COMPONENTS) != 0) {
         contourIndex.add(index);
-        flags = this.data.readUShort(index);
+        flags = data.readUShort(index);
         index += 2 * FontData.SizeOf.USHORT; // flags and glyphIndex
         if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
           index += 2 * FontData.SizeOf.SHORT;
@@ -66,47 +66,47 @@ public final class CompositeGlyph extends Glyph {
       }
       int nonPaddedDataLength = index;
       if ((flags & FLAG_WE_HAVE_INSTRUCTIONS) != 0) {
-        this.instructionSize = this.data.readUShort(index);
+        this.instructionSize = data.readUShort(index);
         index += FontData.SizeOf.USHORT;
         this.instructionsOffset = index;
-        nonPaddedDataLength = index + (this.instructionSize * FontData.SizeOf.BYTE);
+        nonPaddedDataLength = index + (instructionSize * FontData.SizeOf.BYTE);
       }
-      this.setPadding(this.dataLength() - nonPaddedDataLength);
+      setPadding(dataLength() - nonPaddedDataLength);
     }
   }
 
   public int flags(int contour) {
-    return this.data.readUShort(this.contourIndex.get(contour));
+    return data.readUShort(contourIndex.get(contour));
   }
 
   public int numGlyphs() {
-    return this.contourIndex.size();
+    return contourIndex.size();
   }
 
   public int glyphIndex(int contour) {
-    return this.data.readUShort(FontData.SizeOf.USHORT + this.contourIndex.get(contour));
+    return data.readUShort(FontData.SizeOf.USHORT + contourIndex.get(contour));
   }
 
   public int argument1(int contour) {
-    int index = 2 * FontData.SizeOf.USHORT + this.contourIndex.get(contour);
-    int flags = this.flags(contour);
+    int index = 2 * FontData.SizeOf.USHORT + contourIndex.get(contour);
+    int flags = flags(contour);
     if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
-      return this.data.readUShort(index);
+      return data.readUShort(index);
     }
-    return this.data.readByte(index);
+    return data.readByte(index);
   }
 
   public int argument2(int contour) {
-    int index = 2 * FontData.SizeOf.USHORT + this.contourIndex.get(contour);
-    int flags = this.flags(contour);
+    int index = 2 * FontData.SizeOf.USHORT + contourIndex.get(contour);
+    int flags = flags(contour);
     if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
-      return this.data.readUShort(index + FontData.SizeOf.USHORT);
+      return data.readUShort(index + FontData.SizeOf.USHORT);
     }
-    return this.data.readByte(index + FontData.SizeOf.BYTE);
+    return data.readByte(index + FontData.SizeOf.BYTE);
   }
 
   public int transformationSize(int contour) {
-    int flags = this.flags(contour);
+    int flags = flags(contour);
     if ((flags & FLAG_WE_HAVE_A_SCALE) != 0) {
       return FontData.SizeOf.F2DOT14;
     } else if ((flags & FLAG_WE_HAVE_AN_X_AND_Y_SCALE) != 0) {
@@ -118,8 +118,8 @@ public final class CompositeGlyph extends Glyph {
   }
 
   public byte[] transformation(int contour) {
-    int flags = this.flags(contour);
-    int index = this.contourIndex.get(contour) + 2 * FontData.SizeOf.USHORT;
+    int flags = flags(contour);
+    int index = contourIndex.get(contour) + 2 * FontData.SizeOf.USHORT;
     if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
       index += 2 * FontData.SizeOf.SHORT;
     } else {
@@ -128,18 +128,18 @@ public final class CompositeGlyph extends Glyph {
 
     int tsize = transformationSize(contour);
     byte[] transformation = new byte[tsize];
-    this.data.readBytes(index, transformation, 0, tsize);
+    data.readBytes(index, transformation, 0, tsize);
     return transformation;
   }
 
   @Override
   public int instructionSize() {
-    return this.instructionSize;
+    return instructionSize;
   }
 
   @Override
   public ReadableFontData instructions() {
-    return this.data.slice(this.instructionsOffset, this.instructionSize());
+    return data.slice(instructionsOffset, instructionSize());
   }
 
   @Override
@@ -148,20 +148,20 @@ public final class CompositeGlyph extends Glyph {
     sb.append(
         String.format(
             "%s\ncontourOffset.length = %d\ninstructionSize = %d\n",
-            super.toString(), this.contourIndex.size(), this.instructionSize));
+            super.toString(), contourIndex.size(), instructionSize));
     sb.append("\tcontour index = [");
-    for (int contour = 0; contour < this.contourIndex.size(); contour++) {
+    for (int contour = 0; contour < contourIndex.size(); contour++) {
       if (contour != 0) {
         sb.append(", ");
       }
-      sb.append(this.contourIndex.get(contour));
+      sb.append(contourIndex.get(contour));
     }
     sb.append("]\n");
-    for (int contour = 0; contour < this.contourIndex.size(); contour++) {
+    for (int contour = 0; contour < contourIndex.size(); contour++) {
       sb.append(
           String.format(
               "\t%d = [gid = %d, arg1 = %d, arg2 = %d]\n",
-              contour, this.glyphIndex(contour), this.argument1(contour), this.argument2(contour)));
+              contour, glyphIndex(contour), argument1(contour), argument2(contour)));
     }
     return sb.toString();
   }

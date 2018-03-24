@@ -155,7 +155,7 @@ public final class Header {
     if (!(obj instanceof Header)) {
       return false;
     }
-    return ((Header) obj).tag == this.tag;
+    return ((Header) obj).tag == tag;
   }
 
   /**
@@ -164,12 +164,12 @@ public final class Header {
    */
   @Override
   public int hashCode() {
-    return this.tag;
+    return tag;
   }
 
   @Override
   public String toString() {
     return String.format(
-        "[%s, %x, %x, %x]", Tag.stringValue(this.tag), this.checksum, this.offset, this.length);
+        "[%s, %x, %x, %x]", Tag.stringValue(tag), checksum, offset, length);
   }
 }

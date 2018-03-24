@@ -658,8 +658,8 @@ class ViewableTaggedData {
     }
 
     private int lowestEquality(WidthUsageRecord other) {
-      for (int i = 0; this.widthUsage.containsKey(i); i++) {
-        if (other.widthUsage.get(i) == this.widthUsage.get(i)) {
+      for (int i = 0; widthUsage.containsKey(i); i++) {
+        if (other.widthUsage.get(i) == widthUsage.get(i)) {
           return i;
         }
       }
@@ -736,11 +736,11 @@ class ViewableTaggedData {
 
     @Override
     public int compareTo(Marker rhs) {
-      int result = this.position - rhs.position;
+      int result = position - rhs.position;
       if (result != 0) {
         return result;
       }
-      Class<? extends Marker> thisClass = this.getClass();
+      Class<? extends Marker> thisClass = getClass();
       Class<? extends Marker> thatClass = rhs.getClass();
       result = classOrder(thisClass) - classOrder(thatClass);
       if (result != 0) {

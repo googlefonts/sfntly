@@ -36,7 +36,7 @@ public class FontViewer {
   FontViewer(Font font) {
     JScrollPane fontPane = createFontTree(font);
     this.contentScrollPane = createContentPane();
-    this.frame = createFrame(fontPane, this.contentScrollPane);
+    this.frame = createFrame(fontPane, contentScrollPane);
   }
 
   private JScrollPane createFontTree(Font font) {
@@ -67,7 +67,7 @@ public class FontViewer {
     JFrame frame = new JFrame("Font Viewer");
     frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     this.framePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, fontPane, mainPane);
-    frame.getContentPane().add(this.framePane);
+    frame.getContentPane().add(framePane);
     frame.pack();
     frame.setLocationRelativeTo(null);
     return frame;
@@ -77,12 +77,12 @@ public class FontViewer {
     JComponent mainComponent = node.render();
     mainComponent.setBorder(new EmptyBorder(3, 3, 3, 3));
     if (node.renderInScrollPane()) {
-      this.contentScrollPane.setViewportView(mainComponent);
-      this.contentScrollPane.revalidate();
-      this.contentScrollPane.repaint();
-      this.framePane.setRightComponent(this.contentScrollPane);
+      contentScrollPane.setViewportView(mainComponent);
+      contentScrollPane.revalidate();
+      contentScrollPane.repaint();
+      framePane.setRightComponent(contentScrollPane);
     } else {
-      this.framePane.setRightComponent(mainComponent);
+      framePane.setRightComponent(mainComponent);
     }
   }
 

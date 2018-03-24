@@ -40,35 +40,35 @@ public class BigGlyphMetrics extends GlyphMetrics {
   }
 
   public int height() {
-    return this.data.readByte(Offset.height);
+    return data.readByte(Offset.height);
   }
 
   public int width() {
-    return this.data.readByte(Offset.width);
+    return data.readByte(Offset.width);
   }
 
   public int horiBearingX() {
-    return this.data.readChar(Offset.horiBearingX);
+    return data.readChar(Offset.horiBearingX);
   }
 
   public int horiBearingY() {
-    return this.data.readChar(Offset.horiBearingY);
+    return data.readChar(Offset.horiBearingY);
   }
 
   public int horiAdvance() {
-    return this.data.readByte(Offset.horiAdvance);
+    return data.readByte(Offset.horiAdvance);
   }
 
   public int vertBearingX() {
-    return this.data.readChar(Offset.vertBearingX);
+    return data.readChar(Offset.vertBearingX);
   }
 
   public int vertBearingY() {
-    return this.data.readChar(Offset.vertBearingY);
+    return data.readChar(Offset.vertBearingY);
   }
 
   public int vertAdvance() {
-    return this.data.readByte(Offset.vertAdvance);
+    return data.readByte(Offset.vertAdvance);
   }
 
   public static class Builder extends GlyphMetrics.Builder<BigGlyphMetrics> {
@@ -87,67 +87,67 @@ public class BigGlyphMetrics extends GlyphMetrics {
     }
 
     public int height() {
-      return this.internalReadData().readByte(Offset.height);
+      return internalReadData().readByte(Offset.height);
     }
 
     public void setHeight(byte height) {
-      this.internalWriteData().writeByte(Offset.height, height);
+      internalWriteData().writeByte(Offset.height, height);
     }
 
     public int width() {
-      return this.internalReadData().readByte(Offset.width);
+      return internalReadData().readByte(Offset.width);
     }
 
     public void setWidth(byte width) {
-      this.internalWriteData().writeByte(Offset.width, width);
+      internalWriteData().writeByte(Offset.width, width);
     }
 
     public int horiBearingX() {
-      return this.internalReadData().readChar(Offset.horiBearingX);
+      return internalReadData().readChar(Offset.horiBearingX);
     }
 
     public void setHoriBearingX(byte bearing) {
-      this.internalWriteData().writeChar(Offset.horiBearingX, bearing);
+      internalWriteData().writeChar(Offset.horiBearingX, bearing);
     }
 
     public int horiBearingY() {
-      return this.internalReadData().readChar(Offset.horiBearingY);
+      return internalReadData().readChar(Offset.horiBearingY);
     }
 
     public void setHoriBearingY(byte bearing) {
-      this.internalWriteData().writeChar(Offset.horiBearingY, bearing);
+      internalWriteData().writeChar(Offset.horiBearingY, bearing);
     }
 
     public int horiAdvance() {
-      return this.internalReadData().readByte(Offset.horiAdvance);
+      return internalReadData().readByte(Offset.horiAdvance);
     }
 
     public void setHoriAdvance(byte advance) {
-      this.internalWriteData().writeByte(Offset.horiAdvance, advance);
+      internalWriteData().writeByte(Offset.horiAdvance, advance);
     }
 
     public int vertBearingX() {
-      return this.internalReadData().readChar(Offset.vertBearingX);
+      return internalReadData().readChar(Offset.vertBearingX);
     }
 
     public void setVertBearingX(byte bearing) {
-      this.internalWriteData().writeChar(Offset.vertBearingX, bearing);
+      internalWriteData().writeChar(Offset.vertBearingX, bearing);
     }
 
     public int vertBearingY() {
-      return this.internalReadData().readChar(Offset.vertBearingY);
+      return internalReadData().readChar(Offset.vertBearingY);
     }
 
     public void setVertBearingY(byte bearing) {
-      this.internalWriteData().writeChar(Offset.vertBearingY, bearing);
+      internalWriteData().writeChar(Offset.vertBearingY, bearing);
     }
 
     public int vertAdvance() {
-      return this.internalReadData().readByte(Offset.vertAdvance);
+      return internalReadData().readByte(Offset.vertAdvance);
     }
 
     public void setVertAdvance(byte advance) {
-      this.internalWriteData().writeByte(Offset.vertAdvance, advance);
+      internalWriteData().writeByte(Offset.vertAdvance, advance);
     }
 
     @Override
@@ -172,7 +172,7 @@ public class BigGlyphMetrics extends GlyphMetrics {
 
     @Override
     protected int subSerialize(WritableFontData newData) {
-      return this.data().copyTo(newData);
+      return data().copyTo(newData);
     }
   }
 }

@@ -36,16 +36,16 @@ public class ScriptListTableNode extends AbstractNode {
 
     @Override
     public int getRowCount() {
-      return ScriptListTableNode.this.children.size();
+      return children.size();
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
       switch (columnIndex) {
         case 0:
-          return ScriptListTableNode.this.children.get(rowIndex).getKey();
+          return children.get(rowIndex).getKey();
         case 1:
-          return ScriptListTableNode.this.children.get(rowIndex).getValue();
+          return children.get(rowIndex).getValue();
         default:
           throw new IllegalStateException();
       }

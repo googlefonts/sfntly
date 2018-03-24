@@ -54,7 +54,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     }
 
     public int value() {
-      return this.value;
+      return value;
     }
 
     public boolean equals(int value) {
@@ -78,16 +78,16 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
   }
 
   public int format() {
-    return this.format;
+    return format;
   }
 
   public CMapId cmapId() {
-    return this.cmapId;
+    return cmapId;
   }
 
   /** @see PlatformId */
   public int platformId() {
-    return this.cmapId().platformId();
+    return cmapId().platformId();
   }
 
   /**
@@ -96,7 +96,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
    * @see UnicodeEncodingId
    */
   public int encodingId() {
-    return this.cmapId().encodingId();
+    return cmapId().encodingId();
   }
 
   abstract static class CharIterator implements Iterator<Integer> {
@@ -151,16 +151,16 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
 
     @Override
     public boolean hasNext() {
-      while (this.range < this.nRanges) {
-        if (this.curr < this.end) {
+      while (range < nRanges) {
+        if (curr < end) {
           return true;
         }
         this.range++;
-        if (this.range >= this.nRanges) {
+        if (range >= nRanges) {
           return false;
         }
-        this.curr = this.getRangeStart(this.range);
-        this.end = this.getRangeEnd(this.range);
+        this.curr = getRangeStart(range);
+        this.end = getRangeEnd(range);
       }
       return false;
     }
@@ -177,7 +177,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
 
   @Override
   public int hashCode() {
-    return this.cmapId.hashCode();
+    return cmapId.hashCode();
   }
 
   @Override
@@ -188,7 +188,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     if (!(obj instanceof CMap)) {
       return false;
     }
-    return this.cmapId.equals(((CMap) obj).cmapId);
+    return cmapId.equals(((CMap) obj).cmapId);
   }
 
   /**
@@ -220,7 +220,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
   public String toString() {
     return String.format(
         "cmap: %s, %s, Data Size=%#x",
-        this.cmapId(), CMapFormat.valueOf(this.format()), this.data.length());
+        cmapId(), CMapFormat.valueOf(format()), data.length());
   }
 
   public abstract static class Builder<T extends CMap> extends SubTable.Builder<T> {
@@ -236,7 +236,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     }
 
     public CMapId cmapId() {
-      return this.cmapId;
+      return cmapId;
     }
 
     /**
@@ -249,7 +249,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
      * @see UnicodeEncodingId
      */
     public int encodingId() {
-      return this.cmapId().encodingId();
+      return cmapId().encodingId();
     }
 
     /**
@@ -259,15 +259,15 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
      * @see PlatformId
      */
     public int platformId() {
-      return this.cmapId().platformId();
+      return cmapId().platformId();
     }
 
     public CMapFormat format() {
-      return this.format;
+      return format;
     }
 
     public int language() {
-      return this.language;
+      return language;
     }
 
     public void setLanguage(int language) {
@@ -287,7 +287,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
 
     @Override
     protected int subDataSizeToSerialize() {
-      return this.internalReadData().length();
+      return internalReadData().length();
     }
 
     @Override
@@ -297,7 +297,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
 
     @Override
     protected int subSerialize(WritableFontData newData) {
-      return this.internalReadData().copyTo(newData);
+      return internalReadData().copyTo(newData);
     }
 
     static CMap.Builder<? extends CMap> getBuilder(
@@ -349,7 +349,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
 
     @Override
     public String toString() {
-      return String.format("%s, format = %s", this.cmapId(), this.format());
+      return String.format("%s, format = %s", cmapId(), format());
     }
   }
 }

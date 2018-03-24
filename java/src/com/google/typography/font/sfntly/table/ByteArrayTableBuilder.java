@@ -41,7 +41,7 @@ public abstract class ByteArrayTableBuilder<T extends Table> extends TableBasedT
    * @param index index relative to the start of the table
    */
   public int byteValue(int index) throws IOException {
-    ReadableFontData data = this.internalReadData();
+    ReadableFontData data = internalReadData();
     if (data == null) {
       throw new IOException("No font data for the table.");
     }
@@ -54,7 +54,7 @@ public abstract class ByteArrayTableBuilder<T extends Table> extends TableBasedT
    * @param index index relative to the start of the table
    */
   public void setByteValue(int index, byte b) throws IOException {
-    WritableFontData data = this.internalWriteData();
+    WritableFontData data = internalWriteData();
     if (data == null) {
       throw new IOException("No font data for the table.");
     }
@@ -63,7 +63,7 @@ public abstract class ByteArrayTableBuilder<T extends Table> extends TableBasedT
 
   /** Get the number of bytes set for this table. It may include padding bytes at the end. */
   public int byteCount() throws IOException {
-    ReadableFontData data = this.internalReadData();
+    ReadableFontData data = internalReadData();
     if (data == null) {
       throw new IOException("No font data for the table.");
     }

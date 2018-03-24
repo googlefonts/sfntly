@@ -48,47 +48,47 @@ public final class HorizontalMetricsTable extends Table {
   }
 
   public int numberOfHMetrics() {
-    return this.numHMetrics;
+    return numHMetrics;
   }
 
   public int numberOfLSBs() {
-    return this.numGlyphs - this.numHMetrics;
+    return numGlyphs - numHMetrics;
   }
 
   public int hMetricAdvanceWidth(int entry) {
-    if (entry > this.numHMetrics) {
+    if (entry > numHMetrics) {
       throw new IndexOutOfBoundsException();
     }
-    return this.data.readUShort(entry * MetricOffset.SIZE + MetricOffset.advanceWidth);
+    return data.readUShort(entry * MetricOffset.SIZE + MetricOffset.advanceWidth);
   }
 
   public int hMetricLSB(int entry) {
-    if (entry > this.numHMetrics) {
+    if (entry > numHMetrics) {
       throw new IndexOutOfBoundsException();
     }
-    return this.data.readShort(entry * MetricOffset.SIZE + MetricOffset.leftSideBearing);
+    return data.readShort(entry * MetricOffset.SIZE + MetricOffset.leftSideBearing);
   }
 
   public int lsbTableEntry(int entry) {
-    if (entry > this.numberOfLSBs()) {
+    if (entry > numberOfLSBs()) {
       throw new IndexOutOfBoundsException();
     }
-    return this.data.readShort(
-        this.numHMetrics * MetricOffset.SIZE + entry * FontData.SizeOf.SHORT);
+    return data.readShort(
+        numHMetrics * MetricOffset.SIZE + entry * FontData.SizeOf.SHORT);
   }
 
   public int advanceWidth(int glyphId) {
-    if (glyphId < this.numHMetrics) {
-      return this.hMetricAdvanceWidth(glyphId);
+    if (glyphId < numHMetrics) {
+      return hMetricAdvanceWidth(glyphId);
     }
-    return this.hMetricAdvanceWidth(this.numHMetrics - 1);
+    return hMetricAdvanceWidth(numHMetrics - 1);
   }
 
   public int leftSideBearing(int glyphId) {
-    if (glyphId < this.numHMetrics) {
-      return this.hMetricLSB(glyphId);
+    if (glyphId < numHMetrics) {
+      return hMetricLSB(glyphId);
     }
-    return this.lsbTableEntry(glyphId - this.numHMetrics);
+    return lsbTableEntry(glyphId - numHMetrics);
   }
 
   /** Builder for a Horizontal Metrics Table - 'hmtx'. */
@@ -110,7 +110,7 @@ public final class HorizontalMetricsTable extends Table {
 
     @Override
     protected HorizontalMetricsTable subBuildTable(ReadableFontData data) {
-      return new HorizontalMetricsTable(this.header(), data, this.numHMetrics, this.numGlyphs);
+      return new HorizontalMetricsTable(header(), data, numHMetrics, numGlyphs);
     }
 
     public void setNumberOfHMetrics(int numHMetrics) {
@@ -118,7 +118,7 @@ public final class HorizontalMetricsTable extends Table {
         throw new IllegalArgumentException("Number of metrics can't be negative.");
       }
       this.numHMetrics = numHMetrics;
-      this.table().numHMetrics = numHMetrics;
+      table().numHMetrics = numHMetrics;
     }
 
     public void setNumGlyphs(int numGlyphs) {
@@ -126,7 +126,7 @@ public final class HorizontalMetricsTable extends Table {
         throw new IllegalArgumentException("Number of glyphs can't be negative.");
       }
       this.numGlyphs = numGlyphs;
-      this.table().numGlyphs = numGlyphs;
+      table().numGlyphs = numGlyphs;
     }
   }
 }

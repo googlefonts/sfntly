@@ -55,7 +55,7 @@ public class Table extends FontDataTable {
 
   /** Get the calculated checksum for the data in the table. */
   public long calculatedChecksum() {
-    return this.data.checksum();
+    return data.checksum();
   }
 
   /**
@@ -64,7 +64,7 @@ public class Table extends FontDataTable {
    * @return the table header
    */
   public Header header() {
-    return this.header;
+    return header;
   }
 
   /**
@@ -74,7 +74,7 @@ public class Table extends FontDataTable {
    * @see #header
    */
   public int headerTag() {
-    return this.header().tag();
+    return header().tag();
   }
 
   /**
@@ -84,7 +84,7 @@ public class Table extends FontDataTable {
    * @see #header
    */
   public int headerOffset() {
-    return this.header().offset();
+    return header().offset();
   }
 
   /**
@@ -94,7 +94,7 @@ public class Table extends FontDataTable {
    * @see #header
    */
   public int headerLength() {
-    return this.header().length();
+    return header().length();
   }
 
   /**
@@ -104,17 +104,17 @@ public class Table extends FontDataTable {
    * @see #header
    */
   public long headerChecksum() {
-    return this.header().checksum();
+    return header().checksum();
   }
 
   @Override
   public String toString() {
     return String.format(
         "[%-4s, cs=0x%08x, offset=0x%08x, size=0x%08x]",
-        Tag.stringValue(this.header.tag()),
-        this.header.checksum(),
-        this.header.offset(),
-        this.header.length());
+        Tag.stringValue(header.tag()),
+        header.checksum(),
+        header.offset(),
+        header.length());
   }
 
   public abstract static class Builder<T extends Table> extends FontDataTable.Builder<T> {
@@ -136,7 +136,7 @@ public class Table extends FontDataTable {
 
     @Override
     public String toString() {
-      return "Table Builder for - " + this.header.toString();
+      return "Table Builder for - " + header.toString();
     }
 
     /**
@@ -147,7 +147,7 @@ public class Table extends FontDataTable {
      * <p>*********************************************************************************
      */
     public final Header header() {
-      return this.header;
+      return header;
     }
 
     /**
@@ -157,8 +157,8 @@ public class Table extends FontDataTable {
      */
     @Override
     protected void notifyPostTableBuild(T table) {
-      if (this.modelChanged() || this.dataChanged()) {
-        Header header = new Header(this.header().tag(), table.dataLength());
+      if (modelChanged() || dataChanged()) {
+        Header header = new Header(header().tag(), table.dataLength());
         ((Table) table).header = header;
       }
     }

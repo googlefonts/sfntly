@@ -57,17 +57,17 @@ class FontNode extends AbstractNode {
 
   @Override
   public int getChildCount() {
-    return this.tables.size();
+    return tables.size();
   }
 
   @Override
   public AbstractNode getChildAt(int index) {
-    return this.tables.get(index);
+    return tables.get(index);
   }
 
   @Override
   protected String getNodeName() {
-    NameTable nameTable = this.font.getTable(Tag.name);
+    NameTable nameTable = font.getTable(Tag.name);
     return nameTable.name(
         Font.PlatformId.Unicode.value(), Font.UnicodeEncodingId.Unicode2_0_BMP.value(),
         NameTable.UnicodeLanguageId.All.value(), NameTable.NameId.FullFontName.value());
@@ -75,6 +75,6 @@ class FontNode extends AbstractNode {
 
   @Override
   public JComponent render() {
-    return new JTextArea(this.font.toString());
+    return new JTextArea(font.toString());
   }
 }

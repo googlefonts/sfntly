@@ -33,21 +33,21 @@ public final class CMapFormat6 extends CMap {
 
   @Override
   public int glyphId(int character) {
-    if (character < this.firstCode || character >= this.firstCode + this.entryCount) {
+    if (character < firstCode || character >= firstCode + entryCount) {
       return CMapTable.NOTDEF;
     }
-    return this.data.readUShort(
-        Header.glyphIdArray + (character - this.firstCode) * FontData.SizeOf.USHORT);
+    return data.readUShort(
+        Header.glyphIdArray + (character - firstCode) * FontData.SizeOf.USHORT);
   }
 
   @Override
   public int language() {
-    return this.data.readUShort(Header.language);
+    return data.readUShort(Header.language);
   }
 
   @Override
   public Iterator<Integer> iterator() {
-    return new CharacterRangeIterator(this.firstCode, this.firstCode + this.entryCount);
+    return new CharacterRangeIterator(firstCode, firstCode + entryCount);
   }
 
   public static class Builder extends CMap.Builder<CMapFormat6> {
@@ -67,7 +67,7 @@ public final class CMapFormat6 extends CMap {
 
     @Override
     protected CMapFormat6 subBuildTable(ReadableFontData data) {
-      return new CMapFormat6(data, this.cmapId());
+      return new CMapFormat6(data, cmapId());
     }
   }
 }

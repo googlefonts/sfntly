@@ -327,46 +327,46 @@ public final class PostScriptTable extends Table {
 
   // TODO: version enum
   public int version() {
-    return this.data.readFixed(Offset.version);
+    return data.readFixed(Offset.version);
   }
 
   public int italicAngle() {
-    return this.data.readFixed(Offset.italicAngle);
+    return data.readFixed(Offset.italicAngle);
   }
 
   public int underlinePosition() {
-    return this.data.readFWord(Offset.underlinePosition);
+    return data.readFWord(Offset.underlinePosition);
   }
 
   public long isFixedPitchRaw() {
-    return this.data.readULong(Offset.isFixedPitch);
+    return data.readULong(Offset.isFixedPitch);
   }
 
   public boolean isFixedPitch() {
-    return this.isFixedPitchRaw() != 0;
+    return isFixedPitchRaw() != 0;
   }
 
   public long minMemType42() {
-    return this.data.readULong(Offset.minMemType42);
+    return data.readULong(Offset.minMemType42);
   }
 
   public long maxMemType42() {
-    return this.data.readULong(Offset.maxMemType42);
+    return data.readULong(Offset.maxMemType42);
   }
 
   public long minMemType1() {
-    return this.data.readULong(Offset.minMemType1);
+    return data.readULong(Offset.minMemType1);
   }
 
   public long maxMemType1() {
-    return this.data.readULong(Offset.maxMemType1);
+    return data.readULong(Offset.maxMemType1);
   }
 
   public int numberOfGlyphs() {
     if (version() == VERSION_1) {
       return NUM_STANDARD_NAMES;
     } else if (version() == VERSION_2) {
-      return this.data.readUShort(Offset.numberOfGlyphs);
+      return data.readUShort(Offset.numberOfGlyphs);
     } else {
       // TODO: should probably be better at signaling unsupported format
       return -1;
@@ -382,7 +382,7 @@ public final class PostScriptTable extends Table {
     if (version() == VERSION_1) {
       glyphNameIndex = glyphNum;
     } else if (version() == VERSION_2) {
-      glyphNameIndex = this.data.readUShort(Offset.glyphNameIndex + 2 * glyphNum);
+      glyphNameIndex = data.readUShort(Offset.glyphNameIndex + 2 * glyphNum);
     } else {
       return null;
     }
@@ -422,9 +422,9 @@ public final class PostScriptTable extends Table {
       names = new ArrayList<>();
       int index = Offset.glyphNameIndex + 2 * numberOfGlyphs();
       while (index < dataLength()) {
-        int strLen = this.data.readUByte(index);
+        int strLen = data.readUByte(index);
         byte[] nameBytes = new byte[strLen];
-        this.data.readBytes(index + 1, nameBytes, 0, strLen);
+        data.readBytes(index + 1, nameBytes, 0, strLen);
         try {
           names.add(new String(nameBytes, "ISO-8859-1"));
         } catch (UnsupportedEncodingException e) {
@@ -454,7 +454,7 @@ public final class PostScriptTable extends Table {
 
     @Override
     protected PostScriptTable subBuildTable(ReadableFontData data) {
-      return new PostScriptTable(this.header(), data);
+      return new PostScriptTable(header(), data);
     }
   }
 }

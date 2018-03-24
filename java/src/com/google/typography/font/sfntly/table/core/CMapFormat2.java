@@ -34,27 +34,27 @@ public final class CMapFormat2 extends CMap {
   }
 
   private int subHeaderOffset(int subHeaderIndex) {
-    return this.data.readUShort(Header.subHeaderKeys + subHeaderIndex * FontData.SizeOf.USHORT);
+    return data.readUShort(Header.subHeaderKeys + subHeaderIndex * FontData.SizeOf.USHORT);
   }
 
   private int firstCode(int subHeaderIndex) {
     int subHeaderOffset = subHeaderOffset(subHeaderIndex);
-    return this.data.readUShort(Header.subHeaderKeys + subHeaderOffset + SubHeader.firstCode);
+    return data.readUShort(Header.subHeaderKeys + subHeaderOffset + SubHeader.firstCode);
   }
 
   private int entryCount(int subHeaderIndex) {
     int subHeaderOffset = subHeaderOffset(subHeaderIndex);
-    return this.data.readUShort(Header.subHeaderKeys + subHeaderOffset + SubHeader.entryCount);
+    return data.readUShort(Header.subHeaderKeys + subHeaderOffset + SubHeader.entryCount);
   }
 
   private int idRangeOffset(int subHeaderIndex) {
     int subHeaderOffset = subHeaderOffset(subHeaderIndex);
-    return this.data.readUShort(Header.subHeaderKeys + subHeaderOffset + SubHeader.idRangeOffset);
+    return data.readUShort(Header.subHeaderKeys + subHeaderOffset + SubHeader.idRangeOffset);
   }
 
   private int idDelta(int subHeaderIndex) {
     int subHeaderOffset = subHeaderOffset(subHeaderIndex);
-    return this.data.readShort(Header.subHeaderKeys + subHeaderOffset + SubHeader.idDelta);
+    return data.readShort(Header.subHeaderKeys + subHeaderOffset + SubHeader.idDelta);
   }
 
   /**
@@ -105,7 +105,7 @@ public final class CMapFormat2 extends CMap {
         (offset + SubHeader.idRangeOffset)
             + idRangeOffset
             + (lowByte - firstCode) * FontData.SizeOf.USHORT;
-    int p = this.data.readUShort(pLocation);
+    int p = data.readUShort(pLocation);
     if (p == 0) {
       return CMapTable.NOTDEF;
     }
@@ -119,7 +119,7 @@ public final class CMapFormat2 extends CMap {
 
   @Override
   public int language() {
-    return this.data.readUShort(Header.language);
+    return data.readUShort(Header.language);
   }
 
   @Override
@@ -144,7 +144,7 @@ public final class CMapFormat2 extends CMap {
 
     @Override
     protected CMapFormat2 subBuildTable(ReadableFontData data) {
-      return new CMapFormat2(data, this.cmapId());
+      return new CMapFormat2(data, cmapId());
     }
   }
 }

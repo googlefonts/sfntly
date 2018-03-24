@@ -35,11 +35,11 @@ public abstract class TableSubsetterImpl implements TableSubsetter {
 
   @Override
   public boolean tagHandled(int tag) {
-    return this.tags.contains(tag);
+    return tags.contains(tag);
   }
 
   @Override
   public Set<Integer> tagsHandled() {
-    return this.tags;
+    return tags;
   }
 }

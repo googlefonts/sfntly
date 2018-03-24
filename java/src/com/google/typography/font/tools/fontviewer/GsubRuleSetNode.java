@@ -18,7 +18,7 @@ public class GsubRuleSetNode extends AbstractNode {
 
   @Override
   protected String getNodeName() {
-    return Integer.toString(this.ruleSetId);
+    return Integer.toString(ruleSetId);
   }
 
   @Override

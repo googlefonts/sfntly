@@ -14,7 +14,7 @@ abstract class AbstractNode extends DefaultMutableTreeNode {
 
   @Override
   public final String toString() {
-    return this.getNodeName();
+    return getNodeName();
   }
 
   protected abstract String getNodeName();

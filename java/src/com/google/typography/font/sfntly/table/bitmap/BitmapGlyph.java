@@ -87,7 +87,7 @@ public abstract class BitmapGlyph extends SubTable {
   }
 
   public int format() {
-    return this.format;
+    return format;
   }
 
   public abstract static class Builder<T extends BitmapGlyph> extends SubTable.Builder<T> {
@@ -123,7 +123,7 @@ public abstract class BitmapGlyph extends SubTable {
     }
 
     public int format() {
-      return this.format;
+      return format;
     }
 
     @Override
@@ -133,7 +133,7 @@ public abstract class BitmapGlyph extends SubTable {
 
     @Override
     protected int subDataSizeToSerialize() {
-      return this.internalReadData().length();
+      return internalReadData().length();
     }
 
     @Override
@@ -143,7 +143,7 @@ public abstract class BitmapGlyph extends SubTable {
 
     @Override
     protected int subSerialize(WritableFontData newData) {
-      return this.internalReadData().copyTo(newData);
+      return internalReadData().copyTo(newData);
     }
   }
 

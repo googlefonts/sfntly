@@ -54,7 +54,7 @@ public final class CMapFormat14 extends CMap {
 
     @Override
     protected CMapFormat14 subBuildTable(ReadableFontData data) {
-      return new CMapFormat14(data, this.cmapId());
+      return new CMapFormat14(data, cmapId());
     }
   }
 }

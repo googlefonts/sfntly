@@ -49,11 +49,11 @@ public final class LocaTable extends Table {
    * @return the table version
    */
   public IndexToLocFormat formatVersion() {
-    return this.version;
+    return version;
   }
 
   public int numGlyphs() {
-    return this.numGlyphs;
+    return numGlyphs;
   }
 
   /**
@@ -66,10 +66,10 @@ public final class LocaTable extends Table {
    * @return the offset in the glyph table to the specified glyph id
    */
   public int glyphOffset(int glyphId) {
-    if (glyphId < 0 || glyphId >= this.numGlyphs) {
+    if (glyphId < 0 || glyphId >= numGlyphs) {
       throw new IndexOutOfBoundsException("Glyph ID is out of bounds.");
     }
-    return this.loca(glyphId);
+    return loca(glyphId);
   }
 
   /**
@@ -80,10 +80,10 @@ public final class LocaTable extends Table {
    * @return the length of the data in the glyph table for the specified glyph id
    */
   public int glyphLength(int glyphId) {
-    if (glyphId < 0 || glyphId >= this.numGlyphs) {
+    if (glyphId < 0 || glyphId >= numGlyphs) {
       throw new IndexOutOfBoundsException("Glyph ID is out of bounds.");
     }
-    return this.loca(glyphId + 1) - this.loca(glyphId);
+    return loca(glyphId + 1) - loca(glyphId);
   }
 
   /**
@@ -93,7 +93,7 @@ public final class LocaTable extends Table {
    * @return the number of locas
    */
   public int numLocas() {
-    return this.numGlyphs + 1;
+    return numGlyphs + 1;
   }
 
   /**
@@ -105,13 +105,13 @@ public final class LocaTable extends Table {
    * @return the loca table value
    */
   public int loca(int index) {
-    if (index < 0 || index > this.numGlyphs) {
+    if (index < 0 || index > numGlyphs) {
       throw new IndexOutOfBoundsException("Glyph ID is out of bounds.");
     }
-    if (this.version == IndexToLocFormat.shortOffset) {
-      return 2 * this.data.readUShort(index * FontData.SizeOf.USHORT);
+    if (version == IndexToLocFormat.shortOffset) {
+      return 2 * data.readUShort(index * FontData.SizeOf.USHORT);
     }
-    return this.data.readULongAsInt(index * FontData.SizeOf.ULONG);
+    return data.readULongAsInt(index * FontData.SizeOf.ULONG);
   }
 
   /**
@@ -133,7 +133,7 @@ public final class LocaTable extends Table {
 
     @Override
     public boolean hasNext() {
-      return this.index <= numGlyphs;
+      return index <= numGlyphs;
     }
 
     @Override
@@ -176,19 +176,19 @@ public final class LocaTable extends Table {
      * @param data the data to initialize from
      */
     private void initialize(ReadableFontData data) {
-      this.clearLoca(false);
-      if (this.loca == null) {
+      clearLoca(false);
+      if (loca == null) {
         this.loca = new ArrayList<>();
       }
       if (data != null) {
-        if (this.numGlyphs < 0) {
+        if (numGlyphs < 0) {
           throw new IllegalStateException("numglyphs not set on LocaTable Builder.");
         }
 
-        LocaTable table = new LocaTable(this.header(), data, this.formatVersion, this.numGlyphs);
+        LocaTable table = new LocaTable(header(), data, formatVersion, numGlyphs);
         Iterator<Integer> locaIter = table.iterator();
         while (locaIter.hasNext()) {
-          this.loca.add(locaIter.next());
+          loca.add(locaIter.next());
         }
       }
     }
@@ -199,14 +199,14 @@ public final class LocaTable extends Table {
      * @throws IndexOutOfBoundsException if the glyph id is not within the correct range
      */
     private int checkGlyphRange(int glyphId) {
-      if (glyphId < 0 || glyphId > this.lastGlyphIndex()) {
+      if (glyphId < 0 || glyphId > lastGlyphIndex()) {
         throw new IndexOutOfBoundsException("Glyph ID is outside of the allowed range.");
       }
       return glyphId;
     }
 
     private int lastGlyphIndex() {
-      return this.loca != null ? this.loca.size() - 2 : this.numGlyphs - 1;
+      return loca != null ? loca.size() - 2 : numGlyphs - 1;
     }
 
     /**
@@ -216,26 +216,26 @@ public final class LocaTable extends Table {
      * @return the loca list
      */
     private List<Integer> getLocaList() {
-      if (this.loca == null) {
-        this.initialize(this.internalReadData());
-        this.setModelChanged();
+      if (loca == null) {
+        initialize(internalReadData());
+        setModelChanged();
       }
-      return this.loca;
+      return loca;
     }
 
     private void clearLoca(boolean nullify) {
-      if (this.loca != null) {
-        this.loca.clear();
+      if (loca != null) {
+        loca.clear();
       }
       if (nullify) {
         this.loca = null;
       }
-      this.setModelChanged(false);
+      setModelChanged(false);
     }
 
     /** Get the format version that will be used when the loca table is generated. */
     public IndexToLocFormat formatVersion() {
-      return this.formatVersion;
+      return formatVersion;
     }
 
     /** Set the format version to be used when generating the loca table. */
@@ -255,7 +255,7 @@ public final class LocaTable extends Table {
      * @see #setLocaList(List)
      */
     public List<Integer> locaList() {
-      return this.getLocaList();
+      return getLocaList();
     }
 
     /**
@@ -267,7 +267,7 @@ public final class LocaTable extends Table {
      */
     public void setLocaList(List<Integer> list) {
       this.loca = list;
-      this.setModelChanged();
+      setModelChanged();
     }
 
     /**
@@ -280,8 +280,8 @@ public final class LocaTable extends Table {
      * @return the offset in the glyph table to the specified glyph id
      */
     public int glyphOffset(int glyphId) {
-      this.checkGlyphRange(glyphId);
-      return this.getLocaList().get(glyphId);
+      checkGlyphRange(glyphId);
+      return getLocaList().get(glyphId);
     }
 
     /**
@@ -293,8 +293,8 @@ public final class LocaTable extends Table {
      * @return the length of the data in the glyph table for the specified glyph id
      */
     public int glyphLength(int glyphId) {
-      this.checkGlyphRange(glyphId);
-      return this.getLocaList().get(glyphId + 1) - this.getLocaList().get(glyphId);
+      checkGlyphRange(glyphId);
+      return getLocaList().get(glyphId + 1) - getLocaList().get(glyphId);
     }
 
     /**
@@ -317,7 +317,7 @@ public final class LocaTable extends Table {
      * @return the number of glyphs.
      */
     public int numGlyphs() {
-      return this.lastGlyphIndex() + 1;
+      return lastGlyphIndex() + 1;
     }
 
     /**
@@ -328,7 +328,7 @@ public final class LocaTable extends Table {
      */
     public void revert() {
       this.loca = null;
-      this.setModelChanged(false);
+      setModelChanged(false);
     }
 
     /**
@@ -338,7 +338,7 @@ public final class LocaTable extends Table {
      * @return the number of locas
      */
     public int numLocas() {
-      return this.getLocaList().size();
+      return getLocaList().size();
     }
 
     /**
@@ -350,46 +350,46 @@ public final class LocaTable extends Table {
      * @return the loca table value
      */
     public int loca(int index) {
-      return this.getLocaList().get(index);
+      return getLocaList().get(index);
     }
 
     @Override
     protected LocaTable subBuildTable(ReadableFontData data) {
-      return new LocaTable(this.header(), data, this.formatVersion, this.numGlyphs);
+      return new LocaTable(header(), data, formatVersion, numGlyphs);
     }
 
     @Override
     protected void subDataSet() {
-      this.initialize(this.internalReadData());
+      initialize(internalReadData());
     }
 
     @Override
     protected int subDataSizeToSerialize() {
-      if (this.loca == null) {
+      if (loca == null) {
         return 0;
       }
-      if (this.formatVersion == IndexToLocFormat.longOffset) {
-        return this.loca.size() * FontData.SizeOf.ULONG;
+      if (formatVersion == IndexToLocFormat.longOffset) {
+        return loca.size() * FontData.SizeOf.ULONG;
       }
-      return this.loca.size() * FontData.SizeOf.USHORT;
+      return loca.size() * FontData.SizeOf.USHORT;
     }
 
     @Override
     protected boolean subReadyToSerialize() {
-      return this.loca != null;
+      return loca != null;
     }
 
     @Override
     protected int subSerialize(WritableFontData newData) {
       int size = 0;
-      for (int l : this.loca) {
-        if (this.formatVersion == IndexToLocFormat.longOffset) {
+      for (int l : loca) {
+        if (formatVersion == IndexToLocFormat.longOffset) {
           size += newData.writeULong(size, l);
         } else {
           size += newData.writeUShort(size, l / 2);
         }
       }
-      this.numGlyphs = this.loca.size() - 1;
+      this.numGlyphs = loca.size() - 1;
       return size;
     }
   }

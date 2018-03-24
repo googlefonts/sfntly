@@ -92,7 +92,7 @@ public final class FontFactory {
    * @see Font#digest()
    */
   public boolean fingerprintFont() {
-    return this.fingerprint;
+    return fingerprint;
   }
 
   // input stream font loading
@@ -150,7 +150,7 @@ public final class FontFactory {
 
   private Font.Builder loadSingleOTFForBuilding(InputStream is) throws IOException {
     MessageDigest digest = null;
-    if (this.fingerprintFont()) {
+    if (fingerprintFont()) {
       try {
         digest = MessageDigest.getInstance("SHA-1");
       } catch (NoSuchAlgorithmException e) {
@@ -160,7 +160,7 @@ public final class FontFactory {
       is = dis;
     }
     Builder builder = Builder.getOTFBuilder(this, is);
-    if (this.fingerprintFont()) {
+    if (fingerprintFont()) {
       builder.setDigest(digest.digest());
     }
     return builder;
@@ -235,7 +235,7 @@ public final class FontFactory {
   private Font.Builder loadSingleOTFForBuilding(WritableFontData wfd, int offsetToOffsetTable)
       throws IOException {
     MessageDigest digest = null;
-    if (this.fingerprintFont()) {
+    if (fingerprintFont()) {
       // TODO(stuartg): digest of ByteArray
     }
     Font.Builder builder = Font.Builder.getOTFBuilder(this, wfd, offsetToOffsetTable);
@@ -253,7 +253,7 @@ public final class FontFactory {
         fontNumber < numFonts;
         fontNumber++, offsetTableOffset += FontData.SizeOf.ULONG) {
       int offset = wfd.readULongAsInt(offsetTableOffset);
-      builders[fontNumber] = this.loadSingleOTFForBuilding(wfd, offset);
+      builders[fontNumber] = loadSingleOTFForBuilding(wfd, offset);
     }
     return builders;
   }

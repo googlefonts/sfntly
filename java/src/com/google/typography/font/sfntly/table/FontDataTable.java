@@ -41,12 +41,12 @@ public abstract class FontDataTable {
    * @return the read only data
    */
   public ReadableFontData readFontData() {
-    return this.data;
+    return data;
   }
 
   @Override
   public String toString() {
-    return this.data.toString();
+    return data.toString();
   }
 
   /**
@@ -56,11 +56,11 @@ public abstract class FontDataTable {
    * @return the data length in bytes
    */
   public final int dataLength() {
-    return this.data.length();
+    return data.length();
   }
 
   public int serialize(OutputStream os) throws IOException {
-    return this.data.copyTo(os);
+    return data.copyTo(os);
   }
 
   protected int serialize(WritableFontData data) {
@@ -106,13 +106,13 @@ public abstract class FontDataTable {
      */
     public WritableFontData data() {
       WritableFontData newData;
-      if (this.modelChanged) {
-        if (!this.subReadyToSerialize()) {
+      if (modelChanged) {
+        if (!subReadyToSerialize()) {
           throw new RuntimeException("Table not ready to build.");
         }
         int size = subDataSizeToSerialize();
         newData = WritableFontData.createWritableFontData(size);
-        this.subSerialize(newData);
+        subSerialize(newData);
       } else {
         ReadableFontData data = internalReadData();
         newData = WritableFontData.createWritableFontData(data != null ? data.length() : 0);
@@ -124,11 +124,11 @@ public abstract class FontDataTable {
     }
 
     public void setData(WritableFontData data) {
-      this.internalSetData(data, true);
+      internalSetData(data, true);
     }
 
     public void setData(ReadableFontData data) {
-      this.internalSetData(data, true);
+      internalSetData(data, true);
     }
 
     private void internalSetData(WritableFontData data, boolean dataChanged) {
@@ -136,7 +136,7 @@ public abstract class FontDataTable {
       this.rData = null;
       if (dataChanged) {
         this.dataChanged = true;
-        this.subDataSet();
+        subDataSet();
       }
     }
 
@@ -145,28 +145,28 @@ public abstract class FontDataTable {
       this.wData = null;
       if (dataChanged) {
         this.dataChanged = true;
-        this.subDataSet();
+        subDataSet();
       }
     }
 
     public T build() {
       T table = null;
 
-      ReadableFontData data = this.internalReadData();
-      if (this.modelChanged) {
+      ReadableFontData data = internalReadData();
+      if (modelChanged) {
         // let subclass serialize from model
-        if (!this.subReadyToSerialize()) {
+        if (!subReadyToSerialize()) {
           return null;
         }
         int size = subDataSizeToSerialize();
         WritableFontData newData = WritableFontData.createWritableFontData(size);
-        this.subSerialize(newData);
+        subSerialize(newData);
         data = newData;
       }
 
       if (data != null) {
-        table = this.subBuildTable(data);
-        this.notifyPostTableBuild(table);
+        table = subBuildTable(data);
+        notifyPostTableBuild(table);
       }
       this.rData = null;
       this.wData = null;
@@ -179,22 +179,22 @@ public abstract class FontDataTable {
     }
 
     protected ReadableFontData internalReadData() {
-      if (this.rData != null) {
-        return this.rData;
+      if (rData != null) {
+        return rData;
       }
-      return this.wData;
+      return wData;
     }
 
     protected WritableFontData internalWriteData() {
-      if (this.wData == null) {
+      if (wData == null) {
         WritableFontData newData =
-            WritableFontData.createWritableFontData(this.rData == null ? 0 : this.rData.length());
-        if (this.rData != null) {
-          this.rData.copyTo(newData);
+            WritableFontData.createWritableFontData(rData == null ? 0 : rData.length());
+        if (rData != null) {
+          rData.copyTo(newData);
         }
-        this.internalSetData(newData, false);
+        internalSetData(newData, false);
       }
-      return this.wData;
+      return wData;
     }
 
     /**
@@ -204,31 +204,31 @@ public abstract class FontDataTable {
      * @return true if the builder has changed
      */
     public boolean changed() {
-      return this.dataChanged() || this.modelChanged();
+      return dataChanged() || modelChanged();
     }
 
     protected boolean dataChanged() {
-      return this.dataChanged;
+      return dataChanged;
     }
 
     protected boolean modelChanged() {
-      return this.currentModelChanged() || this.containedModelChanged();
+      return currentModelChanged() || containedModelChanged();
     }
 
     protected boolean currentModelChanged() {
-      return this.modelChanged;
+      return modelChanged;
     }
 
     protected boolean containedModelChanged() {
-      return this.containedModelChanged;
+      return containedModelChanged;
     }
 
     protected boolean setModelChanged() {
-      return this.setModelChanged(true);
+      return setModelChanged(true);
     }
 
     protected boolean setModelChanged(boolean changed) {
-      boolean old = this.modelChanged;
+      boolean old = modelChanged;
       this.modelChanged = changed;
       return old;
     }

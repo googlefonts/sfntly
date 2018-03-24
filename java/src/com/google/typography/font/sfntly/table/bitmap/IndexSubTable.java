@@ -65,48 +65,48 @@ public abstract class IndexSubTable extends SubTable {
   }
 
   public int indexFormat() {
-    return this.indexFormat;
+    return indexFormat;
   }
 
   public int firstGlyphIndex() {
-    return this.firstGlyphIndex;
+    return firstGlyphIndex;
   }
 
   public int lastGlyphIndex() {
-    return this.lastGlyphIndex;
+    return lastGlyphIndex;
   }
 
   public int imageFormat() {
-    return this.imageFormat;
+    return imageFormat;
   }
 
   public int imageDataOffset() {
-    return this.imageDataOffset;
+    return imageDataOffset;
   }
 
   public BitmapGlyphInfo glyphInfo(int glyphId) {
-    int loca = this.checkGlyphRange(glyphId);
+    int loca = checkGlyphRange(glyphId);
     if (loca == -1) {
       return null;
     }
-    if (this.glyphStartOffset(glyphId) == -1) {
+    if (glyphStartOffset(glyphId) == -1) {
       return null;
     }
 
     return new BitmapGlyphInfo(
         glyphId,
-        this.imageDataOffset(),
-        this.glyphStartOffset(glyphId),
-        this.glyphLength(glyphId),
-        this.imageFormat());
+        imageDataOffset(),
+        glyphStartOffset(glyphId),
+        glyphLength(glyphId),
+        imageFormat());
   }
 
   public final int glyphOffset(int glyphId) {
-    int glyphStartOffset = this.glyphStartOffset(glyphId);
+    int glyphStartOffset = glyphStartOffset(glyphId);
     if (glyphStartOffset == -1) {
       return -1;
     }
-    return this.imageDataOffset() + glyphStartOffset;
+    return imageDataOffset() + glyphStartOffset;
   }
 
   /** Gets the offset of the glyph relative to the block for this index subtable. */
@@ -124,7 +124,7 @@ public abstract class IndexSubTable extends SubTable {
   }
 
   protected int checkGlyphRange(int glyphId) {
-    return IndexSubTable.checkGlyphRange(glyphId, this.firstGlyphIndex(), this.lastGlyphIndex());
+    return IndexSubTable.checkGlyphRange(glyphId, firstGlyphIndex(), lastGlyphIndex());
   }
 
   @Override
@@ -132,15 +132,15 @@ public abstract class IndexSubTable extends SubTable {
     String s =
         String.format(
             "IndexSubTable: [%#x : %#x], format = %d, image format = %s, imageOff = %#x%n",
-            this.firstGlyphIndex(),
-            this.lastGlyphIndex(),
-            this.indexFormat,
-            this.imageFormat(),
-            this.imageDataOffset());
+            firstGlyphIndex(),
+            lastGlyphIndex(),
+            indexFormat,
+            imageFormat(),
+            imageDataOffset());
 
     if (DEBUG) {
-      for (int g = this.firstGlyphIndex(); g < this.lastGlyphIndex(); g++) {
-        s += String.format("\tgid = %d, offset = %d%n", g, this.glyphStartOffset(g));
+      for (int g = firstGlyphIndex(); g < lastGlyphIndex(); g++) {
+        s += String.format("\tgid = %d, offset = %d%n", g, glyphStartOffset(g));
       }
     }
     return s;
@@ -224,14 +224,14 @@ public abstract class IndexSubTable extends SubTable {
       super(data);
       this.firstGlyphIndex = firstGlyphIndex;
       this.lastGlyphIndex = lastGlyphIndex;
-      this.initialize(data);
+      initialize(data);
     }
 
     protected Builder(ReadableFontData data, int firstGlyphIndex, int lastGlyphIndex) {
       super(data);
       this.firstGlyphIndex = firstGlyphIndex;
       this.lastGlyphIndex = lastGlyphIndex;
-      this.initialize(data);
+      initialize(data);
     }
 
     private void initialize(ReadableFontData data) {
@@ -245,16 +245,16 @@ public abstract class IndexSubTable extends SubTable {
      * as protected.
      */
     protected void revert() {
-      this.setModelChanged(false);
-      this.initialize(this.internalReadData());
+      setModelChanged(false);
+      initialize(internalReadData());
     }
 
     public int indexFormat() {
-      return this.indexFormat;
+      return indexFormat;
     }
 
     public int firstGlyphIndex() {
-      return this.firstGlyphIndex;
+      return firstGlyphIndex;
     }
 
     public void setFirstGlyphIndex(int firstGlyphIndex) {
@@ -262,7 +262,7 @@ public abstract class IndexSubTable extends SubTable {
     }
 
     public int lastGlyphIndex() {
-      return this.lastGlyphIndex;
+      return lastGlyphIndex;
     }
 
     public void setLastGlyphIndex(int lastGlyphIndex) {
@@ -270,7 +270,7 @@ public abstract class IndexSubTable extends SubTable {
     }
 
     public int imageFormat() {
-      return this.imageFormat;
+      return imageFormat;
     }
 
     public void setImageFormat(int imageFormat) {
@@ -278,7 +278,7 @@ public abstract class IndexSubTable extends SubTable {
     }
 
     public int imageDataOffset() {
-      return this.imageDataOffset;
+      return imageDataOffset;
     }
 
     public void setImageDataOffset(int offset) {
@@ -292,15 +292,15 @@ public abstract class IndexSubTable extends SubTable {
     public BitmapGlyphInfo glyphInfo(int glyphId) {
       return new BitmapGlyphInfo(
           glyphId,
-          this.imageDataOffset(),
-          this.glyphStartOffset(glyphId),
-          this.glyphLength(glyphId),
-          this.imageFormat());
+          imageDataOffset(),
+          glyphStartOffset(glyphId),
+          glyphLength(glyphId),
+          imageFormat());
     }
 
     /** Gets the full offset of the glyph within the EBDT table. */
     public final int glyphOffset(int glyphId) {
-      return this.imageDataOffset() + this.glyphStartOffset(glyphId);
+      return imageDataOffset() + glyphStartOffset(glyphId);
     }
 
     /** Gets the offset of the glyph relative to the block for this index subtable. */
@@ -317,13 +317,13 @@ public abstract class IndexSubTable extends SubTable {
      * @throws IndexOutOfBoundsException if the glyph id is not within the correct range
      */
     protected int checkGlyphRange(int glyphId) {
-      return IndexSubTable.checkGlyphRange(glyphId, this.firstGlyphIndex(), this.lastGlyphIndex());
+      return IndexSubTable.checkGlyphRange(glyphId, firstGlyphIndex(), lastGlyphIndex());
     }
 
     protected int serializeIndexSubHeader(WritableFontData data) {
-      int size = data.writeUShort(SubOffset.indexFormat, this.indexFormat);
-      size += data.writeUShort(SubOffset.imageFormat, this.imageFormat);
-      size += data.writeULong(SubOffset.imageDataOffset, this.imageDataOffset);
+      int size = data.writeUShort(SubOffset.indexFormat, indexFormat);
+      size += data.writeUShort(SubOffset.imageFormat, imageFormat);
+      size += data.writeULong(SubOffset.imageDataOffset, imageDataOffset);
       return size;
     }
 
@@ -364,15 +364,15 @@ public abstract class IndexSubTable extends SubTable {
       String s =
           String.format(
               "IndexSubTable: [%#x : %#x], format = %d, image format = %s, imageOff = %#x%n",
-              this.firstGlyphIndex(),
-              this.lastGlyphIndex(),
-              this.indexFormat,
-              this.imageFormat(),
-              this.imageDataOffset());
+              firstGlyphIndex(),
+              lastGlyphIndex(),
+              indexFormat,
+              imageFormat(),
+              imageDataOffset());
 
       if (DEBUG) {
-        for (int g = this.firstGlyphIndex(); g < this.lastGlyphIndex(); g++) {
-          s += String.format("\tgid = %d, offset = %d%n", g, this.glyphStartOffset(g));
+        for (int g = firstGlyphIndex(); g < lastGlyphIndex(); g++) {
+          s += String.format("\tgid = %d, offset = %d%n", g, glyphStartOffset(g));
         }
       }
       return s;

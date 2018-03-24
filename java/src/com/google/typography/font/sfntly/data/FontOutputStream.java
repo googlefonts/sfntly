@@ -99,7 +99,7 @@ public class FontOutputStream extends OutputStream {
    * @return the current position in bytes
    */
   public long position() {
-    return this.position;
+    return position;
   }
 
   @Override
@@ -110,7 +110,7 @@ public class FontOutputStream extends OutputStream {
 
   @Override
   public void write(byte[] b) throws IOException {
-    this.write(b, 0, b.length);
+    write(b, 0, b.length);
   }
 
   @Override
@@ -124,48 +124,48 @@ public class FontOutputStream extends OutputStream {
 
   /** Write a Char value. */
   public void writeChar(byte c) throws IOException {
-    this.write(c);
+    write(c);
   }
 
   /** Write a UShort value. */
   public void writeUShort(int us) throws IOException {
-    this.write((byte) ((us >> 8) & 0xff));
-    this.write((byte) (us & 0xff));
+    write((byte) ((us >> 8) & 0xff));
+    write((byte) (us & 0xff));
   }
 
   /** Write a Short value. */
   public void writeShort(int s) throws IOException {
-    this.writeUShort(s);
+    writeUShort(s);
   }
 
   /** Write a UInt24 value. */
   public void writeUInt24(int ui) throws IOException {
-    this.write((byte) ((ui >> 16) & 0xff));
-    this.write((byte) ((ui >> 8) & 0xff));
-    this.write((byte) (ui & 0xff));
+    write((byte) ((ui >> 16) & 0xff));
+    write((byte) ((ui >> 8) & 0xff));
+    write((byte) (ui & 0xff));
   }
 
   /** Write a ULong value. */
   public void writeULong(long ul) throws IOException {
-    this.write((byte) ((ul >> 24) & 0xff));
-    this.write((byte) ((ul >> 16) & 0xff));
-    this.write((byte) ((ul >> 8) & 0xff));
-    this.write((byte) (ul & 0xff));
+    write((byte) ((ul >> 24) & 0xff));
+    write((byte) ((ul >> 16) & 0xff));
+    write((byte) ((ul >> 8) & 0xff));
+    write((byte) (ul & 0xff));
   }
 
   /** Write a Long value. */
   public void writeLong(long l) throws IOException {
-    this.writeULong(l);
+    writeULong(l);
   }
 
   /** Write a Fixed value. */
   public void writeFixed(int f) throws IOException {
-    this.writeULong(f);
+    writeULong(f);
   }
 
   /** Write DateTime value. */
   public void writeDateTime(long date) throws IOException {
-    this.writeULong(date >> 32);
-    this.writeULong(date);
+    writeULong(date >> 32);
+    writeULong(date);
   }
 }

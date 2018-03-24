@@ -32,14 +32,14 @@ public class GlyphNode extends AbstractNode {
 
   @Override
   protected String getNodeName() {
-    return String.valueOf(this.glyphId);
+    return String.valueOf(glyphId);
   }
 
   @Override
   JComponent render() {
     final JTabbedPane pane = new JTabbedPane(SwingConstants.TOP);
     pane.addTab("Graphical", new GlyphRenderer());
-    pane.add("Text", new JScrollPane(new JTextArea(this.glyph.toString())));
+    pane.add("Text", new JScrollPane(new JTextArea(glyph.toString())));
 
     pane.setPreferredSize(new Dimension(500, 500));
     return pane;
@@ -54,16 +54,16 @@ public class GlyphNode extends AbstractNode {
 
     private static final int MARGIN = 10;
 
-    private final int minX = GlyphNode.this.glyph.xMin();
-    private final int minY = GlyphNode.this.glyph.yMin();
-    private final int maxX = GlyphNode.this.glyph.xMax();
-    private final int maxY = GlyphNode.this.glyph.yMax();
+    private final int minX = glyph.xMin();
+    private final int minY = glyph.yMin();
+    private final int maxX = glyph.xMax();
+    private final int maxY = glyph.yMax();
 
     private double scale;
 
     private void updateScale() {
-      int size = Math.min(this.getWidth(), this.getHeight()) - MARGIN - MARGIN;
-      this.scale = (double) size / Math.max(this.maxX - this.minX, this.maxY - this.minY);
+      int size = Math.min(getWidth(), getHeight()) - MARGIN - MARGIN;
+      this.scale = (double) size / Math.max(maxX - minX, maxY - minY);
     }
 
     @Override
@@ -73,26 +73,26 @@ public class GlyphNode extends AbstractNode {
       Graphics2D g = (Graphics2D) graphics;
       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-      this.updateScale();
+      updateScale();
 
       Glyph glyph = GlyphNode.this.glyph;
       if (glyph instanceof SimpleGlyph) {
-        this.paintSimpleGlyph(g, (SimpleGlyph) glyph, 0, 0);
+        paintSimpleGlyph(g, (SimpleGlyph) glyph, 0, 0);
       } else {
-        this.paintCompositeGlyph(g, (CompositeGlyph) glyph);
+        paintCompositeGlyph(g, (CompositeGlyph) glyph);
       }
     }
 
     private void paintCompositeGlyph(Graphics2D g, CompositeGlyph composite) {
       for (int i = 0; i < composite.numGlyphs(); i++) {
         int glyphIndex = composite.glyphIndex(i);
-        int offset = GlyphNode.this.loca.glyphOffset(glyphIndex);
-        int length = GlyphNode.this.loca.glyphLength(glyphIndex);
+        int offset = loca.glyphOffset(glyphIndex);
+        int length = loca.glyphLength(glyphIndex);
         if (length != 0) {
-          SimpleGlyph simple = (SimpleGlyph) GlyphNode.this.glyf.glyph(offset, length);
+          SimpleGlyph simple = (SimpleGlyph) glyf.glyph(offset, length);
           int deltaX = composite.argument1(i);
           int deltaY = composite.argument2(i);
-          this.paintSimpleGlyph(g, simple, deltaX, deltaY);
+          paintSimpleGlyph(g, simple, deltaX, deltaY);
         }
       }
     }
@@ -101,7 +101,7 @@ public class GlyphNode extends AbstractNode {
       for (int c = 0, cmax = glyph.numberOfContours(); c < cmax; c++) {
         ScreenCoordinateMapper screen =
             new ScreenCoordinateMapper(
-                glyph, c, MARGIN, this.scale, this.minX - deltaX, this.maxY - deltaY);
+                glyph, c, MARGIN, scale, minX - deltaX, maxY - deltaY);
         int pmax = glyph.numberOfPoints(c);
 
         int firstOn = 0;
@@ -171,21 +171,21 @@ public class GlyphNode extends AbstractNode {
     }
 
     int x(int point) {
-      int x = this.glyph.xCoordinate(this.contour, index(point));
-      return this.margin + (int) Math.round(this.scale * (x - this.minX));
+      int x = glyph.xCoordinate(contour, index(point));
+      return margin + (int) Math.round(scale * (x - minX));
     }
 
     int y(int point) {
-      int y = this.glyph.yCoordinate(this.contour, index(point));
-      return this.margin + (int) Math.round(this.scale * (this.maxY - y));
+      int y = glyph.yCoordinate(contour, index(point));
+      return margin + (int) Math.round(scale * (maxY - y));
     }
 
     private int index(int point) {
-      return (point + this.points) % this.points;
+      return (point + points) % points;
     }
 
     boolean onCurve(int point) {
-      return this.glyph.onCurve(this.contour, index(point));
+      return glyph.onCurve(contour, index(point));
     }
   }
 }

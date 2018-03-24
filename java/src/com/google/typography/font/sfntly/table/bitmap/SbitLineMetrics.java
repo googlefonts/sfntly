@@ -27,42 +27,42 @@ public class SbitLineMetrics extends SubTable {
   }
 
   public int ascender() {
-    return this.data.readChar(Offset.ascender);
+    return data.readChar(Offset.ascender);
   }
 
   public int descender() {
-    return this.data.readChar(Offset.descender);
+    return data.readChar(Offset.descender);
   }
 
   public int widthMax() {
-    return this.data.readByte(Offset.widthMax);
+    return data.readByte(Offset.widthMax);
   }
 
   public int caretSlopeNumerator() {
-    return this.data.readChar(Offset.caretSlopeNumerator);
+    return data.readChar(Offset.caretSlopeNumerator);
   }
 
   public int caretSlopeDenominator() {
-    return this.data.readChar(Offset.caretSlopeDenominator);
+    return data.readChar(Offset.caretSlopeDenominator);
   }
 
   public int caretOffset() {
-    return this.data.readChar(Offset.caretOffset);
+    return data.readChar(Offset.caretOffset);
   }
 
   public int minOriginSB() {
-    return this.data.readChar(Offset.minOriginSB);
+    return data.readChar(Offset.minOriginSB);
   }
 
   public int minAdvanceSB() {
-    return this.data.readChar(Offset.minAdvanceSB);
+    return data.readChar(Offset.minAdvanceSB);
   }
 
   public int maxBeforeBL() {
-    return this.data.readChar(Offset.maxBeforeBL);
+    return data.readChar(Offset.maxBeforeBL);
   }
 
   public int minAfterBL() {
-    return this.data.readChar(Offset.minAfterBL);
+    return data.readChar(Offset.minAfterBL);
   }
 }

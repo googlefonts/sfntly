@@ -56,7 +56,7 @@ public abstract class SubTable extends FontDataTable {
   }
 
   protected ReadableFontData masterReadData() {
-    return this.masterData;
+    return masterData;
   }
 
   /**
@@ -101,7 +101,7 @@ public abstract class SubTable extends FontDataTable {
     }
 
     protected ReadableFontData masterReadData() {
-      return this.masterData;
+      return masterData;
     }
   }
 
@@ -112,7 +112,7 @@ public abstract class SubTable extends FontDataTable {
    * @return the number of padding bytes
    */
   public int padding() {
-    return this.padding;
+    return padding;
   }
 
   /** Sets the amount of padding that is part of the data being used by this subtable. */

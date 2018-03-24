@@ -14,27 +14,27 @@ class CMapFormat4Node extends AbstractNode {
 
   @Override
   public int getChildCount() {
-    return this.cmap.getSegCount();
+    return cmap.getSegCount();
   }
 
   @Override
   public AbstractNode getChildAt(int index) {
-    return new CmapSegmentNode(this.cmap, index);
+    return new CmapSegmentNode(cmap, index);
   }
 
   @Override
   public String getNodeName() {
-    return this.cmap.toString();
+    return cmap.toString();
   }
 
   @Override
   public JComponent render() {
     StringBuilder sb = new StringBuilder();
-    sb.append(String.format("Number of segments: %d%n", this.cmap.getSegCount()));
-    for (int i = 0, imax = this.cmap.getSegCount(); i < imax; i++) {
+    sb.append(String.format("Number of segments: %d%n", cmap.getSegCount()));
+    for (int i = 0, imax = cmap.getSegCount(); i < imax; i++) {
       sb.append(
           String.format(
-              "%3d: from U+%04X until U+%04X%n", i, this.cmap.startCode(i), this.cmap.endCode(i)));
+              "%3d: from U+%04X until U+%04X%n", i, cmap.startCode(i), cmap.endCode(i)));
     }
 
     return new JTextArea(sb.toString());

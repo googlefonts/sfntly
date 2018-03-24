@@ -35,17 +35,17 @@ public final class CMapFormat10 extends CMap {
     if (character < startCharCode || character >= (startCharCode + numChars)) {
       return CMapTable.NOTDEF;
     }
-    return this.readFontData().readUShort(character - startCharCode);
+    return readFontData().readUShort(character - startCharCode);
   }
 
   @Override
   public int language() {
-    return this.data.readULongAsInt(Header.language);
+    return data.readULongAsInt(Header.language);
   }
 
   @Override
   public Iterator<Integer> iterator() {
-    return new CharacterRangeIterator(this.startCharCode, this.startCharCode + this.numChars);
+    return new CharacterRangeIterator(startCharCode, startCharCode + numChars);
   }
 
   public static class Builder extends CMap.Builder<CMapFormat10> {
@@ -65,7 +65,7 @@ public final class CMapFormat10 extends CMap {
 
     @Override
     protected CMapFormat10 subBuildTable(ReadableFontData data) {
-      return new CMapFormat10(data, this.cmapId());
+      return new CMapFormat10(data, cmapId());
     }
   }
 }

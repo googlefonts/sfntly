@@ -29,7 +29,7 @@ public class ScriptTable extends TagOffsetsTable<LangSysTable> {
   }
 
   private LanguageTag langSysAt(int index) {
-    return LanguageTag.fromTag(this.tagAt(index));
+    return LanguageTag.fromTag(tagAt(index));
   }
 
   public Map<LanguageTag, LangSysTable> map() {

@@ -68,31 +68,31 @@ public final class BitmapGlyphInfo {
   }
 
   public int glyphId() {
-    return this.glyphId;
+    return glyphId;
   }
 
   public boolean relative() {
-    return this.relative;
+    return relative;
   }
 
   public int blockOffset() {
-    return this.blockOffset;
+    return blockOffset;
   }
 
   public int offset() {
-    return this.blockOffset() + this.startOffset();
+    return blockOffset() + startOffset();
   }
 
   public int startOffset() {
-    return this.startOffset;
+    return startOffset;
   }
 
   public int length() {
-    return this.length;
+    return length;
   }
 
   public int format() {
-    return this.format;
+    return format;
   }
 
   @Override
@@ -109,10 +109,10 @@ public final class BitmapGlyphInfo {
       return false;
     }
     BitmapGlyphInfo other = (BitmapGlyphInfo) obj;
-    return this.format == other.format
-        && this.glyphId == other.glyphId
-        && this.length == other.length
-        && this.offset() == other.offset();
+    return format == other.format
+        && glyphId == other.glyphId
+        && length == other.length
+        && offset() == other.offset();
   }
 
   public static final Comparator<BitmapGlyphInfo> StartOffsetComparator =

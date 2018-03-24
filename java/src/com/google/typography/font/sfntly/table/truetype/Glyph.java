@@ -80,12 +80,12 @@ public abstract class Glyph extends SubTable {
 
   @Override
   public int padding() {
-    this.initialize();
+    initialize();
     return super.padding();
   }
 
   public Glyph.GlyphType glyphType() {
-    return this.glyphType;
+    return glyphType;
   }
 
   /**
@@ -97,23 +97,23 @@ public abstract class Glyph extends SubTable {
    * @return number of contours
    */
   public int numberOfContours() {
-    return this.numberOfContours;
+    return numberOfContours;
   }
 
   public int xMin() {
-    return this.data.readShort(Offset.xMin);
+    return data.readShort(Offset.xMin);
   }
 
   public int xMax() {
-    return this.data.readShort(Offset.xMax);
+    return data.readShort(Offset.xMax);
   }
 
   public int yMin() {
-    return this.data.readShort(Offset.yMin);
+    return data.readShort(Offset.yMin);
   }
 
   public int yMax() {
-    return this.data.readShort(Offset.yMax);
+    return data.readShort(Offset.yMax);
   }
 
   public abstract int instructionSize();
@@ -124,12 +124,12 @@ public abstract class Glyph extends SubTable {
   public String toString() {
     return String.format(
         "%s, contours=%d, [xmin=%d, ymin=%d, xmax=%d, ymax=%d]\n",
-        this.glyphType(),
-        this.numberOfContours(),
-        this.xMin(),
-        this.yMin(),
-        this.xMax(),
-        this.yMax());
+        glyphType(),
+        numberOfContours(),
+        xMin(),
+        yMin(),
+        xMax(),
+        yMax());
   }
 
   // TODO(stuartg): interface? need methods from Composite?
@@ -173,7 +173,7 @@ public abstract class Glyph extends SubTable {
 
     @Override
     protected int subDataSizeToSerialize() {
-      return this.internalReadData().length();
+      return internalReadData().length();
     }
 
     @Override
@@ -183,7 +183,7 @@ public abstract class Glyph extends SubTable {
 
     @Override
     protected int subSerialize(WritableFontData newData) {
-      return this.internalReadData().copyTo(newData);
+      return internalReadData().copyTo(newData);
     }
   }
 }

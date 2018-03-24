@@ -14,31 +14,31 @@ class SubTableNode extends AbstractNode {
   private final FontDataTable table;
 
   SubTableNode(FontDataTable table, String name) {
-    this.setUserObject(name);
+    setUserObject(name);
     this.table = table;
   }
 
   @Override
   public String getNodeName() {
-    return (String) this.getUserObject();
+    return (String) getUserObject();
   }
 
   FontDataTable getTable() {
-    return this.table;
+    return table;
   }
 
   @Override
   public int getChildCount() {
-    if (this.table instanceof CMapTable) {
-      return ((CMapTable) this.table).numCMaps();
+    if (table instanceof CMapTable) {
+      return ((CMapTable) table).numCMaps();
     }
     return 0;
   }
 
   @Override
   public AbstractNode getChildAt(int index) {
-    if (this.table instanceof CMapTable) {
-      CMap child = ((CMapTable) this.table).cmap(index);
+    if (table instanceof CMapTable) {
+      CMap child = ((CMapTable) table).cmap(index);
       if (child.format() == 4) {
         return new CMapFormat4Node((CMapFormat4) child);
       }
@@ -49,6 +49,6 @@ class SubTableNode extends AbstractNode {
 
   @Override
   JComponent render() {
-    return new JTextArea(this.table.readFontData().toString(4096));
+    return new JTextArea(table.readFontData().toString(4096));
   }
 }

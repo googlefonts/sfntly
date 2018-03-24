@@ -53,9 +53,9 @@ final class SegmentedGrowableMemoryByteArray extends ByteArray {
 
   @Override
   protected void internalPut(int index, byte b) {
-    int bufferIndex = this.bufferIndex(index);
-    int bufferOffset = this.bufferOffset(bufferIndex, index);
-    byte[] buffer = this.buffer(bufferIndex);
+    int bufferIndex = bufferIndex(index);
+    int bufferOffset = bufferOffset(bufferIndex, index);
+    byte[] buffer = buffer(bufferIndex);
     buffer[bufferOffset] = b;
   }
 
@@ -63,9 +63,9 @@ final class SegmentedGrowableMemoryByteArray extends ByteArray {
   protected int internalPut(int index, byte[] b, int offset, int length) {
     int copyCount = 0;
     while (copyCount < length) {
-      int bufferIndex = this.bufferIndex(index);
-      int bufferOffset = this.bufferOffset(bufferIndex, index);
-      byte[] buffer = this.buffer(bufferIndex);
+      int bufferIndex = bufferIndex(index);
+      int bufferOffset = bufferOffset(bufferIndex, index);
+      byte[] buffer = buffer(bufferIndex);
       int copyLength = Math.min(length - copyCount, buffer.length - bufferOffset);
       System.arraycopy(b, offset, buffer, bufferOffset, copyLength);
       index += copyLength;
@@ -77,9 +77,9 @@ final class SegmentedGrowableMemoryByteArray extends ByteArray {
 
   @Override
   protected int internalGet(int index) {
-    int bufferIndex = this.bufferIndex(index);
-    int bufferOffset = this.bufferOffset(bufferIndex, index);
-    byte[] buffer = this.buffer(bufferIndex);
+    int bufferIndex = bufferIndex(index);
+    int bufferOffset = bufferOffset(bufferIndex, index);
+    byte[] buffer = buffer(bufferIndex);
     return buffer[bufferOffset];
   }
 
@@ -87,9 +87,9 @@ final class SegmentedGrowableMemoryByteArray extends ByteArray {
   protected int internalGet(int index, byte[] b, int offset, int length) {
     int copyCount = 0;
     while (copyCount < length) {
-      int bufferIndex = this.bufferIndex(index);
-      int bufferOffset = this.bufferOffset(bufferIndex, index);
-      byte[] buffer = this.buffer(bufferIndex);
+      int bufferIndex = bufferIndex(index);
+      int bufferOffset = bufferOffset(bufferIndex, index);
+      byte[] buffer = buffer(bufferIndex);
       int copyLength = Math.min(length - copyCount, buffer.length - bufferOffset);
       System.arraycopy(buffer, bufferOffset, b, offset, copyLength);
       index += copyLength;
@@ -114,7 +114,7 @@ final class SegmentedGrowableMemoryByteArray extends ByteArray {
    * @see #bufferIndex(int)
    */
   private int bufferOffset(int bufferIndex, int index) {
-    return index & ~(0x01 << Math.max(this.lowBits, bufferIndex + this.lowBits - 1));
+    return index & ~(0x01 << Math.max(lowBits, bufferIndex + lowBits - 1));
   }
 
   /**
@@ -125,7 +125,7 @@ final class SegmentedGrowableMemoryByteArray extends ByteArray {
    * @see #bufferOffset(int, int)
    */
   private int bufferIndex(int index) {
-    return FontMath.log2(index >> this.lowBits) + 1;
+    return FontMath.log2(index >> lowBits) + 1;
   }
 
   /**
@@ -138,15 +138,15 @@ final class SegmentedGrowableMemoryByteArray extends ByteArray {
    */
   private byte[] buffer(int index) {
     byte[] b = null;
-    if (index >= this.buffers.size()) {
+    if (index >= buffers.size()) {
       // must fill all buffers between the last one created and this one
-      for (int i = this.buffers.size(); i < index + 1; i++) {
-        int bufferSize = 1 << (Math.max(0, i - 1) + this.lowBits);
+      for (int i = buffers.size(); i < index + 1; i++) {
+        int bufferSize = 1 << (Math.max(0, i - 1) + lowBits);
         b = new byte[bufferSize];
-        this.buffers.add(b);
+        buffers.add(b);
       }
     }
-    b = this.buffers.get(index);
+    b = buffers.get(index);
     return b;
   }
 }

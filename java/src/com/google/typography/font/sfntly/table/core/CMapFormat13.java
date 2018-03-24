@@ -34,26 +34,26 @@ public final class CMapFormat13 extends CMap {
   }
 
   private int groupStartChar(int groupIndex) {
-    return this.data.readULongAsInt(Header.SIZE + groupIndex * Group.SIZE + Group.startCharCode);
+    return data.readULongAsInt(Header.SIZE + groupIndex * Group.SIZE + Group.startCharCode);
   }
 
   private int groupEndChar(int groupIndex) {
-    return this.data.readULongAsInt(Header.SIZE + groupIndex * Group.SIZE + Group.endCharCode);
+    return data.readULongAsInt(Header.SIZE + groupIndex * Group.SIZE + Group.endCharCode);
   }
 
   private int groupGlyph(int groupIndex) {
-    return this.data.readULongAsInt(Header.SIZE + groupIndex * Group.SIZE + Group.glyphId);
+    return data.readULongAsInt(Header.SIZE + groupIndex * Group.SIZE + Group.glyphId);
   }
 
   @Override
   public int glyphId(int character) {
     int group =
-        this.data.searchULong(
+        data.searchULong(
             Header.SIZE + Group.startCharCode,
             Group.SIZE,
             Header.SIZE + Group.endCharCode,
             Group.SIZE,
-            this.numberOfGroups,
+            numberOfGroups,
             character);
     if (group == -1) {
       return CMapTable.NOTDEF;
@@ -63,7 +63,7 @@ public final class CMapFormat13 extends CMap {
 
   @Override
   public int language() {
-    return this.data.readULongAsInt(Header.language);
+    return data.readULongAsInt(Header.language);
   }
 
   @Override
@@ -73,17 +73,17 @@ public final class CMapFormat13 extends CMap {
 
   private class CharacterIterator extends CMap.CharacterRangesIterator {
     CharacterIterator() {
-      super(CMapFormat13.this.numberOfGroups);
+      super(numberOfGroups);
     }
 
     @Override
     protected int getRangeStart(int rangeIndex) {
-      return CMapFormat13.this.groupStartChar(rangeIndex);
+      return groupStartChar(rangeIndex);
     }
 
     @Override
     protected int getRangeEnd(int rangeIndex) {
-      return CMapFormat13.this.groupEndChar(rangeIndex);
+      return groupEndChar(rangeIndex);
     }
   }
 
@@ -104,7 +104,7 @@ public final class CMapFormat13 extends CMap {
 
     @Override
     protected CMapFormat13 subBuildTable(ReadableFontData data) {
-      return new CMapFormat13(data, this.cmapId());
+      return new CMapFormat13(data, cmapId());
     }
   }
 }

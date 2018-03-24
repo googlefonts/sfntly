@@ -336,7 +336,7 @@ public class SfntDump {
   }
 
   public void dumpTablesAsBinary(String tableTag) {
-    this.tablesToBinaryDump.add(tableTag);
+    tablesToBinaryDump.add(tableTag);
   }
 
   public void useCMap(String cmap) {
@@ -360,17 +360,17 @@ public class SfntDump {
           System.out.println("======= TTC Entry #" + fontNumber);
           System.out.println();
         }
-        if (this.dumpTableHeadersInFont) {
+        if (dumpTableHeadersInFont) {
           for (Map.Entry<Integer, ? extends Table> entry : font.tableMap().entrySet()) {
             System.out.println(entry.getValue().header());
           }
         }
 
-        if (this.countSpecialGlyphs) {
-          this.countSpecialGlyphs(font);
+        if (countSpecialGlyphs) {
+          countSpecialGlyphs(font);
         }
 
-        if (this.dumpNameList) {
+        if (dumpNameList) {
           System.out.println();
           System.out.println("----- Name Tables");
           NameTable name = font.getTable(Tag.name);
@@ -379,19 +379,19 @@ public class SfntDump {
           }
         }
 
-        if (this.dumpCmapList) {
+        if (dumpCmapList) {
           System.out.println();
           System.out.println("------ CMap Tables");
           CMapTable cmapTable = font.getTable(Tag.cmap);
           for (CMap cmap : cmapTable) {
             System.out.println(cmap);
-            if (this.cmapMapping) {
+            if (cmapMapping) {
               dumpCMapMapping(cmap);
             }
           }
         }
 
-        if (this.dumpPost) {
+        if (dumpPost) {
           System.out.println();
           System.out.println("------ Post Table");
           PostScriptTable post = font.getTable(Tag.post);
@@ -401,15 +401,15 @@ public class SfntDump {
           }
         }
 
-        if (this.dumpEblc) {
+        if (dumpEblc) {
           System.out.println();
           System.out.println("------ EBLC Table");
           EblcTable eblcTable = font.getTable(Tag.EBLC);
           System.out.println(eblcTable.toString());
         }
 
-        if (this.tablesToBinaryDump.size() > 0) {
-          for (String tag : this.tablesToBinaryDump) {
+        if (tablesToBinaryDump.size() > 0) {
+          for (String tag : tablesToBinaryDump) {
             int tableTag = Tag.intValue(tag);
             Table table = font.getTable(tableTag);
             if (table != null) {
@@ -440,12 +440,12 @@ public class SfntDump {
           System.out.println("PROBLEM: font has no 'glyf' table.");
         }
 
-        if (canDumpGlyphs && this.glyphSet != null) {
+        if (canDumpGlyphs && glyphSet != null) {
           System.out.println();
           System.out.println("------ Glyphs");
-          for (int glyphId = this.glyphSet.nextSetBit(0);
+          for (int glyphId = glyphSet.nextSetBit(0);
               glyphId >= 0;
-              glyphId = this.glyphSet.nextSetBit(glyphId + 1)) {
+              glyphId = glyphSet.nextSetBit(glyphId + 1)) {
             int offset = locaTable.glyphOffset(glyphId);
             int length = locaTable.glyphLength(glyphId);
             Glyph glyph = glyphTable.glyph(offset, length);
@@ -454,7 +454,7 @@ public class SfntDump {
           }
         }
 
-        if (canDumpGlyphs && this.charSet != null) {
+        if (canDumpGlyphs && charSet != null) {
           dumpChars(font, locaTable, glyphTable);
         }
       }
@@ -469,7 +469,7 @@ public class SfntDump {
       System.out.println("PROBLEM: font has no 'cmap' table.");
       return;
     }
-    CMap cmap = cmapTable.cmap(this.cmapId);
+    CMap cmap = cmapTable.cmap(cmapId);
     // if (cmap == null) {
     // cmap = cmapTable.cmap(
     // Font.PlatformId.Windows.value(),
@@ -484,16 +484,16 @@ public class SfntDump {
     System.out.println("=============");
     System.out.println(cmap);
 
-    if (this.dumpAllChars) {
+    if (dumpAllChars) {
       for (int charId : cmap) {
         dumpChar(charId, cmap, locaTable, glyphTable);
       }
-    } else if (this.charSet != null) {
+    } else if (charSet != null) {
       System.out.println();
       System.out.println("------ Characters");
-      for (int charId = this.charSet.nextSetBit(0);
+      for (int charId = charSet.nextSetBit(0);
           charId >= 0;
-          charId = this.charSet.nextSetBit(charId + 1)) {
+          charId = charSet.nextSetBit(charId + 1)) {
         dumpChar(charId, cmap, locaTable, glyphTable);
       }
     }

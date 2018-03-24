@@ -46,19 +46,19 @@ public class EbscTable extends Table {
   }
 
   public int version() {
-    return this.data.readFixed(HeaderOffset.version);
+    return data.readFixed(HeaderOffset.version);
   }
 
   public int numSizes() {
-    return this.data.readULongAsInt(HeaderOffset.numSizes);
+    return data.readULongAsInt(HeaderOffset.numSizes);
   }
 
   public BitmapScaleTable bitmapScaleTable(int index) {
-    if (index < 0 || index > this.numSizes() - 1) {
+    if (index < 0 || index > numSizes() - 1) {
       throw new IndexOutOfBoundsException(
           "BitmapScaleTable index is outside the bounds of available tables.");
     }
-    return new BitmapScaleTable(this.data, HeaderOffset.SIZE + index * BitmapScale.SIZE);
+    return new BitmapScaleTable(data, HeaderOffset.SIZE + index * BitmapScale.SIZE);
   }
 
   public static class BitmapScaleTable extends SubTable {
@@ -67,29 +67,29 @@ public class EbscTable extends Table {
     }
 
     public SbitLineMetrics hori() {
-      ReadableFontData horiData = this.data.slice(BitmapScale.hori, SbitLineMetrics.SIZE);
-      return new SbitLineMetrics(horiData, this.data);
+      ReadableFontData horiData = data.slice(BitmapScale.hori, SbitLineMetrics.SIZE);
+      return new SbitLineMetrics(horiData, data);
     }
 
     public SbitLineMetrics vert() {
-      ReadableFontData horiData = this.data.slice(BitmapScale.vert, SbitLineMetrics.SIZE);
-      return new SbitLineMetrics(horiData, this.data);
+      ReadableFontData horiData = data.slice(BitmapScale.vert, SbitLineMetrics.SIZE);
+      return new SbitLineMetrics(horiData, data);
     }
 
     public int ppemX() {
-      return this.data.readByte(BitmapScale.ppemX);
+      return data.readByte(BitmapScale.ppemX);
     }
 
     public int ppemY() {
-      return this.data.readByte(BitmapScale.ppemY);
+      return data.readByte(BitmapScale.ppemY);
     }
 
     public int substitutePpemX() {
-      return this.data.readByte(BitmapScale.substitutePpemX);
+      return data.readByte(BitmapScale.substitutePpemX);
     }
 
     public int substitutePpemY() {
-      return this.data.readByte(BitmapScale.substitutePpemY);
+      return data.readByte(BitmapScale.substitutePpemY);
     }
   }
 
@@ -110,7 +110,7 @@ public class EbscTable extends Table {
 
     @Override
     protected EbscTable subBuildTable(ReadableFontData data) {
-      return new EbscTable(this.header(), data);
+      return new EbscTable(header(), data);
     }
 
     @Override

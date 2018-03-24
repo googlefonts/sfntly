@@ -13,11 +13,11 @@ abstract class ColumnTableModel extends AbstractTableModel {
 
   @Override
   public int getColumnCount() {
-    return this.columnNames.length;
+    return columnNames.length;
   }
 
   @Override
   public String getColumnName(int column) {
-    return this.columnNames[column];
+    return columnNames[column];
   }
 }

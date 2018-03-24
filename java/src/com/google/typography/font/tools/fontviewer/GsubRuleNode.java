@@ -15,11 +15,11 @@ public class GsubRuleNode extends AbstractNode {
 
   @Override
   protected String getNodeName() {
-    return Integer.toString(this.index);
+    return Integer.toString(index);
   }
 
   @Override
   JComponent render() {
-    return new JTextArea(this.rule.toString());
+    return new JTextArea(rule.toString());
   }
 }

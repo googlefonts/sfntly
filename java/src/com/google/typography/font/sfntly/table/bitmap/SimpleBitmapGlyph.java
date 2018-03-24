@@ -38,7 +38,7 @@ public final class SimpleBitmapGlyph extends BitmapGlyph {
 
     @Override
     protected SimpleBitmapGlyph subBuildTable(ReadableFontData data) {
-      return new SimpleBitmapGlyph(data, this.format());
+      return new SimpleBitmapGlyph(data, format());
     }
   }
 }

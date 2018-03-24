@@ -36,12 +36,12 @@ public final class ControlProgramTable extends Table {
 
   /** Get the data value at the specified index. */
   public int data(int index) {
-    return this.data.readByte(index);
+    return data.readByte(index);
   }
 
   /** Get the number of bytes that may be in the table. */
   public int byteCount() {
-    return this.dataLength() / FontData.SizeOf.BYTE;
+    return dataLength() / FontData.SizeOf.BYTE;
   }
 
   public static class Builder extends ByteArrayTableBuilder<ControlProgramTable> {
@@ -60,7 +60,7 @@ public final class ControlProgramTable extends Table {
 
     @Override
     protected ControlProgramTable subBuildTable(ReadableFontData data) {
-      return new ControlProgramTable(this.header(), data);
+      return new ControlProgramTable(header(), data);
     }
   }
 }

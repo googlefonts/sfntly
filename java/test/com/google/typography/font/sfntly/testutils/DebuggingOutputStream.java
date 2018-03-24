@@ -35,18 +35,18 @@ public class DebuggingOutputStream extends FilterOutputStream {
   @Override
   public void write(byte[] b, int off, int len) throws IOException {
     for (byte bi : b) {
-      this.write(bi);
+      write(bi);
     }
   }
 
   @Override
   public void write(byte[] b) throws IOException {
-    this.write(b, 0, b.length);
+    write(b, 0, b.length);
   }
 
   @Override
   public void write(int b) throws IOException {
-    if (this.debug) {
+    if (debug) {
       System.out.print(Integer.toHexString(0xff & b) + " ");
       if (++lineLength == LINE_LENGTH) {
         System.out.println();

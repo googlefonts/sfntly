@@ -95,7 +95,7 @@ public class GSubTable extends Table {
 
     @Override
     protected GSubTable subBuildTable(ReadableFontData data) {
-      return new GSubTable(this.header(), data, false);
+      return new GSubTable(header(), data, false);
     }
   }
 }

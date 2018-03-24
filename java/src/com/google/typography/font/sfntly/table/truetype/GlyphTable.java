@@ -67,7 +67,7 @@ public final class GlyphTable extends SubTableContainerTable {
    * @return the glyph from the given offset
    */
   public Glyph glyph(int offset, int length) {
-    return Glyph.getGlyph(this, this.data, offset, length);
+    return Glyph.getGlyph(this, data, offset, length);
   }
 
   public static class Builder extends SubTableContainerTable.Builder<GlyphTable> {
@@ -91,7 +91,7 @@ public final class GlyphTable extends SubTableContainerTable {
 
     public void setLoca(List<Integer> loca) {
       this.loca = new ArrayList<>(loca);
-      this.setModelChanged(false);
+      setModelChanged(false);
       this.glyphBuilders = null;
     }
 
@@ -101,13 +101,13 @@ public final class GlyphTable extends SubTableContainerTable {
      * @return a list of loca information for the glyphs
      */
     public List<Integer> generateLocaList() {
-      List<Integer> locas = new ArrayList<>(this.getGlyphBuilders().size());
+      List<Integer> locas = new ArrayList<>(getGlyphBuilders().size());
       locas.add(0);
-      if (this.getGlyphBuilders().size() == 0) {
+      if (getGlyphBuilders().size() == 0) {
         locas.add(0);
       } else {
         int total = 0;
-        for (Glyph.Builder<? extends Glyph> b : this.getGlyphBuilders()) {
+        for (Glyph.Builder<? extends Glyph> b : getGlyphBuilders()) {
           int size = b.subDataSizeToSerialize();
           locas.add(total + size);
           total += size;
@@ -124,7 +124,7 @@ public final class GlyphTable extends SubTableContainerTable {
         int lastLocaValue = loca.get(0);
         for (int i = 1; i < loca.size(); i++) {
           locaValue = loca.get(i);
-          this.glyphBuilders.add(
+          glyphBuilders.add(
               Glyph.Builder.getBuilder(
                   this, data, lastLocaValue /* offset */, locaValue - lastLocaValue /* length */));
           lastLocaValue = locaValue;
@@ -133,19 +133,19 @@ public final class GlyphTable extends SubTableContainerTable {
     }
 
     private List<Glyph.Builder<? extends Glyph>> getGlyphBuilders() {
-      if (this.glyphBuilders == null) {
-        if (this.internalReadData() != null && this.loca == null) {
+      if (glyphBuilders == null) {
+        if (internalReadData() != null && loca == null) {
           throw new IllegalStateException("Loca values not set - unable to parse glyph data.");
         }
-        this.initialize(this.internalReadData(), this.loca);
-        this.setModelChanged();
+        initialize(internalReadData(), loca);
+        setModelChanged();
       }
-      return this.glyphBuilders;
+      return glyphBuilders;
     }
 
     public void revert() {
       this.glyphBuilders = null;
-      this.setModelChanged(false);
+      setModelChanged(false);
     }
 
     /**
@@ -158,7 +158,7 @@ public final class GlyphTable extends SubTableContainerTable {
      * null, empty, or invalid, then an empty glyph builder List will be returned.
      */
     public List<Glyph.Builder<? extends Glyph>> glyphBuilders() {
-      return this.getGlyphBuilders();
+      return getGlyphBuilders();
     }
 
     /**
@@ -172,7 +172,7 @@ public final class GlyphTable extends SubTableContainerTable {
      */
     public void setGlyphBuilders(List<Glyph.Builder<? extends Glyph>> glyphBuilders) {
       this.glyphBuilders = glyphBuilders;
-      this.setModelChanged();
+      setModelChanged();
     }
 
     // glyph builder factories
@@ -186,7 +186,7 @@ public final class GlyphTable extends SubTableContainerTable {
 
     @Override
     protected GlyphTable subBuildTable(ReadableFontData data) {
-      return new GlyphTable(this.header(), data);
+      return new GlyphTable(header(), data);
     }
 
     @Override
@@ -197,7 +197,7 @@ public final class GlyphTable extends SubTableContainerTable {
 
     @Override
     protected int subDataSizeToSerialize() {
-      if (this.glyphBuilders == null || this.glyphBuilders.size() == 0) {
+      if (glyphBuilders == null || glyphBuilders.size() == 0) {
         return 0;
       }
 
@@ -205,7 +205,7 @@ public final class GlyphTable extends SubTableContainerTable {
       int size = 0;
 
       // calculate size of each table
-      for (Glyph.Builder<? extends Glyph> b : this.glyphBuilders) {
+      for (Glyph.Builder<? extends Glyph> b : glyphBuilders) {
         int glyphSize = b.subDataSizeToSerialize();
         size += Math.abs(glyphSize);
         variable |= glyphSize <= 0;
@@ -215,7 +215,7 @@ public final class GlyphTable extends SubTableContainerTable {
 
     @Override
     protected boolean subReadyToSerialize() {
-      if (this.glyphBuilders == null) {
+      if (glyphBuilders == null) {
         return false;
       }
       // TODO(stuartg): check glyphs for ready to build?
@@ -225,7 +225,7 @@ public final class GlyphTable extends SubTableContainerTable {
     @Override
     protected int subSerialize(WritableFontData newData) {
       int size = 0;
-      for (Glyph.Builder<? extends Glyph> b : this.glyphBuilders) {
+      for (Glyph.Builder<? extends Glyph> b : glyphBuilders) {
         size += b.subSerialize(newData.slice(size));
       }
       return size;

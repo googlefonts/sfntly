@@ -28,12 +28,12 @@ public final class CMapFormat0 extends CMap {
     if (character < 0 || character > 255) {
       return CMapTable.NOTDEF;
     }
-    return this.data.readUByte(Header.glyphIdArray + character);
+    return data.readUByte(Header.glyphIdArray + character);
   }
 
   @Override
   public int language() {
-    return this.data.readUShort(Header.language);
+    return data.readUShort(Header.language);
   }
 
   @Override
@@ -58,7 +58,7 @@ public final class CMapFormat0 extends CMap {
 
     @Override
     protected CMapFormat0 subBuildTable(ReadableFontData data) {
-      return new CMapFormat0(data, this.cmapId());
+      return new CMapFormat0(data, cmapId());
     }
   }
 }

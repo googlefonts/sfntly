@@ -67,7 +67,7 @@ public class MtxHeadBuilder {
   }
 
   public MtxHeadBuilder setIndexToLOCFormat(int fmt) {
-    this.data.writeUShort(Offset.indexToLocFormat, fmt);
+    data.writeUShort(Offset.indexToLocFormat, fmt);
     return this;
   }
 

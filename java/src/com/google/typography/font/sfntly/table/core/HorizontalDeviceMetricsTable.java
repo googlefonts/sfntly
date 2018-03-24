@@ -51,37 +51,37 @@ public class HorizontalDeviceMetricsTable extends Table {
   }
 
   public int version() {
-    return this.data.readUShort(HeaderOffset.version);
+    return data.readUShort(HeaderOffset.version);
   }
 
   public int numRecords() {
-    return this.data.readShort(HeaderOffset.numRecords);
+    return data.readShort(HeaderOffset.numRecords);
   }
 
   public int recordSize() {
-    return this.data.readLong(HeaderOffset.sizeDeviceRecord);
+    return data.readLong(HeaderOffset.sizeDeviceRecord);
   }
 
   public int pixelSize(int recordIx) {
-    return this.data.readUByte(this.deviceOffset(recordIx) + DeviceOffset.pixelSize);
+    return data.readUByte(deviceOffset(recordIx) + DeviceOffset.pixelSize);
   }
 
   public int maxWidth(int recordIx) {
-    return this.data.readUByte(this.deviceOffset(recordIx) + DeviceOffset.maxWidth);
+    return data.readUByte(deviceOffset(recordIx) + DeviceOffset.maxWidth);
   }
 
   public int width(int recordIx, int glyphNum) {
-    if (glyphNum < 0 || glyphNum >= this.numGlyphs) {
+    if (glyphNum < 0 || glyphNum >= numGlyphs) {
       throw new IndexOutOfBoundsException();
     }
-    return this.data.readUByte(this.deviceOffset(recordIx) + DeviceOffset.widths + glyphNum);
+    return data.readUByte(deviceOffset(recordIx) + DeviceOffset.widths + glyphNum);
   }
 
   private int deviceOffset(int index) {
-    if (index < 0 || index >= this.numRecords()) {
+    if (index < 0 || index >= numRecords()) {
       throw new IndexOutOfBoundsException();
     }
-    return HeaderOffset.SIZE + index * this.recordSize();
+    return HeaderOffset.SIZE + index * recordSize();
   }
 
   /** Builder for a Horizontal Device Metrics Table - 'hdmx'. */
@@ -102,7 +102,7 @@ public class HorizontalDeviceMetricsTable extends Table {
 
     @Override
     protected HorizontalDeviceMetricsTable subBuildTable(ReadableFontData data) {
-      return new HorizontalDeviceMetricsTable(this.header(), data, this.numGlyphs);
+      return new HorizontalDeviceMetricsTable(header(), data, numGlyphs);
     }
 
     public void setNumGlyphs(int numGlyphs) {
@@ -110,7 +110,7 @@ public class HorizontalDeviceMetricsTable extends Table {
         throw new IllegalArgumentException("Number of glyphs can't be negative.");
       }
       this.numGlyphs = numGlyphs;
-      this.table().numGlyphs = numGlyphs;
+      table().numGlyphs = numGlyphs;
     }
   }
 }

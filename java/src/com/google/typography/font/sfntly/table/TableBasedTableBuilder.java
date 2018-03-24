@@ -42,10 +42,10 @@ public abstract class TableBasedTableBuilder<T extends Table> extends Table.Buil
   }
 
   protected T table() {
-    if (this.table == null) {
-      this.table = this.subBuildTable(this.internalReadData());
+    if (table == null) {
+      this.table = subBuildTable(internalReadData());
     }
-    return this.table;
+    return table;
   }
 
   @Override
@@ -70,11 +70,11 @@ public abstract class TableBasedTableBuilder<T extends Table> extends Table.Buil
 
   @Override
   public T build() {
-    if (!this.subReadyToSerialize()) {
+    if (!subReadyToSerialize()) {
       return null;
     }
-    T table = this.table();
-    this.notifyPostTableBuild(table);
+    T table = table();
+    notifyPostTableBuild(table);
     return table;
   }
 }

@@ -20,7 +20,7 @@ class GlyfTableNode extends AbstractNode {
       int offset = loca.glyphOffset(i);
       int length = loca.glyphLength(i);
       if (length != 0) {
-        this.glyphNodes.add(new GlyphNode(i, glyf.glyph(offset, length), glyf, loca));
+        glyphNodes.add(new GlyphNode(i, glyf.glyph(offset, length), glyf, loca));
       }
     }
   }
@@ -32,12 +32,12 @@ class GlyfTableNode extends AbstractNode {
 
   @Override
   public int getChildCount() {
-    return this.glyphNodes.size();
+    return glyphNodes.size();
   }
 
   @Override
   public AbstractNode getChildAt(int index) {
-    return this.glyphNodes.get(index);
+    return glyphNodes.get(index);
   }
 
   @Override
@@ -57,7 +57,7 @@ class GlyfTableNode extends AbstractNode {
 
     @Override
     public int getRowCount() {
-      return GlyfTableNode.this.loca.numGlyphs();
+      return loca.numGlyphs();
     }
 
     @Override
@@ -66,13 +66,13 @@ class GlyfTableNode extends AbstractNode {
         case 0:
           return rowIndex;
         case 1:
-          return GlyfTableNode.this.loca.glyphOffset(rowIndex);
+          return loca.glyphOffset(rowIndex);
         case 2:
-          return GlyfTableNode.this.loca.glyphLength(rowIndex);
+          return loca.glyphLength(rowIndex);
         case 3:
-          int length = GlyfTableNode.this.loca.glyphLength(rowIndex);
-          int offset = GlyfTableNode.this.loca.glyphOffset(rowIndex);
-          return length != 0 ? GlyfTableNode.this.glyf.glyph(offset, length) : "(empty)";
+          int length = loca.glyphLength(rowIndex);
+          int offset = loca.glyphOffset(rowIndex);
+          return length != 0 ? glyf.glyph(offset, length) : "(empty)";
       }
       throw new IllegalStateException();
     }

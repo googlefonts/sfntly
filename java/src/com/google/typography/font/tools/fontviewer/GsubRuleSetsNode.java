@@ -24,12 +24,12 @@ public class GsubRuleSetsNode extends AbstractNode {
 
   @Override
   public int getChildCount() {
-    return this.rules.size();
+    return rules.size();
   }
 
   @Override
   public AbstractNode getChildAt(int index) {
-    return new GsubRuleSetNode(this.rules.get(index).getKey(), this.rules.get(index).getValue());
+    return new GsubRuleSetNode(rules.get(index).getKey(), rules.get(index).getValue());
   }
 
   @Override
@@ -45,16 +45,16 @@ public class GsubRuleSetsNode extends AbstractNode {
 
     @Override
     public int getRowCount() {
-      return GsubRuleSetsNode.this.rules.size();
+      return rules.size();
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
       switch (columnIndex) {
         case 0:
-          return GsubRuleSetsNode.this.rules.get(rowIndex).getKey();
+          return rules.get(rowIndex).getKey();
         case 1:
-          return GsubRuleSetsNode.this.rules.get(rowIndex).getValue().size();
+          return rules.get(rowIndex).getValue().size();
       }
       throw new IllegalStateException();
     }

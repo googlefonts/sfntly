@@ -57,11 +57,11 @@ public final class BitmapSizeTable extends SubTable {
   }
 
   public int indexSubTableArrayOffset() {
-    return this.data.readULongAsInt(Offset.indexSubTableArrayOffset);
+    return data.readULongAsInt(Offset.indexSubTableArrayOffset);
   }
 
   public int indexTableSize() {
-    return this.data.readULongAsInt(Offset.indexTableSize);
+    return data.readULongAsInt(Offset.indexTableSize);
   }
 
   private static int numberOfIndexSubTables(ReadableFontData data, int tableOffset) {
@@ -69,11 +69,11 @@ public final class BitmapSizeTable extends SubTable {
   }
 
   public int numberOfIndexSubTables() {
-    return BitmapSizeTable.numberOfIndexSubTables(this.data, 0);
+    return BitmapSizeTable.numberOfIndexSubTables(data, 0);
   }
 
   public int colorRef() {
-    return this.data.readULongAsInt(Offset.colorRef);
+    return data.readULongAsInt(Offset.colorRef);
   }
 
   // TODO(stuartg): implement later
@@ -87,27 +87,27 @@ public final class BitmapSizeTable extends SubTable {
   }
 
   public int startGlyphIndex() {
-    return this.data.readUShort(Offset.startGlyphIndex);
+    return data.readUShort(Offset.startGlyphIndex);
   }
 
   public int endGlyphIndex() {
-    return this.data.readUShort(Offset.endGlyphIndex);
+    return data.readUShort(Offset.endGlyphIndex);
   }
 
   public int ppemX() {
-    return this.data.readByte(Offset.ppemX);
+    return data.readByte(Offset.ppemX);
   }
 
   public int ppemY() {
-    return this.data.readByte(Offset.ppemY);
+    return data.readByte(Offset.ppemY);
   }
 
   public int bitDepth() {
-    return this.data.readByte(Offset.bitDepth);
+    return data.readByte(Offset.bitDepth);
   }
 
   public int flagsAsInt() {
-    return this.data.readChar(Offset.flags);
+    return data.readChar(Offset.flags);
   }
 
   public IndexSubTable indexSubTable(int index) {
@@ -157,7 +157,7 @@ public final class BitmapSizeTable extends SubTable {
   }
 
   private IndexSubTable linearSearchIndexSubTables(int glyphId) {
-    for (IndexSubTable subTable : this.getIndexSubTableList()) {
+    for (IndexSubTable subTable : getIndexSubTableList()) {
       if (subTable.firstGlyphIndex() <= glyphId && subTable.lastGlyphIndex() >= glyphId) {
         return subTable;
       }
@@ -189,36 +189,36 @@ public final class BitmapSizeTable extends SubTable {
 
   private IndexSubTable createIndexSubTable(int index) {
     return IndexSubTable.createIndexSubTable(
-        this.masterReadData(), this.indexSubTableArrayOffset(), index);
+        masterReadData(), indexSubTableArrayOffset(), index);
   }
 
   private List<IndexSubTable> getIndexSubTableList() {
-    if (this.indexSubTables == null) {
-      synchronized (this.indexSubTablesLock) {
-        if (this.indexSubTables == null) {
-          List<IndexSubTable> subTables = new ArrayList<>(this.numberOfIndexSubTables());
-          for (int i = 0; i < this.numberOfIndexSubTables(); i++) {
-            subTables.add(this.createIndexSubTable(i));
+    if (indexSubTables == null) {
+      synchronized (indexSubTablesLock) {
+        if (indexSubTables == null) {
+          List<IndexSubTable> subTables = new ArrayList<>(numberOfIndexSubTables());
+          for (int i = 0; i < numberOfIndexSubTables(); i++) {
+            subTables.add(createIndexSubTable(i));
           }
           this.indexSubTables = subTables;
         }
       }
     }
-    return this.indexSubTables;
+    return indexSubTables;
   }
 
   @Override
   public String toString() {
-    List<IndexSubTable> subtables = this.getIndexSubTableList();
+    List<IndexSubTable> subtables = getIndexSubTableList();
 
     StringBuilder sb = new StringBuilder();
     sb.append(
         String.format(
             "BitmapSizeTable: [s=%#x, e=%#x, ppemx=%d, index subtables count=%d]\n",
-            this.startGlyphIndex(),
-            this.endGlyphIndex(),
-            this.ppemX(),
-            this.numberOfIndexSubTables()));
+            startGlyphIndex(),
+            endGlyphIndex(),
+            ppemX(),
+            numberOfIndexSubTables()));
 
     for (int i = 0; i < subtables.size(); i++) {
       sb.append(String.format("\t%d: %s\n", i, subtables.get(i)));
@@ -252,7 +252,7 @@ public final class BitmapSizeTable extends SubTable {
      * @return the subtable array offset
      */
     public int indexSubTableArrayOffset() {
-      return this.internalReadData().readULongAsInt(Offset.indexSubTableArrayOffset);
+      return internalReadData().readULongAsInt(Offset.indexSubTableArrayOffset);
     }
 
     /**
@@ -262,7 +262,7 @@ public final class BitmapSizeTable extends SubTable {
      * @param offset the offset to the index subtable array
      */
     void setIndexSubTableArrayOffset(int offset) {
-      this.internalWriteData().writeULong(Offset.indexSubTableArrayOffset, offset);
+      internalWriteData().writeULong(Offset.indexSubTableArrayOffset, offset);
     }
 
     /**
@@ -272,7 +272,7 @@ public final class BitmapSizeTable extends SubTable {
      * @return the subtable array size
      */
     public int indexTableSize() {
-      return this.internalReadData().readULongAsInt(Offset.indexTableSize);
+      return internalReadData().readULongAsInt(Offset.indexTableSize);
     }
 
     /**
@@ -282,19 +282,19 @@ public final class BitmapSizeTable extends SubTable {
      * @param size the offset to the index subtable array
      */
     void setIndexTableSize(int size) {
-      this.internalWriteData().writeULong(Offset.indexTableSize, size);
+      internalWriteData().writeULong(Offset.indexTableSize, size);
     }
 
     public int numberOfIndexSubTables() {
-      return this.getIndexSubTableBuilders().size();
+      return getIndexSubTableBuilders().size();
     }
 
     private void setNumberOfIndexSubTables(int numberOfIndexSubTables) {
-      this.internalWriteData().writeULong(Offset.numberOfIndexSubTables, numberOfIndexSubTables);
+      internalWriteData().writeULong(Offset.numberOfIndexSubTables, numberOfIndexSubTables);
     }
 
     public int colorRef() {
-      return this.internalReadData().readULongAsInt(Offset.colorRef);
+      return internalReadData().readULongAsInt(Offset.colorRef);
     }
 
     // TODO(stuartg): implement later
@@ -308,27 +308,27 @@ public final class BitmapSizeTable extends SubTable {
     }
 
     public int startGlyphIndex() {
-      return this.internalReadData().readUShort(Offset.startGlyphIndex);
+      return internalReadData().readUShort(Offset.startGlyphIndex);
     }
 
     public int endGlyphIndex() {
-      return this.internalReadData().readUShort(Offset.endGlyphIndex);
+      return internalReadData().readUShort(Offset.endGlyphIndex);
     }
 
     public int ppemX() {
-      return this.internalReadData().readByte(Offset.ppemX);
+      return internalReadData().readByte(Offset.ppemX);
     }
 
     public int ppemY() {
-      return this.internalReadData().readByte(Offset.ppemY);
+      return internalReadData().readByte(Offset.ppemY);
     }
 
     public int bitDepth() {
-      return this.internalReadData().readByte(Offset.bitDepth);
+      return internalReadData().readByte(Offset.bitDepth);
     }
 
     public int flagsAsInt() {
-      return this.internalReadData().readChar(Offset.flags);
+      return internalReadData().readChar(Offset.flags);
     }
 
     public IndexSubTable.Builder<? extends IndexSubTable> indexSubTableBuilder(int index) {
@@ -370,7 +370,7 @@ public final class BitmapSizeTable extends SubTable {
     }
 
     public List<IndexSubTable.Builder<? extends IndexSubTable>> indexSubTableBuilders() {
-      return this.getIndexSubTableBuilders();
+      return getIndexSubTableBuilders();
     }
 
     private class BitmapGlyphInfoIterator implements Iterator<BitmapGlyphInfo> {
@@ -378,18 +378,18 @@ public final class BitmapSizeTable extends SubTable {
       Iterator<BitmapGlyphInfo> subTableGlyphInfoIter;
 
       public BitmapGlyphInfoIterator() {
-        this.subTableIter = BitmapSizeTable.Builder.this.getIndexSubTableBuilders().iterator();
+        this.subTableIter = getIndexSubTableBuilders().iterator();
       }
 
       @Override
       public boolean hasNext() {
-        if (this.subTableGlyphInfoIter != null && this.subTableGlyphInfoIter.hasNext()) {
+        if (subTableGlyphInfoIter != null && subTableGlyphInfoIter.hasNext()) {
           return true;
         }
         while (subTableIter.hasNext()) {
-          IndexSubTable.Builder<? extends IndexSubTable> indexSubTable = this.subTableIter.next();
+          IndexSubTable.Builder<? extends IndexSubTable> indexSubTable = subTableIter.next();
           this.subTableGlyphInfoIter = indexSubTable.iterator();
-          if (this.subTableGlyphInfoIter.hasNext()) {
+          if (subTableGlyphInfoIter.hasNext()) {
             return true;
           }
         }
@@ -401,7 +401,7 @@ public final class BitmapSizeTable extends SubTable {
         if (!hasNext()) {
           throw new NoSuchElementException("No more characters to iterate.");
         }
-        return this.subTableGlyphInfoIter.next();
+        return subTableGlyphInfoIter.next();
       }
 
       @Override
@@ -416,12 +416,12 @@ public final class BitmapSizeTable extends SubTable {
 
     protected void revert() {
       this.indexSubTables = null;
-      this.setModelChanged(false);
+      setModelChanged(false);
     }
 
     public Map<Integer, BitmapGlyphInfo> generateLocaMap() {
       Map<Integer, BitmapGlyphInfo> locaMap = new HashMap<>();
-      Iterator<BitmapGlyphInfo> iter = this.iterator();
+      Iterator<BitmapGlyphInfo> iter = iterator();
       while (iter.hasNext()) {
         BitmapGlyphInfo info = iter.next();
         locaMap.put(info.glyphId(), info);
@@ -473,50 +473,50 @@ public final class BitmapSizeTable extends SubTable {
     }
 
     private List<IndexSubTable.Builder<? extends IndexSubTable>> getIndexSubTableBuilders() {
-      if (this.indexSubTables == null) {
-        this.initialize(this.internalReadData());
-        this.setModelChanged();
+      if (indexSubTables == null) {
+        initialize(internalReadData());
+        setModelChanged();
       }
-      return this.indexSubTables;
+      return indexSubTables;
     }
 
     private void initialize(ReadableFontData data) {
-      if (this.indexSubTables == null) {
+      if (indexSubTables == null) {
         this.indexSubTables = new ArrayList<>();
       } else {
-        this.indexSubTables.clear();
+        indexSubTables.clear();
       }
       if (data != null) {
         int numberOfIndexSubTables = BitmapSizeTable.numberOfIndexSubTables(data, 0);
         for (int i = 0; i < numberOfIndexSubTables; i++) {
-          this.indexSubTables.add(this.createIndexSubTableBuilder(i));
+          indexSubTables.add(createIndexSubTableBuilder(i));
         }
       }
     }
 
     private IndexSubTable.Builder<? extends IndexSubTable> createIndexSubTableBuilder(int index) {
       return IndexSubTable.Builder.createBuilder(
-          this.masterReadData(), this.indexSubTableArrayOffset(), index);
+          masterReadData(), indexSubTableArrayOffset(), index);
     }
 
     @Override
     protected BitmapSizeTable subBuildTable(ReadableFontData data) {
-      return new BitmapSizeTable(data, this.masterReadData());
+      return new BitmapSizeTable(data, masterReadData());
     }
 
     @Override
     protected void subDataSet() {
-      this.revert();
+      revert();
     }
 
     @Override
     protected int subDataSizeToSerialize() {
-      if (this.indexSubTableBuilders() == null) {
+      if (indexSubTableBuilders() == null) {
         return 0;
       }
       int size = Offset.SIZE;
       boolean variable = false;
-      for (IndexSubTable.Builder<? extends IndexSubTable> subTableBuilder : this.indexSubTables) {
+      for (IndexSubTable.Builder<? extends IndexSubTable> subTableBuilder : indexSubTables) {
         size += EblcTable.IndexSubTableEntry.SIZE;
         int subTableSize = subTableBuilder.subDataSizeToSerialize();
         int padding = FontMath.paddingRequired(Math.abs(subTableSize), FontData.SizeOf.ULONG);
@@ -528,13 +528,13 @@ public final class BitmapSizeTable extends SubTable {
 
     @Override
     protected boolean subReadyToSerialize() {
-      return this.indexSubTableBuilders() != null;
+      return indexSubTableBuilders() != null;
     }
 
     @Override
     protected int subSerialize(WritableFontData newData) {
-      this.setNumberOfIndexSubTables(this.indexSubTableBuilders().size());
-      int size = this.internalReadData().copyTo(newData);
+      setNumberOfIndexSubTables(indexSubTableBuilders().size());
+      int size = internalReadData().copyTo(newData);
       return size;
     }
   }

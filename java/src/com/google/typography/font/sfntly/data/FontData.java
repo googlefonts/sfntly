@@ -67,7 +67,7 @@ public abstract class FontData {
    */
   protected FontData(FontData data, int offset, int length) {
     this(data.array);
-    this.bound(data.boundOffset + offset, length);
+    bound(data.boundOffset + offset, length);
   }
 
   /**
@@ -76,7 +76,7 @@ public abstract class FontData {
    */
   protected FontData(FontData data, int offset) {
     this(data.array);
-    this.bound(
+    bound(
         data.boundOffset + offset,
         data.boundLength == FontData.GROWABLE_SIZE
             ? FontData.GROWABLE_SIZE
@@ -92,7 +92,7 @@ public abstract class FontData {
    * @return true if the bounding range was successful; false otherwise
    */
   public boolean bound(int offset, int length) {
-    if ((offset + length > this.size()) || offset < 0 || length < 0) {
+    if ((offset + length > size()) || offset < 0 || length < 0) {
       return false;
     }
     this.boundOffset += offset;
@@ -108,7 +108,7 @@ public abstract class FontData {
    * @return true if the bounding range was successful; false otherwise
    */
   public boolean bound(int offset) {
-    if (offset > this.size() || offset < 0) {
+    if (offset > size() || offset < 0) {
       return false;
     }
     this.boundOffset += offset;
@@ -140,7 +140,7 @@ public abstract class FontData {
    * @return the length of the data
    */
   public int length() {
-    return Math.min(this.array.length() - this.boundOffset, this.boundLength);
+    return Math.min(array.length() - boundOffset, boundLength);
   }
 
   /**
@@ -150,12 +150,12 @@ public abstract class FontData {
    * @return the maximum size of this font data
    */
   public int size() {
-    return Math.min(this.array.size() - this.boundOffset, this.boundLength);
+    return Math.min(array.size() - boundOffset, boundLength);
   }
 
   /** Returns the offset in the underlying data taking into account any bounds on the data. */
   public final int dataOffset() {
-    return this.boundOffset;
+    return boundOffset;
   }
 
   /**
@@ -165,7 +165,7 @@ public abstract class FontData {
    * @return the bound compensated offset
    */
   protected final int boundOffset(int offset) {
-    return offset + this.boundOffset;
+    return offset + boundOffset;
   }
 
   /**
@@ -176,14 +176,14 @@ public abstract class FontData {
    * @return the bound compensated length
    */
   protected final int boundLength(int offset, int length) {
-    return Math.min(length, this.boundLength - offset);
+    return Math.min(length, boundLength - offset);
   }
 
   protected final boolean boundsCheck(int offset, int length) {
-    if (offset < 0 || offset >= this.boundLength) {
+    if (offset < 0 || offset >= boundLength) {
       return false;
     }
-    if (length < 0 || length + offset > this.boundLength) {
+    if (length < 0 || length + offset > boundLength) {
       return false;
     }
     return true;

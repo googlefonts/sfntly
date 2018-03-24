@@ -35,18 +35,18 @@ public final class CMapFormat8 extends CMap {
   }
 
   private int firstChar(int groupIndex) {
-    return this.readFontData()
+    return readFontData()
         .readULongAsInt(Header.SIZE + groupIndex * Group.SIZE + Group.startCharCode);
   }
 
   private int endChar(int groupIndex) {
-    return this.readFontData()
+    return readFontData()
         .readULongAsInt(Header.SIZE + groupIndex * Group.SIZE + Group.endCharCode);
   }
 
   @Override
   public int glyphId(int character) {
-    return this.readFontData()
+    return readFontData()
         .searchULong(
             Header.SIZE + Group.startCharCode,
             Group.SIZE,
@@ -58,7 +58,7 @@ public final class CMapFormat8 extends CMap {
 
   @Override
   public int language() {
-    return this.data.readULongAsInt(Header.language);
+    return data.readULongAsInt(Header.language);
   }
 
   @Override
@@ -68,17 +68,17 @@ public final class CMapFormat8 extends CMap {
 
   private class CharacterIterator extends CMap.CharacterRangesIterator {
     CharacterIterator() {
-      super(CMapFormat8.this.numberOfGroups);
+      super(numberOfGroups);
     }
 
     @Override
     protected int getRangeStart(int rangeIndex) {
-      return CMapFormat8.this.firstChar(rangeIndex);
+      return firstChar(rangeIndex);
     }
 
     @Override
     protected int getRangeEnd(int rangeIndex) {
-      return CMapFormat8.this.endChar(rangeIndex);
+      return endChar(rangeIndex);
     }
   }
 
@@ -99,7 +99,7 @@ public final class CMapFormat8 extends CMap {
 
     @Override
     protected CMapFormat8 subBuildTable(ReadableFontData data) {
-      return new CMapFormat8(data, this.cmapId());
+      return new CMapFormat8(data, cmapId());
     }
   }
 }

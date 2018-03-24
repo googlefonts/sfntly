@@ -142,7 +142,7 @@ public class ReadableFontData extends FontData {
     if (offset < 0
         || length < 0
         || offset > Integer.MAX_VALUE - length
-        || (offset + length) > this.size()) {
+        || (offset + length) > size()) {
       throw new IndexOutOfBoundsException("Attempt to bind data outside of its limits.");
     }
     ReadableFontData slice = new ReadableFontData(this, offset, length);
@@ -158,7 +158,7 @@ public class ReadableFontData extends FontData {
    */
   @Override
   public ReadableFontData slice(int offset) {
-    if (offset < 0 || offset > this.size()) {
+    if (offset < 0 || offset > size()) {
       throw new IndexOutOfBoundsException("Attempt to bind data outside of its limits.");
     }
     ReadableFontData slice = new ReadableFontData(this, offset);
@@ -174,9 +174,9 @@ public class ReadableFontData extends FontData {
   public String toString(int length) {
     return String.format(
         "[l=%d, cs=%d]\n%s",
-        this.length(),
-        this.checksum(),
-        this.array.toString(this.boundOffset(0), this.boundLength(0, length)));
+        length(),
+        checksum(),
+        array.toString(boundOffset(0), boundLength(0, length)));
   }
 
   @Override
@@ -191,10 +191,10 @@ public class ReadableFontData extends FontData {
    * treated as the start of a 4 byte sequence whose remaining bytes are zero.
    */
   public long checksum() {
-    if (!this.checksumSet) {
+    if (!checksumSet) {
       computeChecksum();
     }
-    return this.checksum;
+    return checksum;
   }
 
   /**
@@ -202,21 +202,21 @@ public class ReadableFontData extends FontData {
    * internal state of this object in a threadsafe way.
    */
   private void computeChecksum() {
-    synchronized (this.checksumLock) {
-      if (this.checksumSet) {
+    synchronized (checksumLock) {
+      if (checksumSet) {
         // another thread computed the checksum while were waiting to do so
         return;
       }
       long sum = 0;
-      if (this.checksumRange == null) {
-        sum = computeCheckSum(0, this.length());
+      if (checksumRange == null) {
+        sum = computeCheckSum(0, length());
       } else {
-        for (int lowBoundIndex = 0; lowBoundIndex < this.checksumRange.length; lowBoundIndex += 2) {
-          int lowBound = this.checksumRange[lowBoundIndex];
+        for (int lowBoundIndex = 0; lowBoundIndex < checksumRange.length; lowBoundIndex += 2) {
+          int lowBound = checksumRange[lowBoundIndex];
           int highBound =
-              (lowBoundIndex == this.checksumRange.length - 1)
-                  ? this.length()
-                  : this.checksumRange[lowBoundIndex + 1];
+              (lowBoundIndex == checksumRange.length - 1)
+                  ? length()
+                  : checksumRange[lowBoundIndex + 1];
           sum += computeCheckSum(lowBound, highBound);
         }
       }
@@ -241,14 +241,14 @@ public class ReadableFontData extends FontData {
     long sum = 0;
     // checksum all whole 4-byte chunks
     for (int i = lowBound; i <= highBound - 4; i += 4) {
-      sum += this.readULong(i);
+      sum += readULong(i);
     }
     // add last fragment if not 4-byte multiple
     int off = highBound & -4;
     if (off < highBound) {
-      int b3 = this.readUByte(off);
-      int b2 = (off + 1 < highBound) ? this.readUByte(off + 1) : 0;
-      int b1 = (off + 2 < highBound) ? this.readUByte(off + 2) : 0;
+      int b3 = readUByte(off);
+      int b2 = (off + 1 < highBound) ? readUByte(off + 1) : 0;
+      int b1 = (off + 2 < highBound) ? readUByte(off + 2) : 0;
       int b0 = 0;
       sum += (b3 << 24) | (b2 << 16) | (b1 << 8) | b0;
     }
@@ -263,7 +263,7 @@ public class ReadableFontData extends FontData {
    * @param ranges the range bounds to use for the checksum
    */
   public void setCheckSumRanges(int... ranges) {
-    synchronized (this.checksumLock) {
+    synchronized (checksumLock) {
       if (ranges != null && ranges.length > 0) {
         this.checksumRange = Arrays.copyOf(ranges, ranges.length);
       } else {
@@ -281,9 +281,9 @@ public class ReadableFontData extends FontData {
    * @return the range bounds used for the checksum
    */
   public int[] checkSumRange() {
-    synchronized (this.checksumLock) {
-      if (this.checksumRange != null && checksumRange.length > 0) {
-        return Arrays.copyOf(this.checksumRange, this.checksumRange.length);
+    synchronized (checksumLock) {
+      if (checksumRange != null && checksumRange.length > 0) {
+        return Arrays.copyOf(checksumRange, checksumRange.length);
       }
       return new int[0];
     }
@@ -297,11 +297,11 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readUByte(int index) {
-    if (!this.boundsCheck(index, 1)) {
+    if (!boundsCheck(index, 1)) {
       throw new IndexOutOfBoundsException(
           "Index attempted to be read from is out of bounds: " + Integer.toHexString(index));
     }
-    int b = this.array.get(this.boundOffset(index));
+    int b = array.get(boundOffset(index));
     if (b < 0) {
       throw new IndexOutOfBoundsException(
           "Index attempted to be read from is out of bounds: " + Integer.toHexString(index));
@@ -317,11 +317,11 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readByte(int index) {
-    if (!this.boundsCheck(index, 1)) {
+    if (!boundsCheck(index, 1)) {
       throw new IndexOutOfBoundsException(
           "Index attempted to be read from is out of bounds: " + Integer.toHexString(index));
     }
-    int b = this.array.get(this.boundOffset(index));
+    int b = array.get(boundOffset(index));
     if (b < 0) {
       throw new IndexOutOfBoundsException(
           "Index attempted to be read from is out of bounds: " + Integer.toHexString(index));
@@ -342,7 +342,7 @@ public class ReadableFontData extends FontData {
    */
   public int readBytes(int index, byte[] b, int offset, int length) {
     int bytesRead =
-        this.array.get(this.boundOffset(index), b, offset, this.boundLength(index, length));
+        array.get(boundOffset(index), b, offset, boundLength(index, length));
     if (bytesRead < 0) {
       throw new IndexOutOfBoundsException(
           "Index attempted to be read from is out of bounds: " + Integer.toHexString(index));
@@ -357,7 +357,7 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readChar(int index) {
-    return this.readUByte(index);
+    return readUByte(index);
   }
 
   /**
@@ -367,7 +367,7 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readUShort(int index) {
-    return 0xffff & (this.readUByte(index) << 8 | this.readUByte(index + 1));
+    return 0xffff & (readUByte(index) << 8 | readUByte(index + 1));
   }
 
   /**
@@ -377,7 +377,7 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readShort(int index) {
-    return ((this.readByte(index) << 8 | this.readUByte(index + 1)) << 16) >> 16;
+    return ((readByte(index) << 8 | readUByte(index + 1)) << 16) >> 16;
   }
 
   /**
@@ -388,9 +388,9 @@ public class ReadableFontData extends FontData {
    */
   public int readUInt24(int index) {
     return 0xffffff
-        & (this.readUByte(index) << 16
-            | this.readUByte(index + 1) << 8
-            | this.readUByte(index + 2));
+        & (readUByte(index) << 16
+            | readUByte(index + 1) << 8
+            | readUByte(index + 2));
   }
 
   /**
@@ -401,10 +401,10 @@ public class ReadableFontData extends FontData {
    */
   public long readULong(int index) {
     return 0xffffffffL
-        & (this.readUByte(index) << 24
-            | this.readUByte(index + 1) << 16
-            | this.readUByte(index + 2) << 8
-            | this.readUByte(index + 3));
+        & (readUByte(index) << 24
+            | readUByte(index + 1) << 16
+            | readUByte(index + 2) << 8
+            | readUByte(index + 3));
   }
 
   /**
@@ -415,7 +415,7 @@ public class ReadableFontData extends FontData {
    * @throws ArithmeticException if the value will not fit into an integer
    */
   public int readULongAsInt(int index) {
-    long ulong = this.readULong(index);
+    long ulong = readULong(index);
     if ((ulong & 0x80000000) == 0x80000000) {
       throw new ArithmeticException("Long value too large to fit into an integer.");
     }
@@ -430,10 +430,10 @@ public class ReadableFontData extends FontData {
    */
   public long readULongLE(int index) {
     return 0xffffffffL
-        & (this.readUByte(index)
-            | this.readUByte(index + 1) << 8
-            | this.readUByte(index + 2) << 16
-            | this.readUByte(index + 3) << 24);
+        & (readUByte(index)
+            | readUByte(index + 1) << 8
+            | readUByte(index + 2) << 16
+            | readUByte(index + 3) << 24);
   }
 
   /**
@@ -443,10 +443,10 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readLong(int index) {
-    return this.readByte(index) << 24
-        | this.readUByte(index + 1) << 16
-        | this.readUByte(index + 2) << 8
-        | this.readUByte(index + 3);
+    return readByte(index) << 24
+        | readUByte(index + 1) << 16
+        | readUByte(index + 2) << 8
+        | readUByte(index + 3);
   }
 
   /**
@@ -456,7 +456,7 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readFixed(int index) {
-    return this.readLong(index);
+    return readLong(index);
   }
 
   /**
@@ -476,7 +476,7 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public long readDateTimeAsLong(int index) {
-    return this.readULong(index) << 32 | this.readULong(index + 4);
+    return readULong(index) << 32 | readULong(index + 4);
   }
 
   /**
@@ -506,7 +506,7 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readFWord(int index) {
-    return this.readShort(index);
+    return readShort(index);
   }
 
   /**
@@ -516,7 +516,7 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readUFWord(int index) {
-    return this.readUShort(index);
+    return readUShort(index);
   }
 
   /**
@@ -525,7 +525,7 @@ public class ReadableFontData extends FontData {
    * @return number of bytes copied
    */
   public int copyTo(OutputStream os) throws IOException {
-    return this.array.copyTo(os, this.boundOffset(0), this.length());
+    return array.copyTo(os, boundOffset(0), length());
   }
 
   /**
@@ -535,7 +535,7 @@ public class ReadableFontData extends FontData {
    * @return number of bytes copied
    */
   public int copyTo(WritableFontData wfd) {
-    return this.array.copyTo(wfd.boundOffset(0), wfd.array, this.boundOffset(0), this.length());
+    return array.copyTo(wfd.boundOffset(0), wfd.array, boundOffset(0), length());
   }
 
   /**
@@ -560,13 +560,13 @@ public class ReadableFontData extends FontData {
     int top = length;
     while (top != bottom) {
       location = (top + bottom) / 2;
-      int locationStart = this.readUShort(startIndex + location * startOffset);
+      int locationStart = readUShort(startIndex + location * startOffset);
       if (key < locationStart) {
         // location is below current location
         top = location;
       } else {
         // is key below the upper bound?
-        int locationEnd = this.readUShort(endIndex + location * endOffset);
+        int locationEnd = readUShort(endIndex + location * endOffset);
         if (key <= locationEnd) {
           return location;
         }
@@ -599,13 +599,13 @@ public class ReadableFontData extends FontData {
     int top = length;
     while (top != bottom) {
       location = (top + bottom) / 2;
-      int locationStart = this.readULongAsInt(startIndex + location * startDelta);
+      int locationStart = readULongAsInt(startIndex + location * startDelta);
       if (key < locationStart) {
         // location is below current location
         top = location;
       } else {
         // is key below the upper bound?
-        int locationEnd = this.readULongAsInt(endIndex + location * endDelta);
+        int locationEnd = readULongAsInt(endIndex + location * endDelta);
         if (key <= locationEnd) {
           return location;
         }
@@ -634,7 +634,7 @@ public class ReadableFontData extends FontData {
     int top = length;
     while (top != bottom) {
       location = (top + bottom) / 2;
-      int locationStart = this.readUShort(startIndex + location * startOffset);
+      int locationStart = readUShort(startIndex + location * startOffset);
       if (key < locationStart) {
         // location is below current location
         top = location;
