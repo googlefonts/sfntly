@@ -5,6 +5,7 @@ import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.opentype.GSubTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTag;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -606,7 +607,7 @@ class FontLanguages {
   };
 
   private static Map<String, ScriptTag> fontSpecificScript = new HashMap<>();
-  private Map<ScriptTag, Set<String>> scriptLangMap = new HashMap<>();
+  private final Map<ScriptTag, Set<String>> scriptLangMap = new EnumMap<>(ScriptTag.class);
 
   static {
     fontSpecificScript.put("laoo", ScriptTag.lao);

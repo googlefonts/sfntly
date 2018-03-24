@@ -122,7 +122,7 @@ public enum ScriptTag {
   vai("Vai"),
   yi("Yi");
 
-  private ScriptTag(String description) {
+  ScriptTag(String description) {
     String tag = name();
     while (tag.length() < 4) {
       tag += ' ';

@@ -4,7 +4,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.TagOffsetsTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class ScriptTable extends TagOffsetsTable<LangSysTable> {
@@ -33,7 +33,7 @@ public class ScriptTable extends TagOffsetsTable<LangSysTable> {
   }
 
   public Map<LanguageTag, LangSysTable> map() {
-    Map<LanguageTag, LangSysTable> map = new HashMap<>();
+    Map<LanguageTag, LangSysTable> map = new EnumMap<>(LanguageTag.class);
     LangSysTable defaultLangSys = defaultLangSysTable();
     if (defaultLangSys != null) {
       map.put(LanguageTag.DFLT, defaultLangSys);

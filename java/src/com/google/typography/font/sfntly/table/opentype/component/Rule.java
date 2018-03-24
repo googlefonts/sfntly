@@ -425,14 +425,14 @@ public class Rule {
   // Dump routines
 
   private static void dumpRuleMap(Map<Integer, Set<Rule>> rulesList, PostScriptTable post) {
-    for (int index : rulesList.keySet()) {
-      Set<Rule> rules = rulesList.get(index);
-      System.out.println(
-          "------------------------------ " + index + " --------------------------------");
-      for (Rule rule : rules) {
-        System.out.println(rule.toString(post));
-      }
-    }
+    rulesList.forEach(
+        (key, rules) -> {
+          System.out.println(
+              "------------------------------ " + key + " --------------------------------");
+          for (Rule rule : rules) {
+            System.out.println(rule.toString(post));
+          }
+        });
   }
 
   public static void dumpLookups(Font font) {

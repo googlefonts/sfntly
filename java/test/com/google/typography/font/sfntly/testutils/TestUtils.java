@@ -91,13 +91,9 @@ public class TestUtils {
    * @return the String based on the number
    */
   public static String dumpLongAsString(int i) {
-    byte[] b =
-        new byte[] {
-          (byte) (i >> 24 & 0xff),
-          (byte) (i >> 16 & 0xff),
-          (byte) (i >> 8 & 0xff),
-          (byte) (i & 0xff)
-        };
+    byte[] b = {
+      (byte) (i >> 24 & 0xff), (byte) (i >> 16 & 0xff), (byte) (i >> 8 & 0xff), (byte) (i & 0xff)
+    };
 
     try {
       return new String(b, "US-ASCII");
@@ -159,7 +155,7 @@ public class TestUtils {
    * @return an encoder or null if no encoder available for charset name
    */
   public static CharsetEncoder getEncoder(String charsetName) {
-    if (charsetName == null || charsetName.equals("")) {
+    if (charsetName == null || charsetName.isEmpty()) {
       return null;
     }
     Charset cs = Charset.forName(charsetName);

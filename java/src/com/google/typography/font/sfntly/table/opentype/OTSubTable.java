@@ -46,9 +46,7 @@ abstract class OTSubTable extends SubTable {
     /** Returns true if the data has not been edited, and thus there is no model to serialize. */
     protected abstract boolean unedited();
 
-    /**
-     * Create a model for editing from the data. This causes {@code unedited()} to return false;
-     */
+    /** Create a model for editing from the data. This causes {@code unedited()} to return false; */
     protected abstract void readModel(ReadableFontData data, boolean dataIsCanonical);
 
     /**

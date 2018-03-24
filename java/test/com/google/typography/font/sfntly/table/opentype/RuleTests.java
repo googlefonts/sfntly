@@ -20,8 +20,11 @@ import org.junit.Assume;
 import org.junit.Test;
 
 /**
- * Comparison data is generated from Harfbuzz by running: util/hb-ot-shape-closure --no-glyph-names
- * NotoSansMalayalam.ttf <text>
+ * Comparison data is generated from Harfbuzz by running:
+ *
+ * <pre>
+ * util/hb-ot-shape-closure --no-glyph-names NotoSansMalayalam.ttf &lt;text>
+ * </pre>
  */
 public class RuleTests {
   private static final String FONTS_DIR = "/usr/local/google/home/cibu/sfntly/fonts";
@@ -102,7 +105,7 @@ public class RuleTests {
       GlyphGroup glyphGroup = Rule.glyphGroupForText(word, cmap);
       GlyphGroup closure = Rule.closure(glyphRulesMap, glyphGroup);
 
-      if (expected.size() == 0 && closure.size() > 0) {
+      if (expected.isEmpty() && !closure.isEmpty()) {
         System.err.println("Skipped: " + word);
       } else if (!expected.equals(closure)) {
         System.err.printf("'%s' failed:\n  %s HB\n  %s Snftly\n\n", word, expected, closure);
@@ -129,7 +132,7 @@ public class RuleTests {
     List<GlyphGroup> glyphGroups = new ArrayList<>();
     for (String line : linesFromFile(file)) {
       GlyphGroup glyphGroup = new GlyphGroup();
-      if (line.length() > 0) {
+      if (!line.isEmpty()) {
         for (String intStr : line.split(" ")) {
           glyphGroup.add(Integer.parseInt(intStr));
         }

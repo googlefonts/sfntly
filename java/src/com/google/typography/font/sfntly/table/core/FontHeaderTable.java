@@ -44,8 +44,7 @@ public final class FontHeaderTable extends Table {
   public static final long MAGIC_NUMBER = 0x5F0F3CF5L;
 
   /** The ranges to use for checksum calculation. */
-  private static final int[] CHECKSUM_RANGES =
-      new int[] {0, Offset.checkSumAdjustment, Offset.magicNumber};
+  private static final int[] CHECKSUM_RANGES = {0, Offset.checkSumAdjustment, Offset.magicNumber};
 
   /** Offsets to specific elements in the underlying data, relative to the start of the table. */
   private interface Offset {

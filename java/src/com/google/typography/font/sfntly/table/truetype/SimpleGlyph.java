@@ -214,21 +214,17 @@ public final class SimpleGlyph extends Glyph {
   public String toString() {
     initialize();
     StringBuilder sb = new StringBuilder(super.toString());
-    sb.append("\tinstruction bytes = " + instructionSize() + "\n");
+    sb.append(String.format("\tinstruction bytes = %d\n", instructionSize()));
     for (int contour = 0; contour < numberOfContours(); contour++) {
       for (int point = 0; point < numberOfPoints(contour); point++) {
         sb.append(
-            "\t"
-                + contour
-                + ":"
-                + point
-                + " = ["
-                + xCoordinate(contour, point)
-                + ", "
-                + yCoordinate(contour, point)
-                + ", "
-                + onCurve(contour, point)
-                + "]\n");
+            String.format(
+                "\t%d:%d = [%d, %d, %s]\n",
+                contour,
+                point,
+                xCoordinate(contour, point),
+                yCoordinate(contour, point),
+                onCurve(contour, point)));
       }
     }
     return sb.toString();

@@ -533,10 +533,9 @@ public class RuleExtractor {
 
     Set<Rule> result = new LinkedHashSet<>();
     for (Rule rule : targetRules) {
-      if (rule.subst == null) {
-        continue;
+      if (rule.subst != null) {
+        result.add(rule);
       }
-      result.add(rule);
     }
     return result;
   }

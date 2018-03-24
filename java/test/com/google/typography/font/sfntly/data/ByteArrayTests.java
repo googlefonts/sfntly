@@ -23,8 +23,9 @@ import org.junit.ComparisonFailure;
 /** @author Stuart Gill */
 public class ByteArrayTests extends TestCase {
 
-  private static final int[] BYTE_ARRAY_SIZES =
-      new int[] {1, 7, 127, 128, 129, 255, 256, 257, 666, 1023, 10000, 0xffff, 0x10000};
+  private static final int[] BYTE_ARRAY_SIZES = {
+    1, 7, 127, 128, 129, 255, 256, 257, 666, 1023, 10000, 0xffff, 0x10000
+  };
 
   public ByteArrayTests(String name) {
     super(name);

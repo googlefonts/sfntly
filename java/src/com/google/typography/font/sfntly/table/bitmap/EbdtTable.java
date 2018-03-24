@@ -186,7 +186,7 @@ public final class EbdtTable extends SubTableContainerTable {
 
     @Override
     protected int subDataSizeToSerialize() {
-      if (glyphBuilders == null || glyphBuilders.size() == 0) {
+      if (glyphBuilders == null || glyphBuilders.isEmpty()) {
         return 0;
       }
 
@@ -198,7 +198,7 @@ public final class EbdtTable extends SubTableContainerTable {
           BitmapGlyph.Builder<? extends BitmapGlyph> builder = glyphEntry.getValue();
           int glyphSize = builder.subDataSizeToSerialize();
           size += Math.abs(glyphSize);
-          fixed = (glyphSize <= 0) ? false : fixed;
+          fixed = glyphSize > 0 && fixed;
         }
       }
       return (fixed ? 1 : -1) * size;

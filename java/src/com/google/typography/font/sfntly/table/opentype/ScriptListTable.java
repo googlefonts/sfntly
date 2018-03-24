@@ -3,7 +3,7 @@ package com.google.typography.font.sfntly.table.opentype;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.opentype.component.TagOffsetsTable;
 import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTable;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
@@ -22,7 +22,7 @@ public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
   }
 
   public Map<ScriptTag, ScriptTable> map() {
-    Map<ScriptTag, ScriptTable> map = new HashMap<>();
+    Map<ScriptTag, ScriptTable> map = new EnumMap<>(ScriptTag.class);
     for (int i = 0; i < count(); i++) {
       ScriptTag script;
       try {

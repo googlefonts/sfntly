@@ -368,7 +368,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
 
     @Override
     protected int subDataSizeToSerialize() {
-      if (cmapBuilders == null || cmapBuilders.size() == 0) {
+      if (cmapBuilders == null || cmapBuilders.isEmpty()) {
         return 0;
       }
 

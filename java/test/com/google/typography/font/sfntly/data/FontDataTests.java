@@ -22,12 +22,13 @@ import junit.framework.TestCase;
 /** @author Stuart Gill */
 public class FontDataTests extends TestCase {
 
-  private static final int[] BYTE_ARRAY_SIZES =
-      new int[] {1, 7, 127, 128, 129, 255, 256, 257, 666, 1023, 0x10000};
+  private static final int[] BYTE_ARRAY_SIZES = {
+    1, 7, 127, 128, 129, 255, 256, 257, 666, 1023, 0x10000
+  };
 
   // array data for searching
-  private static final int[] LOWER_BYTE_ARRAY_FOR_SEARCHING = new int[] {2, 4, 7, 13, 127};
-  private static final int[] UPPER_BYTE_ARRAY_FOR_SEARCHING = new int[] {2, 5, 12, 16, 256};
+  private static final int[] LOWER_BYTE_ARRAY_FOR_SEARCHING = {2, 4, 7, 13, 127};
+  private static final int[] UPPER_BYTE_ARRAY_FOR_SEARCHING = {2, 5, 12, 16, 256};
 
   // search test result pairs - number to search for; index found at
   private static final int[][] SEARCH_TEST_PAIRS = {

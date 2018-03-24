@@ -83,20 +83,18 @@ public class Font {
   private static final List<Integer> TRUE_TYPE_TABLE_ORDERING;
 
   static {
-    Integer[] cffArray =
-        new Integer[] {
-          Tag.head, Tag.hhea, Tag.maxp, Tag.OS_2, Tag.name, Tag.cmap, Tag.post, Tag.CFF
-        };
+    Integer[] cffArray = {
+      Tag.head, Tag.hhea, Tag.maxp, Tag.OS_2, Tag.name, Tag.cmap, Tag.post, Tag.CFF
+    };
     List<Integer> cffList = new ArrayList<>(cffArray.length);
     Collections.addAll(cffList, cffArray);
     CFF_TABLE_ORDERING = Collections.unmodifiableList(cffList);
 
-    Integer[] ttArray =
-        new Integer[] {
-          Tag.head, Tag.hhea, Tag.maxp, Tag.OS_2, Tag.hmtx, Tag.LTSH, Tag.VDMX, Tag.hdmx, Tag.cmap,
-          Tag.fpgm, Tag.prep, Tag.cvt, Tag.loca, Tag.glyf, Tag.kern, Tag.name, Tag.post, Tag.gasp,
-          Tag.PCLT, Tag.DSIG
-        };
+    Integer[] ttArray = {
+      Tag.head, Tag.hhea, Tag.maxp, Tag.OS_2, Tag.hmtx, Tag.LTSH, Tag.VDMX, Tag.hdmx, Tag.cmap,
+      Tag.fpgm, Tag.prep, Tag.cvt, Tag.loca, Tag.glyf, Tag.kern, Tag.name, Tag.post, Tag.gasp,
+      Tag.PCLT, Tag.DSIG
+    };
     List<Integer> ttList = new ArrayList<>(ttArray.length);
     Collections.addAll(ttList, ttArray);
     TRUE_TYPE_TABLE_ORDERING = Collections.unmodifiableList(ttList);
@@ -526,9 +524,7 @@ public class Font {
     }
 
     // add all the rest
-    for (Integer tag : tablesInFont) {
-      tableOrdering.add(tag);
-    }
+    tableOrdering.addAll(tablesInFont);
 
     return tableOrdering;
   }
@@ -751,11 +747,11 @@ public class Font {
     private Map<Integer, Table.Builder<? extends Table>> buildAllTableBuilders(
         Map<Header, WritableFontData> tableData) {
       Map<Integer, Table.Builder<? extends Table>> builderMap = new HashMap<>();
-      Set<Header> records = tableData.keySet();
-      for (Header record : records) {
-        Table.Builder<? extends Table> builder = getTableBuilder(record, tableData.get(record));
-        builderMap.put(record.tag(), builder);
-      }
+      tableData.forEach(
+          (header, data) -> {
+            Table.Builder<? extends Table> builder = getTableBuilder(header, data);
+            builderMap.put(header.tag(), builder);
+          });
       interRelateBuilders(builderMap);
       return builderMap;
     }
