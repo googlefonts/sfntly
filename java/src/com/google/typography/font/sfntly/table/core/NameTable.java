@@ -639,7 +639,7 @@ public final class NameTable extends SubTableContainerTable
 
   /**
    * Get the name as bytes for the specified name. If there is no entry for the requested name then
-   * <code>null</code> is returned.
+   * {@code null} is returned.
    */
   public byte[] nameAsBytes(int platformId, int encodingId, int languageId, int nameId) {
     NameEntry entry = nameEntry(platformId, encodingId, languageId, nameId);
@@ -661,8 +661,8 @@ public final class NameTable extends SubTableContainerTable
 
   /**
    * Get the name as a String for the specified name. If there is no entry for the requested name
-   * then <code>null</code> is returned. If there is no encoding conversion available for the name
-   * then a best attempt String will be returned.
+   * then {@code null} is returned. If there is no encoding conversion available for the name then a
+   * best attempt String will be returned.
    */
   public String name(int platformId, int encodingId, int languageId, int nameId) {
     NameEntry entry = nameEntry(platformId, encodingId, languageId, nameId);
@@ -685,7 +685,7 @@ public final class NameTable extends SubTableContainerTable
 
   /**
    * Get the name entry record for the specified name. If there is no entry for the requested name
-   * then <code>null</code> is returned.
+   * then {@code null} is returned.
    */
   public NameEntry nameEntry(int platformId, int encodingId, int languageId, int nameId) {
     Iterator<NameEntry> nameEntryIter =

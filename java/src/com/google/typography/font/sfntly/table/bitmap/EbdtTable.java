@@ -109,8 +109,8 @@ public final class EbdtTable extends SubTableContainerTable {
      *
      * <p>If there is no current data for the glyph builder or the glyph builders have not been
      * previously set then this will return an empty glyph builder List. If there is current data
-     * (i.e. data read from an existing font) and the <code>loca</code> list has not been set or is
-     * null, empty, or invalid, then an empty glyph builder List will be returned.
+     * (i.e. data read from an existing font) and the {@code loca} list has not been set or is null,
+     * empty, or invalid, then an empty glyph builder List will be returned.
      *
      * @return the list of glyph builders
      */

@@ -108,8 +108,8 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Makes a slice of this FontData. The returned slice will share the data with the original <code>
-   * FontData</code>.
+   * Makes a slice of this FontData. The returned slice will share the data with the original {@code
+   * FontData}.
    *
    * @param offset the start of the slice
    * @param length the number of bytes in the slice
@@ -129,7 +129,7 @@ public final class WritableFontData extends ReadableFontData {
 
   /**
    * Makes a bottom bound only slice of this array. The returned slice will share the data with the
-   * original <code>FontData</code>.
+   * original {@code FontData}.
    *
    * @param offset the start of the slice
    * @return a slice of the original FontData

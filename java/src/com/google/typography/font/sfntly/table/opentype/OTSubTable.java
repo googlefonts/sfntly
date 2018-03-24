@@ -47,8 +47,7 @@ abstract class OTSubTable extends SubTable {
     protected abstract boolean unedited();
 
     /**
-     * Create a model for editing from the data. This causes <code>unedited()</code> to return
-     * false;
+     * Create a model for editing from the data. This causes {@code unedited()} to return false;
      */
     protected abstract void readModel(ReadableFontData data, boolean dataIsCanonical);
 

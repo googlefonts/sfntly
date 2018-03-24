@@ -151,7 +151,7 @@ public class ReadableFontData extends FontData {
 
   /**
    * Makes a bottom bound only slice of this array. The returned slice will share the data with the
-   * original <code>FontData</code>.
+   * original {@code FontData}.
    *
    * @param offset the start of the slice
    * @return a slice of the original FontData

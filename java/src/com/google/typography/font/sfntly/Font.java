@@ -320,7 +320,7 @@ public class Font {
    * Gets a copy of the fonts digest that was created when the font was read. If no digest was set
    * at creation time then the return result will be null.
    *
-   * @return a copy of the digest array or <code>null</code> if one wasn't set at creation time
+   * @return a copy of the digest array or {@code null} if one wasn't set at creation time
    */
   public byte[] digest() {
     if (digest == null) {
