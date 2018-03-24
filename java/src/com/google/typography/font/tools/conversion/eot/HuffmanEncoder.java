@@ -42,7 +42,6 @@ public class HuffmanEncoder {
   public HuffmanEncoder(BitIOWriter bits, int range) {
     this.bits = bits;
     this.range = range;
-    bitsUsed(range - 1);
     if (range > 256 && range < 512) {
       bitCount2 = bitsUsed(range - 257);
     } else {

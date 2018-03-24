@@ -211,7 +211,7 @@ abstract class ByteArray {
    */
   public int copyTo(int dstOffset, ByteArray array, int srcOffset, int length) {
     byte[] b = new byte[COPY_BUFFER_SIZE];
-    int bytesRead = 0;
+    int bytesRead;
     int index = 0;
     int bufferLength = Math.min(b.length, length);
     while ((bytesRead = get(index + srcOffset, b, 0, bufferLength)) > 0) {
@@ -240,7 +240,7 @@ abstract class ByteArray {
    */
   public int copyTo(OutputStream os, int offset, int length) throws IOException {
     byte[] b = new byte[COPY_BUFFER_SIZE];
-    int bytesRead = 0;
+    int bytesRead;
     int index = 0;
     int bufferLength = Math.min(b.length, length);
     while ((bytesRead = get(index + offset, b, 0, bufferLength)) > 0) {
@@ -254,7 +254,7 @@ abstract class ByteArray {
   /** Copies from the InputStream into this ByteArray. */
   public void copyFrom(InputStream is, int length) throws IOException {
     byte[] b = new byte[COPY_BUFFER_SIZE];
-    int bytesRead = 0;
+    int bytesRead;
     int index = 0;
     int bufferLength = Math.min(b.length, length);
     while ((bytesRead = is.read(b, 0, bufferLength)) > 0) {
@@ -270,7 +270,7 @@ abstract class ByteArray {
   /** Copies everything from the InputStream into this ByteArray. */
   public void copyFrom(InputStream is) throws IOException {
     byte[] b = new byte[COPY_BUFFER_SIZE];
-    int bytesRead = 0;
+    int bytesRead;
     int index = 0;
     int bufferLength = b.length;
     while ((bytesRead = is.read(b, 0, bufferLength)) > 0) {

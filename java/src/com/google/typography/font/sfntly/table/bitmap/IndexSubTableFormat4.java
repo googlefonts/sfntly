@@ -116,20 +116,8 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
     }
   }
 
-  private static final class CodeOffsetPairGlyphCodeComparator
-      implements Comparator<CodeOffsetPair> {
-    private CodeOffsetPairGlyphCodeComparator() {
-      // Prevent construction.
-    }
-
-    @Override
-    public int compare(CodeOffsetPair p1, CodeOffsetPair p2) {
-      return Integer.compare(p2.glyphCode, p1.glyphCode);
-    }
-  }
-
   public static final Comparator<CodeOffsetPair> CodeOffsetPairComparatorByGlyphCode =
-      new CodeOffsetPairGlyphCodeComparator();
+      Comparator.comparingInt((CodeOffsetPair pair) -> pair.glyphCode).reversed();
 
   public static final class Builder extends IndexSubTable.Builder<IndexSubTableFormat4> {
     private List<CodeOffsetPairBuilder> offsetPairArray;

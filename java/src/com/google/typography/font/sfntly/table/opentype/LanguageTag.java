@@ -654,9 +654,9 @@ enum LanguageTag {
 
   public List<String> iso3List() {
     if (iso3List.isEmpty()) {
-      return Collections.<String>emptyList();
+      return Collections.emptyList();
     } else {
-      return Arrays.<String>asList(iso3List.split(","));
+      return Arrays.asList(iso3List.split(","));
     }
   }
 

@@ -38,7 +38,7 @@ public class HdmxEncoder {
     HorizontalDeviceMetricsTable hdmx = sourceFont.getTable(Tag.hdmx);
     HorizontalMetricsTable hmtx = sourceFont.getTable(Tag.hmtx);
     MaximumProfileTable maxp = sourceFont.getTable(Tag.maxp);
-    FontHeaderTable head = sourceFont.<FontHeaderTable>getTable(Tag.head);
+    FontHeaderTable head = sourceFont.getTable(Tag.head);
     int unitsPerEm = head.unitsPerEm();
     int numRecords = hdmx.numRecords();
     int numGlyphs = maxp.numGlyphs();
