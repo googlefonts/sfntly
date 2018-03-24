@@ -4,7 +4,7 @@ package com.google.typography.font.sfntly;
 
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
-import com.google.typography.font.sfntly.testutils.TestFont.TestFontNames;
+import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 public class GPosTests extends TestCase {
   public void testGposFiles() {
     List<Font> gposFontList = new ArrayList<>();
-    for (TestFontNames name : TestFontNames.values()) {
+    for (TestFont.TestFontNames name : TestFont.TestFontNames.values()) {
       Font[] fonts;
       try {
         fonts = TestFontUtils.loadFont(name.getFile());

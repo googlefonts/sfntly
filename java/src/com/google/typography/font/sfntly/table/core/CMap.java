@@ -1,22 +1,18 @@
 package com.google.typography.font.sfntly.table.core;
 
-import com.google.typography.font.sfntly.Font.MacintoshEncodingId;
-import com.google.typography.font.sfntly.Font.PlatformId;
-import com.google.typography.font.sfntly.Font.UnicodeEncodingId;
-import com.google.typography.font.sfntly.Font.WindowsEncodingId;
+import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
-import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
  * The abstract base class for all cmaps.
  *
- * <p>CMap equality is based on the equality of the (@link {@link CMapId} that defines the CMap. In
- * the cmap table for a font there can only be one cmap with a given cmap id (pair of platform and
- * encoding ids) no matter what the type of the cmap is.
+ * <p>CMap equality is based on the equality of the (@link {@link CMapTable.CMapId} that defines the
+ * CMap. In the cmap table for a font there can only be one cmap with a given cmap id (pair of
+ * platform and encoding ids) no matter what the type of the cmap is.
  *
  * <p>The cmap implements {@code Iterable<Integer>} to allow iteration over characters that are
  * mapped by the cmap. This iteration mostly returns the characters mapped by the cmap. It will
@@ -29,7 +25,7 @@ import java.util.NoSuchElementException;
  */
 public abstract class CMap extends SubTable implements Iterable<Integer> {
   protected final int format;
-  protected final CMapId cmapId;
+  protected final CMapTable.CMapId cmapId;
 
   /**
    * CMap subtable formats.
@@ -71,7 +67,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     }
   }
 
-  protected CMap(ReadableFontData data, int format, CMapId cmapId) {
+  protected CMap(ReadableFontData data, int format, CMapTable.CMapId cmapId) {
     super(data);
     this.format = format;
     this.cmapId = cmapId;
@@ -81,19 +77,19 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     return format;
   }
 
-  public CMapId cmapId() {
+  public CMapTable.CMapId cmapId() {
     return cmapId;
   }
 
-  /** @see PlatformId */
+  /** @see Font.PlatformId */
   public int platformId() {
     return cmapId().platformId();
   }
 
   /**
-   * @see MacintoshEncodingId
-   * @see WindowsEncodingId
-   * @see UnicodeEncodingId
+   * @see Font.MacintoshEncodingId
+   * @see Font.WindowsEncodingId
+   * @see Font.UnicodeEncodingId
    */
   public int encodingId() {
     return cmapId().encodingId();
@@ -225,16 +221,16 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
   public abstract static class Builder<T extends CMap> extends SubTable.Builder<T> {
 
     private final CMapFormat format;
-    private final CMapId cmapId;
+    private final CMapTable.CMapId cmapId;
     private int language;
 
-    protected Builder(ReadableFontData data, CMapFormat format, CMapId cmapId) {
+    protected Builder(ReadableFontData data, CMapFormat format, CMapTable.CMapId cmapId) {
       super(data);
       this.format = format;
       this.cmapId = cmapId;
     }
 
-    public CMapId cmapId() {
+    public CMapTable.CMapId cmapId() {
       return cmapId;
     }
 
@@ -243,9 +239,9 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
      * depending on the platform id.
      *
      * @return the encoding id
-     * @see MacintoshEncodingId
-     * @see WindowsEncodingId
-     * @see UnicodeEncodingId
+     * @see Font.MacintoshEncodingId
+     * @see Font.WindowsEncodingId
+     * @see Font.UnicodeEncodingId
      */
     public int encodingId() {
       return cmapId().encodingId();
@@ -255,7 +251,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
      * Gets the platform id for the cmap.
      *
      * @return the platform id
-     * @see PlatformId
+     * @see Font.PlatformId
      */
     public int platformId() {
       return cmapId().platformId();
@@ -273,7 +269,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
       this.language = language;
     }
 
-    protected Builder(WritableFontData data, CMapFormat format, CMapId cmapId) {
+    protected Builder(WritableFontData data, CMapFormat format, CMapTable.CMapId cmapId) {
       super(data);
       this.format = format;
       this.cmapId = cmapId;
@@ -300,7 +296,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     }
 
     static CMap.Builder<? extends CMap> getBuilder(
-        ReadableFontData data, int offset, CMapId cmapId) {
+        ReadableFontData data, int offset, CMapTable.CMapId cmapId) {
       // read from the front of the cmap - 1st entry is always the format
       int rawFormat = data.readUShort(offset);
       CMapFormat format = CMapFormat.valueOf(rawFormat);
@@ -333,7 +329,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     // TODO: Instead of a root factory method, the individual subtable
     // builders should get created
     // from static factory methods in each subclass
-    static CMap.Builder<? extends CMap> getBuilder(CMapFormat cmapFormat, CMapId cmapId) {
+    static CMap.Builder<? extends CMap> getBuilder(CMapFormat cmapFormat, CMapTable.CMapId cmapId) {
       switch (cmapFormat) {
           // TODO: builders for other formats, as they're implemented
         case Format0:

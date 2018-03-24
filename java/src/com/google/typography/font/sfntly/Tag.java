@@ -26,7 +26,7 @@ import java.io.UnsupportedEncodingException;
  * @author Stuart Gill
  */
 public final class Tag {
-  public static final int ttcf = Tag.intValue("ttcf");
+  public static final int ttcf = intValue("ttcf");
 
   /**
    * *********************************************************************************
@@ -37,70 +37,70 @@ public final class Tag {
    */
 
   // required tables
-  public static final int cmap = Tag.intValue("cmap");
+  public static final int cmap = intValue("cmap");
 
-  public static final int head = Tag.intValue("head");
-  public static final int hhea = Tag.intValue("hhea");
-  public static final int hmtx = Tag.intValue("hmtx");
-  public static final int maxp = Tag.intValue("maxp");
-  public static final int name = Tag.intValue("name");
-  public static final int OS_2 = Tag.intValue("OS/2");
-  public static final int post = Tag.intValue("post");
+  public static final int head = intValue("head");
+  public static final int hhea = intValue("hhea");
+  public static final int hmtx = intValue("hmtx");
+  public static final int maxp = intValue("maxp");
+  public static final int name = intValue("name");
+  public static final int OS_2 = intValue("OS/2");
+  public static final int post = intValue("post");
 
   // truetype outline tables
-  public static final int cvt = Tag.intValue("cvt ");
-  public static final int fpgm = Tag.intValue("fpgm");
-  public static final int glyf = Tag.intValue("glyf");
-  public static final int loca = Tag.intValue("loca");
-  public static final int prep = Tag.intValue("prep");
+  public static final int cvt = intValue("cvt ");
+  public static final int fpgm = intValue("fpgm");
+  public static final int glyf = intValue("glyf");
+  public static final int loca = intValue("loca");
+  public static final int prep = intValue("prep");
 
   // postscript outline tables
-  public static final int CFF = Tag.intValue("CFF ");
-  public static final int VORG = Tag.intValue("VORG");
+  public static final int CFF = intValue("CFF ");
+  public static final int VORG = intValue("VORG");
 
   // opentype bitmap glyph outlines
-  public static final int EBDT = Tag.intValue("EBDT");
-  public static final int EBLC = Tag.intValue("EBLC");
-  public static final int EBSC = Tag.intValue("EBSC");
+  public static final int EBDT = intValue("EBDT");
+  public static final int EBLC = intValue("EBLC");
+  public static final int EBSC = intValue("EBSC");
 
   // advanced typographic features
-  public static final int BASE = Tag.intValue("BASE");
-  public static final int GDEF = Tag.intValue("GDEF");
-  public static final int GPOS = Tag.intValue("GPOS");
-  public static final int GSUB = Tag.intValue("GSUB");
-  public static final int JSTF = Tag.intValue("JSTF");
+  public static final int BASE = intValue("BASE");
+  public static final int GDEF = intValue("GDEF");
+  public static final int GPOS = intValue("GPOS");
+  public static final int GSUB = intValue("GSUB");
+  public static final int JSTF = intValue("JSTF");
 
   // other
-  public static final int DSIG = Tag.intValue("DSIG");
-  public static final int gasp = Tag.intValue("gasp");
-  public static final int hdmx = Tag.intValue("hdmx");
-  public static final int kern = Tag.intValue("kern");
-  public static final int LTSH = Tag.intValue("LTSH");
-  public static final int PCLT = Tag.intValue("PCLT");
-  public static final int VDMX = Tag.intValue("VDMX");
-  public static final int vhea = Tag.intValue("vhea");
-  public static final int vmtx = Tag.intValue("vmtx");
+  public static final int DSIG = intValue("DSIG");
+  public static final int gasp = intValue("gasp");
+  public static final int hdmx = intValue("hdmx");
+  public static final int kern = intValue("kern");
+  public static final int LTSH = intValue("LTSH");
+  public static final int PCLT = intValue("PCLT");
+  public static final int VDMX = intValue("VDMX");
+  public static final int vhea = intValue("vhea");
+  public static final int vmtx = intValue("vmtx");
 
   // AAT Tables
   // TODO(stuartg): some tables may be missing from this list
-  public static final int bsln = Tag.intValue("bsln");
-  public static final int feat = Tag.intValue("feat");
-  public static final int lcar = Tag.intValue("lcar");
-  public static final int morx = Tag.intValue("morx");
-  public static final int opbd = Tag.intValue("opbd");
-  public static final int prop = Tag.intValue("prop");
+  public static final int bsln = intValue("bsln");
+  public static final int feat = intValue("feat");
+  public static final int lcar = intValue("lcar");
+  public static final int morx = intValue("morx");
+  public static final int opbd = intValue("opbd");
+  public static final int prop = intValue("prop");
 
   // Graphite tables
-  public static final int Feat = Tag.intValue("Feat");
-  public static final int Glat = Tag.intValue("Glat");
-  public static final int Gloc = Tag.intValue("Gloc");
-  public static final int Sile = Tag.intValue("Sile");
-  public static final int Silf = Tag.intValue("Silf");
+  public static final int Feat = intValue("Feat");
+  public static final int Glat = intValue("Glat");
+  public static final int Gloc = intValue("Gloc");
+  public static final int Sile = intValue("Sile");
+  public static final int Silf = intValue("Silf");
 
   // truetype bitmap font tables
-  public static final int bhed = Tag.intValue("bhed");
-  public static final int bdat = Tag.intValue("bdat");
-  public static final int bloc = Tag.intValue("bloc");
+  public static final int bhed = intValue("bhed");
+  public static final int bdat = intValue("bdat");
+  public static final int bloc = intValue("bloc");
 
   private Tag() {
     // Prevent construction.
@@ -146,7 +146,7 @@ public final class Tag {
    * @return true if the tag represents the font header table
    */
   public static boolean isHeaderTable(int tag) {
-    if (tag == Tag.head || tag == Tag.bhed) {
+    if (tag == head || tag == bhed) {
       return true;
     }
     return false;

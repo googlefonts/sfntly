@@ -6,7 +6,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import java.util.Iterator;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
@@ -255,7 +255,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
       int subTableFillPos = tableSize;
 
       TagOffsetRecordList recordList = new TagOffsetRecordList(newData);
-      for (Entry<Integer, VisibleSubTable.Builder<S>> entry : builders.entrySet()) {
+      for (Map.Entry<Integer, VisibleSubTable.Builder<S>> entry : builders.entrySet()) {
         int tag = entry.getKey();
         VisibleSubTable.Builder<? extends SubTable> builder = entry.getValue();
         if (builder.serializedLength > 0) {

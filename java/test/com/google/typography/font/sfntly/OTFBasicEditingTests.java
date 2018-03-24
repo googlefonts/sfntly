@@ -16,7 +16,6 @@
 
 package com.google.typography.font.sfntly;
 
-import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
@@ -47,7 +46,7 @@ public class OTFBasicEditingTests extends TestCase {
     Font[] originalFont = TestFontUtils.loadFont(TEST_FONT_FILE);
     long originalChecksum = originalFont[0].checksum();
 
-    Builder fontBuilder = TestFontUtils.builderForFontFile(TEST_FONT_FILE);
+    Font.Builder fontBuilder = TestFontUtils.builderForFontFile(TEST_FONT_FILE);
     Set<Integer> builderTags = new HashSet<>(fontBuilder.tableBuilderMap().keySet());
     FontHeaderTable.Builder headerBuilder =
         (FontHeaderTable.Builder) fontBuilder.getTableBuilder(Tag.head);
@@ -83,7 +82,7 @@ public class OTFBasicEditingTests extends TestCase {
     long originalChecksumAdjustment =
         ((FontHeaderTable) originalFont.getTable(Tag.head)).checkSumAdjustment();
 
-    Builder fontBuilder = TestFontUtils.builderForFontFile(TEST_FONT_FILE);
+    Font.Builder fontBuilder = TestFontUtils.builderForFontFile(TEST_FONT_FILE);
     for (int tag : fontBuilder.tableBuilderMap().keySet()) {
       Table.Builder<? extends Table> tableBuilder = fontBuilder.getTableBuilder(tag);
       WritableFontData data = tableBuilder.data();

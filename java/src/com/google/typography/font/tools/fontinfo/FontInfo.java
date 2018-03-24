@@ -3,10 +3,6 @@
 package com.google.typography.font.tools.fontinfo;
 
 import com.google.typography.font.sfntly.Font;
-import com.google.typography.font.sfntly.Font.MacintoshEncodingId;
-import com.google.typography.font.sfntly.Font.PlatformId;
-import com.google.typography.font.sfntly.Font.UnicodeEncodingId;
-import com.google.typography.font.sfntly.Font.WindowsEncodingId;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.math.Fixed1616;
 import com.google.typography.font.sfntly.table.Table;
@@ -16,18 +12,11 @@ import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 import com.google.typography.font.sfntly.table.core.HorizontalHeaderTable;
 import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
 import com.google.typography.font.sfntly.table.core.NameTable;
-import com.google.typography.font.sfntly.table.core.NameTable.MacintoshLanguageId;
-import com.google.typography.font.sfntly.table.core.NameTable.NameEntry;
-import com.google.typography.font.sfntly.table.core.NameTable.NameId;
-import com.google.typography.font.sfntly.table.core.NameTable.UnicodeLanguageId;
-import com.google.typography.font.sfntly.table.core.NameTable.WindowsLanguageId;
 import com.google.typography.font.sfntly.table.core.OS2Table;
 import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
-import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
-import com.google.typography.font.tools.fontinfo.DataDisplayTable.Align;
 import com.ibm.icu.impl.IllegalIcuArgumentException;
 import com.ibm.icu.lang.UCharacter;
 import com.ibm.icu.lang.UScript;
@@ -70,7 +59,7 @@ public class FontInfo {
    */
   public static DataDisplayTable listFontMetrics(Font font) {
     DataDisplayTable table = new DataDisplayTable("Name", "Value");
-    table.setAlignment(Align.Left, Align.Left);
+    table.setAlignment(DataDisplayTable.Align.Left, DataDisplayTable.Align.Left);
 
     // Retrieve necessary tables
     FontHeaderTable headTable = (FontHeaderTable) FontUtils.getTable(font, Tag.head);
@@ -105,7 +94,11 @@ public class FontInfo {
    */
   public static DataDisplayTable listTables(Font font) {
     DataDisplayTable table = new DataDisplayTable("tag", "checksum", "length", "offset");
-    table.setAlignment(Align.Left, Align.Right, Align.Right, Align.Right);
+    table.setAlignment(
+        DataDisplayTable.Align.Left,
+        DataDisplayTable.Align.Right,
+        DataDisplayTable.Align.Right,
+        DataDisplayTable.Align.Right);
 
     // Total size of font
     int fontSize = 0;
@@ -146,36 +139,42 @@ public class FontInfo {
   public static DataDisplayTable listNameEntries(Font font) {
     DataDisplayTable table =
         new DataDisplayTable("Platform", "Encoding", "Language", "Name", "Value");
-    table.setAlignment(Align.Left, Align.Left, Align.Left, Align.Left, Align.Left);
+    table.setAlignment(
+        DataDisplayTable.Align.Left,
+        DataDisplayTable.Align.Left,
+        DataDisplayTable.Align.Left,
+        DataDisplayTable.Align.Left,
+        DataDisplayTable.Align.Left);
 
     NameTable nameTable = (NameTable) FontUtils.getTable(font, Tag.name);
-    for (NameEntry entry : nameTable) {
+    for (NameTable.NameEntry entry : nameTable) {
 
       String eidEntry = ""; // Platform-specific encoding
       String lidEntry = ""; // Language
 
-      switch (PlatformId.valueOf(entry.platformId())) {
+      switch (Font.PlatformId.valueOf(entry.platformId())) {
         case Unicode:
-          eidEntry = UnicodeEncodingId.valueOf(entry.encodingId()).toString();
-          lidEntry = UnicodeLanguageId.valueOf(entry.languageId()).toString();
+          eidEntry = Font.UnicodeEncodingId.valueOf(entry.encodingId()).toString();
+          lidEntry = NameTable.UnicodeLanguageId.valueOf(entry.languageId()).toString();
           break;
         case Macintosh:
-          eidEntry = MacintoshEncodingId.valueOf(entry.encodingId()).toString();
-          lidEntry = MacintoshLanguageId.valueOf(entry.languageId()).toString();
+          eidEntry = Font.MacintoshEncodingId.valueOf(entry.encodingId()).toString();
+          lidEntry = NameTable.MacintoshLanguageId.valueOf(entry.languageId()).toString();
           break;
         case Windows:
-          eidEntry = WindowsEncodingId.valueOf(entry.encodingId()).toString();
-          lidEntry = WindowsLanguageId.valueOf(entry.languageId()).toString();
+          eidEntry = Font.WindowsEncodingId.valueOf(entry.encodingId()).toString();
+          lidEntry = NameTable.WindowsLanguageId.valueOf(entry.languageId()).toString();
           break;
         default:
           break;
       }
 
       table.add(
-          String.format("%s (id=%d)", PlatformId.valueOf(entry.platformId()), entry.platformId()),
+          String.format(
+              "%s (id=%d)", Font.PlatformId.valueOf(entry.platformId()), entry.platformId()),
           String.format("%s (id=%d)", eidEntry, entry.encodingId()),
           String.format("%s (id=%d)", lidEntry, entry.languageId()),
-          NameId.valueOf(entry.nameId()).toString(),
+          NameTable.NameId.valueOf(entry.nameId()).toString(),
           entry.name());
     }
 
@@ -190,7 +189,8 @@ public class FontInfo {
    */
   public static DataDisplayTable listCmaps(Font font) {
     DataDisplayTable table = new DataDisplayTable("Platform ID", "Encoding ID", "Format");
-    table.setAlignment(Align.Right, Align.Right, Align.Right);
+    table.setAlignment(
+        DataDisplayTable.Align.Right, DataDisplayTable.Align.Right, DataDisplayTable.Align.Right);
 
     // Add information about each individual cmap in the table
     CMapTable cmapTable = FontUtils.getCMapTable(font);
@@ -236,7 +236,8 @@ public class FontInfo {
   public static DataDisplayTable listChars(Font font) {
     DataDisplayTable table =
         new DataDisplayTable("Code point", "Glyph ID", "Unicode-designated name for code point");
-    table.setAlignment(Align.Right, Align.Right, Align.Left);
+    table.setAlignment(
+        DataDisplayTable.Align.Right, DataDisplayTable.Align.Right, DataDisplayTable.Align.Left);
 
     // Iterate through all code points
     CMap cmap = FontUtils.getUCSCMap(font);
@@ -266,7 +267,7 @@ public class FontInfo {
   // FIXME Find more elegant method of retrieving block data
   public static DataDisplayTable listCharBlockCoverage(Font font) {
     DataDisplayTable table = new DataDisplayTable("Block", "Coverage");
-    table.setAlignment(Align.Left, Align.Right);
+    table.setAlignment(DataDisplayTable.Align.Left, DataDisplayTable.Align.Right);
 
     // Iterate through each block to check for coverage
     CMap cmap = FontUtils.getUCSCMap(font);
@@ -319,7 +320,7 @@ public class FontInfo {
    */
   public static DataDisplayTable listScriptCoverage(Font font) {
     DataDisplayTable table = new DataDisplayTable("Script", "Coverage");
-    table.setAlignment(Align.Left, Align.Right);
+    table.setAlignment(DataDisplayTable.Align.Left, DataDisplayTable.Align.Right);
     HashMap<Integer, Integer> coveredScripts = new HashMap<>();
 
     // Add to script count for the script each code point belongs to
@@ -366,7 +367,8 @@ public class FontInfo {
    */
   public static DataDisplayTable listCharsNeededToCoverScript(Font font) {
     DataDisplayTable table = new DataDisplayTable("Script", "Code Point", "Name");
-    table.setAlignment(Align.Left, Align.Right, Align.Left);
+    table.setAlignment(
+        DataDisplayTable.Align.Left, DataDisplayTable.Align.Right, DataDisplayTable.Align.Left);
     HashMap<Integer, UnicodeSet> coveredScripts = new HashMap<>();
 
     // Iterate through each set
@@ -433,7 +435,7 @@ public class FontInfo {
    */
   public static DataDisplayTable listGlyphDimensionBounds(Font font) {
     DataDisplayTable table = new DataDisplayTable("Dimension", "Value");
-    table.setAlignment(Align.Left, Align.Right);
+    table.setAlignment(DataDisplayTable.Align.Left, DataDisplayTable.Align.Right);
 
     LocaTable locaTable = FontUtils.getLocaTable(font);
     GlyphTable glyfTable = FontUtils.getGlyphTable(font);
@@ -498,7 +500,7 @@ public class FontInfo {
    */
   public static DataDisplayTable listSubglyphFrequency(Font font) {
     DataDisplayTable table = new DataDisplayTable("Glyph ID", "Frequency");
-    table.setAlignment(Align.Right, Align.Right);
+    table.setAlignment(DataDisplayTable.Align.Right, DataDisplayTable.Align.Right);
 
     LocaTable locaTable = FontUtils.getLocaTable(font);
     GlyphTable glyfTable = FontUtils.getGlyphTable(font);
@@ -507,7 +509,7 @@ public class FontInfo {
     Map<Integer, Integer> subglyphFreq = new HashMap<>();
     for (int i = 0; i < locaTable.numGlyphs(); i++) {
       Glyph glyph = glyfTable.glyph(locaTable.glyphOffset(i), locaTable.glyphLength(i));
-      if (glyph.glyphType() == GlyphType.Composite) {
+      if (glyph.glyphType() == Glyph.GlyphType.Composite) {
         CompositeGlyph cGlyph = (CompositeGlyph) glyph;
 
         // Add all subglyphs of this glyph to hashmap
@@ -539,7 +541,7 @@ public class FontInfo {
    */
   public static DataDisplayTable listUnmappedGlyphs(Font font) {
     DataDisplayTable table = new DataDisplayTable("Glyph ID");
-    table.setAlignment(Align.Right);
+    table.setAlignment(DataDisplayTable.Align.Right);
 
     // Get a set of all mapped glyph IDs
     Set<Integer> mappedGlyphs = new HashSet<>();

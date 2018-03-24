@@ -16,8 +16,6 @@
 
 package com.google.typography.font.sfntly;
 
-import com.google.typography.font.sfntly.Font.PlatformId;
-import com.google.typography.font.sfntly.Font.WindowsEncodingId;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
@@ -68,8 +66,8 @@ public class GlyphTests extends TestCase {
   private static final TestSet[] GLYPH_TESTS = {
     new TestSet(
         TestFont.TestFontNames.OPENSANS.getFile(),
-        PlatformId.Windows.value(),
-        WindowsEncodingId.UnicodeUCS2.value(),
+        Font.PlatformId.Windows.value(),
+        Font.WindowsEncodingId.UnicodeUCS2.value(),
         0x20,
         0x7f),
 

@@ -120,7 +120,7 @@ public abstract class IndexSubTable extends SubTable {
   }
 
   protected int checkGlyphRange(int glyphId) {
-    return IndexSubTable.checkGlyphRange(glyphId, firstGlyphIndex(), lastGlyphIndex());
+    return checkGlyphRange(glyphId, firstGlyphIndex(), lastGlyphIndex());
   }
 
   @Override

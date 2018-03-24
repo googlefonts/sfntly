@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 /** @author dougfelt@google.com (Doug Felt) */
@@ -700,7 +699,7 @@ class ViewableTaggedData {
         // Now there is a previous entry with same target position but higher source position value.
       }
 
-      Entry<Integer, WidthUsageRecord> entry = tgt2widthUsage.floorEntry(src);
+      Map.Entry<Integer, WidthUsageRecord> entry = tgt2widthUsage.floorEntry(src);
       WidthUsageRecord srcWidthUsage = entry != null ? entry.getValue() : WidthUsageRecord.EMPTY;
 
       // If there is a match and we haven't returned means there is already shorter range with

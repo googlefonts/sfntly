@@ -3,7 +3,6 @@ package com.google.typography.font.sfntly.table.truetype;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
-import com.google.typography.font.sfntly.table.truetype.GlyphTable.Offset;
 
 public abstract class Glyph extends SubTable {
 
@@ -28,7 +27,7 @@ public abstract class Glyph extends SubTable {
       this.numberOfContours = 0;
     } else {
       // -1 if composite
-      this.numberOfContours = this.data.readShort(Offset.numberOfContours);
+      this.numberOfContours = this.data.readShort(GlyphTable.Offset.numberOfContours);
     }
   }
 
@@ -40,7 +39,7 @@ public abstract class Glyph extends SubTable {
       this.numberOfContours = 0;
     } else {
       // -1 if composite
-      this.numberOfContours = this.data.readShort(Offset.numberOfContours);
+      this.numberOfContours = this.data.readShort(GlyphTable.Offset.numberOfContours);
     }
   }
 
@@ -69,7 +68,7 @@ public abstract class Glyph extends SubTable {
   //  }
 
   static Glyph getGlyph(GlyphTable table, ReadableFontData data, int offset, int length) {
-    Glyph.GlyphType type = Glyph.glyphType(data, offset, length);
+    Glyph.GlyphType type = glyphType(data, offset, length);
     if (type == GlyphType.Simple) {
       return new SimpleGlyph(data, offset, length);
     }
@@ -101,19 +100,19 @@ public abstract class Glyph extends SubTable {
   }
 
   public int xMin() {
-    return data.readShort(Offset.xMin);
+    return data.readShort(GlyphTable.Offset.xMin);
   }
 
   public int xMax() {
-    return data.readShort(Offset.xMax);
+    return data.readShort(GlyphTable.Offset.xMax);
   }
 
   public int yMin() {
-    return data.readShort(Offset.yMin);
+    return data.readShort(GlyphTable.Offset.yMin);
   }
 
   public int yMax() {
-    return data.readShort(Offset.yMax);
+    return data.readShort(GlyphTable.Offset.yMax);
   }
 
   public abstract int instructionSize();
@@ -149,12 +148,12 @@ public abstract class Glyph extends SubTable {
 
     static Glyph.Builder<? extends Glyph> getBuilder(
         GlyphTable.Builder tableBuilder, ReadableFontData data) {
-      return Glyph.Builder.getBuilder(tableBuilder, data, 0, data.length());
+      return getBuilder(tableBuilder, data, 0, data.length());
     }
 
     static Glyph.Builder<? extends Glyph> getBuilder(
         GlyphTable.Builder tableBuilder, ReadableFontData data, int offset, int length) {
-      Glyph.GlyphType type = Glyph.glyphType(data, offset, length);
+      Glyph.GlyphType type = glyphType(data, offset, length);
       if (type == GlyphType.Simple) {
         return new SimpleGlyph.SimpleGlyphBuilder(data, offset, length);
       }

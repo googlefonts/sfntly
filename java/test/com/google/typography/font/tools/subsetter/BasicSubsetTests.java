@@ -17,8 +17,6 @@
 package com.google.typography.font.tools.subsetter;
 
 import com.google.typography.font.sfntly.Font;
-import com.google.typography.font.sfntly.Font.MacintoshEncodingId;
-import com.google.typography.font.sfntly.Font.PlatformId;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.Table;
@@ -75,7 +73,7 @@ public class BasicSubsetTests extends TestCase {
     List<CMapTable.CMapId> cmapIds = new ArrayList<>();
     cmapIds.add(
         CMapTable.CMapId.getInstance(
-            PlatformId.Macintosh.value(), MacintoshEncodingId.Mongolian.value()));
+            Font.PlatformId.Macintosh.value(), Font.MacintoshEncodingId.Mongolian.value()));
     cmapIds.add(CMapTable.CMapId.WINDOWS_BMP);
     subsetter.setCMaps(cmapIds, 1);
 

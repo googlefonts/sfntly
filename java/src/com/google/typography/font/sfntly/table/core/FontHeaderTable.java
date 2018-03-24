@@ -139,8 +139,8 @@ public final class FontHeaderTable extends Table {
 
     public static int cleanValue(EnumSet<Flags> set) {
       EnumSet<Flags> clean = EnumSet.copyOf(set);
-      clean.remove(Flags.Reserved14);
-      clean.remove(Flags.Reserved15);
+      clean.remove(Reserved14);
+      clean.remove(Reserved15);
       return value(clean);
     }
   }
@@ -236,8 +236,7 @@ public final class FontHeaderTable extends Table {
       return value(clean);
     }
 
-    private static final EnumSet<MacStyle> reserved =
-        EnumSet.range(MacStyle.Reserved7, MacStyle.Reserved15);
+    private static final EnumSet<MacStyle> reserved = EnumSet.range(Reserved7, Reserved15);
   }
 
   /** Get the Mac style bits as an int. */
@@ -354,20 +353,19 @@ public final class FontHeaderTable extends Table {
 
     protected Builder(Header header, ReadableFontData data) {
       super(header, data);
-      data.setCheckSumRanges(FontHeaderTable.CHECKSUM_RANGES);
+      data.setCheckSumRanges(CHECKSUM_RANGES);
     }
 
     @Override
     protected boolean subReadyToSerialize() {
       if (dataChanged()) {
         ReadableFontData data = internalReadData();
-        data.setCheckSumRanges(FontHeaderTable.CHECKSUM_RANGES);
+        data.setCheckSumRanges(CHECKSUM_RANGES);
       }
       if (fontChecksumSet) {
         ReadableFontData data = internalReadData();
-        data.setCheckSumRanges(FontHeaderTable.CHECKSUM_RANGES);
-        long checksumAdjustment =
-            FontHeaderTable.CHECKSUM_ADJUSTMENT_BASE - (fontChecksum + data.checksum());
+        data.setCheckSumRanges(CHECKSUM_RANGES);
+        long checksumAdjustment = CHECKSUM_ADJUSTMENT_BASE - (fontChecksum + data.checksum());
         setCheckSumAdjustment(checksumAdjustment);
       }
       return super.subReadyToSerialize();

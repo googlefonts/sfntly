@@ -17,10 +17,6 @@
 package com.google.typography.font.sfntly.table.core;
 
 import com.google.typography.font.sfntly.Font;
-import com.google.typography.font.sfntly.Font.MacintoshEncodingId;
-import com.google.typography.font.sfntly.Font.PlatformId;
-import com.google.typography.font.sfntly.Font.UnicodeEncodingId;
-import com.google.typography.font.sfntly.Font.WindowsEncodingId;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.SfObjects;
 import com.google.typography.font.sfntly.data.WritableFontData;
@@ -569,7 +565,7 @@ public final class NameTable extends SubTableContainerTable
    *
    * @param index the index of the name record
    * @return the platform id
-   * @see PlatformId
+   * @see Font.PlatformId
    */
   public int platformId(int index) {
     return data.readUShort(NameRecord.platformId + offsetForNameRecord(index));
@@ -580,9 +576,9 @@ public final class NameTable extends SubTableContainerTable
    *
    * @param index the index of the name record
    * @return the encoding id
-   * @see MacintoshEncodingId
-   * @see WindowsEncodingId
-   * @see UnicodeEncodingId
+   * @see Font.MacintoshEncodingId
+   * @see Font.WindowsEncodingId
+   * @see Font.UnicodeEncodingId
    */
   public int encodingId(int index) {
     return data.readUShort(NameRecord.encodingId + offsetForNameRecord(index));
@@ -832,7 +828,7 @@ public final class NameTable extends SubTableContainerTable
       String nameIdStr = nameId != null ? nameId.toString() : Integer.toHexString(this.nameId);
       return String.format(
           "P=%s, E=%#x, L=%#x, N=%s",
-          PlatformId.valueOf(platformId), encodingId, languageId, nameIdStr);
+          Font.PlatformId.valueOf(platformId), encodingId, languageId, nameIdStr);
     }
   }
 
@@ -908,7 +904,7 @@ public final class NameTable extends SubTableContainerTable
      * then a best attempt String will be returned.
      */
     public String name() {
-      return NameTable.convertFromNameBytes(nameBytes, platformId(), encodingId());
+      return convertFromNameBytes(nameBytes, platformId(), encodingId());
     }
 
     @Override
@@ -956,8 +952,7 @@ public final class NameTable extends SubTableContainerTable
         return;
       }
       this.nameBytes =
-          NameTable.convertToNameBytes(
-              name, nameEntryId.getPlatformId(), nameEntryId.getEncodingId());
+          convertToNameBytes(name, nameEntryId.getPlatformId(), nameEntryId.getEncodingId());
     }
 
     public void setName(byte[] nameBytes) {
@@ -1041,12 +1036,12 @@ public final class NameTable extends SubTableContainerTable
   // TODO(stuartg): do this in the encoding enums
   private static String getEncodingName(int platformId, int encodingId) {
     String encodingName = null;
-    switch (PlatformId.valueOf(platformId)) {
+    switch (Font.PlatformId.valueOf(platformId)) {
       case Unicode:
         encodingName = "UTF-16BE";
         break;
       case Macintosh:
-        switch (MacintoshEncodingId.valueOf(encodingId)) {
+        switch (Font.MacintoshEncodingId.valueOf(encodingId)) {
           case Roman:
             encodingName = "MacRoman";
             break;
@@ -1135,7 +1130,7 @@ public final class NameTable extends SubTableContainerTable
       case ISO:
         break;
       case Windows:
-        switch (WindowsEncodingId.valueOf(encodingId)) {
+        switch (Font.WindowsEncodingId.valueOf(encodingId)) {
           case Symbol:
             encodingName = "UTF-16BE";
             break;
@@ -1172,7 +1167,7 @@ public final class NameTable extends SubTableContainerTable
 
   // TODO: caching of charsets?
   private static Charset getCharset(int platformId, int encodingId) {
-    String encodingName = NameTable.getEncodingName(platformId, encodingId);
+    String encodingName = getEncodingName(platformId, encodingId);
     if (encodingName == null) {
       return null;
     }
@@ -1188,7 +1183,7 @@ public final class NameTable extends SubTableContainerTable
   // TODO(stuartg):
   // do the conversion by hand to detect conversion failures (i.e. no character in the encoding)
   private static byte[] convertToNameBytes(String name, int platformId, int encodingId) {
-    Charset cs = NameTable.getCharset(platformId, encodingId);
+    Charset cs = getCharset(platformId, encodingId);
     if (cs == null) {
       return null;
     }
@@ -1197,11 +1192,11 @@ public final class NameTable extends SubTableContainerTable
   }
 
   private static String convertFromNameBytes(byte[] nameBytes, int platformId, int encodingId) {
-    return NameTable.convertFromNameBytes(ByteBuffer.wrap(nameBytes), platformId, encodingId);
+    return convertFromNameBytes(ByteBuffer.wrap(nameBytes), platformId, encodingId);
   }
 
   private static String convertFromNameBytes(ByteBuffer nameBytes, int platformId, int encodingId) {
-    Charset cs = NameTable.getCharset(platformId, encodingId);
+    Charset cs = getCharset(platformId, encodingId);
     if (cs == null) {
       return Integer.toHexString(platformId);
     }

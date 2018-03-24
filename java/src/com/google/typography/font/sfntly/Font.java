@@ -540,9 +540,9 @@ public class Font {
    */
   private List<Integer> defaultTableOrdering() {
     if (hasTable(Tag.CFF)) {
-      return Font.CFF_TABLE_ORDERING;
+      return CFF_TABLE_ORDERING;
     }
-    return Font.TRUE_TYPE_TABLE_ORDERING;
+    return TRUE_TYPE_TABLE_ORDERING;
   }
 
   /**

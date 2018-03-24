@@ -17,7 +17,6 @@
 package com.google.typography.font.tools.subsetter;
 
 import com.google.typography.font.sfntly.Font;
-import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.HorizontalMetricsTable;
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ public class HorizontalMetricsTableSubsetter extends TableSubsetterImpl {
   }
 
   @Override
-  public boolean subset(Subsetter subsetter, Font font, Builder fontBuilder) {
+  public boolean subset(Subsetter subsetter, Font font, Font.Builder fontBuilder) {
     List<Integer> permutationTable = subsetter.glyphMappingTable();
     if (permutationTable == null) {
       return false;

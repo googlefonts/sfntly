@@ -21,7 +21,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
-import com.google.typography.font.sfntly.table.core.FontHeaderTable.IndexToLocFormat;
+import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,10 +34,14 @@ import java.util.List;
  */
 public final class LocaTable extends Table {
 
-  private IndexToLocFormat version;
+  private FontHeaderTable.IndexToLocFormat version;
   private int numGlyphs;
 
-  private LocaTable(Header header, ReadableFontData data, IndexToLocFormat version, int numGlyphs) {
+  private LocaTable(
+      Header header,
+      ReadableFontData data,
+      FontHeaderTable.IndexToLocFormat version,
+      int numGlyphs) {
     super(header, data);
     this.version = version;
     this.numGlyphs = numGlyphs;
@@ -48,7 +52,7 @@ public final class LocaTable extends Table {
    *
    * @return the table version
    */
-  public IndexToLocFormat formatVersion() {
+  public FontHeaderTable.IndexToLocFormat formatVersion() {
     return version;
   }
 
@@ -108,7 +112,7 @@ public final class LocaTable extends Table {
     if (index < 0 || index > numGlyphs) {
       throw new IndexOutOfBoundsException("Glyph ID is out of bounds.");
     }
-    if (version == IndexToLocFormat.shortOffset) {
+    if (version == FontHeaderTable.IndexToLocFormat.shortOffset) {
       return 2 * data.readUShort(index * FontData.SizeOf.USHORT);
     }
     return data.readULongAsInt(index * FontData.SizeOf.ULONG);
@@ -151,7 +155,8 @@ public final class LocaTable extends Table {
   public static class Builder extends Table.Builder<LocaTable> {
 
     // values that need to be set to properly parse an existing loca table
-    private IndexToLocFormat formatVersion = IndexToLocFormat.longOffset;
+    private FontHeaderTable.IndexToLocFormat formatVersion =
+        FontHeaderTable.IndexToLocFormat.longOffset;
     private int numGlyphs = -1;
 
     // parsed loca table
@@ -234,12 +239,12 @@ public final class LocaTable extends Table {
     }
 
     /** Get the format version that will be used when the loca table is generated. */
-    public IndexToLocFormat formatVersion() {
+    public FontHeaderTable.IndexToLocFormat formatVersion() {
       return formatVersion;
     }
 
     /** Set the format version to be used when generating the loca table. */
-    public void setFormatVersion(IndexToLocFormat formatVersion) {
+    public void setFormatVersion(FontHeaderTable.IndexToLocFormat formatVersion) {
       this.formatVersion = formatVersion;
     }
 
@@ -368,7 +373,7 @@ public final class LocaTable extends Table {
       if (loca == null) {
         return 0;
       }
-      if (formatVersion == IndexToLocFormat.longOffset) {
+      if (formatVersion == FontHeaderTable.IndexToLocFormat.longOffset) {
         return loca.size() * FontData.SizeOf.ULONG;
       }
       return loca.size() * FontData.SizeOf.USHORT;
@@ -383,7 +388,7 @@ public final class LocaTable extends Table {
     protected int subSerialize(WritableFontData newData) {
       int size = 0;
       for (int l : loca) {
-        if (formatVersion == IndexToLocFormat.longOffset) {
+        if (formatVersion == FontHeaderTable.IndexToLocFormat.longOffset) {
           size += newData.writeULong(size, l);
         } else {
           size += newData.writeUShort(size, l / 2);

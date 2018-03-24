@@ -16,7 +16,6 @@
 
 package com.google.typography.font.sfntly;
 
-import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
@@ -108,8 +107,7 @@ public final class FontFactory {
    * @return one or more fonts
    */
   public Font[] loadFonts(InputStream is) throws IOException {
-    PushbackInputStream pbis =
-        new PushbackInputStream(new BufferedInputStream(is), FontFactory.LOOKAHEAD_SIZE);
+    PushbackInputStream pbis = new PushbackInputStream(new BufferedInputStream(is), LOOKAHEAD_SIZE);
     if (isCollection(pbis)) {
       return loadCollection(pbis);
     }
@@ -126,13 +124,12 @@ public final class FontFactory {
    * @param is the input stream font data
    * @return one or more font builders
    */
-  public Builder[] loadFontsForBuilding(InputStream is) throws IOException {
-    PushbackInputStream pbis =
-        new PushbackInputStream(new BufferedInputStream(is), FontFactory.LOOKAHEAD_SIZE);
+  public Font.Builder[] loadFontsForBuilding(InputStream is) throws IOException {
+    PushbackInputStream pbis = new PushbackInputStream(new BufferedInputStream(is), LOOKAHEAD_SIZE);
     if (isCollection(pbis)) {
       return loadCollectionForBuilding(pbis);
     }
-    return new Builder[] {loadSingleOTFForBuilding(pbis)};
+    return new Font.Builder[] {loadSingleOTFForBuilding(pbis)};
   }
 
   private Font loadSingleOTF(InputStream is) throws IOException {
@@ -159,7 +156,7 @@ public final class FontFactory {
       DigestInputStream dis = new DigestInputStream(is, digest);
       is = dis;
     }
-    Builder builder = Builder.getOTFBuilder(this, is);
+    Font.Builder builder = Font.Builder.getOTFBuilder(this, is);
     if (fingerprintFont()) {
       builder.setDigest(digest.digest());
     }
@@ -288,7 +285,7 @@ public final class FontFactory {
    *
    * @return an empty font builder
    */
-  public Builder newFontBuilder() {
+  public Font.Builder newFontBuilder() {
     return Font.Builder.getOTFBuilder(this);
   }
 }

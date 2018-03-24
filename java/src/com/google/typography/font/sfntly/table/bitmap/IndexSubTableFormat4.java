@@ -55,7 +55,7 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
 
   @Override
   public int numGlyphs() {
-    return IndexSubTableFormat4.numGlyphs(data, 0);
+    return numGlyphs(data, 0);
   }
 
   @Override
@@ -140,13 +140,13 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
 
     static Builder createBuilder(
         ReadableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
-      int length = Builder.dataLength(data, indexSubTableOffset, firstGlyphIndex, lastGlyphIndex);
+      int length = dataLength(data, indexSubTableOffset, firstGlyphIndex, lastGlyphIndex);
       return new Builder(data.slice(indexSubTableOffset, length), firstGlyphIndex, lastGlyphIndex);
     }
 
     static Builder createBuilder(
         WritableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
-      int length = Builder.dataLength(data, indexSubTableOffset, firstGlyphIndex, lastGlyphIndex);
+      int length = dataLength(data, indexSubTableOffset, firstGlyphIndex, lastGlyphIndex);
       return new Builder(data.slice(indexSubTableOffset, length), firstGlyphIndex, lastGlyphIndex);
     }
 
@@ -157,7 +157,7 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
     }
 
     private Builder() {
-      super(Offset.builderDataSize, Format.FORMAT_4);
+      super(Offset.builderDataSize, IndexSubTable.Format.FORMAT_4);
     }
 
     private Builder(WritableFontData data, int firstGlyphIndex, int lastGlyphIndex) {

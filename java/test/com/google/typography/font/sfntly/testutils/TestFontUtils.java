@@ -17,7 +17,6 @@
 package com.google.typography.font.sfntly.testutils;
 
 import com.google.typography.font.sfntly.Font;
-import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.FontDataTable;
@@ -28,7 +27,6 @@ import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
 import com.google.typography.font.sfntly.table.core.NameTable;
-import com.google.typography.font.sfntly.table.core.NameTable.NameEntry;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -186,7 +184,7 @@ public class TestFontUtils {
 
         logger.fine("\n----- Name Tables");
         NameTable name = (NameTable) font.getTable(Tag.name);
-        for (NameEntry entry : name) {
+        for (NameTable.NameEntry entry : name) {
           logger.finer(entry.toString());
         }
       }
@@ -195,7 +193,7 @@ public class TestFontUtils {
   }
 
   public static File serializeFont(File fontFile) throws Exception {
-    Font[] fonts = TestFontUtils.loadFont(fontFile);
+    Font[] fonts = loadFont(fontFile);
     if (fonts == null || fonts.length != 1) {
       return null;
     }
@@ -206,7 +204,7 @@ public class TestFontUtils {
 
   public static File serializeFont(Font font, String extension) throws Exception {
     File serializedFontFile = File.createTempFile("serializedFont_", extension);
-    return TestFontUtils.serializeFont(font, serializedFontFile);
+    return serializeFont(font, serializedFontFile);
   }
 
   public static File serializeFont(Font font, File serializedFontFile) throws Exception {
@@ -222,15 +220,16 @@ public class TestFontUtils {
     return serializedFontFile;
   }
 
-  public static Builder builderForFontFile(File fontFile) throws IOException {
+  public static Font.Builder builderForFontFile(File fontFile) throws IOException {
     return builderForFontFile(fontFile, true);
   }
 
-  public static Builder builderForFontFile(File fontFile, boolean fingerprint) throws IOException {
+  public static Font.Builder builderForFontFile(File fontFile, boolean fingerprint)
+      throws IOException {
     FileInputStream is = new FileInputStream(fontFile);
     FontFactory otfFactory = FontFactory.getInstance();
     otfFactory.fingerprintFont(fingerprint);
-    Builder[] builder = otfFactory.loadFontsForBuilding(is);
+    Font.Builder[] builder = otfFactory.loadFontsForBuilding(is);
     return builder[0];
   }
 }

@@ -17,10 +17,8 @@
 package com.google.typography.font.tools.subsetter;
 
 import com.google.typography.font.sfntly.Font;
-import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.CMap;
-import com.google.typography.font.sfntly.table.core.CMap.CMapFormat;
 import com.google.typography.font.sfntly.table.core.CMapFormat4;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import java.io.IOException;
@@ -37,7 +35,7 @@ public class RenumberingCMapTableSubsetter extends TableSubsetterImpl {
   private static CMapFormat4 getCMapFormat4(Font font) {
     CMapTable cmapTable = font.getTable(Tag.cmap);
     for (CMap cmap : cmapTable) {
-      if (cmap.format() == CMapFormat.Format4.value()) {
+      if (cmap.format() == CMap.CMapFormat.Format4.value()) {
         return (CMapFormat4) cmap;
       }
     }
@@ -61,7 +59,8 @@ public class RenumberingCMapTableSubsetter extends TableSubsetterImpl {
   }
 
   @Override
-  public boolean subset(Subsetter subsetter, Font font, Builder fontBuilder) throws IOException {
+  public boolean subset(Subsetter subsetter, Font font, Font.Builder fontBuilder)
+      throws IOException {
     CMapTableBuilder cmapBuilder =
         new CMapTableBuilder(fontBuilder, computeMapping(subsetter, font));
     cmapBuilder.build();

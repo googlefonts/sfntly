@@ -54,7 +54,7 @@ public abstract class FontData {
   /** Offset to apply as a lower bound on the internal byte array. */
   private int boundOffset;
   /** The length of the bound on the internal byte array. */
-  private int boundLength = FontData.GROWABLE_SIZE;
+  private int boundLength = GROWABLE_SIZE;
 
   protected FontData(ByteArray backingArray) {
     this.array = backingArray;
@@ -78,9 +78,7 @@ public abstract class FontData {
     this(data.array);
     bound(
         data.boundOffset + offset,
-        data.boundLength == FontData.GROWABLE_SIZE
-            ? FontData.GROWABLE_SIZE
-            : data.boundLength - offset);
+        data.boundLength == GROWABLE_SIZE ? GROWABLE_SIZE : data.boundLength - offset);
   }
 
   /**

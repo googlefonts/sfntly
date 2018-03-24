@@ -20,11 +20,9 @@ import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.SfStringUtils;
 import com.google.typography.font.sfntly.table.core.CMap;
-import com.google.typography.font.sfntly.table.core.CMap.CMapFormat;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
-import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import java.util.ArrayList;
@@ -59,7 +57,7 @@ public class GlyphCoverage {
     if (!coverage.contains(glyphId)) {
       coverage.add(glyphId);
       Glyph glyph = getGlyph(font, glyphId);
-      if (glyph != null && glyph.glyphType() == GlyphType.Composite) {
+      if (glyph != null && glyph.glyphType() == Glyph.GlyphType.Composite) {
         CompositeGlyph composite = (CompositeGlyph) glyph;
         for (int i = 0; i < composite.numGlyphs(); i++) {
           touchGlyph(font, coverage, composite.glyphIndex(i));
@@ -70,12 +68,12 @@ public class GlyphCoverage {
 
   private static CMap getBestCMap(CMapTable cmapTable) {
     for (CMap cmap : cmapTable) {
-      if (cmap.format() == CMapFormat.Format12.value()) {
+      if (cmap.format() == CMap.CMapFormat.Format12.value()) {
         return cmap;
       }
     }
     for (CMap cmap : cmapTable) {
-      if (cmap.format() == CMapFormat.Format4.value()) {
+      if (cmap.format() == CMap.CMapFormat.Format4.value()) {
         return cmap;
       }
     }

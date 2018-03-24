@@ -16,14 +16,11 @@
 
 package com.google.typography.font.sfntly.table.core;
 
-import com.google.typography.font.sfntly.Font.MacintoshEncodingId;
-import com.google.typography.font.sfntly.Font.PlatformId;
-import com.google.typography.font.sfntly.Font.WindowsEncodingId;
+import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.SubTableContainerTable;
-import com.google.typography.font.sfntly.table.core.CMap.CMapFormat;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,11 +57,11 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
   public static final class CMapId implements Comparable<CMapId> {
 
     public static final CMapId WINDOWS_BMP =
-        CMapId.getInstance(PlatformId.Windows.value(), WindowsEncodingId.UnicodeUCS2.value());
+        getInstance(Font.PlatformId.Windows.value(), Font.WindowsEncodingId.UnicodeUCS2.value());
     public static final CMapId WINDOWS_UCS4 =
-        CMapId.getInstance(PlatformId.Windows.value(), WindowsEncodingId.UnicodeUCS4.value());
+        getInstance(Font.PlatformId.Windows.value(), Font.WindowsEncodingId.UnicodeUCS4.value());
     public static final CMapId MAC_ROMAN =
-        CMapId.getInstance(PlatformId.Macintosh.value(), MacintoshEncodingId.Roman.value());
+        getInstance(Font.PlatformId.Macintosh.value(), Font.MacintoshEncodingId.Roman.value());
 
     public static CMapId getInstance(int platformId, int encodingId) {
       return new CMapId(platformId, encodingId);
@@ -458,7 +455,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
       return builder;
     }
 
-    public CMap.Builder<? extends CMap> newCMapBuilder(CMapId cmapId, CMapFormat cmapFormat) {
+    public CMap.Builder<? extends CMap> newCMapBuilder(CMapId cmapId, CMap.CMapFormat cmapFormat) {
       CMap.Builder<? extends CMap> builder = CMap.Builder.getBuilder(cmapFormat, cmapId);
       Map<CMapId, CMap.Builder<? extends CMap>> cmapBuilders = getCMapBuilders();
       cmapBuilders.put(cmapId, builder);

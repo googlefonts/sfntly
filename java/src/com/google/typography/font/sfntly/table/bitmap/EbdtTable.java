@@ -140,7 +140,7 @@ public final class EbdtTable extends SubTableContainerTable {
         if (glyphLoca == null) {
           throw new IllegalStateException("Loca values not set - unable to parse glyph data.");
         }
-        this.glyphBuilders = Builder.initialize(internalReadData(), glyphLoca);
+        this.glyphBuilders = initialize(internalReadData(), glyphLoca);
         setModelChanged();
       }
       return glyphBuilders;

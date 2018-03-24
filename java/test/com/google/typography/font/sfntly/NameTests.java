@@ -16,10 +16,8 @@
 
 package com.google.typography.font.sfntly;
 
-import com.google.typography.font.sfntly.Font.PlatformId;
 import com.google.typography.font.sfntly.table.core.NameTable;
 import com.google.typography.font.sfntly.testutils.TestFont;
-import com.google.typography.font.sfntly.testutils.TestFont.TestFontNames;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
 import java.io.File;
 import junit.framework.TestCase;
@@ -35,7 +33,7 @@ public class NameTests extends TestCase {
     super(name);
   }
 
-  private static final TestFontNames testFonts[] = {TestFont.TestFontNames.OPENSANS};
+  private static final TestFont.TestFontNames testFonts[] = {TestFont.TestFontNames.OPENSANS};
   // total, mac, win
   private static final int[][] nameTestResults = {{26, 13, 13}};
 
@@ -52,11 +50,11 @@ public class NameTests extends TestCase {
       for (int nameIndex = 0; nameIndex < nameTable.nameCount(); nameIndex++) {
         NameTable.NameEntry entry = nameTable.nameEntry(nameIndex);
         nameCount++;
-        if (entry.platformId() == PlatformId.Macintosh.value()) {
+        if (entry.platformId() == Font.PlatformId.Macintosh.value()) {
           macNameCount++;
         }
 
-        if (entry.platformId() == PlatformId.Windows.value()) {
+        if (entry.platformId() == Font.PlatformId.Windows.value()) {
           winNameCount++;
         }
         if (DEBUG) {

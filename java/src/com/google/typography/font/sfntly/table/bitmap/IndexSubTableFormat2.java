@@ -79,13 +79,13 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
 
     static Builder createBuilder(
         ReadableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
-      int length = Builder.dataLength(data, indexSubTableOffset, firstGlyphIndex, lastGlyphIndex);
+      int length = dataLength(data, indexSubTableOffset, firstGlyphIndex, lastGlyphIndex);
       return new Builder(data.slice(indexSubTableOffset, length), firstGlyphIndex, lastGlyphIndex);
     }
 
     static Builder createBuilder(
         WritableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
-      int length = Builder.dataLength(data, indexSubTableOffset, firstGlyphIndex, lastGlyphIndex);
+      int length = dataLength(data, indexSubTableOffset, firstGlyphIndex, lastGlyphIndex);
       return new Builder(data.slice(indexSubTableOffset, length), firstGlyphIndex, lastGlyphIndex);
     }
 
@@ -95,7 +95,7 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
     }
 
     private Builder() {
-      super(Offset.SIZE, Format.FORMAT_2);
+      super(Offset.SIZE, IndexSubTable.Format.FORMAT_2);
       this.metrics = BigGlyphMetrics.Builder.createBuilder();
     }
 

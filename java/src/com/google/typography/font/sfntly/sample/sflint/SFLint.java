@@ -22,12 +22,9 @@ import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.HorizontalHeaderTable;
 import com.google.typography.font.sfntly.table.core.HorizontalMetricsTable;
 import com.google.typography.font.sfntly.table.core.NameTable;
-import com.google.typography.font.sfntly.table.core.NameTable.NameEntry;
-import com.google.typography.font.sfntly.table.core.NameTable.NameId;
 import com.google.typography.font.sfntly.table.core.OS2Table;
 import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
-import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import java.io.File;
@@ -92,11 +89,11 @@ public class SFLint {
     // Test if name entries are consistent. Logic is adapted from fix_full_font_name in
     // font_optimizer.
     NameTable name = (NameTable) font.getTable(Tag.name);
-    for (NameEntry entry : name) {
+    for (NameTable.NameEntry entry : name) {
       // System.out.println(entry);
-      if (entry.nameId() == NameId.FontFamilyName.value()) {
-        for (NameEntry entry2 : name) {
-          if (entry2.nameId() == NameId.FullFontName.value()
+      if (entry.nameId() == NameTable.NameId.FontFamilyName.value()) {
+        for (NameTable.NameEntry entry2 : name) {
+          if (entry2.nameId() == NameTable.NameId.FullFontName.value()
               && entry.platformId() == entry2.platformId()
               && entry.encodingId() == entry2.encodingId()
               && entry.languageId() == entry2.languageId()) {
@@ -203,7 +200,7 @@ public class SFLint {
       int length = loca.glyphLength(glyphId);
       Glyph glyph = glyphTable.glyph(offset, length);
       if (glyph != null) {
-        if (glyph.glyphType() == GlyphType.Composite) {
+        if (glyph.glyphType() == Glyph.GlyphType.Composite) {
           lintCompositeGlyph(font, (CompositeGlyph) glyph, glyphId);
         }
       }

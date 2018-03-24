@@ -16,12 +16,7 @@
 
 package com.google.typography.font.sfntly;
 
-import com.google.typography.font.sfntly.Font.PlatformId;
-import com.google.typography.font.sfntly.Font.WindowsEncodingId;
 import com.google.typography.font.sfntly.table.core.NameTable;
-import com.google.typography.font.sfntly.table.core.NameTable.NameEntryBuilder;
-import com.google.typography.font.sfntly.table.core.NameTable.NameId;
-import com.google.typography.font.sfntly.table.core.NameTable.WindowsLanguageId;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
 import com.google.typography.font.sfntly.testutils.TestUtils;
@@ -44,12 +39,12 @@ public class NameEditingTests extends TestCase {
     NameTable.Builder nameBuilder = (NameTable.Builder) fontBuilder.getTableBuilder(Tag.name);
 
     // change the font name
-    NameEntryBuilder neb =
+    NameTable.NameEntryBuilder neb =
         nameBuilder.nameBuilder(
-            PlatformId.Windows.value(),
-            WindowsEncodingId.UnicodeUCS2.value(),
-            WindowsLanguageId.English_UnitedStates.value(),
-            NameId.FontFamilyName.value());
+            Font.PlatformId.Windows.value(),
+            Font.WindowsEncodingId.UnicodeUCS2.value(),
+            NameTable.WindowsLanguageId.English_UnitedStates.value(),
+            NameTable.NameId.FontFamilyName.value());
     neb.setName(newName);
 
     // build the font
@@ -64,10 +59,10 @@ public class NameEditingTests extends TestCase {
     NameTable nameTable = font.getTable(Tag.name);
     String name =
         nameTable.name(
-            PlatformId.Windows.value(),
-            WindowsEncodingId.UnicodeUCS2.value(),
-            WindowsLanguageId.English_UnitedStates.value(),
-            NameId.FontFamilyName.value());
+            Font.PlatformId.Windows.value(),
+            Font.WindowsEncodingId.UnicodeUCS2.value(),
+            NameTable.WindowsLanguageId.English_UnitedStates.value(),
+            NameTable.NameId.FontFamilyName.value());
     assertTrue(name != null);
     assertEquals(newName, name);
   }
@@ -80,12 +75,12 @@ public class NameEditingTests extends TestCase {
     NameTable.Builder nameBuilder = (NameTable.Builder) fontBuilder.getTableBuilder(Tag.name);
 
     // change the font name
-    NameEntryBuilder neb =
+    NameTable.NameEntryBuilder neb =
         nameBuilder.nameBuilder(
-            PlatformId.Windows.value(),
-            WindowsEncodingId.UnicodeUCS2.value(),
-            WindowsLanguageId.English_UnitedStates.value(),
-            NameId.FontFamilyName.value());
+            Font.PlatformId.Windows.value(),
+            Font.WindowsEncodingId.UnicodeUCS2.value(),
+            NameTable.WindowsLanguageId.English_UnitedStates.value(),
+            NameTable.NameId.FontFamilyName.value());
     originalName = neb.name();
     neb.setName(newName);
 
@@ -103,10 +98,10 @@ public class NameEditingTests extends TestCase {
     NameTable nameTable = font.getTable(Tag.name);
     String name =
         nameTable.name(
-            PlatformId.Windows.value(),
-            WindowsEncodingId.UnicodeUCS2.value(),
-            WindowsLanguageId.English_UnitedStates.value(),
-            NameId.FontFamilyName.value());
+            Font.PlatformId.Windows.value(),
+            Font.WindowsEncodingId.UnicodeUCS2.value(),
+            NameTable.WindowsLanguageId.English_UnitedStates.value(),
+            NameTable.NameId.FontFamilyName.value());
     assertTrue(name != null);
     assertEquals(originalName, name);
   }
@@ -118,17 +113,17 @@ public class NameEditingTests extends TestCase {
     // change the font name
     assertTrue(
         nameBuilder.has(
-            PlatformId.Windows.value(),
-            WindowsEncodingId.UnicodeUCS2.value(),
-            WindowsLanguageId.English_UnitedStates.value(),
-            NameId.FontFamilyName.value()));
+            Font.PlatformId.Windows.value(),
+            Font.WindowsEncodingId.UnicodeUCS2.value(),
+            NameTable.WindowsLanguageId.English_UnitedStates.value(),
+            NameTable.NameId.FontFamilyName.value()));
 
     assertTrue(
         nameBuilder.remove(
-            PlatformId.Windows.value(),
-            WindowsEncodingId.UnicodeUCS2.value(),
-            WindowsLanguageId.English_UnitedStates.value(),
-            NameId.FontFamilyName.value()));
+            Font.PlatformId.Windows.value(),
+            Font.WindowsEncodingId.UnicodeUCS2.value(),
+            NameTable.WindowsLanguageId.English_UnitedStates.value(),
+            NameTable.NameId.FontFamilyName.value()));
 
     // build the font
     Font font = fontBuilder.build();
@@ -142,10 +137,10 @@ public class NameEditingTests extends TestCase {
     NameTable nameTable = font.getTable(Tag.name);
     String name =
         nameTable.name(
-            PlatformId.Windows.value(),
-            WindowsEncodingId.UnicodeUCS2.value(),
-            WindowsLanguageId.English_UnitedStates.value(),
-            NameId.FontFamilyName.value());
+            Font.PlatformId.Windows.value(),
+            Font.WindowsEncodingId.UnicodeUCS2.value(),
+            NameTable.WindowsLanguageId.English_UnitedStates.value(),
+            NameTable.NameId.FontFamilyName.value());
     assertTrue(name == null);
   }
 
@@ -160,12 +155,12 @@ public class NameEditingTests extends TestCase {
     assertEquals(0, nameBuilder.builderCount());
 
     // change the font name
-    NameEntryBuilder neb =
+    NameTable.NameEntryBuilder neb =
         nameBuilder.nameBuilder(
-            PlatformId.Windows.value(),
-            WindowsEncodingId.UnicodeUCS2.value(),
-            WindowsLanguageId.English_UnitedStates.value(),
-            NameId.FontFamilyName.value());
+            Font.PlatformId.Windows.value(),
+            Font.WindowsEncodingId.UnicodeUCS2.value(),
+            NameTable.WindowsLanguageId.English_UnitedStates.value(),
+            NameTable.NameId.FontFamilyName.value());
     neb.setName(newName);
 
     // build the font
@@ -181,10 +176,10 @@ public class NameEditingTests extends TestCase {
     nameTable.nameCount();
     String name =
         nameTable.name(
-            PlatformId.Windows.value(),
-            WindowsEncodingId.UnicodeUCS2.value(),
-            WindowsLanguageId.English_UnitedStates.value(),
-            NameId.FontFamilyName.value());
+            Font.PlatformId.Windows.value(),
+            Font.WindowsEncodingId.UnicodeUCS2.value(),
+            NameTable.WindowsLanguageId.English_UnitedStates.value(),
+            NameTable.NameId.FontFamilyName.value());
     assertTrue(name != null);
     assertEquals(newName, name);
     assertEquals(1, nameTable.nameCount());

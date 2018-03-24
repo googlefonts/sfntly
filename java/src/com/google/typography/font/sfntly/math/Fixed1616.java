@@ -45,6 +45,6 @@ public enum Fixed1616 {
   }
 
   public static String toString(int fixed) {
-    return String.format("%d.%d", Fixed1616.integral(fixed), Fixed1616.fractional(fixed));
+    return String.format("%d.%d", integral(fixed), fractional(fixed));
   }
 }

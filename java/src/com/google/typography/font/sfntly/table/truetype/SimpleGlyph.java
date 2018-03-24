@@ -3,7 +3,6 @@ package com.google.typography.font.sfntly.table.truetype;
 import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.truetype.GlyphTable.Offset;
 
 public final class SimpleGlyph extends Glyph {
   private static final int FLAG_ONCURVE = 0x01;
@@ -66,9 +65,11 @@ public final class SimpleGlyph extends Glyph {
       }
       this.instructionSize =
           data.readUShort(
-              Offset.simpleEndPtsOfCountours + numberOfContours() * FontData.SizeOf.USHORT);
+              GlyphTable.Offset.simpleEndPtsOfCountours
+                  + numberOfContours() * FontData.SizeOf.USHORT);
       this.instructionsOffset =
-          Offset.simpleEndPtsOfCountours + (numberOfContours() + 1) * FontData.SizeOf.USHORT;
+          GlyphTable.Offset.simpleEndPtsOfCountours
+              + (numberOfContours() + 1) * FontData.SizeOf.USHORT;
       this.flagsOffset = instructionsOffset + instructionSize * FontData.SizeOf.BYTE;
       this.numberOfPoints = contourEndPoint(numberOfContours() - 1) + 1;
       this.xCoordinates = new int[numberOfPoints];
@@ -170,7 +171,8 @@ public final class SimpleGlyph extends Glyph {
   }
 
   public int contourEndPoint(int contour) {
-    return data.readUShort(contour * FontData.SizeOf.USHORT + Offset.simpleEndPtsOfCountours);
+    return data.readUShort(
+        contour * FontData.SizeOf.USHORT + GlyphTable.Offset.simpleEndPtsOfCountours);
   }
 
   @Override

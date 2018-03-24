@@ -3,7 +3,6 @@ package com.google.typography.font.sfntly.table.core;
 import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
 import java.util.Iterator;
 
 /**
@@ -29,8 +28,8 @@ public final class CMapFormat2 extends CMap {
     int idRangeOffset = 6;
   }
 
-  protected CMapFormat2(ReadableFontData data, CMapId cmapId) {
-    super(data, CMapFormat.Format2.value, cmapId);
+  protected CMapFormat2(ReadableFontData data, CMapTable.CMapId cmapId) {
+    super(data, CMap.CMapFormat.Format2.value, cmapId);
   }
 
   private int subHeaderOffset(int subHeaderIndex) {
@@ -128,17 +127,17 @@ public final class CMapFormat2 extends CMap {
   }
 
   public static class Builder extends CMap.Builder<CMapFormat2> {
-    protected Builder(WritableFontData data, int offset, CMapId cmapId) {
+    protected Builder(WritableFontData data, int offset, CMapTable.CMapId cmapId) {
       super(
           data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
-          CMapFormat.Format2,
+          CMap.CMapFormat.Format2,
           cmapId);
     }
 
-    protected Builder(ReadableFontData data, int offset, CMapId cmapId) {
+    protected Builder(ReadableFontData data, int offset, CMapTable.CMapId cmapId) {
       super(
           data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
-          CMapFormat.Format2,
+          CMap.CMapFormat.Format2,
           cmapId);
     }
 

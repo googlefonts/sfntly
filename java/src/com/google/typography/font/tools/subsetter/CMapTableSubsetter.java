@@ -17,7 +17,6 @@
 package com.google.typography.font.tools.subsetter;
 
 import com.google.typography.font.sfntly.Font;
-import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
@@ -31,7 +30,8 @@ public class CMapTableSubsetter extends TableSubsetterImpl {
   }
 
   @Override
-  public boolean subset(Subsetter subsetter, Font font, Builder fontBuilder) throws IOException {
+  public boolean subset(Subsetter subsetter, Font font, Font.Builder fontBuilder)
+      throws IOException {
     CMapTable cmapTable = font.getTable(Tag.cmap);
     if (cmapTable == null) {
       throw new RuntimeException("Font to subset is not valid.");

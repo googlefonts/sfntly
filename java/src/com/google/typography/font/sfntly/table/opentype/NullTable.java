@@ -28,12 +28,12 @@ public final class NullTable extends SubstSubtable {
 
     @Override
     public int subDataSizeToSerialize() {
-      return NullTable.RECORD_SIZE;
+      return RECORD_SIZE;
     }
 
     @Override
     public int subSerialize(WritableFontData newData) {
-      return NullTable.RECORD_SIZE;
+      return RECORD_SIZE;
     }
 
     @Override

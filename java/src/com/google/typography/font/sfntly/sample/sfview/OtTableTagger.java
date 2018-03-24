@@ -3,7 +3,6 @@
 package com.google.typography.font.sfntly.sample.sfview;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
-import com.google.typography.font.sfntly.sample.sfview.TaggedData.FieldType;
 import com.google.typography.font.sfntly.table.FontDataTable;
 import com.google.typography.font.sfntly.table.opentype.AlternateSubst;
 import com.google.typography.font.sfntly.table.opentype.ChainContextSubst;
@@ -135,10 +134,10 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             ScriptListTable table = (ScriptListTable) fdt;
-            int scriptCount = td.tagRangeField(FieldType.SHORT, "script count");
+            int scriptCount = td.tagRangeField(TaggedData.FieldType.SHORT, "script count");
             for (int i = 0; i < scriptCount; ++i) {
-              td.tagRangeField(FieldType.TAG, null);
-              td.tagRangeField(FieldType.OFFSET, null);
+              td.tagRangeField(TaggedData.FieldType.TAG, null);
+              td.tagRangeField(TaggedData.FieldType.OFFSET, null);
             }
             for (ScriptTable st : table) {
               tagTable(st);
@@ -151,11 +150,11 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             ScriptTable table = (ScriptTable) fdt;
-            td.tagRangeField(FieldType.OFFSET_NONZERO, "default lang sys");
-            int langCount = td.tagRangeField(FieldType.SHORT, "language count");
+            td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, "default lang sys");
+            int langCount = td.tagRangeField(TaggedData.FieldType.SHORT, "language count");
             for (int i = 0; i < langCount; ++i) {
-              td.tagRangeField(FieldType.TAG, null);
-              td.tagRangeField(FieldType.OFFSET, null);
+              td.tagRangeField(TaggedData.FieldType.TAG, null);
+              td.tagRangeField(TaggedData.FieldType.OFFSET, null);
             }
             for (LangSysTable lst : table) {
               tagTable(lst);
@@ -169,11 +168,11 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             LangSysTable table = (LangSysTable) fdt;
-            td.tagRangeField(FieldType.SHORT_IGNORED, "lookup order");
-            td.tagRangeField(FieldType.SHORT_IGNORED_FFFF, "required feature");
-            td.tagRangeField(FieldType.SHORT, "feature count");
+            td.tagRangeField(TaggedData.FieldType.SHORT_IGNORED, "lookup order");
+            td.tagRangeField(TaggedData.FieldType.SHORT_IGNORED_FFFF, "required feature");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "feature count");
             for (int i = 0; i < table.recordList.count(); ++i) {
-              td.tagRangeField(FieldType.SHORT, null);
+              td.tagRangeField(TaggedData.FieldType.SHORT, null);
             }
           }
         });
@@ -183,10 +182,10 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             FeatureListTable table = (FeatureListTable) fdt;
-            int featureCount = td.tagRangeField(FieldType.SHORT, "feature count");
+            int featureCount = td.tagRangeField(TaggedData.FieldType.SHORT, "feature count");
             for (int i = 0; i < featureCount; ++i) {
-              td.tagRangeField(FieldType.TAG, "index: " + i);
-              td.tagRangeField(FieldType.OFFSET, null);
+              td.tagRangeField(TaggedData.FieldType.TAG, "index: " + i);
+              td.tagRangeField(TaggedData.FieldType.OFFSET, null);
             }
             for (FeatureTable ft : table) {
               tagTable(ft);
@@ -199,10 +198,10 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             FeatureTable table = (FeatureTable) fdt;
-            td.tagRangeField(FieldType.OFFSET_NONZERO, "feature params");
-            td.tagRangeField(FieldType.SHORT, "lookup count");
+            td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, "feature params");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "lookup count");
             for (int i = 0; i < table.recordList.count(); ++i) {
-              td.tagRangeField(FieldType.SHORT, null);
+              td.tagRangeField(TaggedData.FieldType.SHORT, null);
             }
           }
         });
@@ -212,9 +211,9 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             LookupListTable table = (LookupListTable) fdt;
-            int lookupCount = td.tagRangeField(FieldType.SHORT, "lookup count");
+            int lookupCount = td.tagRangeField(TaggedData.FieldType.SHORT, "lookup count");
             for (int i = 0; i < lookupCount; ++i) {
-              td.tagRangeField(FieldType.OFFSET, "index: " + i);
+              td.tagRangeField(TaggedData.FieldType.OFFSET, "index: " + i);
             }
             for (int i = 0; i < lookupCount; ++i) {
               LookupTable lookup = table.subTableAt(i);
@@ -230,11 +229,11 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             LookupTable table = (LookupTable) fdt;
-            td.tagRangeField(FieldType.SHORT, "lookup type");
-            td.tagRangeField(FieldType.SHORT, "lookup flags");
-            int subTableCount = td.tagRangeField(FieldType.SHORT, "subtable count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "lookup type");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "lookup flags");
+            int subTableCount = td.tagRangeField(TaggedData.FieldType.SHORT, "subtable count");
             for (int i = 0; i < subTableCount; ++i) {
-              td.tagRangeField(FieldType.OFFSET, null);
+              td.tagRangeField(TaggedData.FieldType.OFFSET, null);
             }
             for (int i = 0; i < subTableCount; ++i) {
               SubstSubtable subTable = table.subTableAt(i);
@@ -248,14 +247,14 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             LigatureSubst table = (LigatureSubst) fdt;
-            td.tagRangeField(FieldType.SHORT, "subst format");
-            td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "subst format");
+            td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, "coverage offset");
             tagTable(table.coverage());
-            td.tagRangeField(FieldType.SHORT, "subtable count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "subtable count");
 
             int subTableCount = table.subTableCount();
             for (int i = 0; i < subTableCount; ++i) {
-              td.tagRangeField(FieldType.OFFSET, null);
+              td.tagRangeField(TaggedData.FieldType.OFFSET, null);
             }
 
             for (int i = 0; i < subTableCount; ++i) {
@@ -270,9 +269,9 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             LigatureSet table = (LigatureSet) fdt;
-            td.tagRangeField(FieldType.SHORT, "lookup count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "lookup count");
             for (int i = 0; i < table.recordList.count(); ++i) {
-              td.tagRangeField(FieldType.OFFSET, null);
+              td.tagRangeField(TaggedData.FieldType.OFFSET, null);
             }
             for (int i = 0; i < table.recordList.count(); ++i) {
               Ligature lookup = table.subTableAt(i);
@@ -288,10 +287,10 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             Ligature table = (Ligature) fdt;
-            td.tagRangeField(FieldType.GLYPH, "lig glyph");
-            td.tagRangeField(FieldType.SHORT, "glyph count + 1");
+            td.tagRangeField(TaggedData.FieldType.GLYPH, "lig glyph");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "glyph count + 1");
             for (int i = 0; i < table.recordList.count(); ++i) {
-              td.tagRangeField(FieldType.GLYPH, null);
+              td.tagRangeField(TaggedData.FieldType.GLYPH, null);
             }
           }
         });
@@ -301,22 +300,22 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             SingleSubst table = (SingleSubst) fdt;
-            td.tagRangeField(FieldType.SHORT, "format");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "format");
             switch (table.format) {
               case 1:
                 HeaderFmt1 tableFmt1 = table.fmt1Table();
-                td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
+                td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, "coverage offset");
                 tagTable(tableFmt1.coverage);
-                td.tagRangeField(FieldType.SHORT, "delta glyph id");
+                td.tagRangeField(TaggedData.FieldType.SHORT, "delta glyph id");
                 break;
               case 2:
                 com.google.typography.font.sfntly.table.opentype.singlesubst.InnerArrayFmt2
                     tableFmt2 = table.fmt2Table();
-                td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
+                td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, "coverage offset");
                 tagTable(tableFmt2.coverage);
-                td.tagRangeField(FieldType.SHORT, "glyph count");
+                td.tagRangeField(TaggedData.FieldType.SHORT, "glyph count");
                 for (int i = 0; i < tableFmt2.recordList.count(); ++i) {
-                  td.tagRangeField(FieldType.GLYPH, null);
+                  td.tagRangeField(TaggedData.FieldType.GLYPH, null);
                 }
                 break;
             }
@@ -328,14 +327,14 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             OneToManySubst table = (OneToManySubst) fdt;
-            td.tagRangeField(FieldType.SHORT, "subst format");
-            td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "subst format");
+            td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, "coverage offset");
             tagTable(table.coverage());
-            td.tagRangeField(FieldType.SHORT, "sequence count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "sequence count");
 
             int subTableCount = table.recordList().count();
             for (int i = 0; i < subTableCount; ++i) {
-              td.tagRangeField(FieldType.OFFSET, null);
+              td.tagRangeField(TaggedData.FieldType.OFFSET, null);
             }
 
             for (int i = 0; i < subTableCount; ++i) {
@@ -351,9 +350,9 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             NumRecordTable table = (NumRecordTable) fdt;
-            td.tagRangeField(FieldType.SHORT, "glyph count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "glyph count");
             for (int i = 0; i < table.recordList.count(); ++i) {
-              td.tagRangeField(FieldType.GLYPH, null);
+              td.tagRangeField(TaggedData.FieldType.GLYPH, null);
             }
           }
         });
@@ -363,18 +362,18 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             ContextSubst table = (ContextSubst) fdt;
-            td.tagRangeField(FieldType.SHORT, "subst format");
-            td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "subst format");
+            td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, "coverage offset");
             tagTable(table.coverage());
             if (table.format == 2) {
-              td.tagRangeField(FieldType.OFFSET_NONZERO, "class def offset");
+              td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, "class def offset");
               tagTable(table.classDef());
             }
-            td.tagRangeField(FieldType.SHORT, "sub rule set count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "sub rule set count");
 
             int subTableCount = table.recordList().count();
             for (int i = 0; i < subTableCount; ++i) {
-              td.tagRangeField(FieldType.OFFSET_NONZERO, "for inital class: " + i);
+              td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, "for inital class: " + i);
             }
             for (int i = 0; i < subTableCount; ++i) {
               SubGenericRuleSet<?> subTable = table.subTableAt(i);
@@ -390,10 +389,10 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             SubGenericRuleSet<?> table = (SubGenericRuleSet<?>) fdt;
-            td.tagRangeField(FieldType.SHORT, "sub rule count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "sub rule count");
             int subTableCount = table.recordList.count();
             for (int i = 0; i < subTableCount; ++i) {
-              td.tagRangeField(FieldType.OFFSET, null);
+              td.tagRangeField(TaggedData.FieldType.OFFSET, null);
             }
             for (int i = 0; i < subTableCount; ++i) {
               DoubleRecordTable subTable = table.subTableAt(i);
@@ -408,16 +407,16 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             SubRule table = (SubRule) fdt;
-            td.tagRangeField(FieldType.SHORT, "input glyph count + 1");
-            td.tagRangeField(FieldType.SHORT, "subst lookup record count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "input glyph count + 1");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "subst lookup record count");
             int glyphCount = table.inputGlyphs.count();
             for (int i = 0; i < glyphCount; ++i) {
-              td.tagRangeField(FieldType.GLYPH, "glyph id");
+              td.tagRangeField(TaggedData.FieldType.GLYPH, "glyph id");
             }
             int lookupCount = table.lookupRecords.count();
             for (int i = 0; i < lookupCount; ++i) {
-              td.tagRangeField(FieldType.SHORT, "sequence index");
-              td.tagRangeField(FieldType.SHORT, "lookup list index");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "sequence index");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "lookup list index");
             }
           }
         });
@@ -427,16 +426,16 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             SubClassRule table = (SubClassRule) fdt;
-            td.tagRangeField(FieldType.SHORT, "input class count + 1");
-            td.tagRangeField(FieldType.SHORT, "subst lookup record count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "input class count + 1");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "subst lookup record count");
             int glyphCount = table.inputGlyphs.count();
             for (int i = 0; i < glyphCount; ++i) {
-              td.tagRangeField(FieldType.SHORT, "class id");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "class id");
             }
             int lookupCount = table.lookupRecords.count();
             for (int i = 0; i < lookupCount; ++i) {
-              td.tagRangeField(FieldType.SHORT, "sequence index");
-              td.tagRangeField(FieldType.SHORT, "lookup list index");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "sequence index");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "lookup list index");
             }
           }
         });
@@ -446,25 +445,26 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             ChainContextSubst table = (ChainContextSubst) fdt;
-            td.tagRangeField(FieldType.SHORT, "subst format");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "subst format");
             if (table.format == 1 || table.format == 2) {
-              td.tagRangeField(FieldType.OFFSET_NONZERO, "coverage offset");
+              td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, "coverage offset");
               tagTable(table.coverage());
               int subTableCount = table.recordList().count();
               if (table.format == 1) {
-                td.tagRangeField(FieldType.SHORT, "chain sub rule set count");
+                td.tagRangeField(TaggedData.FieldType.SHORT, "chain sub rule set count");
               }
               if (table.format == 2) {
-                td.tagRangeField(FieldType.OFFSET_NONZERO, "backtrack class def offset");
+                td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, "backtrack class def offset");
                 tagTable(table.backtrackClassDef());
-                td.tagRangeField(FieldType.OFFSET_NONZERO, "input class def offset");
+                td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, "input class def offset");
                 tagTable(table.inputClassDef());
-                td.tagRangeField(FieldType.OFFSET_NONZERO, "look ahead class def offset");
+                td.tagRangeField(
+                    TaggedData.FieldType.OFFSET_NONZERO, "look ahead class def offset");
                 tagTable(table.lookAheadClassDef());
-                td.tagRangeField(FieldType.SHORT, "chain sub class set count");
+                td.tagRangeField(TaggedData.FieldType.SHORT, "chain sub class set count");
               }
               for (int i = 0; i < subTableCount; ++i) {
-                td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+                td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, null);
               }
               for (int i = 0; i < subTableCount; ++i) {
                 ChainSubGenericRuleSet<?> subTable = table.subTableAt(i);
@@ -474,41 +474,41 @@ class OtTableTagger {
               }
             }
             if (table.format == 3) {
-              td.tagRangeField(FieldType.SHORT, "backtrackGlyphs coverage count");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "backtrackGlyphs coverage count");
               int subTableCount = table.fmt3Array.backtrackGlyphs.recordList.count();
               for (int i = 0; i < subTableCount; ++i) {
-                td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+                td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, null);
                 CoverageTable subTable = table.fmt3Array.backtrackGlyphs.subTableAt(i);
                 if (subTable != null) {
                   tagTable(subTable);
                 }
               }
 
-              td.tagRangeField(FieldType.SHORT, "input glyphs coverage count");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "input glyphs coverage count");
               subTableCount = table.fmt3Array.inputGlyphs.recordList.count();
               for (int i = 0; i < subTableCount; ++i) {
-                td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+                td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, null);
                 CoverageTable subTable = table.fmt3Array.inputGlyphs.subTableAt(i);
                 if (subTable != null) {
                   tagTable(subTable);
                 }
               }
 
-              td.tagRangeField(FieldType.SHORT, "lookahead glyphs coverage count");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "lookahead glyphs coverage count");
               subTableCount = table.fmt3Array.lookAheadGlyphs.recordList.count();
               for (int i = 0; i < subTableCount; ++i) {
-                td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+                td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, null);
                 CoverageTable subTable = table.fmt3Array.lookAheadGlyphs.subTableAt(i);
                 if (subTable != null) {
                   tagTable(subTable);
                 }
               }
 
-              td.tagRangeField(FieldType.SHORT, "subst lookup record count");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "subst lookup record count");
               int lookupCount = table.fmt3Array.lookupRecords.count();
               for (int i = 0; i < lookupCount; ++i) {
-                td.tagRangeField(FieldType.SHORT, "sequence index");
-                td.tagRangeField(FieldType.SHORT, "lookup list index");
+                td.tagRangeField(TaggedData.FieldType.SHORT, "sequence index");
+                td.tagRangeField(TaggedData.FieldType.SHORT, "lookup list index");
               }
             }
           }
@@ -519,10 +519,10 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             ChainSubRuleSet table = (ChainSubRuleSet) fdt;
-            td.tagRangeField(FieldType.SHORT, "sub rule count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "sub rule count");
             int subTableCount = table.recordList.count();
             for (int i = 0; i < subTableCount; ++i) {
-              td.tagRangeField(FieldType.OFFSET, null);
+              td.tagRangeField(TaggedData.FieldType.OFFSET, null);
             }
             for (int i = 0; i < subTableCount; ++i) {
               ChainSubRule subTable = table.subTableAt(i);
@@ -536,29 +536,29 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             ChainSubRule table = (ChainSubRule) fdt;
-            td.tagRangeField(FieldType.SHORT, "backtrack glyph count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "backtrack glyph count");
             int glyphCount = table.backtrackGlyphs.count();
             for (int i = 0; i < glyphCount; ++i) {
-              td.tagRangeField(FieldType.GLYPH, null);
+              td.tagRangeField(TaggedData.FieldType.GLYPH, null);
             }
 
-            td.tagRangeField(FieldType.SHORT, "input glyph count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "input glyph count");
             glyphCount = table.inputClasses.count();
             for (int i = 0; i < glyphCount; ++i) {
-              td.tagRangeField(FieldType.GLYPH, null);
+              td.tagRangeField(TaggedData.FieldType.GLYPH, null);
             }
 
-            td.tagRangeField(FieldType.SHORT, "look ahead glyph count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "look ahead glyph count");
             glyphCount = table.lookAheadGlyphs.count();
             for (int i = 0; i < glyphCount; ++i) {
-              td.tagRangeField(FieldType.GLYPH, null);
+              td.tagRangeField(TaggedData.FieldType.GLYPH, null);
             }
 
-            td.tagRangeField(FieldType.SHORT, "subst lookup record count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "subst lookup record count");
             int lookupCount = table.lookupRecords.count();
             for (int i = 0; i < lookupCount; ++i) {
-              td.tagRangeField(FieldType.SHORT, "sequence index");
-              td.tagRangeField(FieldType.SHORT, "lookup list index");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "sequence index");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "lookup list index");
             }
           }
         });
@@ -568,10 +568,10 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             ChainSubClassSet table = (ChainSubClassSet) fdt;
-            td.tagRangeField(FieldType.SHORT, "sub class count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "sub class count");
             int subTableCount = table.recordList.count();
             for (int i = 0; i < subTableCount; ++i) {
-              td.tagRangeField(FieldType.OFFSET, null);
+              td.tagRangeField(TaggedData.FieldType.OFFSET, null);
             }
             for (int i = 0; i < subTableCount; ++i) {
               ChainSubClassRule subTable = table.subTableAt(i);
@@ -585,29 +585,29 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             ChainSubClassRule table = (ChainSubClassRule) fdt;
-            td.tagRangeField(FieldType.SHORT, "backtrack glyph class count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "backtrack glyph class count");
             int glyphCount = table.backtrackGlyphs.count();
             for (int i = 0; i < glyphCount; ++i) {
-              td.tagRangeField(FieldType.SHORT, "class id");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "class id");
             }
 
-            td.tagRangeField(FieldType.SHORT, "input glyph class count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "input glyph class count");
             glyphCount = table.inputClasses.count();
             for (int i = 0; i < glyphCount; ++i) {
-              td.tagRangeField(FieldType.SHORT, "class id");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "class id");
             }
 
-            td.tagRangeField(FieldType.SHORT, "look ahead glyph class count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "look ahead glyph class count");
             glyphCount = table.lookAheadGlyphs.count();
             for (int i = 0; i < glyphCount; ++i) {
-              td.tagRangeField(FieldType.SHORT, "class id");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "class id");
             }
 
-            td.tagRangeField(FieldType.SHORT, "subst lookup record count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "subst lookup record count");
             int lookupCount = table.lookupRecords.count();
             for (int i = 0; i < lookupCount; ++i) {
-              td.tagRangeField(FieldType.SHORT, "sequence index");
-              td.tagRangeField(FieldType.SHORT, "lookup list index");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "sequence index");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "lookup list index");
             }
           }
         });
@@ -617,9 +617,9 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             ExtensionSubst table = (ExtensionSubst) fdt;
-            td.tagRangeField(FieldType.SHORT, "format");
-            td.tagRangeField(FieldType.SHORT, "lookup type");
-            td.tagRangeField(FieldType.OFFSET32, "lookup offset");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "format");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "lookup type");
+            td.tagRangeField(TaggedData.FieldType.OFFSET32, "lookup offset");
             SubstSubtable subTable = table.subTable();
             tagTable(subTable);
           }
@@ -630,33 +630,33 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             ReverseChainSingleSubst table = (ReverseChainSingleSubst) fdt;
-            td.tagRangeField(FieldType.SHORT, "subst format");
-            td.tagRangeField(FieldType.OFFSET_NONZERO, "input coverage offset");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "subst format");
+            td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, "input coverage offset");
             tagTable(table.coverage);
 
-            td.tagRangeField(FieldType.SHORT, "backtrack glyphs coverages count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "backtrack glyphs coverages count");
             int subTableCount = table.backtrackGlyphs.recordList.count();
             for (int i = 0; i < subTableCount; ++i) {
-              td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+              td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, null);
               CoverageTable subTable = table.backtrackGlyphs.subTableAt(i);
               if (subTable != null) {
                 tagTable(subTable);
               }
             }
 
-            td.tagRangeField(FieldType.SHORT, "lookahead glyphs coverages count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "lookahead glyphs coverages count");
             subTableCount = table.lookAheadGlyphs.recordList.count();
             for (int i = 0; i < subTableCount; ++i) {
-              td.tagRangeField(FieldType.OFFSET_NONZERO, null);
+              td.tagRangeField(TaggedData.FieldType.OFFSET_NONZERO, null);
               CoverageTable subTable = table.lookAheadGlyphs.subTableAt(i);
               if (subTable != null) {
                 tagTable(subTable);
               }
             }
 
-            td.tagRangeField(FieldType.SHORT, "subst glyph count");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "subst glyph count");
             for (int i = 0; i < table.substitutes.recordList.count(); ++i) {
-              td.tagRangeField(FieldType.GLYPH, null);
+              td.tagRangeField(TaggedData.FieldType.GLYPH, null);
             }
           }
         });
@@ -666,21 +666,21 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             CoverageTable table = (CoverageTable) fdt;
-            td.tagRangeField(FieldType.SHORT, "format");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "format");
             if (table.format == 1) {
               NumRecordTable tableFmt1 = (NumRecordTable) table.array;
-              td.tagRangeField(FieldType.SHORT, "glyph count");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "glyph count");
               for (int i = 0; i < tableFmt1.recordList.count(); ++i) {
-                td.tagRangeField(FieldType.GLYPH, null);
+                td.tagRangeField(TaggedData.FieldType.GLYPH, null);
               }
             }
             if (table.format == 2) {
               RangeRecordTable tableFmt2 = (RangeRecordTable) table.array;
-              td.tagRangeField(FieldType.SHORT, "range count");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "range count");
               for (int i = 0; i < tableFmt2.recordList.count(); ++i) {
-                td.tagRangeField(FieldType.SHORT, "start");
-                td.tagRangeField(FieldType.SHORT, "end");
-                td.tagRangeField(FieldType.SHORT, "offset");
+                td.tagRangeField(TaggedData.FieldType.SHORT, "start");
+                td.tagRangeField(TaggedData.FieldType.SHORT, "end");
+                td.tagRangeField(TaggedData.FieldType.SHORT, "offset");
               }
             }
           }
@@ -691,22 +691,22 @@ class OtTableTagger {
           @Override
           protected void tag(FontDataTable fdt) {
             ClassDefTable table = (ClassDefTable) fdt;
-            td.tagRangeField(FieldType.SHORT, "format");
+            td.tagRangeField(TaggedData.FieldType.SHORT, "format");
             if (table.format == 1) {
               InnerArrayFmt1 tableFmt1 = (InnerArrayFmt1) table.array;
-              td.tagRangeField(FieldType.SHORT, "start glyph");
-              td.tagRangeField(FieldType.SHORT, "glyph count");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "start glyph");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "glyph count");
               for (int i = 0; i < tableFmt1.recordList.count(); ++i) {
-                td.tagRangeField(FieldType.SHORT, null);
+                td.tagRangeField(TaggedData.FieldType.SHORT, null);
               }
             }
             if (table.format == 2) {
               RangeRecordTable tableFmt2 = (RangeRecordTable) table.array;
-              td.tagRangeField(FieldType.SHORT, "class range count");
+              td.tagRangeField(TaggedData.FieldType.SHORT, "class range count");
               for (int i = 0; i < tableFmt2.recordList.count(); ++i) {
-                td.tagRangeField(FieldType.SHORT, "start");
-                td.tagRangeField(FieldType.SHORT, "end");
-                td.tagRangeField(FieldType.SHORT, "class");
+                td.tagRangeField(TaggedData.FieldType.SHORT, "start");
+                td.tagRangeField(TaggedData.FieldType.SHORT, "end");
+                td.tagRangeField(TaggedData.FieldType.SHORT, "class");
               }
             }
           }

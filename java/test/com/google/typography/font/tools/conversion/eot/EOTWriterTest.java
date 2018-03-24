@@ -18,7 +18,7 @@ package com.google.typography.font.tools.conversion.eot;
 
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.testutils.TestFont.TestFontNames;
+import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
 import com.google.typography.font.sfntly.testutils.TestUtils;
 import java.io.File;
@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 
 /** @author Raph Levien */
 public class EOTWriterTest extends TestCase {
-  private static final File fontFile = TestFontNames.OPENSANS.getFile();
+  private static final File fontFile = TestFont.TestFontNames.OPENSANS.getFile();
   private static final long EOT_VERSION = 0x00020002;
 
   public void testBasicEot() throws IOException {

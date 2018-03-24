@@ -4,7 +4,6 @@ import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.math.FontMath;
-import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,8 +28,8 @@ public final class CMapFormat4 extends CMap {
     int SIZE = 14;
   }
 
-  protected CMapFormat4(ReadableFontData data, CMapId cmapId) {
-    super(data, CMapFormat.Format4.value, cmapId);
+  protected CMapFormat4(ReadableFontData data, CMapTable.CMapId cmapId) {
+    super(data, CMap.CMapFormat.Format4.value, cmapId);
 
     this.segCount = this.data.readUShort(Header.segCountX2) / 2;
     this.glyphIdArrayOffset = glyphIdArrayOffset(segCount);
@@ -295,17 +294,17 @@ public final class CMapFormat4 extends CMap {
     private List<Builder.Segment> segments;
     private List<Integer> glyphIdArray;
 
-    protected Builder(WritableFontData data, int offset, CMapId cmapId) {
+    protected Builder(WritableFontData data, int offset, CMapTable.CMapId cmapId) {
       super(
           data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
-          CMapFormat.Format4,
+          CMap.CMapFormat.Format4,
           cmapId);
     }
 
-    protected Builder(ReadableFontData data, int offset, CMapId cmapId) {
+    protected Builder(ReadableFontData data, int offset, CMapTable.CMapId cmapId) {
       super(
           data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
-          CMapFormat.Format4,
+          CMap.CMapFormat.Format4,
           cmapId);
     }
 
@@ -318,21 +317,21 @@ public final class CMapFormat4 extends CMap {
       }
 
       // build segments
-      int segCount = CMapFormat4.segCount(data);
+      int segCount = segCount(data);
       for (int index = 0; index < segCount; index++) {
         Builder.Segment segment = new Segment();
-        segment.setStartCount(CMapFormat4.startCode(data, segCount, index));
-        segment.setEndCount(CMapFormat4.endCode(data, segCount, index));
-        segment.setIdDelta(CMapFormat4.idDelta(data, segCount, index));
-        segment.setIdRangeOffset(CMapFormat4.idRangeOffset(data, segCount, index));
+        segment.setStartCount(startCode(data, segCount, index));
+        segment.setEndCount(endCode(data, segCount, index));
+        segment.setIdDelta(idDelta(data, segCount, index));
+        segment.setIdRangeOffset(idRangeOffset(data, segCount, index));
 
         segments.add(segment);
       }
 
       // build glyph id array
-      int glyphIdArrayLength = CMapFormat4.length(data) - CMapFormat4.glyphIdArrayOffset(segCount);
+      int glyphIdArrayLength = length(data) - glyphIdArrayOffset(segCount);
       for (int index = 0; index < glyphIdArrayLength; index += FontData.SizeOf.USHORT) {
-        glyphIdArray.add(data.readUShort(index + CMapFormat4.glyphIdArrayOffset(segCount)));
+        glyphIdArray.add(data.readUShort(index + glyphIdArrayOffset(segCount)));
       }
     }
 
@@ -404,7 +403,7 @@ public final class CMapFormat4 extends CMap {
       }
 
       int index = 0;
-      index += newData.writeUShort(index, CMapFormat.Format4.value());
+      index += newData.writeUShort(index, CMap.CMapFormat.Format4.value());
       index += FontData.SizeOf.USHORT; // length - write this at the end
       index += newData.writeUShort(index, language());
       int segCount = segments.size();

@@ -2,7 +2,6 @@ package com.google.typography.font.sfntly.table.core;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
 import java.util.Iterator;
 
 /**
@@ -19,8 +18,8 @@ public final class CMapFormat0 extends CMap {
     int glyphIdArray = 6;
   }
 
-  protected CMapFormat0(ReadableFontData data, CMapId cmapId) {
-    super(data, CMapFormat.Format0.value, cmapId);
+  protected CMapFormat0(ReadableFontData data, CMapTable.CMapId cmapId) {
+    super(data, CMap.CMapFormat.Format0.value, cmapId);
   }
 
   @Override
@@ -42,17 +41,17 @@ public final class CMapFormat0 extends CMap {
   }
 
   public static class Builder extends CMap.Builder<CMapFormat0> {
-    protected Builder(WritableFontData data, int offset, CMapId cmapId) {
+    protected Builder(WritableFontData data, int offset, CMapTable.CMapId cmapId) {
       super(
           data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
-          CMapFormat.Format0,
+          CMap.CMapFormat.Format0,
           cmapId);
     }
 
-    protected Builder(ReadableFontData data, int offset, CMapId cmapId) {
+    protected Builder(ReadableFontData data, int offset, CMapTable.CMapId cmapId) {
       super(
           data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
-          CMapFormat.Format0,
+          CMap.CMapFormat.Format0,
           cmapId);
     }
 

@@ -77,7 +77,7 @@ public class Rule {
   }
 
   public static Map<Integer, Set<Rule>> glyphRulesMap(Font font) {
-    Set<Rule> featuredRules = Rule.featuredRules(font);
+    Set<Rule> featuredRules = featuredRules(font);
     if (featuredRules == null) {
       return null;
     }
@@ -161,7 +161,7 @@ public class Rule {
     LookupListTable lookupList = gsub.lookupList();
     Map<Integer, Set<Rule>> ruleMap = RuleExtractor.extract(lookupList);
     Set<Integer> lookupIds = featuredLookups(font);
-    Set<Rule> featuredRules = Rule.featuredRules(lookupIds, ruleMap);
+    Set<Rule> featuredRules = featuredRules(lookupIds, ruleMap);
     return featuredRules;
   }
 
@@ -440,7 +440,7 @@ public class Rule {
     Map<Integer, Set<Rule>> ruleMap = RuleExtractor.extract(gsub.lookupList());
     PostScriptTable post = font.getTable(Tag.post);
     dumpRuleMap(ruleMap, post);
-    System.out.println("\nFeatured Lookup IDs: " + Rule.featuredLookups(font));
+    System.out.println("\nFeatured Lookup IDs: " + featuredLookups(font));
   }
 
   private String toString(PostScriptTable post) {

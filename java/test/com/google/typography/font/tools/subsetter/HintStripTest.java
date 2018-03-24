@@ -25,11 +25,10 @@ import com.google.typography.font.sfntly.table.core.HorizontalMetricsTable;
 import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
 import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
-import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
-import com.google.typography.font.sfntly.testutils.TestFont.TestFontNames;
+import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +39,7 @@ import junit.framework.TestCase;
 /** @author Raph Levien */
 public class HintStripTest extends TestCase {
 
-  private static final File fontFile = TestFontNames.OPENSANS.getFile();
+  private static final File fontFile = TestFont.TestFontNames.OPENSANS.getFile();
 
   // The subsetted font - individual tests will query and validate aspects of it
   Font dstFont;
@@ -95,7 +94,7 @@ public class HintStripTest extends TestCase {
   public void testSimpleGlyph1() {
     // grave
     Glyph glyph = getGlyph(dstFont, 67);
-    assertEquals(GlyphType.Simple, glyph.glyphType());
+    assertEquals(Glyph.GlyphType.Simple, glyph.glyphType());
     SimpleGlyph simple = (SimpleGlyph) glyph;
     assertEquals(1, simple.numberOfContours());
     assertEquals(10, simple.numberOfPoints(0));
@@ -116,7 +115,7 @@ public class HintStripTest extends TestCase {
   public void testSimpleGlyph2() {
     // lowercase a
     Glyph glyph = getGlyph(dstFont, 68);
-    assertEquals(GlyphType.Simple, glyph.glyphType());
+    assertEquals(Glyph.GlyphType.Simple, glyph.glyphType());
     SimpleGlyph simple = (SimpleGlyph) glyph;
     assertEquals(2, simple.numberOfContours());
     assertEquals(26, simple.numberOfPoints(0));
@@ -129,7 +128,7 @@ public class HintStripTest extends TestCase {
   public void testCompositeGlyph() {
     // agrave
     Glyph glyph = getGlyph(dstFont, 162);
-    assertEquals(GlyphType.Composite, glyph.glyphType());
+    assertEquals(Glyph.GlyphType.Composite, glyph.glyphType());
     CompositeGlyph composite = (CompositeGlyph) glyph;
     assertEquals(2, composite.numGlyphs());
     assertEquals(68, composite.glyphIndex(0)); // a

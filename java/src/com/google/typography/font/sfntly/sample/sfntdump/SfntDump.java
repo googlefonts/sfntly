@@ -23,9 +23,7 @@ import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.bitmap.EblcTable;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
-import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
 import com.google.typography.font.sfntly.table.core.NameTable;
-import com.google.typography.font.sfntly.table.core.NameTable.NameEntry;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
@@ -58,7 +56,7 @@ public class SfntDump {
   private BitSet glyphSet;
   private boolean dumpAllChars;
   private BitSet charSet;
-  private CMapId cmapId = CMapId.WINDOWS_BMP;
+  private CMapTable.CMapId cmapId = CMapTable.CMapId.WINDOWS_BMP;
   private FontFactory fontFactory;
 
   /** Dump a font with various options based on the command line. */
@@ -342,7 +340,8 @@ public class SfntDump {
   public void useCMap(String cmap) {
     String[] cmapParams = cmap.split("\\D");
     this.cmapId =
-        CMapId.getInstance(Integer.parseInt(cmapParams[0]), Integer.parseInt(cmapParams[1]));
+        CMapTable.CMapId.getInstance(
+            Integer.parseInt(cmapParams[0]), Integer.parseInt(cmapParams[1]));
   }
 
   public void dumpFont(File fontFile) throws IOException {
@@ -374,7 +373,7 @@ public class SfntDump {
           System.out.println();
           System.out.println("----- Name Tables");
           NameTable name = font.getTable(Tag.name);
-          for (NameEntry entry : name) {
+          for (NameTable.NameEntry entry : name) {
             System.out.println(entry);
           }
         }

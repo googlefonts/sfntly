@@ -5,7 +5,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public abstract class HeaderTable extends SubTable {
   protected static final int FIELD_SIZE = 2;
@@ -84,7 +83,7 @@ public abstract class HeaderTable extends SubTable {
 
     @Override
     public int subSerialize(WritableFontData newData) {
-      for (Entry<Integer, Integer> entry : map.entrySet()) {
+      for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
         newData.writeUShort(entry.getKey() * FIELD_SIZE, entry.getValue());
       }
       return headerSize();

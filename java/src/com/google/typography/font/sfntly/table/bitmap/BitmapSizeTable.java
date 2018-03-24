@@ -69,7 +69,7 @@ public final class BitmapSizeTable extends SubTable {
   }
 
   public int numberOfIndexSubTables() {
-    return BitmapSizeTable.numberOfIndexSubTables(data, 0);
+    return numberOfIndexSubTables(data, 0);
   }
 
   public int colorRef() {
