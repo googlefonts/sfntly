@@ -171,7 +171,7 @@ public class TestFontUtils {
 
       if (debug >= 2) {
         logger.fine("\n------ CMap Tables");
-        CMapTable cmap = (CMapTable) font.getTable(Tag.cmap);
+        CMapTable cmap = font.getTable(Tag.cmap);
         for (CMap cmt : cmap) {
           logger.fine(cmt.toString());
           for (int c = 0; c < 256; c++) {
@@ -180,7 +180,7 @@ public class TestFontUtils {
         }
 
         logger.fine("\n----- Name Tables");
-        NameTable name = (NameTable) font.getTable(Tag.name);
+        NameTable name = font.getTable(Tag.name);
         for (NameTable.NameEntry entry : name) {
           logger.finer(entry.toString());
         }

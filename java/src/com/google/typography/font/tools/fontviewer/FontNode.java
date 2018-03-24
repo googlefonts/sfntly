@@ -38,7 +38,7 @@ class FontNode extends AbstractNode {
     if (tag == Tag.loca) {
       return new LocaTableNode((LocaTable) table, Tag.stringValue(table.headerTag()));
     } else if (tag == Tag.glyf) {
-      return new GlyfTableNode((GlyphTable) table, (LocaTable) font.getTable(Tag.loca));
+      return new GlyfTableNode((GlyphTable) table, font.getTable(Tag.loca));
     } else if (tag == Tag.GSUB) {
       return new GsubTableNode((GSubTable) table);
     } else {

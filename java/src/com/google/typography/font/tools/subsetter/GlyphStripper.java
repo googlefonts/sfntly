@@ -46,8 +46,6 @@ public class GlyphStripper {
         case Composite:
           newGlyphData = stripCompositeGlyph(glyph);
           break;
-        default:
-          break;
       }
     }
     if (newGlyphData == null) {

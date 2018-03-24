@@ -61,12 +61,12 @@ public class WoffWriter {
   }
 
   private int extractMajorVersion(Font font) {
-    FontHeaderTable head = (FontHeaderTable) font.getTable(Tag.head);
+    FontHeaderTable head = font.getTable(Tag.head);
     return (head.fontRevision() >> 16) & 0xffff;
   }
 
   private int extractMinorVersion(Font sfntlyFont) {
-    FontHeaderTable head = (FontHeaderTable) sfntlyFont.getTable(Tag.head);
+    FontHeaderTable head = sfntlyFont.getTable(Tag.head);
     return head.fontRevision() & 0xffff;
   }
 

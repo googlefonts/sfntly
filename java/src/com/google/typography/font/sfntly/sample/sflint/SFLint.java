@@ -85,7 +85,7 @@ public class SFLint {
   private void lintNameTable(Font font) {
     // Test if name entries are consistent. Logic is adapted from fix_full_font_name in
     // font_optimizer.
-    NameTable name = (NameTable) font.getTable(Tag.name);
+    NameTable name = font.getTable(Tag.name);
     for (NameTable.NameEntry entry : name) {
       // System.out.println(entry);
       if (entry.nameId() == NameTable.NameId.FontFamilyName.value()) {
@@ -109,9 +109,9 @@ public class SFLint {
   }
 
   private void lintWindowsClipping(Font font) {
-    LocaTable loca = (LocaTable) font.getTable(Tag.loca);
+    LocaTable loca = font.getTable(Tag.loca);
     int nGlyphs = loca.numGlyphs();
-    GlyphTable glyphTable = (GlyphTable) font.getTable(Tag.glyf);
+    GlyphTable glyphTable = font.getTable(Tag.glyf);
     int bbox_xMin = 0;
     int bbox_yMin = 0;
     int bbox_xMax = 0;
@@ -139,7 +139,7 @@ public class SFLint {
         }
       }
     }
-    OS2Table os2 = (OS2Table) font.getTable(Tag.OS_2);
+    OS2Table os2 = font.getTable(Tag.OS_2);
     if (os2.usWinAscent() < bbox_yMax) {
       reportProblem("font is clipped on top by " + (bbox_yMax - os2.usWinAscent()) + " units");
     }
@@ -150,14 +150,14 @@ public class SFLint {
 
   private void lintAdvanceWidths(Font font) {
     int maxAdvanceWidth = 0;
-    HorizontalMetricsTable hmtx = (HorizontalMetricsTable) font.getTable(Tag.hmtx);
+    HorizontalMetricsTable hmtx = font.getTable(Tag.hmtx);
     for (int i = 0; i < hmtx.numberOfHMetrics(); i++) {
       int advanceWidth = hmtx.hMetricAdvanceWidth(i);
       if (i == 0 || advanceWidth > maxAdvanceWidth) {
         maxAdvanceWidth = advanceWidth;
       }
     }
-    HorizontalHeaderTable hhea = (HorizontalHeaderTable) font.getTable(Tag.hhea);
+    HorizontalHeaderTable hhea = font.getTable(Tag.hhea);
     int hheaMax = hhea.advanceWidthMax();
     if (maxAdvanceWidth != hhea.advanceWidthMax()) {
       reportProblem("advanceWidthMax mismatch, expected " + maxAdvanceWidth + " got " + hheaMax);
@@ -189,8 +189,8 @@ public class SFLint {
   }
 
   private void lintAllGlyphs(Font font) {
-    LocaTable loca = (LocaTable) font.getTable(Tag.loca);
-    GlyphTable glyphTable = (GlyphTable) font.getTable(Tag.glyf);
+    LocaTable loca = font.getTable(Tag.loca);
+    GlyphTable glyphTable = font.getTable(Tag.glyf);
     int nGlyphs = loca.numGlyphs();
     for (int glyphId = 0; glyphId < nGlyphs; glyphId++) {
       int offset = loca.glyphOffset(glyphId);
@@ -205,7 +205,7 @@ public class SFLint {
   }
 
   private void lintOS2Misc(Font font) {
-    OS2Table os2 = (OS2Table) font.getTable(Tag.OS_2);
+    OS2Table os2 = font.getTable(Tag.OS_2);
     int widthClass = os2.usWidthClass();
     if (widthClass < 1 || widthClass > 9) {
       reportProblem("widthClass must be [1..9] inclusive, was " + widthClass + "; IE9 fail");

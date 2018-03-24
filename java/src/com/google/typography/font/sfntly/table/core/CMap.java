@@ -320,8 +320,6 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
           return new CMapFormat13.Builder(data, offset, cmapId);
         case Format14:
           return new CMapFormat14.Builder(data, offset, cmapId);
-        default:
-          break;
       }
       return null;
     }
