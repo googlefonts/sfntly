@@ -96,7 +96,6 @@ public class RuleExtractor {
   }
 
   private static GlyphGroup extract(RangeRecord record) {
-    int len = record.end - record.start + 1;
     GlyphGroup result = new GlyphGroup();
     for (int i = record.start; i <= record.end; i++) {
       result.add(i);

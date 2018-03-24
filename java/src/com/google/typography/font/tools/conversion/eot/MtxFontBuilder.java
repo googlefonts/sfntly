@@ -96,7 +96,6 @@ public class MtxFontBuilder {
     byte[] buf = new byte[size];
     putUlong(buf, 0, OPENTYPE_VERSION_1_0);
     putUshort(buf, 4, nTables);
-    int entrySelector = 0;
     int searchRange = searchRange(nTables);
     putUshort(buf, 6, searchRange * FONT_HEADER_PER_TABLE_SIZE);
     putUshort(buf, 8, log2(searchRange));

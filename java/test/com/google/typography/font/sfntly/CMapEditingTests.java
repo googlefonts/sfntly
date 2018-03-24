@@ -82,7 +82,7 @@ public class CMapEditingTests extends TestCase {
 
     Font newFont = fontBuilder.build();
 
-    CMapTable newCMapTable = font.getTable(Tag.cmap);
+    CMapTable newCMapTable = newFont.getTable(Tag.cmap);
     assertEquals(cmapTable.numCMaps(), newCMapTable.numCMaps());
 
     CMap cmap = cmapTable.cmap(CMapId.WINDOWS_BMP);

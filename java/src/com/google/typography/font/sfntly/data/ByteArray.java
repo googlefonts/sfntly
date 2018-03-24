@@ -28,9 +28,6 @@ import java.io.OutputStream;
 abstract class ByteArray {
   private static final int COPY_BUFFER_SIZE = 8192;
 
-  @SuppressWarnings("unused")
-  private boolean bound;
-
   private int storageLength;
   private int filledLength;
   private boolean growable;
@@ -219,8 +216,8 @@ abstract class ByteArray {
     int bufferLength = Math.min(b.length, length);
     while ((bytesRead = get(index + srcOffset, b, 0, bufferLength)) > 0) {
       int bytesWritten = array.put(index + dstOffset, b, 0, bytesRead);
-      index += bytesRead;
-      length -= bytesRead;
+      index += bytesWritten;
+      length -= bytesWritten;
       bufferLength = Math.min(b.length, length);
     }
     return index;

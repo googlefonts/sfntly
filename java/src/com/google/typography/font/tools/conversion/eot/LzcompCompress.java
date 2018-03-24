@@ -90,7 +90,6 @@ public class LzcompCompress {
   }
 
   private void encode() {
-    int maxIndex = length1 + PRELOAD_SIZE;
     initializeModel();
     bits.writeValue(length1, 24);
     int limit = length1 + PRELOAD_SIZE;

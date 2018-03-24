@@ -18,6 +18,7 @@ package com.google.typography.font.sfntly.data;
 
 import com.google.typography.font.sfntly.testutils.TestUtils;
 import junit.framework.TestCase;
+import org.junit.ComparisonFailure;
 
 /** @author Stuart Gill */
 public class ByteArrayTests extends TestCase {
@@ -61,11 +62,11 @@ public class ByteArrayTests extends TestCase {
   private void readComparison(ByteArray ba1, ByteArray ba2) throws Exception {
     // single byte reads
     for (int i = 0; i < ba1.length(); i++) {
-      int b = ba1.get(i);
-      if (b != ba2.get(i)) {
-        int fred = 12;
+      int b1 = ba1.get(i);
+      int b2 = ba2.get(i);
+      if (b1 != b2) {
+        throw new ComparisonFailure("At offset " + i, String.valueOf(b1), String.valueOf(b2));
       }
-      assertEquals(b, ba2.get(i));
     }
 
     byte[] b1;

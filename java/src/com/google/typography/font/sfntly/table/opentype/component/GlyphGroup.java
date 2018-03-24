@@ -4,8 +4,6 @@ import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 public class GlyphGroup extends BitSet implements Iterable<Integer> {
   private static final long serialVersionUID = 1L;
@@ -50,7 +48,6 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
   }
 
   void copyTo(Collection<Integer> target) {
-    List<Integer> list = new LinkedList<>();
     for (int i = nextSetBit(0); i >= 0; i = nextSetBit(i + 1)) {
       target.add(i);
     }

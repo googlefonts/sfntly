@@ -259,7 +259,6 @@ public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
         return;
       }
 
-      int subTableLimit = recordList.limit();
       Iterator<NumRecord> recordIterator = recordList.iterator();
       do {
         NumRecord record = recordIterator.next();

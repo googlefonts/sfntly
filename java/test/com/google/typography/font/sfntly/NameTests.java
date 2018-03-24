@@ -18,7 +18,6 @@ package com.google.typography.font.sfntly;
 
 import com.google.typography.font.sfntly.Font.PlatformId;
 import com.google.typography.font.sfntly.table.core.NameTable;
-import com.google.typography.font.sfntly.table.core.NameTable.NameId;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFont.TestFontNames;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
@@ -47,7 +46,6 @@ public class NameTests extends TestCase {
       Font font = fonts[0];
       NameTable nameTable = font.getTable(Tag.name);
 
-      NameId[] nameIds = NameId.values();
       int nameCount = 0;
       int winNameCount = 0;
       int macNameCount = 0;
