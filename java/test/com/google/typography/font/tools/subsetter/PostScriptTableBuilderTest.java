@@ -30,7 +30,7 @@ public class PostScriptTableBuilderTest extends TestCase {
   public void testPostTableBuilding() {
     FontFactory fontFactory = FontFactory.getInstance();
     Font.Builder fontBuilder = fontFactory.newFontBuilder();
-    List<String> names = new ArrayList<String>();
+    List<String> names = new ArrayList<>();
     names.add(".notdef");
     names.add("numbersign");
     names.add("nonstandardglyph");

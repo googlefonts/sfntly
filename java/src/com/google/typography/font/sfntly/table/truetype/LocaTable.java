@@ -178,7 +178,7 @@ public final class LocaTable extends Table {
     private void initialize(ReadableFontData data) {
       this.clearLoca(false);
       if (this.loca == null) {
-        this.loca = new ArrayList<Integer>();
+        this.loca = new ArrayList<>();
       }
       if (data != null) {
         if (this.numGlyphs < 0) {

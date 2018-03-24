@@ -168,7 +168,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
     }
 
     private void initFromData(ReadableFontData data, int base) {
-      builders = new TreeMap<Integer, VisibleSubTable.Builder<S>>();
+      builders = new TreeMap<>();
       if (data == null) {
         return;
       }

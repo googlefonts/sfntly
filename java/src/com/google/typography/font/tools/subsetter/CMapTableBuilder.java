@@ -54,7 +54,7 @@ public class CMapTableBuilder {
     CMap4Segment(int startCode, int endCode) {
       this.startCode = startCode;
       this.endCode = endCode;
-      this.glyphIds = new ArrayList<Integer>();
+      this.glyphIds = new ArrayList<>();
     }
 
     private boolean isContiguous() {
@@ -93,8 +93,8 @@ public class CMapTableBuilder {
   // glyph ids. A smarter approach would leave "holes", or short runs of glyphs
   // mapped to notdef, to reduce the number of segments.
   private List<CMap4Segment> getFormat4Segments() {
-    List<CMap4Segment> result = new ArrayList<CMap4Segment>();
-    SortedMap<Integer, Integer> sortedMap = new TreeMap<Integer, Integer>(mapping);
+    List<CMap4Segment> result = new ArrayList<>();
+    SortedMap<Integer, Integer> sortedMap = new TreeMap<>(mapping);
     if (!sortedMap.containsKey(MAX_FORMAT4_ENDCODE)) {
       sortedMap.put(MAX_FORMAT4_ENDCODE, 0);
     }
@@ -118,8 +118,8 @@ public class CMapTableBuilder {
   }
 
   private void buildCMapFormat4(CMapFormat4.Builder builder, List<CMap4Segment> segments) {
-    List<CMapFormat4.Builder.Segment> segmentList = new ArrayList<CMapFormat4.Builder.Segment>();
-    List<Integer> glyphIdArray = new ArrayList<Integer>();
+    List<CMapFormat4.Builder.Segment> segmentList = new ArrayList<>();
+    List<Integer> glyphIdArray = new ArrayList<>();
 
     // The glyphIndexArray immediately follows the idRangeOffset array, so idOffset counts the
     // offset (in shorts) from the beginning of the idRangeOffset array to the next block of

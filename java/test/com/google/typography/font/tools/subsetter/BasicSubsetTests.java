@@ -48,7 +48,7 @@ public class BasicSubsetTests extends TestCase {
     LocaTable srcLocaTable = srcFont.getTable(Tag.loca);
     GlyphTable srcGlyphTable = srcFont.getTable(Tag.glyf);
 
-    List<Integer> srcLoca = new ArrayList<Integer>(glyphCount + 1);
+    List<Integer> srcLoca = new ArrayList<>(glyphCount + 1);
     for (int i = 0; i <= glyphCount + 1; i++) {
       srcLoca.add(srcLocaTable.loca(i));
     }
@@ -57,7 +57,7 @@ public class BasicSubsetTests extends TestCase {
     Subsetter subsetter = new DumbSubsetter(srcFont, factory);
     // BitSet glyphs = new BitSet();
     // glyphs.set(0, 10);
-    List<Integer> glyphs = new ArrayList<Integer>(glyphCount);
+    List<Integer> glyphs = new ArrayList<>(glyphCount);
     glyphs.add(0);
     glyphs.add(1);
     glyphs.add(2);
@@ -72,14 +72,14 @@ public class BasicSubsetTests extends TestCase {
     glyphs.add(10);
     subsetter.setGlyphs(glyphs);
 
-    List<CMapTable.CMapId> cmapIds = new ArrayList<CMapTable.CMapId>();
+    List<CMapTable.CMapId> cmapIds = new ArrayList<>();
     cmapIds.add(
         CMapTable.CMapId.getInstance(
             PlatformId.Macintosh.value(), MacintoshEncodingId.Mongolian.value()));
     cmapIds.add(CMapTable.CMapId.WINDOWS_BMP);
     subsetter.setCMaps(cmapIds, 1);
 
-    Set<Integer> removeTables = new HashSet<Integer>();
+    Set<Integer> removeTables = new HashSet<>();
     removeTables.add(Tag.GPOS);
     removeTables.add(Tag.GSUB);
     removeTables.add(Tag.kern);
@@ -92,7 +92,7 @@ public class BasicSubsetTests extends TestCase {
     LocaTable dstLocaTable = dstFont.getTable(Tag.loca);
 
     // TODO(stuartg): subsetter needs to modify other tables with the new glyph
-    List<Integer> dstLoca = new ArrayList<Integer>(glyphCount + 1);
+    List<Integer> dstLoca = new ArrayList<>(glyphCount + 1);
     for (int i = 0; i <= glyphCount + 1; i++) {
       dstLoca.add(dstLocaTable.loca(i));
     }

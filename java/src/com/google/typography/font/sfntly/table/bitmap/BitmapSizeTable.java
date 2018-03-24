@@ -196,8 +196,7 @@ public final class BitmapSizeTable extends SubTable {
     if (this.indexSubTables == null) {
       synchronized (this.indexSubTablesLock) {
         if (this.indexSubTables == null) {
-          List<IndexSubTable> subTables =
-              new ArrayList<IndexSubTable>(this.numberOfIndexSubTables());
+          List<IndexSubTable> subTables = new ArrayList<>(this.numberOfIndexSubTables());
           for (int i = 0; i < this.numberOfIndexSubTables(); i++) {
             subTables.add(this.createIndexSubTable(i));
           }
@@ -421,7 +420,7 @@ public final class BitmapSizeTable extends SubTable {
     }
 
     public Map<Integer, BitmapGlyphInfo> generateLocaMap() {
-      Map<Integer, BitmapGlyphInfo> locaMap = new HashMap<Integer, BitmapGlyphInfo>();
+      Map<Integer, BitmapGlyphInfo> locaMap = new HashMap<>();
       Iterator<BitmapGlyphInfo> iter = this.iterator();
       while (iter.hasNext()) {
         BitmapGlyphInfo info = iter.next();
@@ -483,7 +482,7 @@ public final class BitmapSizeTable extends SubTable {
 
     private void initialize(ReadableFontData data) {
       if (this.indexSubTables == null) {
-        this.indexSubTables = new ArrayList<IndexSubTable.Builder<? extends IndexSubTable>>();
+        this.indexSubTables = new ArrayList<>();
       } else {
         this.indexSubTables.clear();
       }

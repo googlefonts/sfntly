@@ -52,7 +52,7 @@ public class HintStripTest extends TestCase {
     FontFactory factory = FontFactory.getInstance();
     Subsetter subsetter = new HintStripper(srcFont, factory);
 
-    Set<Integer> removeTables = new HashSet<Integer>();
+    Set<Integer> removeTables = new HashSet<>();
     removeTables.add(Tag.fpgm);
     removeTables.add(Tag.prep);
     removeTables.add(Tag.cvt);

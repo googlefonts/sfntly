@@ -55,14 +55,14 @@ public class RenumberingSubsetTest extends TestCase {
 
     FontFactory factory = FontFactory.getInstance();
     Subsetter subsetter = new RenumberingSubsetter(srcFont, factory);
-    List<Integer> glyphs = new ArrayList<Integer>();
+    List<Integer> glyphs = new ArrayList<>();
     glyphs.add(0);
     glyphs.add(67); // grave, u+0060
     glyphs.add(68); // a, u+0061
     glyphs.add(162); // agrave, u+00e0
     subsetter.setGlyphs(glyphs);
 
-    Set<Integer> removeTables = new HashSet<Integer>();
+    Set<Integer> removeTables = new HashSet<>();
     removeTables.add(Tag.GPOS);
     removeTables.add(Tag.GSUB);
     removeTables.add(Tag.kern);

@@ -347,7 +347,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
     }
 
     private void initialize(ReadableFontData data) {
-      this.cmapBuilders = new /*TreeMap*/ HashMap<CMapId, CMap.Builder<? extends CMap>>();
+      this.cmapBuilders = new /*TreeMap*/ HashMap<>();
 
       int numCMaps = numCMaps(data);
       for (int i = 0; i < numCMaps; i++) {

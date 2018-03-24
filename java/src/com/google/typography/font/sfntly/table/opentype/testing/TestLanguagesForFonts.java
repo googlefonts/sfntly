@@ -33,7 +33,7 @@ public class TestLanguagesForFonts {
   }
 
   private static List<String> availableLangs(String wordsDir) {
-    List<String> langs = new ArrayList<String>();
+    List<String> langs = new ArrayList<>();
     File[] wordFiles = new File(wordsDir).listFiles();
     for (File file : wordFiles) {
       String lang = file.getName();

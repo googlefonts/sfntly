@@ -174,7 +174,7 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
 
     private void initialize(ReadableFontData data) {
       if (this.glyphArray == null) {
-        this.glyphArray = new ArrayList<Integer>();
+        this.glyphArray = new ArrayList<>();
       } else {
         this.glyphArray.clear();
       }

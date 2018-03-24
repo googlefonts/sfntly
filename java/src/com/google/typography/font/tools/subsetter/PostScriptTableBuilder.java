@@ -331,7 +331,7 @@ public class PostScriptTableBuilder {
   private static final Map<String, Integer> INVERTED_STANDARD_NAMES = invertNameMap(STANDARD_NAMES);
 
   private static Map<String, Integer> invertNameMap(String[] names) {
-    Map<String, Integer> nameMap = new HashMap<String, Integer>();
+    Map<String, Integer> nameMap = new HashMap<>();
     for (int i = 0; i < names.length; i++) {
       nameMap.put(names[i], i);
     }
@@ -366,7 +366,7 @@ public class PostScriptTableBuilder {
     if (names == null) {
       return v1Data;
     }
-    List<Integer> glyphNameIndices = new ArrayList<Integer>();
+    List<Integer> glyphNameIndices = new ArrayList<>();
     ByteArrayOutputStream nameBos = new ByteArrayOutputStream();
     int nGlyphs = names.size();
     int tableIndex = NUM_STANDARD_NAMES;

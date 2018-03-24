@@ -90,7 +90,7 @@ public final class GlyphTable extends SubTableContainerTable {
     // glyph table level building
 
     public void setLoca(List<Integer> loca) {
-      this.loca = new ArrayList<Integer>(loca);
+      this.loca = new ArrayList<>(loca);
       this.setModelChanged(false);
       this.glyphBuilders = null;
     }
@@ -101,7 +101,7 @@ public final class GlyphTable extends SubTableContainerTable {
      * @return a list of loca information for the glyphs
      */
     public List<Integer> generateLocaList() {
-      List<Integer> locas = new ArrayList<Integer>(this.getGlyphBuilders().size());
+      List<Integer> locas = new ArrayList<>(this.getGlyphBuilders().size());
       locas.add(0);
       if (this.getGlyphBuilders().size() == 0) {
         locas.add(0);
@@ -117,7 +117,7 @@ public final class GlyphTable extends SubTableContainerTable {
     }
 
     private void initialize(ReadableFontData data, List<Integer> loca) {
-      this.glyphBuilders = new ArrayList<Glyph.Builder<? extends Glyph>>();
+      this.glyphBuilders = new ArrayList<>();
 
       if (data != null) {
         int locaValue;

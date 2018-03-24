@@ -9,7 +9,7 @@ import javax.swing.JTextArea;
 public class GsubTableNode extends AbstractNode {
 
   private final GSubTable gsub;
-  private final List<AbstractNode> children = new ArrayList<AbstractNode>();
+  private final List<AbstractNode> children = new ArrayList<>();
 
   public GsubTableNode(GSubTable gsub) {
     this.gsub = gsub;

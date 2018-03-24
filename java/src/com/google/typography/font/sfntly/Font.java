@@ -87,7 +87,7 @@ public class Font {
         new Integer[] {
           Tag.head, Tag.hhea, Tag.maxp, Tag.OS_2, Tag.name, Tag.cmap, Tag.post, Tag.CFF
         };
-    List<Integer> cffList = new ArrayList<Integer>(cffArray.length);
+    List<Integer> cffList = new ArrayList<>(cffArray.length);
     Collections.addAll(cffList, cffArray);
     CFF_TABLE_ORDERING = Collections.unmodifiableList(cffList);
 
@@ -97,7 +97,7 @@ public class Font {
           Tag.fpgm, Tag.prep, Tag.cvt, Tag.loca, Tag.glyf, Tag.kern, Tag.name, Tag.post, Tag.gasp,
           Tag.PCLT, Tag.DSIG
         };
-    List<Integer> ttList = new ArrayList<Integer>(ttArray.length);
+    List<Integer> ttList = new ArrayList<>(ttArray.length);
     Collections.addAll(ttList, ttArray);
     TRUE_TYPE_TABLE_ORDERING = Collections.unmodifiableList(ttList);
   }
@@ -441,7 +441,7 @@ public class Font {
   private List<Header> buildTableHeadersForSerialization(List<Integer> tableOrdering) {
     List<Integer> finalTableOrdering = this.generateTableOrdering(tableOrdering);
 
-    List<Header> tableHeaders = new ArrayList<Header>(this.numTables());
+    List<Header> tableHeaders = new ArrayList<>(this.numTables());
     int tableOffset = HeaderOffset.SIZE + this.numTables() * TableOffset.SIZE;
     for (Integer tag : finalTableOrdering) {
       Table table = this.tables.get(tag);
@@ -470,7 +470,7 @@ public class Font {
     fos.writeUShort(log2OfMaxPowerOf2);
     fos.writeUShort((tableHeaders.size() * 16) - searchRange);
 
-    List<Header> sortedHeaders = new ArrayList<Header>(tableHeaders);
+    List<Header> sortedHeaders = new ArrayList<>(tableHeaders);
     Collections.sort(sortedHeaders, Header.COMPARATOR_BY_TAG);
 
     for (Header record : sortedHeaders) {
@@ -510,12 +510,12 @@ public class Font {
    * @return the full ordering for serialization
    */
   private List<Integer> generateTableOrdering(List<Integer> defaultTableOrdering) {
-    List<Integer> tableOrdering = new ArrayList<Integer>(this.tables.size());
+    List<Integer> tableOrdering = new ArrayList<>(this.tables.size());
     if (defaultTableOrdering == null) {
       defaultTableOrdering = defaultTableOrdering();
     }
 
-    Set<Integer> tablesInFont = new TreeSet<Integer>(this.tables.keySet());
+    Set<Integer> tablesInFont = new TreeSet<>(this.tables.keySet());
 
     // add all the default ordering
     for (Integer tag : defaultTableOrdering) {
@@ -574,7 +574,7 @@ public class Font {
 
     private Builder(FontFactory factory) {
       this.factory = factory;
-      this.tableBuilders = new HashMap<Integer, Table.Builder<? extends Table>>();
+      this.tableBuilders = new HashMap<>();
     }
 
     private void loadFont(InputStream is) throws IOException {
@@ -750,8 +750,7 @@ public class Font {
 
     private Map<Integer, Table.Builder<? extends Table>> buildAllTableBuilders(
         Map<Header, WritableFontData> tableData) {
-      Map<Integer, Table.Builder<? extends Table>> builderMap =
-          new HashMap<Integer, Table.Builder<? extends Table>>();
+      Map<Integer, Table.Builder<? extends Table>> builderMap = new HashMap<>();
       Set<Header> records = tableData.keySet();
       for (Header record : records) {
         Table.Builder<? extends Table> builder = getTableBuilder(record, tableData.get(record));
@@ -768,7 +767,7 @@ public class Font {
 
     private static Map<Integer, Table> buildTablesFromBuilders(
         Font font, Map<Integer, Table.Builder<? extends Table>> builderMap) {
-      Map<Integer, Table> tableMap = new TreeMap<Integer, Table>();
+      Map<Integer, Table> tableMap = new TreeMap<>();
 
       interRelateBuilders(builderMap);
 
@@ -870,7 +869,7 @@ public class Font {
         throw new IllegalStateException(msg);
       }
 
-      SortedSet<Header> records = new TreeSet<Header>(Header.COMPARATOR_BY_OFFSET);
+      SortedSet<Header> records = new TreeSet<>(Header.COMPARATOR_BY_OFFSET);
       for (int tableNumber = 0; tableNumber < this.numTables; tableNumber++) {
         int tag = is.readULongAsInt();
         long checksum = is.readULong();
@@ -883,8 +882,7 @@ public class Font {
 
     private Map<Header, WritableFontData> loadTableData(
         SortedSet<Header> headers, FontInputStream is) throws IOException {
-      Map<Header, WritableFontData> tableData =
-          new HashMap<Header, WritableFontData>(headers.size());
+      Map<Header, WritableFontData> tableData = new HashMap<>(headers.size());
       logger.fine("########  Reading Table Data");
       for (Header tableHeader : headers) {
         is.skip(tableHeader.offset() - is.position());
@@ -908,7 +906,7 @@ public class Font {
       this.entrySelector = fd.readUShort(offset + HeaderOffset.entrySelector);
       this.rangeShift = fd.readUShort(offset + HeaderOffset.rangeShift);
 
-      SortedSet<Header> records = new TreeSet<Header>(Header.COMPARATOR_BY_OFFSET);
+      SortedSet<Header> records = new TreeSet<>(Header.COMPARATOR_BY_OFFSET);
       int tableOffset = offset + HeaderOffset.SIZE;
       for (int i = 0; i < this.numTables; i++, tableOffset += TableOffset.SIZE) {
         int tag = fd.readULongAsInt(tableOffset + TableOffset.tag);
@@ -922,8 +920,7 @@ public class Font {
 
     private Map<Header, WritableFontData> loadTableData(
         SortedSet<Header> headers, WritableFontData fd) {
-      Map<Header, WritableFontData> tableData =
-          new HashMap<Header, WritableFontData>(headers.size());
+      Map<Header, WritableFontData> tableData = new HashMap<>(headers.size());
       logger.fine("########  Reading Table Data");
       for (Header tableHeader : headers) {
         WritableFontData data = fd.slice(tableHeader.offset(), tableHeader.length());

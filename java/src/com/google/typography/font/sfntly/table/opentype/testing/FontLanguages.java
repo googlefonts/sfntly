@@ -605,8 +605,8 @@ class FontLanguages {
     {"zza", "Arab"},
   };
 
-  private static Map<String, ScriptTag> fontSpecificScript = new HashMap<String, ScriptTag>();
-  private Map<ScriptTag, Set<String>> scriptLangMap = new HashMap<ScriptTag, Set<String>>();
+  private static Map<String, ScriptTag> fontSpecificScript = new HashMap<>();
+  private Map<ScriptTag, Set<String>> scriptLangMap = new HashMap<>();
 
   static {
     fontSpecificScript.put("laoo", ScriptTag.lao);
@@ -635,11 +635,11 @@ class FontLanguages {
       }
     }
 
-    scriptLangMap.put(ScriptTag.DFLT, new HashSet<String>());
-    scriptLangMap.put(ScriptTag.brai, new HashSet<String>());
-    scriptLangMap.put(ScriptTag.math, new HashSet<String>());
-    scriptLangMap.put(ScriptTag.musc, new HashSet<String>());
-    scriptLangMap.put(ScriptTag.musi, new HashSet<String>());
+    scriptLangMap.put(ScriptTag.DFLT, new HashSet<>());
+    scriptLangMap.put(ScriptTag.brai, new HashSet<>());
+    scriptLangMap.put(ScriptTag.math, new HashSet<>());
+    scriptLangMap.put(ScriptTag.musc, new HashSet<>());
+    scriptLangMap.put(ScriptTag.musi, new HashSet<>());
     scriptLangMap.put(ScriptTag.mly2, scriptLangMap.get(ScriptTag.mlym));
     scriptLangMap.put(ScriptTag.mlm2, scriptLangMap.get(ScriptTag.mlym));
     scriptLangMap.put(ScriptTag.dev2, scriptLangMap.get(ScriptTag.deva));
@@ -656,14 +656,14 @@ class FontLanguages {
 
   private void addLangScriptMap(String lang, ScriptTag scriptTag) {
     if (!scriptLangMap.containsKey(scriptTag)) {
-      scriptLangMap.put(scriptTag, new HashSet<String>());
+      scriptLangMap.put(scriptTag, new HashSet<>());
     }
     Set<String> langs = scriptLangMap.get(scriptTag);
     langs.add(lang);
   }
 
   Set<String> get(Font font) {
-    Set<String> langs = new HashSet<String>();
+    Set<String> langs = new HashSet<>();
     GSubTable gsub = font.getTable(Tag.GSUB);
     if (gsub == null) {
       return langs;

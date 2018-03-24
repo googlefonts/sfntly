@@ -46,7 +46,7 @@ public class CMapTableBuilderTest extends TestCase {
   }
 
   public void testCmapBuilding() {
-    Map<Integer, Integer> mapping = new HashMap<Integer, Integer>();
+    Map<Integer, Integer> mapping = new HashMap<>();
     mapping.put(32, 0);
     mapping.put(33, 1);
     mapping.put(34, 2);

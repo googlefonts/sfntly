@@ -27,8 +27,8 @@ public class LanguageTagGenerator {
   }
 
   private static void crosscheckWithIso639() {
-    List<String> errors = new ArrayList<String>();
-    List<String> enumValues = new ArrayList<String>();
+    List<String> errors = new ArrayList<>();
+    List<String> enumValues = new ArrayList<>();
 
     Map<String, String> languageNameByIso3 = getIso639Languages();
     for (LanguageTag languageTag : LanguageTag.values()) {
@@ -73,7 +73,7 @@ public class LanguageTagGenerator {
   }
 
   private static Map<String, String> getIso639Languages() {
-    List<String> lines = new ArrayList<String>();
+    List<String> lines = new ArrayList<>();
     try {
       FileInputStream inputStream = new FileInputStream(ISO_639_3_DATA);
       try {
@@ -91,7 +91,7 @@ public class LanguageTagGenerator {
       throw new IllegalStateException(e);
     }
 
-    Map<String, String> languageNameByIso3 = new LinkedHashMap<String, String>();
+    Map<String, String> languageNameByIso3 = new LinkedHashMap<>();
 
     Matcher m =
         Pattern.compile(

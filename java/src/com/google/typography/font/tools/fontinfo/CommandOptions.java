@@ -6,7 +6,7 @@ import java.util.List;
 
 public class CommandOptions {
   @Parameter(description = "FONT_LOCATION")
-  public List<String> files = new ArrayList<String>();
+  public List<String> files = new ArrayList<>();
 
   @Parameter(
     names = {"-h", "-?", "--help"},

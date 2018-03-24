@@ -26,7 +26,7 @@ class FontNode extends AbstractNode {
   }
 
   private static List<AbstractNode> createTableNodes(Font font) {
-    List<AbstractNode> tableNodes = new ArrayList<AbstractNode>();
+    List<AbstractNode> tableNodes = new ArrayList<>();
     for (Iterator<? extends Table> it = font.iterator(); it.hasNext(); ) {
       Table table = it.next();
       tableNodes.add(nodeFor(font, table));

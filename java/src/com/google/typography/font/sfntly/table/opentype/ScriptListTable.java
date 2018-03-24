@@ -22,7 +22,7 @@ public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
   }
 
   public Map<ScriptTag, ScriptTable> map() {
-    Map<ScriptTag, ScriptTable> map = new HashMap<ScriptTag, ScriptTable>();
+    Map<ScriptTag, ScriptTable> map = new HashMap<>();
     for (int i = 0; i < count(); i++) {
       ScriptTag script;
       try {

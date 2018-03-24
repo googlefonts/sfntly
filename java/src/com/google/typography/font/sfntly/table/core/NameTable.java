@@ -720,7 +720,7 @@ public final class NameTable extends SubTableContainerTable
    * @return the set of all name entry records
    */
   public Set<NameEntry> names() {
-    Set<NameEntry> nameSet = new HashSet<NameEntry>(this.nameCount());
+    Set<NameEntry> nameSet = new HashSet<>(this.nameCount());
     for (NameEntry entry : this) {
       nameSet.add(entry);
     }
@@ -1237,7 +1237,7 @@ public final class NameTable extends SubTableContainerTable
     }
 
     private void initialize(ReadableFontData data) {
-      this.nameEntryMap = new TreeMap<NameEntryId, NameEntryBuilder>();
+      this.nameEntryMap = new TreeMap<>();
 
       if (data != null) {
         NameTable table = new NameTable(this.header(), data);

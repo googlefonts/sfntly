@@ -35,8 +35,7 @@ public class HorizontalMetricsTableBuilderTest extends TestCase {
     HorizontalHeaderTable.Builder hheaBuilder =
         (HorizontalHeaderTable.Builder) fontBuilder.newTableBuilder(Tag.hhea);
 
-    List<HorizontalMetricsTableBuilder.LongHorMetric> metrics =
-        new ArrayList<HorizontalMetricsTableBuilder.LongHorMetric>();
+    List<HorizontalMetricsTableBuilder.LongHorMetric> metrics = new ArrayList<>();
     metrics.add(new HorizontalMetricsTableBuilder.LongHorMetric(123, 42));
     metrics.add(new HorizontalMetricsTableBuilder.LongHorMetric(123, 43));
     metrics.add(new HorizontalMetricsTableBuilder.LongHorMetric(789, 44));

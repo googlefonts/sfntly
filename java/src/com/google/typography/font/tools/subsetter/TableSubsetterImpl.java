@@ -26,7 +26,7 @@ public abstract class TableSubsetterImpl implements TableSubsetter {
   protected final Set<Integer> tags;
 
   protected TableSubsetterImpl(Integer... tags) {
-    Set<Integer> temp = new HashSet<Integer>(tags.length);
+    Set<Integer> temp = new HashSet<>(tags.length);
     for (Integer tag : tags) {
       temp.add(tag);
     }

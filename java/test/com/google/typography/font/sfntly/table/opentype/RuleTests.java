@@ -114,7 +114,7 @@ public class RuleTests {
   private static Map<String, List<String>> langWordsMap() {
     Assume.assumeTrue(new File(WORDS_DIR).exists());
 
-    Map<String, List<String>> langWordsMap = new HashMap<String, List<String>>();
+    Map<String, List<String>> langWordsMap = new HashMap<>();
     for (File wordsFile : new File(WORDS_DIR).listFiles()) {
       String lang = wordsFile.getName();
       if (lang.startsWith(".")) {
@@ -126,7 +126,7 @@ public class RuleTests {
   }
 
   private static List<GlyphGroup> hbClosure(File file) {
-    List<GlyphGroup> glyphGroups = new ArrayList<GlyphGroup>();
+    List<GlyphGroup> glyphGroups = new ArrayList<>();
     for (String line : linesFromFile(file)) {
       GlyphGroup glyphGroup = new GlyphGroup();
       if (line.length() > 0) {
@@ -140,7 +140,7 @@ public class RuleTests {
   }
 
   private static List<String> linesFromFile(File file) {
-    List<String> lines = new ArrayList<String>();
+    List<String> lines = new ArrayList<>();
     Scanner scanner;
     try {
       scanner = new Scanner(file);

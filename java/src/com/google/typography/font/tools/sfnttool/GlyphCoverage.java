@@ -44,13 +44,13 @@ public class GlyphCoverage {
   public static List<Integer> getGlyphCoverage(Font font, String string) {
     CMapTable cmapTable = font.getTable(Tag.cmap);
     CMap cmap = getBestCMap(cmapTable);
-    Set<Integer> coverage = new HashSet<Integer>();
+    Set<Integer> coverage = new HashSet<>();
     coverage.add(0); // Always include notdef
     for (int codepoint : SfStringUtils.getAllCodepoints(string)) {
       int glyphId = cmap.glyphId(codepoint);
       touchGlyph(font, coverage, glyphId);
     }
-    List<Integer> sortedCoverage = new ArrayList<Integer>(coverage);
+    List<Integer> sortedCoverage = new ArrayList<>(coverage);
     Collections.sort(sortedCoverage);
     return sortedCoverage;
   }

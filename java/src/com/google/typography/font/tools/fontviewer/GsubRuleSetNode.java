@@ -13,7 +13,7 @@ public class GsubRuleSetNode extends AbstractNode {
 
   public GsubRuleSetNode(int ruleSetId, Set<Rule> rules) {
     this.ruleSetId = ruleSetId;
-    this.rules = new ArrayList<Rule>(rules);
+    this.rules = new ArrayList<>(rules);
   }
 
   @Override

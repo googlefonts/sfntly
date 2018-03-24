@@ -32,7 +32,7 @@ public class MtxFontBuilder {
   private MtxHeadBuilder headBuilder;
 
   public MtxFontBuilder() {
-    tables = new HashMap<Integer, ReadableFontData>();
+    tables = new HashMap<>();
     headBuilder = new MtxHeadBuilder();
   }
 
@@ -80,7 +80,7 @@ public class MtxFontBuilder {
   public byte[] build() {
     addTable(Tag.head, headBuilder.build());
 
-    TreeSet<Integer> tags = new TreeSet<Integer>(tables.keySet());
+    TreeSet<Integer> tags = new TreeSet<>(tables.keySet());
     int nTables = tables.size();
     int size = FONT_HEADER_BASE_SIZE + FONT_HEADER_PER_TABLE_SIZE * nTables;
     for (Map.Entry<Integer, ReadableFontData> entry : tables.entrySet()) {

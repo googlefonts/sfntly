@@ -320,7 +320,7 @@ public class FontInfo {
   public static DataDisplayTable listScriptCoverage(Font font) {
     DataDisplayTable table = new DataDisplayTable("Script", "Coverage");
     table.setAlignment(Align.Left, Align.Right);
-    HashMap<Integer, Integer> coveredScripts = new HashMap<Integer, Integer>();
+    HashMap<Integer, Integer> coveredScripts = new HashMap<>();
 
     // Add to script count for the script each code point belongs to
     CMap cmap = FontUtils.getUCSCMap(font);
@@ -337,7 +337,7 @@ public class FontInfo {
 
     // For each covered script, find the total size of the script and add
     // coverage to table
-    Set<Integer> sortedScripts = new TreeSet<Integer>(coveredScripts.keySet());
+    Set<Integer> sortedScripts = new TreeSet<>(coveredScripts.keySet());
     int unknown = 0;
     for (Integer scriptCode : sortedScripts) {
       UnicodeSet scriptSet;
@@ -367,7 +367,7 @@ public class FontInfo {
   public static DataDisplayTable listCharsNeededToCoverScript(Font font) {
     DataDisplayTable table = new DataDisplayTable("Script", "Code Point", "Name");
     table.setAlignment(Align.Left, Align.Right, Align.Left);
-    HashMap<Integer, UnicodeSet> coveredScripts = new HashMap<Integer, UnicodeSet>();
+    HashMap<Integer, UnicodeSet> coveredScripts = new HashMap<>();
 
     // Iterate through each set
     CMap cmap = FontUtils.getUCSCMap(font);
@@ -398,7 +398,7 @@ public class FontInfo {
     }
 
     // Insert into table in order
-    Set<Integer> sortedScripts = new TreeSet<Integer>(coveredScripts.keySet());
+    Set<Integer> sortedScripts = new TreeSet<>(coveredScripts.keySet());
     for (Integer scriptCode : sortedScripts) {
       UnicodeSet uSet = coveredScripts.get(scriptCode);
       for (String charStr : uSet) {
@@ -504,7 +504,7 @@ public class FontInfo {
     GlyphTable glyfTable = FontUtils.getGlyphTable(font);
 
     // Add subglyphs of all composite glyphs to hashmap
-    Map<Integer, Integer> subglyphFreq = new HashMap<Integer, Integer>();
+    Map<Integer, Integer> subglyphFreq = new HashMap<>();
     for (int i = 0; i < locaTable.numGlyphs(); i++) {
       Glyph glyph = glyfTable.glyph(locaTable.glyphOffset(i), locaTable.glyphLength(i));
       if (glyph.glyphType() == GlyphType.Composite) {
@@ -523,7 +523,7 @@ public class FontInfo {
     }
 
     // Add frequency data to table
-    Set<Integer> sortedKeySet = new TreeSet<Integer>(subglyphFreq.keySet());
+    Set<Integer> sortedKeySet = new TreeSet<>(subglyphFreq.keySet());
     for (Integer key : sortedKeySet) {
       table.add(key.toString(), subglyphFreq.get(key).toString());
     }
@@ -542,7 +542,7 @@ public class FontInfo {
     table.setAlignment(Align.Right);
 
     // Get a set of all mapped glyph IDs
-    Set<Integer> mappedGlyphs = new HashSet<Integer>();
+    Set<Integer> mappedGlyphs = new HashSet<>();
     CMapTable cmapTable = FontUtils.getCMapTable(font);
     for (CMap cmap : cmapTable) {
       for (Integer codePoint : cmap) {

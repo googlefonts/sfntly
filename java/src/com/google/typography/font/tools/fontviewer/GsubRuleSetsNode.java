@@ -14,9 +14,7 @@ public class GsubRuleSetsNode extends AbstractNode {
   private final List<Map.Entry<Integer, Set<Rule>>> rules;
 
   public GsubRuleSetsNode(GSubTable gsub) {
-    this.rules =
-        new ArrayList<Map.Entry<Integer, Set<Rule>>>(
-            RuleExtractor.extract(gsub.lookupList()).entrySet());
+    this.rules = new ArrayList<>(RuleExtractor.extract(gsub.lookupList()).entrySet());
   }
 
   @Override

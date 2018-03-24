@@ -58,7 +58,7 @@ class OtTableTagger {
 
   OtTableTagger(TaggedData tdata) {
     this.td = tdata;
-    this.tagMethodRegistry = new HashMap<Class<? extends FontDataTable>, TagMethod>();
+    this.tagMethodRegistry = new HashMap<>();
 
     registerTagMethods();
   }
@@ -73,7 +73,7 @@ class OtTableTagger {
     tagTable(gsub.lookupList());
   }
 
-  private final List<String> tableCache = new ArrayList<String>();
+  private final List<String> tableCache = new ArrayList<>();
 
   private void tagTable(FontDataTable table) {
     if (table == null) {
@@ -728,7 +728,7 @@ class OtTableTagger {
       };
 
   private static Set<Class<? extends FontDataTable>> missedClasses =
-      new TreeSet<Class<? extends FontDataTable>>(CLASS_NAME_COMPARATOR);
+      new TreeSet<>(CLASS_NAME_COMPARATOR);
 
   private TagMethod getTagMethod(FontDataTable table) {
     Class<? extends FontDataTable> clzz = table.getClass();

@@ -11,7 +11,7 @@ import java.util.List;
 
 public class FontLoader {
   public static List<File> getFontFiles(String fontDir) {
-    List<File> fontFiles = new ArrayList<File>();
+    List<File> fontFiles = new ArrayList<>();
     getFontFiles(fontFiles, new File(fontDir), "", true);
     return fontFiles;
   }

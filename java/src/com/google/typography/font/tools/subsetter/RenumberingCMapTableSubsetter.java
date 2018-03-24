@@ -50,7 +50,7 @@ public class RenumberingCMapTableSubsetter extends TableSubsetterImpl {
       throw new RuntimeException("CMap format 4 table in source font not found");
     }
     Map<Integer, Integer> inverseMapping = subsetter.getInverseMapping();
-    Map<Integer, Integer> mapping = new HashMap<Integer, Integer>();
+    Map<Integer, Integer> mapping = new HashMap<>();
     for (Integer unicode : cmap4) {
       int glyph = cmap4.glyphId(unicode);
       if (inverseMapping.containsKey(glyph)) {

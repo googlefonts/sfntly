@@ -144,7 +144,7 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
 
   private void copyFromRead() {
     if (recordsToWrite == null) {
-      recordsToWrite = new ArrayList<T>(count);
+      recordsToWrite = new ArrayList<>(count);
       for (T t : this) {
         recordsToWrite.add(t);
       }

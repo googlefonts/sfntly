@@ -26,7 +26,7 @@ import java.util.Set;
 public class RenumberingSubsetter extends Subsetter {
 
   {
-    Set<TableSubsetter> temp = new HashSet<TableSubsetter>();
+    Set<TableSubsetter> temp = new HashSet<>();
     temp.add(new GlyphTableSubsetter());
     temp.add(new RenumberingCMapTableSubsetter());
     temp.add(new PostScriptTableSubsetter());

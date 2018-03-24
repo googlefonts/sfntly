@@ -61,7 +61,7 @@ public class Subsetter {
   }
 
   public void setGlyphs(List<Integer> glyphs) {
-    this.newToOldGlyphs = new ArrayList<Integer>(glyphs);
+    this.newToOldGlyphs = new ArrayList<>(glyphs);
   }
 
   /**
@@ -86,7 +86,7 @@ public class Subsetter {
    * @param number the maximum number of cmaps to place in the subsetted font
    */
   public void setCMaps(List<CMapTable.CMapId> cmapIds, int number) {
-    this.cmapIds = new ArrayList<CMapTable.CMapId>();
+    this.cmapIds = new ArrayList<>();
     CMapTable cmapTable = this.font.getTable(Tag.cmap);
     if (cmapTable == null) {
       throw new InvalidParameterException("Font has no cmap table.");
@@ -109,7 +109,7 @@ public class Subsetter {
   }
 
   public void setRemoveTables(Set<Integer> removeTables) {
-    this.removeTables = new HashSet<Integer>(removeTables);
+    this.removeTables = new HashSet<>(removeTables);
   }
 
   public Font.Builder subset() throws IOException {
@@ -117,7 +117,7 @@ public class Subsetter {
 
     setUpTables(fontBuilder);
 
-    Set<Integer> tableTags = new TreeSet<Integer>(this.font.tableMap().keySet());
+    Set<Integer> tableTags = new TreeSet<>(this.font.tableMap().keySet());
     if (this.removeTables != null) {
       tableTags.removeAll(this.removeTables);
     }
@@ -153,7 +153,7 @@ public class Subsetter {
    */
   Map<Integer, Integer> getInverseMapping() {
     if (oldToNewGlyphs == null) {
-      oldToNewGlyphs = new HashMap<Integer, Integer>();
+      oldToNewGlyphs = new HashMap<>();
       List<Integer> mapping = glyphMappingTable();
       for (int i = 0; i < mapping.size(); i++) {
         oldToNewGlyphs.put(mapping.get(i), i);

@@ -48,7 +48,7 @@ public class OTFBasicEditingTests extends TestCase {
     long originalChecksum = originalFont[0].checksum();
 
     Builder fontBuilder = TestFontUtils.builderForFontFile(TEST_FONT_FILE);
-    Set<Integer> builderTags = new HashSet<Integer>(fontBuilder.tableBuilderMap().keySet());
+    Set<Integer> builderTags = new HashSet<>(fontBuilder.tableBuilderMap().keySet());
     FontHeaderTable.Builder headerBuilder =
         (FontHeaderTable.Builder) fontBuilder.getTableBuilder(Tag.head);
     long modDate = headerBuilder.modified();

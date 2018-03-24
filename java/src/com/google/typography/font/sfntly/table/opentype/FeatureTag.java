@@ -170,7 +170,7 @@ enum FeatureTag {
   public static FeatureTag forTagValue(int value) {
     synchronized (FeatureTag.class) {
       if (tagMap == null) {
-        Map<Integer, FeatureTag> map = new HashMap<Integer, FeatureTag>();
+        Map<Integer, FeatureTag> map = new HashMap<>();
         for (FeatureTag tag : values()) {
           map.put(tag.tag(), tag);
         }

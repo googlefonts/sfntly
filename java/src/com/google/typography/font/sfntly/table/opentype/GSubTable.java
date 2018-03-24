@@ -30,12 +30,9 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class GSubTable extends Table {
   private final GsubCommonTable gsub;
-  private final AtomicReference<ScriptListTable> scriptListTable =
-      new AtomicReference<ScriptListTable>();
-  private final AtomicReference<FeatureListTable> featureListTable =
-      new AtomicReference<FeatureListTable>();
-  private final AtomicReference<LookupListTable> lookupListTable =
-      new AtomicReference<LookupListTable>();
+  private final AtomicReference<ScriptListTable> scriptListTable = new AtomicReference<>();
+  private final AtomicReference<FeatureListTable> featureListTable = new AtomicReference<>();
+  private final AtomicReference<LookupListTable> lookupListTable = new AtomicReference<>();
 
   private GSubTable(Header header, ReadableFontData data, boolean dataIsCanonical) {
     super(header, data);

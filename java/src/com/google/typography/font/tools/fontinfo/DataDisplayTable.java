@@ -38,19 +38,19 @@ public class DataDisplayTable {
       throw new IllegalArgumentException("Table must have at least one column");
     }
 
-    this.header = Collections.unmodifiableList(new ArrayList<String>(Arrays.asList(header)));
-    data = new ArrayList<List<String>>();
+    this.header = Collections.unmodifiableList(new ArrayList<>(Arrays.asList(header)));
+    data = new ArrayList<>();
     numCols = header.length;
     numRows = 0;
 
     // Initialise the maximum length for each column based on the header
-    maxColLengths = new ArrayList<Integer>(numCols);
+    maxColLengths = new ArrayList<>(numCols);
     for (int i = 0; i < numCols; i++) {
       maxColLengths.add(header[i].length());
     }
 
     // Initialise all columns to be left-aligned
-    displayAlignment = new ArrayList<Align>(numCols);
+    displayAlignment = new ArrayList<>(numCols);
     for (int i = 0; i < numCols; i++) {
       displayAlignment.add(Align.Left);
     }
@@ -67,7 +67,7 @@ public class DataDisplayTable {
       throw new IllegalArgumentException("Array is wrong size");
     }
 
-    displayAlignment = Collections.unmodifiableList(new ArrayList<Align>(Arrays.asList(alignment)));
+    displayAlignment = Collections.unmodifiableList(new ArrayList<>(Arrays.asList(alignment)));
   }
 
   /**
@@ -81,7 +81,7 @@ public class DataDisplayTable {
       throw new IllegalArgumentException("Array is wrong size");
     }
 
-    data.add(Collections.unmodifiableList(new ArrayList<String>(Arrays.asList(row))));
+    data.add(Collections.unmodifiableList(new ArrayList<>(Arrays.asList(row))));
     numRows++;
 
     // Modify the maximum size of each column

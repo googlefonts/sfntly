@@ -131,7 +131,7 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
 
     private void initialize(ReadableFontData data) {
       if (this.offsetArray == null) {
-        this.offsetArray = new ArrayList<Integer>();
+        this.offsetArray = new ArrayList<>();
       } else {
         this.offsetArray.clear();
       }

@@ -11,7 +11,7 @@ class GlyfTableNode extends AbstractNode {
 
   private final GlyphTable glyf;
   private final LocaTable loca;
-  private final List<GlyphNode> glyphNodes = new ArrayList<GlyphNode>();
+  private final List<GlyphNode> glyphNodes = new ArrayList<>();
 
   GlyfTableNode(GlyphTable glyf, LocaTable loca) {
     this.glyf = glyf;

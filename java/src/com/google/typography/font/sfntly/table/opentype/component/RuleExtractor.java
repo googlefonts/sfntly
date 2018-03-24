@@ -45,7 +45,7 @@ import java.util.TreeMap;
 
 public class RuleExtractor {
   private static Set<Rule> extract(LigatureSubst table) {
-    Set<Rule> allRules = new LinkedHashSet<Rule>();
+    Set<Rule> allRules = new LinkedHashSet<>();
     List<Integer> prefixChars = extract(table.coverage());
 
     for (int i = 0; i < table.subTableCount(); i++) {
@@ -84,7 +84,7 @@ public class RuleExtractor {
 
   private static Map<Integer, GlyphGroup> extract(RangeRecordTable table) {
     // Order is important.
-    Map<Integer, GlyphGroup> result = new LinkedHashMap<Integer, GlyphGroup>();
+    Map<Integer, GlyphGroup> result = new LinkedHashMap<>();
     for (RangeRecord record : table.recordList) {
       if (!result.containsKey(record.property)) {
         result.put(record.property, new GlyphGroup());
@@ -105,7 +105,7 @@ public class RuleExtractor {
   }
 
   private static List<Rule> extract(LigatureSet table) {
-    List<Rule> allRules = new ArrayList<Rule>();
+    List<Rule> allRules = new ArrayList<>();
 
     for (int i = 0; i < table.subTableCount(); i++) {
       Rule subRule = extract(table.subTableAt(i));
@@ -149,7 +149,7 @@ public class RuleExtractor {
   }
 
   private static Set<Rule> extract(MultipleSubst table) {
-    Set<Rule> result = new LinkedHashSet<Rule>();
+    Set<Rule> result = new LinkedHashSet<>();
 
     GlyphList coverage = extract(table.coverage());
     int i = 0;
@@ -167,7 +167,7 @@ public class RuleExtractor {
   }
 
   private static Set<Rule> extract(AlternateSubst table) {
-    Set<Rule> result = new LinkedHashSet<Rule>();
+    Set<Rule> result = new LinkedHashSet<>();
 
     GlyphList coverage = extract(table.coverage());
     int i = 0;
@@ -203,7 +203,7 @@ public class RuleExtractor {
       Map<Integer, Set<Rule>> allLookupRules) {
     GlyphList coverage = extract(table.coverage);
 
-    Set<Rule> result = new LinkedHashSet<Rule>();
+    Set<Rule> result = new LinkedHashSet<>();
     int i = 0;
     for (SubRuleSet subRuleSet : table) {
       Set<Rule> subRules = extract(coverage.get(i), subRuleSet, lookupListTable, allLookupRules);
@@ -218,7 +218,7 @@ public class RuleExtractor {
       SubRuleSet table,
       LookupListTable lookupListTable,
       Map<Integer, Set<Rule>> allLookupRules) {
-    Set<Rule> result = new LinkedHashSet<Rule>();
+    Set<Rule> result = new LinkedHashSet<>();
     for (SubRule subRule : table) {
       Set<Rule> subrules = extract(firstGlyph, subRule, lookupListTable, allLookupRules);
       if (subrules == null) {
@@ -250,7 +250,7 @@ public class RuleExtractor {
     GlyphList coverage = extract(table.coverage);
     Map<Integer, GlyphGroup> classDef = extract(table.classDef);
 
-    Set<Rule> result = new LinkedHashSet<Rule>();
+    Set<Rule> result = new LinkedHashSet<>();
     int i = 0;
     for (SubClassSet subClassRuleSet : table) {
       if (subClassRuleSet != null) {
@@ -268,7 +268,7 @@ public class RuleExtractor {
       Map<Integer, GlyphGroup> inputClassDef,
       LookupListTable lookupListTable,
       Map<Integer, Set<Rule>> allLookupRules) {
-    Set<Rule> result = new LinkedHashSet<Rule>();
+    Set<Rule> result = new LinkedHashSet<>();
     for (SubClassRule subRule : table) {
       Set<Rule> subRules =
           extract(subRule, firstInputClass, inputClassDef, lookupListTable, allLookupRules);
@@ -311,7 +311,7 @@ public class RuleExtractor {
       Map<Integer, Set<Rule>> allLookupRules) {
     GlyphList coverage = extract(table.coverage);
 
-    Set<Rule> result = new LinkedHashSet<Rule>();
+    Set<Rule> result = new LinkedHashSet<>();
     int i = 0;
     for (ChainSubRuleSet subRuleSet : table) {
       Set<Rule> subRules = extract(coverage.get(i), subRuleSet, lookupListTable, allLookupRules);
@@ -326,7 +326,7 @@ public class RuleExtractor {
       ChainSubRuleSet table,
       LookupListTable lookupListTable,
       Map<Integer, Set<Rule>> allLookupRules) {
-    Set<Rule> result = new LinkedHashSet<Rule>();
+    Set<Rule> result = new LinkedHashSet<>();
     for (ChainSubRule subRule : table) {
       result.addAll(extract(firstGlyph, subRule, lookupListTable, allLookupRules));
     }
@@ -366,7 +366,7 @@ public class RuleExtractor {
     Map<Integer, GlyphGroup> inputClassDef = extract(table.inputClassDef);
     Map<Integer, GlyphGroup> lookAheadClassDef = extract(table.lookAheadClassDef);
 
-    Set<Rule> result = new LinkedHashSet<Rule>();
+    Set<Rule> result = new LinkedHashSet<>();
     int i = 0;
     for (ChainSubClassSet chainSubRuleSet : table) {
       if (chainSubRuleSet != null) {
@@ -397,7 +397,7 @@ public class RuleExtractor {
   }
 
   private static Map<Integer, GlyphGroup> extract(InnerArrayFmt1 table) {
-    Map<Integer, GlyphGroup> result = new HashMap<Integer, GlyphGroup>();
+    Map<Integer, GlyphGroup> result = new HashMap<>();
     int glyphId = table.getField(InnerArrayFmt1.START_GLYPH_INDEX);
     for (NumRecord record : table) {
       int classId = record.value;
@@ -419,7 +419,7 @@ public class RuleExtractor {
       Map<Integer, GlyphGroup> lookAheadClassDef,
       LookupListTable lookupListTable,
       Map<Integer, Set<Rule>> allLookupRules) {
-    List<Rule> result = new ArrayList<Rule>();
+    List<Rule> result = new ArrayList<>();
     for (ChainSubClassRule chainSubRule : table) {
       result.addAll(
           extract(
@@ -514,7 +514,7 @@ public class RuleExtractor {
       LookupListTable lookupListTable,
       Map<Integer, Set<Rule>> allLookupRules) {
 
-    LinkedList<Rule> targetRules = new LinkedList<Rule>();
+    LinkedList<Rule> targetRules = new LinkedList<>();
     targetRules.add(ruleSansSubst);
     for (SubstLookupRecord lookup : lookups) {
       int at = lookup.sequenceIndex;
@@ -526,13 +526,13 @@ public class RuleExtractor {
       }
       LinkedList<Rule> newRules = Rule.applyRulesOnRules(rulesToApply, targetRules, at);
 
-      LinkedList<Rule> result = new LinkedList<Rule>();
+      LinkedList<Rule> result = new LinkedList<>();
       result.addAll(newRules);
       result.addAll(targetRules);
       targetRules = result;
     }
 
-    Set<Rule> result = new LinkedHashSet<Rule>();
+    Set<Rule> result = new LinkedHashSet<>();
     for (Rule rule : targetRules) {
       if (rule.subst == null) {
         continue;
@@ -543,7 +543,7 @@ public class RuleExtractor {
   }
 
   public static Map<Integer, Set<Rule>> extract(LookupListTable table) {
-    Map<Integer, Set<Rule>> allRules = new TreeMap<Integer, Set<Rule>>();
+    Map<Integer, Set<Rule>> allRules = new TreeMap<>();
     for (int i = 0; i < table.subTableCount(); i++) {
       extract(table, allRules, i);
     }
@@ -556,7 +556,7 @@ public class RuleExtractor {
       return allRules.get(i);
     }
 
-    Set<Rule> rules = new LinkedHashSet<Rule>();
+    Set<Rule> rules = new LinkedHashSet<>();
 
     LookupTable lookupTable = lookupListTable.subTableAt(i);
     GsubLookupType lookupType = lookupTable.lookupType();

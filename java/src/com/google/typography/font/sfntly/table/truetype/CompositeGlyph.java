@@ -21,7 +21,7 @@ public final class CompositeGlyph extends Glyph {
   public static final int FLAG_SCALED_COMPONENT_OFFSET = 0x01 << 11;
   public static final int FLAG_UNSCALED_COMPONENT_OFFSET = 0x01 << 12;
 
-  private final List<Integer> contourIndex = new LinkedList<Integer>();
+  private final List<Integer> contourIndex = new LinkedList<>();
   private int instructionsOffset;
   private int instructionSize;
 

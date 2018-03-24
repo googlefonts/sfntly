@@ -58,7 +58,7 @@ public final class PostScriptTable extends Table {
     // Version 4.0 table
   }
 
-  private AtomicReference<List<String>> names = new AtomicReference<List<String>>();
+  private AtomicReference<List<String>> names = new AtomicReference<>();
 
   private static final String[] STANDARD_NAMES = {
     ".notdef",
@@ -419,7 +419,7 @@ public final class PostScriptTable extends Table {
   private List<String> parse() {
     List<String> names = null;
     if (version() == VERSION_2) {
-      names = new ArrayList<String>();
+      names = new ArrayList<>();
       int index = Offset.glyphNameIndex + 2 * numberOfGlyphs();
       while (index < dataLength()) {
         int strLen = this.data.readUByte(index);

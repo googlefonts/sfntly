@@ -50,7 +50,7 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
   }
 
   void copyTo(Collection<Integer> target) {
-    List<Integer> list = new LinkedList<Integer>();
+    List<Integer> list = new LinkedList<>();
     for (int i = this.nextSetBit(0); i >= 0; i = this.nextSetBit(i + 1)) {
       target.add(i);
     }

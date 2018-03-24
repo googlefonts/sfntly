@@ -98,7 +98,7 @@ public class EblcTable extends SubTableContainerTable {
   }
 
   private static List<BitmapSizeTable> createBitmapSizeTable(ReadableFontData data, int numSizes) {
-    List<BitmapSizeTable> bitmapSizeTable = new ArrayList<BitmapSizeTable>();
+    List<BitmapSizeTable> bitmapSizeTable = new ArrayList<>();
     for (int i = 0; i < numSizes; i++) {
       BitmapSizeTable.Builder sizeBuilder =
           BitmapSizeTable.Builder.createBuilder(
@@ -152,8 +152,7 @@ public class EblcTable extends SubTableContainerTable {
     public List<Map<Integer, BitmapGlyphInfo>> generateLocaList() {
       List<BitmapSizeTable.Builder> sizeBuilderList = this.getSizeList();
 
-      List<Map<Integer, BitmapGlyphInfo>> locaList =
-          new ArrayList<Map<Integer, BitmapGlyphInfo>>(sizeBuilderList.size());
+      List<Map<Integer, BitmapGlyphInfo>> locaList = new ArrayList<>(sizeBuilderList.size());
       int sizeIndex = 0;
       for (BitmapSizeTable.Builder sizeBuilder : sizeBuilderList) {
         if (DEBUG) {
@@ -175,7 +174,7 @@ public class EblcTable extends SubTableContainerTable {
     }
 
     private List<BitmapSizeTable.Builder> initialize(ReadableFontData data) {
-      List<BitmapSizeTable.Builder> sizeBuilders = new ArrayList<BitmapSizeTable.Builder>();
+      List<BitmapSizeTable.Builder> sizeBuilders = new ArrayList<>();
 
       if (data != null) {
         int numSizes = data.readULongAsInt(HeaderOffsets.numSizes);

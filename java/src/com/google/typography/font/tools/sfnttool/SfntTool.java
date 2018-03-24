@@ -149,7 +149,7 @@ public class SfntTool {
       fis.read(fontBytes);
       Font[] fontArray = fontFactory.loadFonts(fontBytes);
       Font font = fontArray[0];
-      List<CMapTable.CMapId> cmapIds = new ArrayList<CMapTable.CMapId>();
+      List<CMapTable.CMapId> cmapIds = new ArrayList<>();
       cmapIds.add(CMapTable.CMapId.WINDOWS_BMP);
       for (int i = 0; i < iterations; i++) {
         Font newFont = font;
@@ -158,7 +158,7 @@ public class SfntTool {
           subsetter.setCMaps(cmapIds, 1);
           List<Integer> glyphs = GlyphCoverage.getGlyphCoverage(font, subsetString);
           subsetter.setGlyphs(glyphs);
-          Set<Integer> removeTables = new HashSet<Integer>();
+          Set<Integer> removeTables = new HashSet<>();
           // Most of the following are valid tables, but we don't renumber them yet, so strip
           removeTables.add(Tag.GDEF);
           removeTables.add(Tag.GPOS);
@@ -178,7 +178,7 @@ public class SfntTool {
         }
         if (strip) {
           Subsetter hintStripper = new HintStripper(newFont, fontFactory);
-          Set<Integer> removeTables = new HashSet<Integer>();
+          Set<Integer> removeTables = new HashSet<>();
           removeTables.add(Tag.fpgm);
           removeTables.add(Tag.prep);
           removeTables.add(Tag.cvt);

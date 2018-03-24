@@ -162,7 +162,7 @@ public class TestFontUtils {
         }
       }
 
-      Set<Table> tables = new TreeSet<Table>(TABLE_COMPARATOR_BY_OFFSET);
+      Set<Table> tables = new TreeSet<>(TABLE_COMPARATOR_BY_OFFSET);
       tables.addAll(font.tableMap().values());
 
       for (Table table : tables) {

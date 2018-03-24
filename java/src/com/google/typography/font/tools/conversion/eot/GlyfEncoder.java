@@ -258,7 +258,7 @@ public class GlyfEncoder {
     int instrSize = glyph.instructionSize();
     ReadableFontData data = glyph.instructions();
     int i = 0;
-    List<Integer> result = new ArrayList<Integer>();
+    List<Integer> result = new ArrayList<>();
     // All push sequences are at least two bytes, make sure there's enough room
     while (i + 1 < instrSize) {
       int ix = i;

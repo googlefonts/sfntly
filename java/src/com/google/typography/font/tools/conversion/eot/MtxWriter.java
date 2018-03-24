@@ -33,7 +33,7 @@ public class MtxWriter {
   private static final Set<Integer> REMOVE_TABLES = createRemoveTables();
 
   private static Set<Integer> createRemoveTables() {
-    Set<Integer> result = new HashSet<Integer>();
+    Set<Integer> result = new HashSet<>();
     result.add(Tag.VDMX);
     result.add(Tag.glyf);
     result.add(Tag.cvt);

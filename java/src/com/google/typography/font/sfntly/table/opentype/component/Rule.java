@@ -85,12 +85,12 @@ public class Rule {
   }
 
   private static Map<Integer, Set<Rule>> createGlyphRuleMap(Set<Rule> lookupRules) {
-    Map<Integer, Set<Rule>> map = new HashMap<Integer, Set<Rule>>();
+    Map<Integer, Set<Rule>> map = new HashMap<>();
 
     for (Rule rule : lookupRules) {
       for (int glyph : rule.input.get(0)) {
         if (!map.containsKey(glyph)) {
-          map.put(glyph, new HashSet<Rule>());
+          map.put(glyph, new HashSet<>());
         }
         map.get(glyph).add(rule);
       }
@@ -99,7 +99,7 @@ public class Rule {
   }
 
   private static Set<Rule> rulesForGlyph(Map<Integer, Set<Rule>> glyphRuleMap, GlyphGroup glyphs) {
-    Set<Rule> set = new HashSet<Rule>();
+    Set<Rule> set = new HashSet<>();
     for (int glyph : glyphs) {
       if (glyphRuleMap.containsKey(glyph)) {
         set.addAll(glyphRuleMap.get(glyph));
@@ -109,7 +109,7 @@ public class Rule {
   }
 
   private static Set<Rule> featuredRules(Set<Integer> lookupIds, Map<Integer, Set<Rule>> ruleMap) {
-    Set<Rule> rules = new LinkedHashSet<Rule>();
+    Set<Rule> rules = new LinkedHashSet<>();
     for (int lookupId : lookupIds) {
       Set<Rule> ruleForLookup = ruleMap.get(lookupId);
       if (ruleForLookup == null) {
@@ -132,8 +132,8 @@ public class Rule {
     LookupListTable lookupList = gsub.lookupList();
     Map<Integer, Set<Rule>> ruleMap = RuleExtractor.extract(lookupList);
 
-    Set<Integer> features = new HashSet<Integer>();
-    Set<Integer> lookupIds = new HashSet<Integer>();
+    Set<Integer> features = new HashSet<>();
+    Set<Integer> lookupIds = new HashSet<>();
 
     for (ScriptTable script : scripts.map().values()) {
       for (LangSysTable langSys : script.map().values()) {
@@ -258,11 +258,11 @@ public class Rule {
   }
 
   private static Set<RuleSegment> permuteToSegments(List<GlyphGroup> glyphGroups) {
-    Set<RuleSegment> result = new LinkedHashSet<RuleSegment>();
+    Set<RuleSegment> result = new LinkedHashSet<>();
     result.add(new RuleSegment());
 
     for (GlyphGroup glyphGroup : glyphGroups) {
-      Set<RuleSegment> newResult = new LinkedHashSet<RuleSegment>();
+      Set<RuleSegment> newResult = new LinkedHashSet<>();
       for (Integer glyphId : glyphGroup) {
         for (RuleSegment segment : result) {
           RuleSegment newSegment = new RuleSegment();
@@ -314,7 +314,7 @@ public class Rule {
 
   static LinkedList<Rule> applyRulesOnRules(
       Set<Rule> rulesToApply, List<Rule> targetRules, int at) {
-    LinkedList<Rule> result = new LinkedList<Rule>();
+    LinkedList<Rule> result = new LinkedList<>();
     for (Rule targetRule : targetRules) {
       if (targetRule.subst != null) {
         applyRulesOnRuleWithSubst(rulesToApply, targetRule, at, result);
@@ -386,7 +386,7 @@ public class Rule {
   }
 
   static List<Rule> prependToInput(int prefix, List<Rule> rules) {
-    List<Rule> result = new ArrayList<Rule>();
+    List<Rule> result = new ArrayList<>();
     for (Rule rule : rules) {
       result.add(prependToInput(prefix, rule));
     }
@@ -394,7 +394,7 @@ public class Rule {
   }
 
   static Set<Rule> deltaRules(List<Integer> glyphIds, int delta) {
-    Set<Rule> result = new LinkedHashSet<Rule>();
+    Set<Rule> result = new LinkedHashSet<>();
     for (int glyphId : glyphIds) {
       RuleSegment input = new RuleSegment(glyphId);
       RuleSegment subst = new RuleSegment(glyphId + delta);
@@ -409,7 +409,7 @@ public class Rule {
       throw new IllegalArgumentException("input - subst should have same count");
     }
 
-    Set<Rule> result = new LinkedHashSet<Rule>();
+    Set<Rule> result = new LinkedHashSet<>();
     for (int i = 0; i < inputs.size(); i++) {
       RuleSegment input = new RuleSegment(inputs.get(i));
       RuleSegment subst = new RuleSegment(substs.get(i));

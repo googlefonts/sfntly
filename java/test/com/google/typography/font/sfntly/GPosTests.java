@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 /** @author dougfelt@google.com (Doug Felt) */
 public class GPosTests extends TestCase {
   public void testGposFiles() {
-    List<Font> gposFontList = new ArrayList<Font>();
+    List<Font> gposFontList = new ArrayList<>();
     for (TestFontNames name : TestFontNames.values()) {
       Font[] fonts;
       try {

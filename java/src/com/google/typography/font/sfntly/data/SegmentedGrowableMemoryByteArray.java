@@ -47,7 +47,7 @@ final class SegmentedGrowableMemoryByteArray extends ByteArray<SegmentedGrowable
    */
   public SegmentedGrowableMemoryByteArray(int lowBits) {
     super(0, Integer.MAX_VALUE, true /*growable*/);
-    this.buffers = new ArrayList<byte[]>();
+    this.buffers = new ArrayList<>();
     this.lowBits = lowBits;
   }
 

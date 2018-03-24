@@ -54,7 +54,7 @@ public class SfntDump {
   @SuppressWarnings("unused")
   private boolean dumpAllGlyphs;
 
-  private List<String> tablesToBinaryDump = new ArrayList<String>();
+  private List<String> tablesToBinaryDump = new ArrayList<>();
   private BitSet glyphSet;
   private boolean dumpAllChars;
   private BitSet charSet;

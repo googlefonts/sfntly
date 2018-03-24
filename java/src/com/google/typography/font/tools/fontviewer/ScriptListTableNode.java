@@ -15,9 +15,7 @@ public class ScriptListTableNode extends AbstractNode {
   private final List<Map.Entry<ScriptTag, ScriptTable>> children;
 
   public ScriptListTableNode(ScriptListTable table) {
-    this.children =
-        new ArrayList<Map.Entry<ScriptTag, ScriptTable>>(
-            new TreeMap<ScriptTag, ScriptTable>(table.map()).entrySet());
+    this.children = new ArrayList<>(new TreeMap<>(table.map()).entrySet());
   }
 
   @Override

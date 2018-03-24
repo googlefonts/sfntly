@@ -23,7 +23,7 @@ import java.util.TreeMap;
 
 /** @author dougfelt@google.com (Doug Felt) */
 class ViewableTaggedData {
-  private List<Marker> markers = new ArrayList<Marker>();
+  private List<Marker> markers = new ArrayList<>();
   private final Style style;
   private final Metrics metrics;
 
@@ -138,7 +138,7 @@ class ViewableTaggedData {
   }
 
   public static class TaggedDataImpl implements TaggedData {
-    private final List<Marker> markers = new ArrayList<Marker>();
+    private final List<Marker> markers = new ArrayList<>();
     private RangeNode rangeStack;
     private final PostScriptTable post;
 
@@ -637,7 +637,7 @@ class ViewableTaggedData {
   }
 
   private static class WidthUsageRecord {
-    private final Map<Integer, Integer> widthUsage = new HashMap<Integer, Integer>();
+    private final Map<Integer, Integer> widthUsage = new HashMap<>();
     private int width;
     private int src;
     private static final WidthUsageRecord EMPTY = new WidthUsageRecord();
@@ -685,7 +685,7 @@ class ViewableTaggedData {
     private static final int MAX_WIDTH = 600;
 
     private RefWidthFinder() {
-      tgt2widthUsage = new TreeMap<Integer, WidthUsageRecord>();
+      tgt2widthUsage = new TreeMap<>();
     }
 
     private int add(Reference ref) {

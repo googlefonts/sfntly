@@ -74,7 +74,7 @@ abstract class LookupList extends SubTable {
 
     private void initFromData(ReadableFontData data) {
       int count = readLookupCount(data);
-      builders = new ArrayList<LookupTable.Builder>(count);
+      builders = new ArrayList<>(count);
       for (int i = 0; i < count; ++i) {
         ReadableFontData lookupData = readLookupData(data, dataIsCanonical, i);
         LookupTable.Builder lookup = createLookupBuilder(lookupData);

@@ -25,7 +25,7 @@ import java.util.Set;
 public class HintStripper extends Subsetter {
 
   {
-    Set<TableSubsetter> temp = new HashSet<TableSubsetter>();
+    Set<TableSubsetter> temp = new HashSet<>();
     temp.add(new GlyphTableStripper());
     tableSubsetters = temp;
   }

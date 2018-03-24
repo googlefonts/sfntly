@@ -55,7 +55,7 @@ public class GlyphEditingTests extends TestCase {
     List<Integer> locaList = locaBuilder.locaList();
     locaList.clear();
 
-    List<Integer> newLoca = new ArrayList<Integer>();
+    List<Integer> newLoca = new ArrayList<>();
     for (int glyphId = 0; glyphId < locaSlots; glyphId++) {
       newLoca.add(glyphId * 6);
     }

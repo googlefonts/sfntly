@@ -33,7 +33,7 @@ public class ScriptTable extends TagOffsetsTable<LangSysTable> {
   }
 
   public Map<LanguageTag, LangSysTable> map() {
-    Map<LanguageTag, LangSysTable> map = new HashMap<LanguageTag, LangSysTable>();
+    Map<LanguageTag, LangSysTable> map = new HashMap<>();
     LangSysTable defaultLangSys = defaultLangSysTable();
     if (defaultLangSys != null) {
       map.put(LanguageTag.DFLT, defaultLangSys);

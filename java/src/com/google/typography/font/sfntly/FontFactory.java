@@ -278,7 +278,7 @@ public final class FontFactory {
    * listed in the ordering will be placed in an unspecified order following those listed.
    */
   public void setSerializationTableOrdering(List<Integer> tableOrdering) {
-    this.tableOrdering = new ArrayList<Integer>(tableOrdering);
+    this.tableOrdering = new ArrayList<>(tableOrdering);
   }
 
   // new fonts

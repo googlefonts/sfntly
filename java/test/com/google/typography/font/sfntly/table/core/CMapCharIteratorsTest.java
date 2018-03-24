@@ -34,7 +34,7 @@ public class CMapCharIteratorsTest extends TestCase {
   }
 
   private static List<Integer> toList(Iterator<Integer> it) {
-    List<Integer> list = new ArrayList<Integer>();
+    List<Integer> list = new ArrayList<>();
     while (it.hasNext()) {
       list.add(it.next());
     }
