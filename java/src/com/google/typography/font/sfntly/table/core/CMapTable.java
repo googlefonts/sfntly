@@ -279,7 +279,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
   }
 
   public CMap cmap(CMapId cmapId) {
-    Iterator<CMap> cmapIter = iterator(foundCMapId -> cmapId.equals(foundCMapId));
+    Iterator<CMap> cmapIter = iterator(cmapId::equals);
     // can only be one cmap for each set of ids
     if (cmapIter.hasNext()) {
       return cmapIter.next();

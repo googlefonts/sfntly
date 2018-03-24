@@ -348,8 +348,7 @@ public class SfntDump {
     boolean canDumpGlyphs = true;
 
     System.out.println(fontFile + " ============================");
-    FileInputStream fis = new FileInputStream(fontFile);
-    try {
+    try (FileInputStream fis = new FileInputStream(fontFile)) {
       Font[] fontArray = fontFactory.loadFonts(fis);
 
       for (int fontNumber = 0; fontNumber < fontArray.length; fontNumber++) {
@@ -457,8 +456,6 @@ public class SfntDump {
           dumpChars(font, locaTable, glyphTable);
         }
       }
-    } finally {
-      fis.close();
     }
   }
 

@@ -121,10 +121,10 @@ class OtTableTagger {
     tagMethodRegistry.put(m.clzz, m);
   }
 
-  private final void register(TagMethod m, Class<? extends FontDataTable>... clzzes) {
+  private final void register(TagMethod m, Class<? extends FontDataTable>... classes) {
     tagMethodRegistry.put(m.clzz, m);
-    for (Class<? extends FontDataTable> clzz : clzzes) {
-      tagMethodRegistry.put(clzz, m);
+    for (Class<? extends FontDataTable> clazz : classes) {
+      tagMethodRegistry.put(clazz, m);
     }
   }
 

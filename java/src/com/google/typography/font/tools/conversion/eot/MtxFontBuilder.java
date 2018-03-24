@@ -104,7 +104,7 @@ public class MtxFontBuilder {
     int offset = FONT_HEADER_BASE_SIZE + FONT_HEADER_PER_TABLE_SIZE * nTables;
     for (Integer tag : tags) {
       ReadableFontData data = tables.get(tag);
-      putUlong(buf, headerOffset, tag.intValue());
+      putUlong(buf, headerOffset, tag);
       int checksum = 0; // TODO(raph): compute checksum
       putUlong(buf, headerOffset + 4, checksum);
       if (data == null) {

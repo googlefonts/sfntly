@@ -469,7 +469,7 @@ public class Font {
     fos.writeUShort((tableHeaders.size() * 16) - searchRange);
 
     List<Header> sortedHeaders = new ArrayList<>(tableHeaders);
-    Collections.sort(sortedHeaders, Header.COMPARATOR_BY_TAG);
+    sortedHeaders.sort(Header.COMPARATOR_BY_TAG);
 
     for (Header record : sortedHeaders) {
       fos.writeULong(record.tag());
@@ -577,13 +577,10 @@ public class Font {
       if (is == null) {
         throw new IOException("No input stream for font.");
       }
-      FontInputStream fontIS = new FontInputStream(is);
-      try {
+      try (FontInputStream fontIS = new FontInputStream(is)) {
         SortedSet<Header> headers = readHeader(fontIS);
         this.dataBlocks = loadTableData(headers, fontIS);
         this.tableBuilders = buildAllTableBuilders(dataBlocks);
-      } finally {
-        fontIS.close();
       }
     }
 

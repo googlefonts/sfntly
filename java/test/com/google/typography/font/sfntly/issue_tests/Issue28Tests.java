@@ -23,12 +23,9 @@ public class Issue28Tests extends TestCase {
 
   private static byte[] readToByteArray(File file) throws IOException {
     byte[] data = new byte[(int) file.length()];
-    FileInputStream fis = new FileInputStream(file);
 
-    try {
+    try (FileInputStream fis = new FileInputStream(file)) {
       fis.read(data);
-    } finally {
-      fis.close();
     }
 
     return data;
@@ -53,12 +50,9 @@ public class Issue28Tests extends TestCase {
     byte[] data = readToByteArray(TestFont.TestFontNames.ROBOTO.getFile());
     Font byteFont = factory.loadFonts(data)[0];
 
-    InputStream is = new FileInputStream(TestFont.TestFontNames.ROBOTO.getFile());
     Font streamFont;
-    try {
+    try (InputStream is = new FileInputStream(TestFont.TestFontNames.ROBOTO.getFile())) {
       streamFont = factory.loadFonts(is)[0];
-    } finally {
-      is.close();
     }
 
     // first test for byte array sourced font

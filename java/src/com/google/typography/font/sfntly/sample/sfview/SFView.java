@@ -33,11 +33,8 @@ public class SFView {
     FontFactory fontFactory = FontFactory.getInstance();
     fontFactory.fingerprintFont(true);
     try {
-      FileInputStream is = new FileInputStream(file);
-      try {
+      try (FileInputStream is = new FileInputStream(file)) {
         return fontFactory.loadFonts(is);
-      } finally {
-        is.close();
       }
     } catch (FileNotFoundException e) {
       System.err.println("Could not load the font: " + file.getName());

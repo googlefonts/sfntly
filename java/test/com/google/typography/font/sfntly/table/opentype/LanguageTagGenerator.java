@@ -75,8 +75,7 @@ public class LanguageTagGenerator {
   private static Map<String, String> getIso639Languages() {
     List<String> lines = new ArrayList<>();
     try {
-      FileInputStream inputStream = new FileInputStream(ISO_639_3_DATA);
-      try {
+      try (FileInputStream inputStream = new FileInputStream(ISO_639_3_DATA)) {
         BufferedReader rd =
             new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
         rd.readLine(); // Skip the header
@@ -84,8 +83,6 @@ public class LanguageTagGenerator {
         while ((line = rd.readLine()) != null) {
           lines.add(line);
         }
-      } finally {
-        inputStream.close();
       }
     } catch (IOException e) {
       throw new IllegalStateException(e);

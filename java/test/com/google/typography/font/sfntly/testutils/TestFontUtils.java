@@ -65,11 +65,8 @@ public class TestFontUtils {
   public static Font[] loadFont(File file, boolean fingerprint) throws IOException {
     FontFactory fontFactory = FontFactory.getInstance();
     fontFactory.fingerprintFont(fingerprint);
-    FileInputStream is = new FileInputStream(file);
-    try {
+    try (FileInputStream is = new FileInputStream(file)) {
       return fontFactory.loadFonts(is);
-    } finally {
-      is.close();
     }
   }
 
@@ -210,12 +207,9 @@ public class TestFontUtils {
   public static File serializeFont(Font font, File serializedFontFile) throws Exception {
     serializedFontFile.mkdirs();
     serializedFontFile.createNewFile();
-    OutputStream os = TestUtils.createOutputStream(serializedFontFile);
-    try {
+    try (OutputStream os = TestUtils.createOutputStream(serializedFontFile)) {
       FontFactory factory = FontFactory.getInstance();
       factory.serializeFont(font, os);
-    } finally {
-      os.close();
     }
     return serializedFontFile;
   }

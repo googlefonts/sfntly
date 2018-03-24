@@ -143,8 +143,7 @@ public class SfntTool {
 
   public void subsetFontFile() throws IOException {
     FontFactory fontFactory = FontFactory.getInstance();
-    FileInputStream fis = new FileInputStream(fontFile);
-    try {
+    try (FileInputStream fis = new FileInputStream(fontFile)) {
       byte[] fontBytes = new byte[(int) fontFile.length()];
       fis.read(fontBytes);
       Font[] fontArray = fontFactory.loadFonts(fontBytes);
@@ -202,8 +201,6 @@ public class SfntTool {
           fontFactory.serializeFont(newFont, fos);
         }
       }
-    } finally {
-      fis.close();
     }
   }
 }

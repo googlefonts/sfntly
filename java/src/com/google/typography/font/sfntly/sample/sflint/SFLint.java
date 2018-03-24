@@ -74,14 +74,11 @@ public class SFLint {
   }
 
   public void lintFontFile(File fontFile) throws IOException {
-    FileInputStream fis = new FileInputStream(fontFile);
-    try {
+    try (FileInputStream fis = new FileInputStream(fontFile)) {
       Font[] fontArray = fontFactory.loadFonts(fis);
       for (Font font : fontArray) {
         lintFont(font);
       }
-    } finally {
-      fis.close();
     }
   }
 

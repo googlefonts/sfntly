@@ -178,14 +178,11 @@ public class TestUtils {
     int length = (int) file.length();
     byte[] b = new byte[length];
 
-    FileInputStream fis = new FileInputStream(file);
-    try {
+    try (FileInputStream fis = new FileInputStream(file)) {
       while (length > 0) {
         length -= fis.read(b, b.length - length, length);
       }
       return b;
-    } finally {
-      fis.close();
     }
   }
 
@@ -230,9 +227,7 @@ public class TestUtils {
       data.copyTo(new DigestOutputStream(new ByteArrayOutputStream(), digest));
       byte[] hash = digest.digest();
       assertEquals(expectedSha256Hex, hex(hash));
-    } catch (NoSuchAlgorithmException e) {
-      throw new IllegalStateException(e);
-    } catch (IOException e) {
+    } catch (NoSuchAlgorithmException | IOException e) {
       throw new IllegalStateException(e);
     }
   }
