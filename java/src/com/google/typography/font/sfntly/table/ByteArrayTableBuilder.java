@@ -18,7 +18,6 @@ package com.google.typography.font.sfntly.table;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-
 import java.io.IOException;
 
 /**
@@ -26,8 +25,7 @@ import java.io.IOException;
  *
  * @author Stuart Gill
  */
-public abstract class ByteArrayTableBuilder<T extends Table>
-    extends TableBasedTableBuilder<T> {
+public abstract class ByteArrayTableBuilder<T extends Table> extends TableBasedTableBuilder<T> {
 
   protected ByteArrayTableBuilder(Header header, WritableFontData data) {
     super(header, data);
@@ -63,10 +61,7 @@ public abstract class ByteArrayTableBuilder<T extends Table>
     data.writeByte(index, b);
   }
 
-  /**
-   * Get the number of bytes set for this table. It may include padding bytes at
-   * the end.
-   */
+  /** Get the number of bytes set for this table. It may include padding bytes at the end. */
   public int byteCount() throws IOException {
     ReadableFontData data = this.internalReadData();
     if (data == null) {

@@ -19,7 +19,6 @@ package com.google.typography.font.sfntly.table.bitmap;
 import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -59,8 +58,8 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
   }
 
   private int loca(int loca) {
-    return this.imageDataOffset() + this.data.readULongAsInt(
-        Offset.offsetArray + loca * FontData.SizeOf.ULONG);
+    return this.imageDataOffset()
+        + this.data.readULongAsInt(Offset.offsetArray + loca * FontData.SizeOf.ULONG);
   }
 
   public static final class Builder extends IndexSubTable.Builder<IndexSubTableFormat1> {
@@ -84,8 +83,8 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
 
     private static int dataLength(
         ReadableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
-      return EblcTable.HeaderOffsets.SIZE + (lastGlyphIndex - firstGlyphIndex + 1 + 1)
-          * FontData.SizeOf.ULONG;
+      return EblcTable.HeaderOffsets.SIZE
+          + (lastGlyphIndex - firstGlyphIndex + 1 + 1) * FontData.SizeOf.ULONG;
     }
 
     private Builder() {
@@ -169,7 +168,9 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
           throw new NoSuchElementException("No more characters to iterate.");
         }
         BitmapGlyphInfo info =
-            new BitmapGlyphInfo(this.glyphId, IndexSubTableFormat1.Builder.this.imageDataOffset(),
+            new BitmapGlyphInfo(
+                this.glyphId,
+                IndexSubTableFormat1.Builder.this.imageDataOffset(),
                 IndexSubTableFormat1.Builder.this.glyphStartOffset(this.glyphId),
                 IndexSubTableFormat1.Builder.this.glyphLength(this.glyphId),
                 IndexSubTableFormat1.Builder.this.imageFormat());
@@ -221,8 +222,10 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
     protected int subSerialize(WritableFontData newData) {
       int size = super.serializeIndexSubHeader(newData);
       if (!this.modelChanged()) {
-        size += this.internalReadData().slice(Offset.offsetArray)
-            .copyTo(newData.slice(Offset.offsetArray));
+        size +=
+            this.internalReadData()
+                .slice(Offset.offsetArray)
+                .copyTo(newData.slice(Offset.offsetArray));
       } else {
         for (Integer loca : this.offsetArray) {
           size += newData.writeULong(size, loca);

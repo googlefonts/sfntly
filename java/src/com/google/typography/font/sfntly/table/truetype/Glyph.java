@@ -58,18 +58,17 @@ public abstract class Glyph extends SubTable {
     return GlyphType.Composite;
   }
 
-//  @SuppressWarnings("unchecked")
-//  static <T extends Glyph> T getGlyph(
-//      GlyphTable table, ReadableFontData data, int offset, int length) {
-//    Glyph.GlyphType type = Glyph.glyphType(data, offset, length);
-//    if (type == GlyphType.Simple) {
-//      return (T) new SimpleGlyph(data, offset, length);
-//    }
-//    return (T) new CompositeGlyph(data, offset, length);
-//  }
+  //  @SuppressWarnings("unchecked")
+  //  static <T extends Glyph> T getGlyph(
+  //      GlyphTable table, ReadableFontData data, int offset, int length) {
+  //    Glyph.GlyphType type = Glyph.glyphType(data, offset, length);
+  //    if (type == GlyphType.Simple) {
+  //      return (T) new SimpleGlyph(data, offset, length);
+  //    }
+  //    return (T) new CompositeGlyph(data, offset, length);
+  //  }
 
-  static Glyph getGlyph(
-      GlyphTable table, ReadableFontData data, int offset, int length) {
+  static Glyph getGlyph(GlyphTable table, ReadableFontData data, int offset, int length) {
     Glyph.GlyphType type = Glyph.glyphType(data, offset, length);
     if (type == GlyphType.Simple) {
       return new SimpleGlyph(data, offset, length);
@@ -78,7 +77,6 @@ public abstract class Glyph extends SubTable {
   }
 
   protected abstract void initialize();
-
 
   @Override
   public int padding() {
@@ -91,11 +89,10 @@ public abstract class Glyph extends SubTable {
   }
 
   /**
-   * Gets the number of contours in the glyph. If this returns a number greater
-   * than or equal to zero it is the actual number of contours and this is a
-   * simple glyph. If there are zero contours in the glyph then none of the
-   * other data operations will return usable values. If it -1 then the glyph is
-   * a composite glyph.
+   * Gets the number of contours in the glyph. If this returns a number greater than or equal to
+   * zero it is the actual number of contours and this is a simple glyph. If there are zero contours
+   * in the glyph then none of the other data operations will return usable values. If it -1 then
+   * the glyph is a composite glyph.
    *
    * @return number of contours
    */
@@ -125,15 +122,19 @@ public abstract class Glyph extends SubTable {
 
   @Override
   public String toString() {
-    return String.format("%s, contours=%d, [xmin=%d, ymin=%d, xmax=%d, ymax=%d]\n",
-        this.glyphType(), this.numberOfContours(),
-        this.xMin(), this.yMin(), this.xMax(), this.yMax());
+    return String.format(
+        "%s, contours=%d, [xmin=%d, ymin=%d, xmax=%d, ymax=%d]\n",
+        this.glyphType(),
+        this.numberOfContours(),
+        this.xMin(),
+        this.yMin(),
+        this.xMax(),
+        this.yMax());
   }
 
   // TODO(stuartg): interface? need methods from Composite?
   public abstract static class Contour {
-    protected Contour() {
-    }
+    protected Contour() {}
   }
 
   public abstract static class Builder<T extends Glyph> extends SubTable.Builder<T> {

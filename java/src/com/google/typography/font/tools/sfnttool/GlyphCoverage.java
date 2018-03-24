@@ -27,7 +27,6 @@ import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,9 +34,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A class for computing which glyphs are needed to render a given string. Currently
- * this class is quite simplistic, only using the cmap, not taking into account any
- * ligature or complex layout.
+ * A class for computing which glyphs are needed to render a given string. Currently this class is
+ * quite simplistic, only using the cmap, not taking into account any ligature or complex layout.
  *
  * @author Raph Levien
  */
@@ -47,7 +45,7 @@ public class GlyphCoverage {
     CMapTable cmapTable = font.getTable(Tag.cmap);
     CMap cmap = getBestCMap(cmapTable);
     Set<Integer> coverage = new HashSet<Integer>();
-    coverage.add(0);  // Always include notdef
+    coverage.add(0); // Always include notdef
     for (int codepoint : SfStringUtils.getAllCodepoints(string)) {
       int glyphId = cmap.glyphId(codepoint);
       touchGlyph(font, coverage, glyphId);

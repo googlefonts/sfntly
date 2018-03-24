@@ -31,17 +31,13 @@ import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
 import com.google.typography.font.sfntly.testutils.TestFont.TestFontNames;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import junit.framework.TestCase;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class HintStripTest extends TestCase {
 
   private static final File fontFile = TestFontNames.OPENSANS.getFile();
@@ -103,7 +99,7 @@ public class HintStripTest extends TestCase {
     SimpleGlyph simple = (SimpleGlyph) glyph;
     assertEquals(1, simple.numberOfContours());
     assertEquals(10, simple.numberOfPoints(0));
-    assertEquals(0, simple.instructionSize());  // hints are stripped
+    assertEquals(0, simple.instructionSize()); // hints are stripped
     assertTrue(simple.onCurve(0, 0));
     assertEquals(786, simple.xCoordinate(0, 0));
     assertEquals(1241, simple.yCoordinate(0, 0));
@@ -136,13 +132,13 @@ public class HintStripTest extends TestCase {
     assertEquals(GlyphType.Composite, glyph.glyphType());
     CompositeGlyph composite = (CompositeGlyph) glyph;
     assertEquals(2, composite.numGlyphs());
-    assertEquals(68, composite.glyphIndex(0));  // a
+    assertEquals(68, composite.glyphIndex(0)); // a
     assertEquals(0, composite.argument1(0));
     assertEquals(0, composite.argument2(0));
-    assertEquals(67, composite.glyphIndex(1));  // grave
+    assertEquals(67, composite.glyphIndex(1)); // grave
     assertEquals(-114, composite.argument1(1));
     assertEquals(0, composite.argument2(1));
-    assertEquals(0, composite.instructionSize());  // hints are stripped
+    assertEquals(0, composite.instructionSize()); // hints are stripped
     assertEquals(0, composite.padding());
   }
 

@@ -22,7 +22,6 @@ import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.table.core.CMap.CMapFormat;
 import com.google.typography.font.sfntly.table.core.CMapFormat4;
 import com.google.typography.font.sfntly.table.core.CMapTable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +29,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * This is a medium-level builder for CMap tables, given the mapping from Unicode codepoint
- * to glyph id.
+ * This is a medium-level builder for CMap tables, given the mapping from Unicode codepoint to glyph
+ * id.
  *
  * @author Raph Levien
  */
@@ -118,10 +117,8 @@ public class CMapTableBuilder {
     return result;
   }
 
-  private void buildCMapFormat4(CMapFormat4.Builder builder,
-                                List<CMap4Segment> segments) {
-    List<CMapFormat4.Builder.Segment> segmentList =
-        new ArrayList<CMapFormat4.Builder.Segment>();
+  private void buildCMapFormat4(CMapFormat4.Builder builder, List<CMap4Segment> segments) {
+    List<CMapFormat4.Builder.Segment> segmentList = new ArrayList<CMapFormat4.Builder.Segment>();
     List<Integer> glyphIdArray = new ArrayList<Integer>();
 
     // The glyphIndexArray immediately follows the idRangeOffset array, so idOffset counts the
@@ -138,8 +135,9 @@ public class CMapTableBuilder {
         glyphIdArray.addAll(segment.getGlyphIds());
         idOffset += segment.getGlyphIds().size();
       }
-      segmentList.add(new CMapFormat4.Builder.Segment(segment.getStartCode(), segment.getEndCode(),
-          segment.idDelta(), idRangeOffset));
+      segmentList.add(
+          new CMapFormat4.Builder.Segment(
+              segment.getStartCode(), segment.getEndCode(), segment.idDelta(), idRangeOffset));
     }
     builder.setGlyphIdArray(glyphIdArray);
     builder.setSegments(segmentList);
@@ -148,8 +146,8 @@ public class CMapTableBuilder {
   public void build() {
     CMapTable.Builder cmapTableBuilder = (CMapTable.Builder) fontBuilder.newTableBuilder(Tag.cmap);
     CMapFormat4.Builder cmapBuilder =
-        (CMapFormat4.Builder) cmapTableBuilder.newCMapBuilder(CMapTable.CMapId.WINDOWS_BMP,
-            CMapFormat.Format4);
+        (CMapFormat4.Builder)
+            cmapTableBuilder.newCMapBuilder(CMapTable.CMapId.WINDOWS_BMP, CMapFormat.Format4);
     buildCMapFormat4(cmapBuilder, getFormat4Segments());
   }
 }

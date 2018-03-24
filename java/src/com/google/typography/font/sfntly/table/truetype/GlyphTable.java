@@ -20,7 +20,6 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.SubTableContainerTable;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,8 +96,7 @@ public final class GlyphTable extends SubTableContainerTable {
     }
 
     /**
-     * Generate a loca table list from the current state of the glyph table
-     * builder.
+     * Generate a loca table list from the current state of the glyph table builder.
      *
      * @return a list of loca information for the glyphs
      */
@@ -126,8 +124,9 @@ public final class GlyphTable extends SubTableContainerTable {
         int lastLocaValue = loca.get(0);
         for (int i = 1; i < loca.size(); i++) {
           locaValue = loca.get(i);
-          this.glyphBuilders.add(Glyph.Builder.getBuilder(this, data, lastLocaValue /* offset */,
-              locaValue - lastLocaValue /* length */));
+          this.glyphBuilders.add(
+              Glyph.Builder.getBuilder(
+                  this, data, lastLocaValue /* offset */, locaValue - lastLocaValue /* length */));
           lastLocaValue = locaValue;
         }
       }
@@ -150,28 +149,26 @@ public final class GlyphTable extends SubTableContainerTable {
     }
 
     /**
-     * Gets the List of glyph builders for the glyph table builder. These may be
-     * manipulated in any way by the caller and the changes will be reflected in
-     * the final glyph table produced.
+     * Gets the List of glyph builders for the glyph table builder. These may be manipulated in any
+     * way by the caller and the changes will be reflected in the final glyph table produced.
      *
-     *  If there is no current data for the glyph builder or the glyph builders
-     * have not been previously set then this will return an empty glyph builder
-     * List. If there is current data (i.e. data read from an existing font) and
-     * the <code>loca</code> list has not been set or is null, empty, or
-     * invalid, then an empty glyph builder List will be returned.
+     * <p>If there is no current data for the glyph builder or the glyph builders have not been
+     * previously set then this will return an empty glyph builder List. If there is current data
+     * (i.e. data read from an existing font) and the <code>loca</code> list has not been set or is
+     * null, empty, or invalid, then an empty glyph builder List will be returned.
      */
     public List<Glyph.Builder<? extends Glyph>> glyphBuilders() {
       return this.getGlyphBuilders();
     }
 
     /**
-     * Replace the internal glyph builders with the one provided. The provided
-     * list and all contained objects belong to this builder.
+     * Replace the internal glyph builders with the one provided. The provided list and all
+     * contained objects belong to this builder.
      *
-     *  This call is only required if the entire set of glyphs in the glyph
-     * table builder are being replaced. If the glyph builder list provided from
-     * the {@link GlyphTable.Builder#glyphBuilders()} is being used and modified
-     * then those changes will already be reflected in the glyph table builder.
+     * <p>This call is only required if the entire set of glyphs in the glyph table builder are
+     * being replaced. If the glyph builder list provided from the {@link
+     * GlyphTable.Builder#glyphBuilders()} is being used and modified then those changes will
+     * already be reflected in the glyph table builder.
      */
     public void setGlyphBuilders(List<Glyph.Builder<? extends Glyph>> glyphBuilders) {
       this.glyphBuilders = glyphBuilders;
@@ -184,7 +181,6 @@ public final class GlyphTable extends SubTableContainerTable {
       Glyph.Builder<? extends Glyph> glyphBuilder = Glyph.Builder.getBuilder(this, data);
       return glyphBuilder;
     }
-
 
     // internal API for building
 

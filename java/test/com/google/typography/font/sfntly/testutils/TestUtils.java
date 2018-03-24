@@ -16,8 +16,9 @@
 
 package com.google.typography.font.sfntly.testutils;
 
-import com.google.typography.font.sfntly.data.ReadableFontData;
+import static org.junit.Assert.assertEquals;
 
+import com.google.typography.font.sfntly.data.ReadableFontData;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,16 +37,13 @@ import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import static org.junit.Assert.assertEquals;
-
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class TestUtils {
   private TestUtils() {}
 
   /**
    * Compare sections of two byte arrays for equality.
+   *
    * @param b1 byte array 1
    * @param offset1 offset for comparison in byte array 1
    * @param b2 byte array 2
@@ -70,8 +68,8 @@ public class TestUtils {
   }
 
   /**
-   * Creates a new file including deleting an already existing file with the same path
-   * and name and creating any needed directories.
+   * Creates a new file including deleting an already existing file with the same path and name and
+   * creating any needed directories.
    */
   public static void createNewFile(File file) throws IOException {
     if (file.exists()) {
@@ -88,15 +86,18 @@ public class TestUtils {
 
   /**
    * Converts an integer into a 4 character string using the ASCII encoding.
+   *
    * @param i the value to convert
    * @return the String based on the number
    */
   public static String dumpLongAsString(int i) {
-    byte[] b = new byte[] {
-        (byte) (i >> 24 & 0xff),
-        (byte) (i >> 16 & 0xff),
-        (byte) (i >> 8 & 0xff),
-        (byte) (i & 0xff)};
+    byte[] b =
+        new byte[] {
+          (byte) (i >> 24 & 0xff),
+          (byte) (i >> 16 & 0xff),
+          (byte) (i >> 8 & 0xff),
+          (byte) (i & 0xff)
+        };
 
     try {
       return new String(b, "US-ASCII");
@@ -107,6 +108,7 @@ public class TestUtils {
 
   /**
    * Calculate an OpenType checksum from the array.
+   *
    * @param b the array to calculate checksum on
    * @param offset the starting index in the array
    * @param length the number of bytes to check; <b>must</b> be a multiple of 4
@@ -115,10 +117,10 @@ public class TestUtils {
   public static long checkSum(byte[] b, int offset, int length) {
     long checkSum = 0;
 
-    for (int i = offset; i < length; i+=4) {
+    for (int i = offset; i < length; i += 4) {
       for (int j = 0; j < 4; j++) {
         if (j + i < length) {
-          checkSum += (b[j+i] & 0xff) << (24 - 8*j);
+          checkSum += (b[j + i] & 0xff) << (24 - 8 * j);
         }
       }
     }
@@ -127,6 +129,7 @@ public class TestUtils {
 
   /**
    * Encode a single character in UTF-16.
+   *
    * @param encoder the encoder to use for the encoding
    * @param uchar the Unicode character to encode
    * @return the encoded character
@@ -150,8 +153,9 @@ public class TestUtils {
   }
 
   /**
-   * Get an encoder for the charset name.
-   * If the name is null or the empty string then just return null.
+   * Get an encoder for the charset name. If the name is null or the empty string then just return
+   * null.
+   *
    * @return an encoder or null if no encoder available for charset name
    */
   public static CharsetEncoder getEncoder(String charsetName) {
@@ -173,9 +177,7 @@ public class TestUtils {
     return ext.substring(extPosition);
   }
 
-  /**
-   * Read a file fully into a new byte array.
-   */
+  /** Read a file fully into a new byte array. */
   public static byte[] readFile(File file) throws IOException {
     int length = (int) file.length();
     byte[] b = new byte[length];
@@ -212,9 +214,8 @@ public class TestUtils {
   }
 
   /**
-   * Checks that both objects are equal as defined by the object itself. If one
-   * is null then they are not equal. If both are null they are considered
-   * equal.
+   * Checks that both objects are equal as defined by the object itself. If one is null then they
+   * are not equal. If both are null they are considered equal.
    */
   public static boolean equalsNullOk(Object o1, Object o2) {
     if (o1 == o2) {

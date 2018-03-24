@@ -4,7 +4,6 @@ import com.google.typography.font.sfntly.table.FontDataTable;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapFormat4;
 import com.google.typography.font.sfntly.table.core.CMapTable;
-
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
 

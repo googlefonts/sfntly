@@ -17,13 +17,9 @@
 package com.google.typography.font.sfntly;
 
 import com.google.typography.font.sfntly.table.core.HorizontalHeaderTable;
-
 import junit.framework.TestCase;
 
-
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class HheaTests extends TestCase {
 
   public void testAdvanceWidthMax() throws Exception {

@@ -56,8 +56,7 @@ public class ScriptListTable extends TagOffsetsTable<ScriptTable> {
     }
 
     @Override
-    protected void initFields() {
-    }
+    protected void initFields() {}
 
     @Override
     public int fieldCount() {

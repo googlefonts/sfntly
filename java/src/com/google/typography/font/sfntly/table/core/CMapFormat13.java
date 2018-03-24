@@ -3,7 +3,6 @@ package com.google.typography.font.sfntly.table.core;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
-
 import java.util.Iterator;
 
 /**
@@ -48,13 +47,14 @@ public final class CMapFormat13 extends CMap {
 
   @Override
   public int glyphId(int character) {
-    int group = this.data.searchULong(
-        Header.SIZE + Group.startCharCode,
-        Group.SIZE,
-        Header.SIZE + Group.endCharCode,
-        Group.SIZE,
-        this.numberOfGroups,
-        character);
+    int group =
+        this.data.searchULong(
+            Header.SIZE + Group.startCharCode,
+            Group.SIZE,
+            Header.SIZE + Group.endCharCode,
+            Group.SIZE,
+            this.numberOfGroups,
+            character);
     if (group == -1) {
       return CMapTable.NOTDEF;
     }
@@ -89,13 +89,17 @@ public final class CMapFormat13 extends CMap {
 
   public static class Builder extends CMap.Builder<CMapFormat13> {
     protected Builder(WritableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(offset, data.readULongAsInt(offset + Header.length)),
-          CMapFormat.Format13, cmapId);
+      super(
+          data == null ? null : data.slice(offset, data.readULongAsInt(offset + Header.length)),
+          CMapFormat.Format13,
+          cmapId);
     }
 
     protected Builder(ReadableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(offset, data.readULongAsInt(offset + Header.length)),
-          CMapFormat.Format13, cmapId);
+      super(
+          data == null ? null : data.slice(offset, data.readULongAsInt(offset + Header.length)),
+          CMapFormat.Format13,
+          cmapId);
     }
 
     @Override

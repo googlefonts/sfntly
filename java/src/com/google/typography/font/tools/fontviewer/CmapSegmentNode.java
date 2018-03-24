@@ -1,7 +1,6 @@
 package com.google.typography.font.tools.fontviewer;
 
 import com.google.typography.font.sfntly.table.core.CMapFormat4;
-
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
 
@@ -17,8 +16,8 @@ class CmapSegmentNode extends AbstractNode {
 
   @Override
   public String getNodeName() {
-    return String.format("U+%04X to U+%04X",
-        this.cmap.startCode(this.index), this.cmap.endCode(this.index));
+    return String.format(
+        "U+%04X to U+%04X", this.cmap.startCode(this.index), this.cmap.endCode(this.index));
   }
 
   @Override

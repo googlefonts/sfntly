@@ -19,9 +19,7 @@ package com.google.typography.font.sfntly.table.bitmap;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class BigGlyphMetrics extends GlyphMetrics {
 
   public static final int SIZE = 8;

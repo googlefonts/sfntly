@@ -17,13 +17,9 @@
 package com.google.typography.font.sfntly.data;
 
 import com.google.typography.font.sfntly.testutils.TestUtils;
-
 import junit.framework.TestCase;
 
-
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class FontDataTests extends TestCase {
 
   private static final int[] BYTE_ARRAY_SIZES =
@@ -34,47 +30,64 @@ public class FontDataTests extends TestCase {
   private static final int[] UPPER_BYTE_ARRAY_FOR_SEARCHING = new int[] {2, 5, 12, 16, 256};
 
   // search test result pairs - number to search for; index found at
-  private static final int[][] SEARCH_TEST_PAIRS = { {0, -1},
-      {1, -1},
-      {2, 0},
-      {3, -1},
-      {4, 1},
-      {5, 1},
-      {6, -1},
-      {12, 2},
-      {13, 3},
-      {17, -1},
-      {126, -1},
-      {127, 4},
-      {256, 4},
-      {257, -1},
-      {0x1000, -1}};
+  private static final int[][] SEARCH_TEST_PAIRS = {
+    {0, -1},
+    {1, -1},
+    {2, 0},
+    {3, -1},
+    {4, 1},
+    {5, 1},
+    {6, -1},
+    {12, 2},
+    {13, 3},
+    {17, -1},
+    {126, -1},
+    {127, 4},
+    {256, 4},
+    {257, -1},
+    {0x1000, -1}
+  };
 
   // offset and start index data for searching data
   // array data size, lowerStartIndex, lowerOffset, upperStartIndex, upperOffset
   private static final int[][] SEARCH_TEST_OFFSETS = {
-      // lower[], upper[]
-      {
-          (LOWER_BYTE_ARRAY_FOR_SEARCHING.length + UPPER_BYTE_ARRAY_FOR_SEARCHING.length)
-              * FontData.SizeOf.USHORT, 0, FontData.SizeOf.USHORT,
-          LOWER_BYTE_ARRAY_FOR_SEARCHING.length * FontData.SizeOf.USHORT,
-          FontData.SizeOf.USHORT},
-      // {lower, upper} []
-      {
-          (LOWER_BYTE_ARRAY_FOR_SEARCHING.length + UPPER_BYTE_ARRAY_FOR_SEARCHING.length)
-              * FontData.SizeOf.USHORT, 0, 2 * FontData.SizeOf.USHORT,
-          FontData.SizeOf.USHORT, 2 * FontData.SizeOf.USHORT},
-      // upper[], lower[]
-      {
-          (LOWER_BYTE_ARRAY_FOR_SEARCHING.length + UPPER_BYTE_ARRAY_FOR_SEARCHING.length)
-              * FontData.SizeOf.USHORT,
-          LOWER_BYTE_ARRAY_FOR_SEARCHING.length * FontData.SizeOf.USHORT,
-          FontData.SizeOf.USHORT, 0, FontData.SizeOf.USHORT},
-      // {upper, lower} []
-      {
-          (LOWER_BYTE_ARRAY_FOR_SEARCHING.length + UPPER_BYTE_ARRAY_FOR_SEARCHING.length)
-              * FontData.SizeOf.USHORT, FontData.SizeOf.USHORT,
-          2 * FontData.SizeOf.USHORT, 0, 2 * FontData.SizeOf.USHORT}};
+    // lower[], upper[]
+    {
+      (LOWER_BYTE_ARRAY_FOR_SEARCHING.length + UPPER_BYTE_ARRAY_FOR_SEARCHING.length)
+          * FontData.SizeOf.USHORT,
+      0,
+      FontData.SizeOf.USHORT,
+      LOWER_BYTE_ARRAY_FOR_SEARCHING.length * FontData.SizeOf.USHORT,
+      FontData.SizeOf.USHORT
+    },
+    // {lower, upper} []
+    {
+      (LOWER_BYTE_ARRAY_FOR_SEARCHING.length + UPPER_BYTE_ARRAY_FOR_SEARCHING.length)
+          * FontData.SizeOf.USHORT,
+      0,
+      2 * FontData.SizeOf.USHORT,
+      FontData.SizeOf.USHORT,
+      2 * FontData.SizeOf.USHORT
+    },
+    // upper[], lower[]
+    {
+      (LOWER_BYTE_ARRAY_FOR_SEARCHING.length + UPPER_BYTE_ARRAY_FOR_SEARCHING.length)
+          * FontData.SizeOf.USHORT,
+      LOWER_BYTE_ARRAY_FOR_SEARCHING.length * FontData.SizeOf.USHORT,
+      FontData.SizeOf.USHORT,
+      0,
+      FontData.SizeOf.USHORT
+    },
+    // {upper, lower} []
+    {
+      (LOWER_BYTE_ARRAY_FOR_SEARCHING.length + UPPER_BYTE_ARRAY_FOR_SEARCHING.length)
+          * FontData.SizeOf.USHORT,
+      FontData.SizeOf.USHORT,
+      2 * FontData.SizeOf.USHORT,
+      0,
+      2 * FontData.SizeOf.USHORT
+    }
+  };
 
   // for sizing the slicing increments on the buffer used in read and write tests
   private static final int SLICING_READWRITE_TEST_BUFFER_TRIM_FRACTION_DENOMINATOR = 21;
@@ -91,7 +104,8 @@ public class FontDataTests extends TestCase {
   public void testReadableFontDataSearching() throws Exception {
     for (int[] arraySetupOffsets : SEARCH_TEST_OFFSETS) {
       WritableFontData wfd = WritableFontData.createWritableFontData(arraySetupOffsets[0]);
-      fillTestFontDataWithShortsForSearching(wfd,
+      fillTestFontDataWithShortsForSearching(
+          wfd,
           LOWER_BYTE_ARRAY_FOR_SEARCHING,
           arraySetupOffsets[1],
           arraySetupOffsets[2],
@@ -99,12 +113,14 @@ public class FontDataTests extends TestCase {
           arraySetupOffsets[3],
           arraySetupOffsets[4]);
       for (int[] testCase : SEARCH_TEST_PAIRS) {
-        int found = wfd.searchUShort(arraySetupOffsets[1],
-            arraySetupOffsets[2],
-            arraySetupOffsets[3],
-            arraySetupOffsets[4],
-            LOWER_BYTE_ARRAY_FOR_SEARCHING.length,
-            testCase[0]);
+        int found =
+            wfd.searchUShort(
+                arraySetupOffsets[1],
+                arraySetupOffsets[2],
+                arraySetupOffsets[3],
+                arraySetupOffsets[4],
+                LOWER_BYTE_ARRAY_FOR_SEARCHING.length,
+                testCase[0]);
         assertEquals(testCase[1], found);
       }
     }
@@ -129,7 +145,8 @@ public class FontDataTests extends TestCase {
   }
 
   private void slicingReadTest(ReadableFontData rfd) throws Exception {
-    for (int trim = 0; trim < (rfd.length() / 2) + 1;
+    for (int trim = 0;
+        trim < (rfd.length() / 2) + 1;
         trim += (rfd.length() / SLICING_READWRITE_TEST_BUFFER_TRIM_FRACTION_DENOMINATOR) + 1) {
       // System.out.println("\tread - trim = " + trim);
       int length = rfd.length() - 2 * trim;
@@ -139,7 +156,8 @@ public class FontDataTests extends TestCase {
   }
 
   private void slicingWriteTest(ReadableFontData rfd, WritableFontData wfd) throws Exception {
-    for (int trim = 0; trim < (rfd.length() / 2) + 1;
+    for (int trim = 0;
+        trim < (rfd.length() / 2) + 1;
         trim += (rfd.length() / SLICING_READWRITE_TEST_BUFFER_TRIM_FRACTION_DENOMINATOR) + 1) {
       // System.out.println("\twrite - trim = " + trim);
       int length = rfd.length() - 2 * trim;
@@ -270,7 +288,8 @@ public class FontDataTests extends TestCase {
     return wfd;
   }
 
-  private static ReadableFontData fillTestFontDataWithShortsForSearching(WritableFontData wfd,
+  private static ReadableFontData fillTestFontDataWithShortsForSearching(
+      WritableFontData wfd,
       int[] lowerData,
       int lowerStartIndex,
       int lowerOffset,
@@ -292,6 +311,6 @@ public class FontDataTests extends TestCase {
       offset += upperOffset;
     }
 
-   return wfd;
+    return wfd;
   }
 }

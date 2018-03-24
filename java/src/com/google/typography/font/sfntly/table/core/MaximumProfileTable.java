@@ -110,9 +110,7 @@ public final class MaximumProfileTable extends Table {
     return this.data.readUShort(Offset.maxComponentDepth);
   }
 
-  /**
-   * Builder for a Maximum Profile table - 'maxp'.
-   */
+  /** Builder for a Maximum Profile table - 'maxp'. */
   public static class Builder extends TableBasedTableBuilder<MaximumProfileTable> {
 
     public static Builder createBuilder(Header header, WritableFontData data) {

@@ -87,7 +87,8 @@ public class ReverseChainSingleSubst extends SubstSubtable {
       }
 
       if (coverageBuilder == null
-          || backtrackGlyphsBuilder == null || lookAheadGlyphsBuilder == null) {
+          || backtrackGlyphsBuilder == null
+          || lookAheadGlyphsBuilder == null) {
         return serializeFromData(newData);
       }
 
@@ -134,8 +135,7 @@ public class ReverseChainSingleSubst extends SubstSubtable {
     }
 
     private void initFromData(ReadableFontData data) {
-      if (backtrackGlyphsBuilder == null
-          || lookAheadGlyphsBuilder == null) {
+      if (backtrackGlyphsBuilder == null || lookAheadGlyphsBuilder == null) {
         NumRecordList records = new NumRecordList(data);
         backtrackGlyphsBuilder = new CoverageArray.Builder(records);
 

@@ -1,11 +1,10 @@
 package com.google.typography.font.sfntly.table.core;
 
-import junit.framework.TestCase;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import junit.framework.TestCase;
 
 public class CMapCharIteratorsTest extends TestCase {
 
@@ -16,19 +15,20 @@ public class CMapCharIteratorsTest extends TestCase {
   }
 
   public void testCharRangesIterator() {
-    final int[][] ranges = { { 0, 5 }, { 8, 8 }, { 10, 11 }, { 0, 3 } };
+    final int[][] ranges = {{0, 5}, {8, 8}, {10, 11}, {0, 3}};
 
-    CMap.CharacterRangesIterator it = new CMap.CharacterRangesIterator(ranges.length) {
-      @Override
-      protected int getRangeStart(int rangeIndex) {
-        return ranges[rangeIndex][0];
-      }
+    CMap.CharacterRangesIterator it =
+        new CMap.CharacterRangesIterator(ranges.length) {
+          @Override
+          protected int getRangeStart(int rangeIndex) {
+            return ranges[rangeIndex][0];
+          }
 
-      @Override
-      protected int getRangeEnd(int rangeIndex) {
-        return ranges[rangeIndex][1];
-      }
-    };
+          @Override
+          protected int getRangeEnd(int rangeIndex) {
+            return ranges[rangeIndex][1];
+          }
+        };
 
     assertEquals(Arrays.asList(0, 1, 2, 3, 4, 10, 0, 1, 2), toList(it));
   }

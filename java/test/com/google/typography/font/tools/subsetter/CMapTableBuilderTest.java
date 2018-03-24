@@ -21,15 +21,11 @@ import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
-
-import junit.framework.TestCase;
-
 import java.util.HashMap;
 import java.util.Map;
+import junit.framework.TestCase;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class CMapTableBuilderTest extends TestCase {
 
   private static void verifyCmap(Map<Integer, Integer> mapping) {
@@ -40,7 +36,7 @@ public class CMapTableBuilderTest extends TestCase {
     Font font = fontBuilder.build();
     CMapTable cmapTable = font.getTable(Tag.cmap);
     CMap cmap = cmapTable.cmap(3, 1);
-    for (Map.Entry<Integer,Integer> entry : mapping.entrySet()) {
+    for (Map.Entry<Integer, Integer> entry : mapping.entrySet()) {
       int unicode = entry.getKey();
       int glyphId = entry.getValue();
       assertEquals(glyphId, cmap.glyphId(unicode));

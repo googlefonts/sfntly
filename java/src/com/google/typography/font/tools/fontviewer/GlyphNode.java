@@ -71,9 +71,7 @@ public class GlyphNode extends AbstractNode {
       super.paintComponent(graphics);
 
       Graphics2D g = (Graphics2D) graphics;
-      g.setRenderingHint(
-          RenderingHints.KEY_ANTIALIASING,
-          RenderingHints.VALUE_ANTIALIAS_ON);
+      g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
       this.updateScale();
 
@@ -101,8 +99,9 @@ public class GlyphNode extends AbstractNode {
 
     private void paintSimpleGlyph(Graphics2D g, SimpleGlyph glyph, int deltaX, int deltaY) {
       for (int c = 0, cmax = glyph.numberOfContours(); c < cmax; c++) {
-        ScreenCoordinateMapper screen = new ScreenCoordinateMapper(glyph, c, MARGIN, this.scale,
-            this.minX - deltaX, this.maxY - deltaY);
+        ScreenCoordinateMapper screen =
+            new ScreenCoordinateMapper(
+                glyph, c, MARGIN, this.scale, this.minX - deltaX, this.maxY - deltaY);
         int pmax = glyph.numberOfPoints(c);
 
         int firstOn = 0;
@@ -159,7 +158,8 @@ public class GlyphNode extends AbstractNode {
     private final double minX;
     private final double maxY;
 
-    ScreenCoordinateMapper(SimpleGlyph glyph, int contour, int margin, double scale, double minX, double maxY) {
+    ScreenCoordinateMapper(
+        SimpleGlyph glyph, int contour, int margin, double scale, double minX, double maxY) {
       this.glyph = glyph;
       this.contour = contour;
       this.points = glyph.numberOfPoints(contour);

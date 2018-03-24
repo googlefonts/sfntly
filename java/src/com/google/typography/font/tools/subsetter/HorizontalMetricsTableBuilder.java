@@ -20,15 +20,14 @@ import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.HorizontalHeaderTable;
-
 import java.util.List;
 
 /**
- * A builder method for the hmtx (horizontal metrics) table. The goal is for this
- * logic to go into the HorizontalMetricsTable.Builder class, but for now is separate.
+ * A builder method for the hmtx (horizontal metrics) table. The goal is for this logic to go into
+ * the HorizontalMetricsTable.Builder class, but for now is separate.
  *
- * Note that this class also computes the advanceWidthMax value, which goes into the
- * hhea table, leading to somewhat awkward plumbing.
+ * <p>Note that this class also computes the advanceWidthMax value, which goes into the hhea table,
+ * leading to somewhat awkward plumbing.
  *
  * @author Raph Levien
  */

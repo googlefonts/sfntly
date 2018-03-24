@@ -22,13 +22,10 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
-
 import java.io.IOException;
 import java.util.List;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class GlyphTableStripper extends TableSubsetterImpl {
 
   public GlyphTableStripper() {

@@ -16,7 +16,6 @@
 package com.google.typography.font.tools.conversion.eot;
 
 import com.google.typography.font.sfntly.table.truetype.ControlValueTable;
-
 import java.io.ByteArrayOutputStream;
 
 /**
@@ -45,7 +44,7 @@ public class CvtEncoder {
     int lastValue = 0;
     for (int i = 0; i < numEntries; i++) {
       int value = cvtTable.fword(i * 2);
-      int deltaValue = (short)(value - lastValue);
+      int deltaValue = (short) (value - lastValue);
       int absValue = Math.abs(deltaValue);
       int index = absValue / CVT_LOWESTCODE;
       if (index <= 8) {

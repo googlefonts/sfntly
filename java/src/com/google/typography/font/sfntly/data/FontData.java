@@ -49,17 +49,11 @@ public abstract class FontData {
     int Offset = 2;
   }
 
-  /**
-   * The internal data.
-   */
+  /** The internal data. */
   protected final ByteArray<? extends ByteArray<?>> array;
-  /**
-   * Offset to apply as a lower bound on the internal byte array.
-   */
+  /** Offset to apply as a lower bound on the internal byte array. */
   private int boundOffset;
-  /**
-   * The length of the bound on the internal byte array.
-   */
+  /** The length of the bound on the internal byte array. */
   private int boundLength = FontData.GROWABLE_SIZE;
 
   protected FontData(ByteArray<? extends ByteArray<?>> backingArray) {
@@ -82,14 +76,16 @@ public abstract class FontData {
    */
   protected FontData(FontData data, int offset) {
     this(data.array);
-    this.bound(data.boundOffset + offset,
-        data.boundLength == FontData.GROWABLE_SIZE ? FontData.GROWABLE_SIZE : data.boundLength
-            - offset);
+    this.bound(
+        data.boundOffset + offset,
+        data.boundLength == FontData.GROWABLE_SIZE
+            ? FontData.GROWABLE_SIZE
+            : data.boundLength - offset);
   }
 
   /**
-   * Sets limits on the size of the FontData. The FontData is then only
-   * visible within the bounds set.
+   * Sets limits on the size of the FontData. The FontData is then only visible within the bounds
+   * set.
    *
    * @param offset the start of the new bounds
    * @param length the number of bytes in the bounded array
@@ -105,12 +101,10 @@ public abstract class FontData {
   }
 
   /**
-   * Sets limits on the size of the FontData. This is an offset bound only so if
-   * the FontData is writable and growable then there is no limit to that growth
-   * from the bounding operation.
+   * Sets limits on the size of the FontData. This is an offset bound only so if the FontData is
+   * writable and growable then there is no limit to that growth from the bounding operation.
    *
-   * @param offset the start of the new bounds which must be within the current
-   *        size of the FontData
+   * @param offset the start of the new bounds which must be within the current size of the FontData
    * @return true if the bounding range was successful; false otherwise
    */
   public boolean bound(int offset) {
@@ -122,8 +116,8 @@ public abstract class FontData {
   }
 
   /**
-   * Makes a slice of this FontData. The returned slice will share the data with
-   * the original <code>FontData</code>.
+   * Makes a slice of this FontData. The returned slice will share the data with the original <code>
+   * FontData</code>.
    *
    * @param offset the start of the slice
    * @param length the number of bytes in the slice
@@ -132,8 +126,8 @@ public abstract class FontData {
   public abstract FontData slice(int offset, int length);
 
   /**
-   * Makes a bottom bound only slice of this array. The returned slice will
-   * share the data with the original <code>FontData</code>.
+   * Makes a bottom bound only slice of this array. The returned slice will share the data with the
+   * original <code>FontData</code>.
    *
    * @param offset the start of the slice
    * @return a slice of the original FontData
@@ -150,9 +144,8 @@ public abstract class FontData {
   }
 
   /**
-   * Gets the maximum size of the FontData. This is the maximum number of bytes
-   * that the font data can hold and all of it may not be filled with data or
-   * even fully allocated yet.
+   * Gets the maximum size of the FontData. This is the maximum number of bytes that the font data
+   * can hold and all of it may not be filled with data or even fully allocated yet.
    *
    * @return the maximum size of this font data
    */
@@ -160,20 +153,15 @@ public abstract class FontData {
     return Math.min(this.array.size() - this.boundOffset, this.boundLength);
   }
 
-  /**
-   * Returns the offset in the underlying data taking into account any bounds on
-   * the data.
-   */
+  /** Returns the offset in the underlying data taking into account any bounds on the data. */
   public final int dataOffset() {
     return this.boundOffset;
   }
 
   /**
-   * Gets the offset in the underlying data taking into account any bounds on
-   * the data.
+   * Gets the offset in the underlying data taking into account any bounds on the data.
    *
-   * @param offset
-   *          the offset to get the bound compensated offset for
+   * @param offset the offset to get the bound compensated offset for
    * @return the bound compensated offset
    */
   protected final int boundOffset(int offset) {

@@ -4,7 +4,6 @@ package com.google.typography.font.sfntly.table.opentype.component;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-
 import java.util.Iterator;
 
 public abstract class RecordsTable<R extends Record> extends HeaderTable implements Iterable<R> {
@@ -38,7 +37,7 @@ public abstract class RecordsTable<R extends Record> extends HeaderTable impleme
   protected abstract RecordList<R> createRecordList(ReadableFontData data);
 
   public abstract static class Builder<T extends HeaderTable, R extends Record>
-  extends HeaderTable.Builder<T> {
+      extends HeaderTable.Builder<T> {
 
     protected RecordList<R> records;
     private int serializedLength;

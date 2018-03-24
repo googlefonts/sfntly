@@ -32,7 +32,6 @@ import com.google.typography.font.sfntly.table.core.HorizontalMetricsTable;
 import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
 import com.google.typography.font.sfntly.table.core.NameTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -50,9 +49,8 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 /**
- * An sfnt container font object.
- * This object is immutable and thread safe.
- * To construct one, use an instance of {@link Font.Builder}.
+ * An sfnt container font object. This object is immutable and thread safe. To construct one, use an
+ * instance of {@link Font.Builder}.
  *
  * @author Stuart Gill
  */
@@ -79,58 +77,45 @@ public class Font {
     int SIZE = 16;
   }
 
-  /**
-   * Ordering of tables for different font types.
-   */
+  /** Ordering of tables for different font types. */
   private static final List<Integer> CFF_TABLE_ORDERING;
+
   private static final List<Integer> TRUE_TYPE_TABLE_ORDERING;
+
   static {
-    Integer[] cffArray = new Integer[] {Tag.head,
-        Tag.hhea,
-        Tag.maxp,
-        Tag.OS_2,
-        Tag.name,
-        Tag.cmap,
-        Tag.post,
-        Tag.CFF};
+    Integer[] cffArray =
+        new Integer[] {
+          Tag.head, Tag.hhea, Tag.maxp, Tag.OS_2, Tag.name, Tag.cmap, Tag.post, Tag.CFF
+        };
     List<Integer> cffList = new ArrayList<Integer>(cffArray.length);
     Collections.addAll(cffList, cffArray);
     CFF_TABLE_ORDERING = Collections.unmodifiableList(cffList);
 
-    Integer[] ttArray = new Integer[] {Tag.head,
-        Tag.hhea,
-        Tag.maxp,
-        Tag.OS_2,
-        Tag.hmtx,
-        Tag.LTSH,
-        Tag.VDMX,
-        Tag.hdmx,
-        Tag.cmap,
-        Tag.fpgm,
-        Tag.prep,
-        Tag.cvt,
-        Tag.loca,
-        Tag.glyf,
-        Tag.kern,
-        Tag.name,
-        Tag.post,
-        Tag.gasp,
-        Tag.PCLT,
-        Tag.DSIG};
+    Integer[] ttArray =
+        new Integer[] {
+          Tag.head, Tag.hhea, Tag.maxp, Tag.OS_2, Tag.hmtx, Tag.LTSH, Tag.VDMX, Tag.hdmx, Tag.cmap,
+          Tag.fpgm, Tag.prep, Tag.cvt, Tag.loca, Tag.glyf, Tag.kern, Tag.name, Tag.post, Tag.gasp,
+          Tag.PCLT, Tag.DSIG
+        };
     List<Integer> ttList = new ArrayList<Integer>(ttArray.length);
     Collections.addAll(ttList, ttArray);
     TRUE_TYPE_TABLE_ORDERING = Collections.unmodifiableList(ttList);
   }
 
   /**
-   * Platform ids. These are used in a number of places within the font whenever
-   * the platform needs to be specified.
+   * Platform ids. These are used in a number of places within the font whenever the platform needs
+   * to be specified.
    *
    * @see NameTable
    * @see CMapTable
    */
   public enum PlatformId {
-    Unknown(-1), Unicode(0), Macintosh(1), ISO(2), Windows(3), Custom(4);
+    Unknown(-1),
+    Unicode(0),
+    Macintosh(1),
+    ISO(2),
+    Windows(3),
+    Custom(4);
 
     private final int value;
 
@@ -157,8 +142,8 @@ public class Font {
   }
 
   /**
-   * Unicode encoding ids. These are used in a number of places within the font
-   * whenever character encodings need to be specified.
+   * Unicode encoding ids. These are used in a number of places within the font whenever character
+   * encodings need to be specified.
    *
    * @see NameTable
    * @see CMapTable
@@ -198,8 +183,8 @@ public class Font {
   }
 
   /**
-   * Windows encoding ids. These are used in a number of places within the font
-   * whenever character encodings need to be specified.
+   * Windows encoding ids. These are used in a number of places within the font whenever character
+   * encodings need to be specified.
    *
    * @see NameTable
    * @see CMapTable
@@ -241,8 +226,8 @@ public class Font {
   }
 
   /**
-   * Macintosh encoding ids. These are used in a number of places within the
-   * font whenever character encodings need to be specified.
+   * Macintosh encoding ids. These are used in a number of places within the font whenever character
+   * encodings need to be specified.
    *
    * @see NameTable
    * @see CMapTable
@@ -316,10 +301,7 @@ public class Font {
 
   private Map<Integer, ? extends Table> tables; // these get set in the builder
 
-  /**
-   * @param digest the computed digest for the font; null if digest was not
-   *        computed
-   */
+  /** @param digest the computed digest for the font; null if digest was not computed */
   private Font(int sfntVersion, byte[] digest) {
     this.sfntVersion = sfntVersion;
     this.digest = digest;
@@ -335,11 +317,10 @@ public class Font {
   }
 
   /**
-   * Gets a copy of the fonts digest that was created when the font was read. If
-   * no digest was set at creation time then the return result will be null.
+   * Gets a copy of the fonts digest that was created when the font was read. If no digest was set
+   * at creation time then the return result will be null.
    *
-   * @return a copy of the digest array or <code>null</code> if one wasn't set
-   *         at creation time
+   * @return a copy of the digest array or <code>null</code> if one wasn't set at creation time
    */
   public byte[] digest() {
     if (this.digest == null) {
@@ -450,13 +431,11 @@ public class Font {
   }
 
   /**
-   * Build the table headers to be used for serialization. These headers will be
-   * filled out with the data required for serialization. The headers will be
-   * sorted in the order specified and only those specified will have headers
-   * generated.
+   * Build the table headers to be used for serialization. These headers will be filled out with the
+   * data required for serialization. The headers will be sorted in the order specified and only
+   * those specified will have headers generated.
    *
-   * @param tableOrdering the tables to generate headers for and the order to
-   *        sort them
+   * @param tableOrdering the tables to generate headers for and the order to sort them
    * @return a list of table headers ready for serialization
    */
   private List<Header> buildTableHeadersForSerialization(List<Integer> tableOrdering) {
@@ -467,8 +446,8 @@ public class Font {
     for (Integer tag : finalTableOrdering) {
       Table table = this.tables.get(tag);
       if (table != null) {
-        tableHeaders.add(new Header(
-            tag, table.calculatedChecksum(), tableOffset, table.header().length()));
+        tableHeaders.add(
+            new Header(tag, table.calculatedChecksum(), tableOffset, table.header().length()));
         // write on boundary of 4 bytes
         tableOffset += (table.dataLength() + 3) & ~3;
       }
@@ -482,8 +461,7 @@ public class Font {
    * @param fos the destination stream for the headers
    * @param tableHeaders the headers to serialize
    */
-  private void serializeHeader(FontOutputStream fos, List<Header> tableHeaders)
-      throws IOException {
+  private void serializeHeader(FontOutputStream fos, List<Header> tableHeaders) throws IOException {
     fos.writeFixed(this.sfntVersion);
     fos.writeUShort(tableHeaders.size());
     int log2OfMaxPowerOf2 = FontMath.log2(tableHeaders.size());
@@ -509,8 +487,7 @@ public class Font {
    * @param fos the destination stream for the headers
    * @param tableHeaders the headers for the tables to serialize
    */
-  private void serializeTables(FontOutputStream fos, List<Header> tableHeaders)
-      throws IOException {
+  private void serializeTables(FontOutputStream fos, List<Header> tableHeaders) throws IOException {
 
     for (Header record : tableHeaders) {
       Table table = this.getTable(record.tag());
@@ -526,12 +503,10 @@ public class Font {
   }
 
   /**
-   * Generate the full table ordering to used for serialization. The full
-   * ordering uses the partial ordering as a seed and then adds all remaining
-   * tables in the font in an undefined order.
+   * Generate the full table ordering to used for serialization. The full ordering uses the partial
+   * ordering as a seed and then adds all remaining tables in the font in an undefined order.
    *
-   * @param defaultTableOrdering the partial ordering to be used as a seed for
-   *        the full ordering
+   * @param defaultTableOrdering the partial ordering to be used as a seed for the full ordering
    * @return the full ordering for serialization
    */
   private List<Integer> generateTableOrdering(List<Integer> defaultTableOrdering) {
@@ -571,11 +546,10 @@ public class Font {
   }
 
   /**
-   * A builder for a font object. The builder allows the for the creation of
-   * immutable {@link Font} objects. The builder is a one use non-thread safe
-   * object and cnce the {@link Font} object has been created it is no longer
-   * usable. To create a further {@link Font} object new builder will be
-   * required.
+   * A builder for a font object. The builder allows the for the creation of immutable {@link Font}
+   * objects. The builder is a one use non-thread safe object and cnce the {@link Font} object has
+   * been created it is no longer usable. To create a further {@link Font} object new builder will
+   * be required.
    *
    * @author Stuart Gill
    */
@@ -585,12 +559,16 @@ public class Font {
     private FontFactory factory;
     private int sfntVersion = SFNTVERSION_1;
     private int numTables;
+
     @SuppressWarnings("unused")
     private int searchRange;
+
     @SuppressWarnings("unused")
     private int entrySelector;
+
     @SuppressWarnings("unused")
     private int rangeShift;
+
     private Map<Header, WritableFontData> dataBlocks;
     private byte[] digest;
 
@@ -628,8 +606,8 @@ public class Font {
       return builder;
     }
 
-    static Builder getOTFBuilder(
-        FontFactory factory, WritableFontData wfd, int offsetToOffsetTable) throws IOException {
+    static Builder getOTFBuilder(FontFactory factory, WritableFontData wfd, int offsetToOffsetTable)
+        throws IOException {
       Builder builder = new Builder(factory);
       builder.loadFont(wfd, offsetToOffsetTable);
       return builder;
@@ -667,10 +645,7 @@ public class Font {
       return true;
     }
 
-    /**
-     * Build the {@link Font}. After this call this builder will no longer be
-     * usable.
-     */
+    /** Build the {@link Font}. After this call this builder will no longer be usable. */
     public Font build() {
       Map<Integer, ? extends Table> tables = null;
 
@@ -685,30 +660,24 @@ public class Font {
       return font;
     }
 
-    /**
-     * Set a unique fingerprint for the font object.
-     */
+    /** Set a unique fingerprint for the font object. */
     public void setDigest(byte[] digest) {
       this.digest = digest;
     }
 
-    /**
-     * Clear all table builders.
-     */
+    /** Clear all table builders. */
     public void clearTableBuilders() {
       this.tableBuilders.clear();
     }
 
-    /**
-     * Does this font builder have the specified table builder?
-     */
+    /** Does this font builder have the specified table builder? */
     public boolean hasTableBuilder(int tableBuilderTag) {
       return this.tableBuilders.containsKey(tableBuilderTag);
     }
 
     /**
-     * Get the table builder for the given tag. If there is no builder for that
-     * tag then return a null.
+     * Get the table builder for the given tag. If there is no builder for that tag then return a
+     * null.
      */
     public Table.Builder<? extends Table> getTableBuilder(int tableBuilderTag) {
       Table.Builder<? extends Table> builder = this.tableBuilders.get(tableBuilderTag);
@@ -716,14 +685,13 @@ public class Font {
     }
 
     /**
-     * Creates a new empty table builder for the table type given by the table
-     * id tag.
+     * Creates a new empty table builder for the table type given by the table id tag.
      *
-     *  This new table will be added to the font and will replace any existing
-     * builder for that table.
+     * <p>This new table will be added to the font and will replace any existing builder for that
+     * table.
      *
-     * @return new empty table of the type specified by tag; if tag is not known
-     *         then a generic OpenTypeTable is returned
+     * @return new empty table of the type specified by tag; if tag is not known then a generic
+     *     OpenTypeTable is returned
      */
     public Table.Builder<? extends Table> newTableBuilder(int tag) {
       Header header = new Header(tag);
@@ -734,14 +702,14 @@ public class Font {
     }
 
     /**
-     * Creates a new table builder for the table type given by the table id tag.
-     * It makes a copy of the data provided and uses that copy for the table.
+     * Creates a new table builder for the table type given by the table id tag. It makes a copy of
+     * the data provided and uses that copy for the table.
      *
-     *  This new table has been added to the font and will replace any existing
-     * builder for that table.
+     * <p>This new table has been added to the font and will replace any existing builder for that
+     * table.
      *
-     * @return new empty table of the type specified by tag; if tag is not known
-     *         then a generic OpenTypeTable is returned
+     * @return new empty table of the type specified by tag; if tag is not known then a generic
+     *     OpenTypeTable is returned
      */
     public Table.Builder<? extends Table> newTableBuilder(int tag, ReadableFontData srcData) {
       WritableFontData data;
@@ -758,8 +726,7 @@ public class Font {
     }
 
     /**
-     * Get a map of the table builders in this font builder accessed by table
-     * tag.
+     * Get a map of the table builders in this font builder accessed by table tag.
      *
      * @return an unmodifiable view of the table builders in this font builder
      */
@@ -767,9 +734,7 @@ public class Font {
       return Collections.unmodifiableMap(this.tableBuilders);
     }
 
-    /**
-     * @return the removed table builder
-     */
+    /** @return the removed table builder */
     public Table.Builder<? extends Table> removeTableBuilder(int tag) {
       return this.tableBuilders.remove(tag);
     }
@@ -786,7 +751,7 @@ public class Font {
     private Map<Integer, Table.Builder<? extends Table>> buildAllTableBuilders(
         Map<Header, WritableFontData> tableData) {
       Map<Integer, Table.Builder<? extends Table>> builderMap =
-        new HashMap<Integer, Table.Builder<? extends Table>>();
+          new HashMap<Integer, Table.Builder<? extends Table>>();
       Set<Header> records = tableData.keySet();
       for (Header record : records) {
         Table.Builder<? extends Table> builder = getTableBuilder(record, tableData.get(record));
@@ -801,8 +766,8 @@ public class Font {
       return builder;
     }
 
-    private static Map<Integer, Table> buildTablesFromBuilders(Font font,
-        Map<Integer, Table.Builder<? extends Table>> builderMap) {
+    private static Map<Integer, Table> buildTablesFromBuilders(
+        Font font, Map<Integer, Table.Builder<? extends Table>> builderMap) {
       Map<Integer, Table> tableMap = new TreeMap<Integer, Table>();
 
       interRelateBuilders(builderMap);
@@ -851,20 +816,19 @@ public class Font {
       return tableMap;
     }
 
-    private static void
-    interRelateBuilders(Map<Integer, Table.Builder<? extends Table>> builderMap) {
+    private static void interRelateBuilders(
+        Map<Integer, Table.Builder<? extends Table>> builderMap) {
       FontHeaderTable.Builder headerTableBuilder =
-        (FontHeaderTable.Builder) builderMap.get(Tag.head);
+          (FontHeaderTable.Builder) builderMap.get(Tag.head);
       HorizontalHeaderTable.Builder horizontalHeaderBuilder =
-        (HorizontalHeaderTable.Builder) builderMap.get(Tag.hhea);
+          (HorizontalHeaderTable.Builder) builderMap.get(Tag.hhea);
       MaximumProfileTable.Builder maxProfileBuilder =
-        (MaximumProfileTable.Builder) builderMap.get(Tag.maxp);
-      LocaTable.Builder locaTableBuilder =
-        (LocaTable.Builder) builderMap.get(Tag.loca);
+          (MaximumProfileTable.Builder) builderMap.get(Tag.maxp);
+      LocaTable.Builder locaTableBuilder = (LocaTable.Builder) builderMap.get(Tag.loca);
       HorizontalMetricsTable.Builder horizontalMetricsBuilder =
-        (HorizontalMetricsTable.Builder) builderMap.get(Tag.hmtx);
+          (HorizontalMetricsTable.Builder) builderMap.get(Tag.hmtx);
       HorizontalDeviceMetricsTable.Builder hdmxTableBuilder =
-        (HorizontalDeviceMetricsTable.Builder) builderMap.get(Tag.hdmx);
+          (HorizontalDeviceMetricsTable.Builder) builderMap.get(Tag.hdmx);
 
       // set the inter table data required to build certain tables
       if (horizontalMetricsBuilder != null) {
@@ -872,8 +836,7 @@ public class Font {
           horizontalMetricsBuilder.setNumGlyphs(maxProfileBuilder.numGlyphs());
         }
         if (horizontalHeaderBuilder != null) {
-          horizontalMetricsBuilder.setNumberOfHMetrics(
-              horizontalHeaderBuilder.numberOfHMetrics());
+          horizontalMetricsBuilder.setNumberOfHMetrics(horizontalHeaderBuilder.numberOfHMetrics());
         }
       }
 
@@ -901,7 +864,9 @@ public class Font {
       this.rangeShift = is.readUShort();
 
       if (this.sfntVersion != SFNTVERSION_1 && this.sfntVersion != 0x4F54544F /* OTTO */) {
-        String msg = String.format("Wrong sfntVersion 0x%08x, must be 0x%#08x", this.sfntVersion, SFNTVERSION_1);
+        String msg =
+            String.format(
+                "Wrong sfntVersion 0x%08x, must be 0x%#08x", this.sfntVersion, SFNTVERSION_1);
         throw new IllegalStateException(msg);
       }
 

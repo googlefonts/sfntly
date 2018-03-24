@@ -27,19 +27,15 @@ import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import junit.framework.TestCase;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class BasicSubsetTests extends TestCase {
   private static final boolean DEBUG = false;
   private static final File fontFile = TestFont.TestFontNames.OPENSANS.getFile();
@@ -77,8 +73,9 @@ public class BasicSubsetTests extends TestCase {
     subsetter.setGlyphs(glyphs);
 
     List<CMapTable.CMapId> cmapIds = new ArrayList<CMapTable.CMapId>();
-    cmapIds.add(CMapTable.CMapId.getInstance(
-        PlatformId.Macintosh.value(), MacintoshEncodingId.Mongolian.value()));
+    cmapIds.add(
+        CMapTable.CMapId.getInstance(
+            PlatformId.Macintosh.value(), MacintoshEncodingId.Mongolian.value()));
     cmapIds.add(CMapTable.CMapId.WINDOWS_BMP);
     subsetter.setCMaps(cmapIds, 1);
 

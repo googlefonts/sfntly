@@ -6,9 +6,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 
-/**
- * @author dougfelt@google.com (Doug Felt)
- */
+/** @author dougfelt@google.com (Doug Felt) */
 abstract class LayoutCommonTable<T extends LookupTable> extends SubTable {
 
   private static final int VERSION_ID = 0x00010000;
@@ -23,10 +21,7 @@ abstract class LayoutCommonTable<T extends LookupTable> extends SubTable {
     int SIZE = 10;
   }
 
-  /**
-   * @param data
-   *          the GSUB or GPOS data
-   */
+  /** @param data the GSUB or GPOS data */
   protected LayoutCommonTable(ReadableFontData data, boolean dataIsCanonical) {
     super(data);
     this.dataIsCanonical = dataIsCanonical;
@@ -36,8 +31,8 @@ abstract class LayoutCommonTable<T extends LookupTable> extends SubTable {
     return data.readUShort(Offset.scriptList);
   }
 
-  private static ReadableFontData scriptListData(ReadableFontData commonData,
-      boolean dataIsCanonical) {
+  private static ReadableFontData scriptListData(
+      ReadableFontData commonData, boolean dataIsCanonical) {
     int start = readScriptListOffset(commonData);
     if (dataIsCanonical) {
       int limit = readFeatureListOffset(commonData);
@@ -54,8 +49,8 @@ abstract class LayoutCommonTable<T extends LookupTable> extends SubTable {
     return data.readUShort(Offset.featureList);
   }
 
-  private static ReadableFontData featureListData(ReadableFontData commonData,
-      boolean dataIsCanonical) {
+  private static ReadableFontData featureListData(
+      ReadableFontData commonData, boolean dataIsCanonical) {
     int start = readFeatureListOffset(commonData);
     if (dataIsCanonical) {
       int limit = readLookupListOffset(commonData);
@@ -72,8 +67,8 @@ abstract class LayoutCommonTable<T extends LookupTable> extends SubTable {
     return data.readUShort(Offset.lookupList);
   }
 
-  private static ReadableFontData lookupListData(ReadableFontData commonData,
-      boolean dataIsCanonical) {
+  private static ReadableFontData lookupListData(
+      ReadableFontData commonData, boolean dataIsCanonical) {
     int start = readLookupListOffset(commonData);
     if (dataIsCanonical) {
       int limit = commonData.length();
@@ -96,10 +91,7 @@ abstract class LayoutCommonTable<T extends LookupTable> extends SubTable {
     private FeatureListTable.Builder serializedFeatureListBuilder;
     private LookupListTable.Builder serializedLookupListBuilder;
 
-    /**
-     * @param data
-     *          the GSUB or GPOS data
-     */
+    /** @param data the GSUB or GPOS data */
     protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data);
     }

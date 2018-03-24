@@ -24,7 +24,6 @@ import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,8 +32,8 @@ import java.util.List;
 
 /**
  * @author Raph Levien
- *
- * Implementation of compression of CTF glyph data, as per sections 5.6-5.10 and 6 of the spec.
+ *     <p>Implementation of compression of CTF glyph data, as per sections 5.6-5.10 and 6 of the
+ *     spec.
  */
 public class GlyfEncoder {
 
@@ -73,16 +72,16 @@ public class GlyfEncoder {
       if (glyph == null || glyph.dataLength() == 0) {
         writeUShort(0);
       } else if (glyph instanceof SimpleGlyph) {
-        writeSimpleGlyph((SimpleGlyph)glyph);
+        writeSimpleGlyph((SimpleGlyph) glyph);
       } else if (glyph instanceof CompositeGlyph) {
-        writeCompositeGlyph((CompositeGlyph)glyph);
+        writeCompositeGlyph((CompositeGlyph) glyph);
       }
     } catch (IOException e) {
       throw new RuntimeException("unexpected IOException writing glyph data", e);
     }
   }
 
-  private void writeInstructions(Glyph glyph) throws IOException{
+  private void writeInstructions(Glyph glyph) throws IOException {
     if (doPush) {
       splitPush(glyph);
     } else {
@@ -98,29 +97,29 @@ public class GlyfEncoder {
 
   private void writeSimpleGlyph(SimpleGlyph glyph) throws IOException {
     int numContours = glyph.numberOfContours();
-      writeUShort(numContours);
-      for (int i = 0; i < numContours; i++) {
-        write255UShort(glyfStream, glyph.numberOfPoints(i) - (i == 0 ? 1 : 0));
+    writeUShort(numContours);
+    for (int i = 0; i < numContours; i++) {
+      write255UShort(glyfStream, glyph.numberOfPoints(i) - (i == 0 ? 1 : 0));
+    }
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    int lastX = 0;
+    int lastY = 0;
+    for (int i = 0; i < numContours; i++) {
+      int numPoints = glyph.numberOfPoints(i);
+      for (int j = 0; j < numPoints; j++) {
+        int x = glyph.xCoordinate(i, j);
+        int y = glyph.yCoordinate(i, j);
+        int dx = x - lastX;
+        int dy = y - lastY;
+        writeTriplet(os, glyph.onCurve(i, j), dx, dy);
+        lastX = x;
+        lastY = y;
       }
-      ByteArrayOutputStream os = new ByteArrayOutputStream();
-      int lastX = 0;
-      int lastY = 0;
-      for (int i = 0; i < numContours; i++) {
-        int numPoints = glyph.numberOfPoints(i);
-        for (int j = 0; j < numPoints; j++) {
-          int x = glyph.xCoordinate(i, j);
-          int y = glyph.yCoordinate(i, j);
-          int dx = x - lastX;
-          int dy = y - lastY;
-          writeTriplet(os, glyph.onCurve(i, j), dx, dy);
-          lastX = x;
-          lastY = y;
-        }
-      }
-      os.writeTo(glyfStream);
-      if (numContours > 0) {
-        writeInstructions(glyph);
-      }
+    }
+    os.writeTo(glyfStream);
+    if (numContours > 0) {
+      writeInstructions(glyph);
+    }
   }
 
   private void writeCompositeGlyph(CompositeGlyph glyph) throws IOException {
@@ -166,17 +165,17 @@ public class GlyfEncoder {
       throw new IllegalArgumentException();
     }
     if (value < 253) {
-      os.write((byte)value);
+      os.write((byte) value);
     } else if (value < 506) {
       os.write(255);
-      os.write((byte)(value - 253));
+      os.write((byte) (value - 253));
     } else if (value < 762) {
       os.write(254);
-      os.write((byte)(value - 506));
+      os.write((byte) (value - 506));
     } else {
       os.write(253);
-      os.write((byte)(value >> 8));
-      os.write((byte)(value & 0xff));
+      os.write((byte) (value >> 8));
+      os.write((byte) (value & 0xff));
     }
   }
 
@@ -190,17 +189,17 @@ public class GlyfEncoder {
       os.write(250);
     }
     if (absValue < 250) {
-      os.write((byte)absValue);
+      os.write((byte) absValue);
     } else if (absValue < 500) {
       os.write(255);
-      os.write((byte)(absValue - 250));
+      os.write((byte) (absValue - 250));
     } else if (absValue < 756) {
       os.write(254);
-      os.write((byte)(absValue - 500));
+      os.write((byte) (absValue - 500));
     } else {
       os.write(253);
-      os.write((byte)(absValue >> 8));
-      os.write((byte)(absValue & 0xff));
+      os.write((byte) (absValue >> 8));
+      os.write((byte) (absValue & 0xff));
     }
   }
 
@@ -221,12 +220,16 @@ public class GlyfEncoder {
       glyfStream.write(onCurveBit + 10 + ((absX & 0xf00) >> 7) + xSignBit);
       os.write(absX & 0xff);
     } else if (absX < 65 && absY < 65) {
-      glyfStream.write(onCurveBit + 20 + ((absX - 1) & 0x30) + (((absY - 1) & 0x30) >> 2) +
-          xySignBits);
+      glyfStream.write(
+          onCurveBit + 20 + ((absX - 1) & 0x30) + (((absY - 1) & 0x30) >> 2) + xySignBits);
       os.write((((absX - 1) & 0xf) << 4) | ((absY - 1) & 0xf));
     } else if (absX < 769 && absY < 769) {
-      glyfStream.write(onCurveBit + 84 + 12 * (((absX - 1) & 0x300) >> 8) +
-          (((absY - 1) & 0x300) >> 6) + xySignBits);
+      glyfStream.write(
+          onCurveBit
+              + 84
+              + 12 * (((absX - 1) & 0x300) >> 8)
+              + (((absY - 1) & 0x300) >> 6)
+              + xySignBits);
       os.write((absX - 1) & 0xff);
       os.write((absY - 1) & 0xff);
     } else if (absX < 4096 && absY < 4096) {
@@ -244,10 +247,10 @@ public class GlyfEncoder {
   }
 
   /**
-   * Split the instructions into a push sequence and the remainder of the instructions.
-   * Writes both streams, and the counts to the glyfStream.
+   * Split the instructions into a push sequence and the remainder of the instructions. Writes both
+   * streams, and the counts to the glyfStream.
    *
-   * As per section 6.2.1 of the spec.
+   * <p>As per section 6.2.1 of the spec.
    *
    * @param glyph the glyph to split
    */
@@ -306,8 +309,11 @@ public class GlyfEncoder {
     for (int i = 0; i < n; i++) {
       if ((hopSkip & 1) == 0) {
         int val = data.get(i);
-        if (hopSkip == 0 && i >= 2 &&
-            i + 2 < n && val == data.get(i - 2) && val == data.get(i + 2)) {
+        if (hopSkip == 0
+            && i >= 2
+            && i + 2 < n
+            && val == data.get(i - 2)
+            && val == data.get(i + 2)) {
           if (i + 4 < n && val == data.get(i + 4)) {
             // Hop4 code
             os.write(252);

@@ -4,7 +4,6 @@ import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
-
 import java.util.Iterator;
 
 /**
@@ -53,13 +52,17 @@ public final class CMapFormat6 extends CMap {
 
   public static class Builder extends CMap.Builder<CMapFormat6> {
     protected Builder(WritableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
-          CMapFormat.Format6, cmapId);
+      super(
+          data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
+          CMapFormat.Format6,
+          cmapId);
     }
 
     protected Builder(ReadableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
-          CMapFormat.Format6, cmapId);
+      super(
+          data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
+          CMapFormat.Format6,
+          cmapId);
     }
 
     @Override

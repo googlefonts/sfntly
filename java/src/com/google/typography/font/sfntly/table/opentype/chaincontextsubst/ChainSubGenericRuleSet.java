@@ -30,8 +30,7 @@ public abstract class ChainSubGenericRuleSet<T extends ChainSubGenericRule>
     }
 
     @Override
-    protected void initFields() {
-    }
+    protected void initFields() {}
 
     @Override
     public int fieldCount() {

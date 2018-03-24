@@ -21,7 +21,6 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.math.FontMath;
 import com.google.typography.font.sfntly.table.SubTable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -78,12 +77,12 @@ public final class BitmapSizeTable extends SubTable {
   }
 
   // TODO(stuartg): implement later
-  public void /* SBitLineMetrics */hori() {
+  public void /* SBitLineMetrics */ hori() {
     // NOP
   }
 
   // TODO(stuartg): implement later
-  public void /* SBitLineMetrics */vert() {
+  public void /* SBitLineMetrics */ vert() {
     // NOP
   }
 
@@ -214,8 +213,13 @@ public final class BitmapSizeTable extends SubTable {
     List<IndexSubTable> subtables = this.getIndexSubTableList();
 
     StringBuilder sb = new StringBuilder();
-    sb.append(String.format("BitmapSizeTable: [s=%#x, e=%#x, ppemx=%d, index subtables count=%d]\n",
-        this.startGlyphIndex(), this.endGlyphIndex(), this.ppemX(), this.numberOfIndexSubTables()));
+    sb.append(
+        String.format(
+            "BitmapSizeTable: [s=%#x, e=%#x, ppemx=%d, index subtables count=%d]\n",
+            this.startGlyphIndex(),
+            this.endGlyphIndex(),
+            this.ppemX(),
+            this.numberOfIndexSubTables()));
 
     for (int i = 0; i < subtables.size(); i++) {
       sb.append(String.format("\t%d: %s\n", i, subtables.get(i)));
@@ -243,32 +247,28 @@ public final class BitmapSizeTable extends SubTable {
     }
 
     /**
-     * Gets the subtable array offset as set in the original table as read from
-     * the font file. This value cannot be explicitly set and will be generated
-     * during table building.
+     * Gets the subtable array offset as set in the original table as read from the font file. This
+     * value cannot be explicitly set and will be generated during table building.
      *
      * @return the subtable array offset
      */
     public int indexSubTableArrayOffset() {
-      return this.internalReadData().readULongAsInt(
-          Offset.indexSubTableArrayOffset);
+      return this.internalReadData().readULongAsInt(Offset.indexSubTableArrayOffset);
     }
 
     /**
-     * Sets the subtable array offset. This is used only during the building
-     * process when the objects are being serialized.
+     * Sets the subtable array offset. This is used only during the building process when the
+     * objects are being serialized.
      *
      * @param offset the offset to the index subtable array
      */
     void setIndexSubTableArrayOffset(int offset) {
-      this.internalWriteData().writeULong(
-          Offset.indexSubTableArrayOffset, offset);
+      this.internalWriteData().writeULong(Offset.indexSubTableArrayOffset, offset);
     }
 
     /**
-     * Gets the subtable array size as set in the original table as read from
-     * the font file. This value cannot be explicitly set and will be generated
-     * during table building.
+     * Gets the subtable array size as set in the original table as read from the font file. This
+     * value cannot be explicitly set and will be generated during table building.
      *
      * @return the subtable array size
      */
@@ -277,8 +277,8 @@ public final class BitmapSizeTable extends SubTable {
     }
 
     /**
-     * Sets the subtable size. This is used only during the building process
-     * when the objects are being serialized.
+     * Sets the subtable size. This is used only during the building process when the objects are
+     * being serialized.
      *
      * @param size the offset to the index subtable array
      */
@@ -291,8 +291,7 @@ public final class BitmapSizeTable extends SubTable {
     }
 
     private void setNumberOfIndexSubTables(int numberOfIndexSubTables) {
-      this.internalWriteData().writeULong(
-          Offset.numberOfIndexSubTables, numberOfIndexSubTables);
+      this.internalWriteData().writeULong(Offset.numberOfIndexSubTables, numberOfIndexSubTables);
     }
 
     public int colorRef() {
@@ -300,12 +299,12 @@ public final class BitmapSizeTable extends SubTable {
     }
 
     // TODO(stuartg): implement later
-    public void /* SBitLineMetrics */hori() {
+    public void /* SBitLineMetrics */ hori() {
       // NOP
     }
 
     // TODO(stuartg): implement later
-    public void /* SBitLineMetrics */vert() {
+    public void /* SBitLineMetrics */ vert() {
       // NOP
     }
 

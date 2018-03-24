@@ -5,7 +5,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.SubstSubtable;
 import com.google.typography.font.sfntly.table.opentype.multiplesubst.GlyphIds;
-
 import java.util.Iterator;
 
 public class OneToManySubst extends SubstSubtable implements Iterable<NumRecordTable> {

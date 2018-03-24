@@ -26,7 +26,6 @@ import com.google.typography.font.tools.conversion.woff.WoffWriter;
 import com.google.typography.font.tools.subsetter.HintStripper;
 import com.google.typography.font.tools.subsetter.RenumberingSubsetter;
 import com.google.typography.font.tools.subsetter.Subsetter;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -40,9 +39,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class SfntTool {
 
   private boolean strip;
@@ -124,7 +121,7 @@ public class SfntTool {
     StringBuilder sb = new StringBuilder();
     Matcher m = pattern.matcher("");
     for (int cp = 0; cp <= Character.MAX_CODE_POINT; cp++) {
-      if (m.reset(new String(new int[]{cp}, 0, 1)).matches()) {
+      if (m.reset(new String(new int[] {cp}, 0, 1)).matches()) {
         sb.appendCodePoint(cp);
       }
     }
@@ -148,7 +145,7 @@ public class SfntTool {
     FontFactory fontFactory = FontFactory.getInstance();
     FileInputStream fis = new FileInputStream(fontFile);
     try {
-      byte[] fontBytes = new byte[(int)fontFile.length()];
+      byte[] fontBytes = new byte[(int) fontFile.length()];
       fis.read(fontBytes);
       Font[] fontArray = fontFactory.loadFonts(fontBytes);
       Font font = fontArray[0];
@@ -174,8 +171,8 @@ public class SfntTool {
           removeTables.add(Tag.DSIG);
           removeTables.add(Tag.vhea);
           // AAT tables, not yet defined in sfntly Tag class
-          removeTables.add(Tag.intValue(new byte[]{'m', 'o', 'r', 't'}));
-          removeTables.add(Tag.intValue(new byte[]{'m', 'o', 'r', 'x'}));
+          removeTables.add(Tag.intValue(new byte[] {'m', 'o', 'r', 't'}));
+          removeTables.add(Tag.intValue(new byte[] {'m', 'o', 'r', 'x'}));
           subsetter.setRemoveTables(removeTables);
           newFont = subsetter.subset().build();
         }

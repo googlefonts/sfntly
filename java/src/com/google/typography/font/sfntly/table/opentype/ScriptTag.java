@@ -4,9 +4,7 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.Tag;
 
-/**
- * @author dougfelt@google.com (Doug Felt)
- */
+/** @author dougfelt@google.com (Doug Felt) */
 public enum ScriptTag {
   arab("Arabic"),
   armn("Armenian"),

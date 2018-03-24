@@ -19,7 +19,6 @@ package com.google.typography.font.tools.subsetter;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
-
 import java.util.HashSet;
 import java.util.Set;
 

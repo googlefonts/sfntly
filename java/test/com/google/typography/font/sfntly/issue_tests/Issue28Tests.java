@@ -7,19 +7,17 @@ import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.sfntly.testutils.TestFont;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import junit.framework.TestCase;
 
 /**
  * Test for <a href="https://github.com/googlei18n/sfntly/issues/28">Issue 28</a>.
- * <p>
- * Test class showing inconsistent behaviour between loading from a byte array
- * vs loading from a file input stream.
+ *
+ * <p>Test class showing inconsistent behaviour between loading from a byte array vs loading from a
+ * file input stream.
  */
 public class Issue28Tests extends TestCase {
 
@@ -46,8 +44,8 @@ public class Issue28Tests extends TestCase {
   }
 
   /**
-   * Ensure that the stream and byte array sourced fonts both throw an exception when you
-   * read off the end of a sliced ReadableFontData
+   * Ensure that the stream and byte array sourced fonts both throw an exception when you read off
+   * the end of a sliced ReadableFontData
    */
   public void testStreamVsBytes() throws IOException {
     FontFactory factory = FontFactory.getInstance();

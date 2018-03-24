@@ -23,7 +23,6 @@ import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.TableBasedTableBuilder;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
-
 import java.util.EnumSet;
 
 /**
@@ -36,25 +35,19 @@ import java.util.EnumSet;
 public final class FontHeaderTable extends Table {
 
   /**
-   * Checksum adjustment base value. To compute the checksum adjustment:
-   * 1) set it to 0; 2) sum the entire font as ULONG, 3) then store 0xB1B0AFBA - sum.
+   * Checksum adjustment base value. To compute the checksum adjustment: 1) set it to 0; 2) sum the
+   * entire font as ULONG, 3) then store 0xB1B0AFBA - sum.
    */
   public static final long CHECKSUM_ADJUSTMENT_BASE = 0xB1B0AFBAL;
 
-  /**
-   * Magic number value stored in the magic number field.
-   */
+  /** Magic number value stored in the magic number field. */
   public static final long MAGIC_NUMBER = 0x5F0F3CF5L;
 
-  /**
-   * The ranges to use for checksum calculation.
-   */
+  /** The ranges to use for checksum calculation. */
   private static final int[] CHECKSUM_RANGES =
-    new int[] {0, Offset.checkSumAdjustment, Offset.magicNumber};
+      new int[] {0, Offset.checkSumAdjustment, Offset.magicNumber};
 
-  /**
-   * Offsets to specific elements in the underlying data, relative to the start of the table.
-   */
+  /** Offsets to specific elements in the underlying data, relative to the start of the table. */
   private interface Offset {
     int tableVersion = 0;
     int fontRevision = 4;
@@ -89,30 +82,26 @@ public final class FontHeaderTable extends Table {
   }
 
   /**
-   * Get the checksum adjustment. To compute: set it to 0, sum the entire font
-   * as ULONG, then store 0xB1B0AFBA - sum.
+   * Get the checksum adjustment. To compute: set it to 0, sum the entire font as ULONG, then store
+   * 0xB1B0AFBA - sum.
    */
   public long checkSumAdjustment() {
     return this.data.readULong(Offset.checkSumAdjustment);
   }
 
-  /**
-   * Get the magic number. Set to 0x5F0F3CF5.
-   */
+  /** Get the magic number. Set to 0x5F0F3CF5. */
   public long magicNumber() {
     return this.data.readULong(Offset.magicNumber);
   }
 
-  /**
-   * Flag values in the font header table.
-   */
+  /** Flag values in the font header table. */
   public enum Flags {
     BaselineAtY0,
     LeftSidebearingAtX0,
     InstructionsDependOnPointSize,
     ForcePPEMToInteger,
     InstructionsAlterAdvanceWidth,
-    //Apple Flags
+    // Apple Flags
     Apple_Vertical,
     Apple_Zero,
     Apple_RequiresLayout,
@@ -156,16 +145,12 @@ public final class FontHeaderTable extends Table {
     }
   }
 
-  /**
-   * @see #flags()
-   */
+  /** @see #flags() */
   public int flagsAsInt() {
     return this.data.readUShort(Offset.flags);
   }
 
-  /**
-   * @see #flagsAsInt()
-   */
+  /** @see #flagsAsInt() */
   public EnumSet<Flags> flags() {
     return Flags.asSet(this.flagsAsInt());
   }
@@ -174,53 +159,37 @@ public final class FontHeaderTable extends Table {
     return this.data.readUShort(Offset.unitsPerEm);
   }
 
-  /**
-   * Get the created date.
-   * Number of seconds since 12:00 midnight, January 1, 1904.
-   */
+  /** Get the created date. Number of seconds since 12:00 midnight, January 1, 1904. */
   public long created() {
     return this.data.readDateTimeAsLong(Offset.created);
   }
 
-  /**
-   * Get the modified date.
-   * Number of seconds since 12:00 midnight, January 1, 1904.
-   */
+  /** Get the modified date. Number of seconds since 12:00 midnight, January 1, 1904. */
   public long modified() {
     return this.data.readDateTimeAsLong(Offset.modified);
   }
 
-  /**
-   * Get the x min. For all glyph bounding boxes.
-   */
+  /** Get the x min. For all glyph bounding boxes. */
   public int xMin() {
     return this.data.readShort(Offset.xMin);
   }
 
-  /**
-   * Get the y min. For all glyph bounding boxes.
-   */
+  /** Get the y min. For all glyph bounding boxes. */
   public int yMin() {
     return this.data.readShort(Offset.yMin);
   }
 
-  /**
-   * Get the x max. For all glyph bounding boxes.
-   */
+  /** Get the x max. For all glyph bounding boxes. */
   public int xMax() {
     return this.data.readShort(Offset.xMax);
   }
 
-  /**
-   * Get the y max. For all glyph bounding boxes.
-   */
+  /** Get the y max. For all glyph bounding boxes. */
   public int yMax() {
     return this.data.readShort(Offset.yMax);
   }
 
-  /**
-   * Mac style bits set in the font header table.
-   */
+  /** Mac style bits set in the font header table. */
   public enum MacStyle {
     Bold,
     Italic,
@@ -268,19 +237,15 @@ public final class FontHeaderTable extends Table {
     }
 
     private static final EnumSet<MacStyle> reserved =
-      EnumSet.range(MacStyle.Reserved7, MacStyle.Reserved15);
+        EnumSet.range(MacStyle.Reserved7, MacStyle.Reserved15);
   }
 
-  /**
-   * Get the Mac style bits as an int.
-   */
+  /** Get the Mac style bits as an int. */
   public int macStyleAsInt() {
     return this.data.readUShort(Offset.macStyle);
   }
 
-  /**
-   * Get the Mac style bits as an enum set.
-   */
+  /** Get the Mac style bits as an enum set. */
   public EnumSet<MacStyle> macStyle() {
     return MacStyle.asSet(this.macStyleAsInt());
   }
@@ -289,9 +254,7 @@ public final class FontHeaderTable extends Table {
     return this.data.readUShort(Offset.lowestRecPPEM);
   }
 
-  /**
-   * Font direction hint values in the font header table.
-   */
+  /** Font direction hint values in the font header table. */
   public enum FontDirectionHint {
     FullyMixed(0),
     OnlyStrongLTR(1),
@@ -404,7 +367,7 @@ public final class FontHeaderTable extends Table {
         ReadableFontData data = this.internalReadData();
         data.setCheckSumRanges(FontHeaderTable.CHECKSUM_RANGES);
         long checksumAdjustment =
-          FontHeaderTable.CHECKSUM_ADJUSTMENT_BASE - (this.fontChecksum + data.checksum());
+            FontHeaderTable.CHECKSUM_ADJUSTMENT_BASE - (this.fontChecksum + data.checksum());
         this.setCheckSumAdjustment(checksumAdjustment);
       }
       return super.subReadyToSerialize();
@@ -416,15 +379,13 @@ public final class FontHeaderTable extends Table {
     }
 
     /**
-     * Sets the font checksum to be used when calculating the the checksum
-     * adjustment for the header table during build time.
+     * Sets the font checksum to be used when calculating the the checksum adjustment for the header
+     * table during build time.
      *
-     * The font checksum is the sum value of all tables but the font header
-     * table. If the font checksum has been set then further setting will be
-     * ignored until the font check sum has been cleared with
-     * {@link #clearFontChecksum()}. Most users will never need to set this. It
-     * is used when the font is being built. If set by a client it can interfere
-     * with that process.
+     * <p>The font checksum is the sum value of all tables but the font header table. If the font
+     * checksum has been set then further setting will be ignored until the font check sum has been
+     * cleared with {@link #clearFontChecksum()}. Most users will never need to set this. It is used
+     * when the font is being built. If set by a client it can interfere with that process.
      */
     public void setFontChecksum(long checksum) {
       if (this.fontChecksumSet) {
@@ -435,12 +396,12 @@ public final class FontHeaderTable extends Table {
     }
 
     /**
-     * Clears the font checksum to be used when calculating the the checksum
-     * adjustment for the header table during build time.
+     * Clears the font checksum to be used when calculating the the checksum adjustment for the
+     * header table during build time.
      *
-     * The font checksum is the sum value of all tables but the font header
-     * table. If the font checksum has been set then further setting will be
-     * ignored until the font check sum has been cleared.
+     * <p>The font checksum is the sum value of all tables but the font header table. If the font
+     * checksum has been set then further setting will be ignored until the font check sum has been
+     * cleared.
      */
     public void clearFontChecksum() {
       this.fontChecksumSet = false;

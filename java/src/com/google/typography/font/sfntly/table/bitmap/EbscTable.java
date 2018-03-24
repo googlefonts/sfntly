@@ -22,9 +22,7 @@ import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.Table;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class EbscTable extends Table {
 
   private interface HeaderOffset {
@@ -134,6 +132,5 @@ public class EbscTable extends Table {
     protected int subSerialize(WritableFontData newData) {
       return 0;
     }
-
   }
 }

@@ -17,10 +17,10 @@
 package com.google.typography.font.tools.conversion.eot;
 
 /**
- * Implement LZCOMP compression algorithm as defined in MicroType Express,
- * part of the EOT draft spec at <a href="http://www.w3.org/Submission/MTX/">MTX</a>.
+ * Implement LZCOMP compression algorithm as defined in MicroType Express, part of the EOT draft
+ * spec at <a href="http://www.w3.org/Submission/MTX/">MTX</a>.
  *
- * Based on the MTX reference code.
+ * <p>Based on the MTX reference code.
  *
  * @author Raph Levien
  */
@@ -119,25 +119,26 @@ public class LzcompCompress {
       }
     }
   }
+
   void initializeModel() {
     hashTable = new HashNode[0x10000];
     int i = 0;
     for (int k = 0; k < 32; k++) {
       for (int j = 0; j < 96; j++) {
-        buf[i] = (byte)k;
+        buf[i] = (byte) k;
         updateModel(i++);
-        buf[i]= (byte)j;
+        buf[i] = (byte) j;
         updateModel(i++);
       }
     }
     for (int j = 0; i < PRELOAD_SIZE && j < 256; j++) {
-      buf[i] = (byte)j;
+      buf[i] = (byte) j;
       updateModel(i++);
-      buf[i] = (byte)j;
+      buf[i] = (byte) j;
       updateModel(i++);
-      buf[i] = (byte)j;
+      buf[i] = (byte) j;
       updateModel(i++);
-      buf[i] = (byte)j;
+      buf[i] = (byte) j;
       updateModel(i++);
     }
   }
@@ -155,8 +156,8 @@ public class LzcompCompress {
       int[] costPerByte2 = new int[1];
       int len2 = findMatch(index, dist2, gain2, costPerByte2);
       int symbolCost = symEncoder.writeSymbolCost(buf[here] & 0xff);
-      if (gain2[0] >= gain1[0] && costPerByte1[0] > (costPerByte2[0] * len2 + symbolCost) /
-          (len2 + 1)) {
+      if (gain2[0] >= gain1[0]
+          && costPerByte1[0] > (costPerByte2[0] * len2 + symbolCost) / (len2 + 1)) {
         len1 = 0;
       } else if (len1 > 3) {
         len2 = findMatch(here + len1, dist2, gain2, costPerByte2);
@@ -238,7 +239,7 @@ public class LzcompCompress {
           continue;
         }
         dist = dist - length + 1;
-        if (dist > distMax || (length == 2&& dist >= MAX_2BYTE_DIST)) {
+        if (dist > distMax || (length == 2 && dist >= MAX_2BYTE_DIST)) {
           continue;
         }
         if (length <= bestLength && dist > bestDist) {

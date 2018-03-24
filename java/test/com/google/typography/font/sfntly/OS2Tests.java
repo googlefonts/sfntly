@@ -22,22 +22,16 @@ import com.google.typography.font.sfntly.table.core.OS2Table.UnicodeRange;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
 import com.google.typography.font.sfntly.testutils.TestUtils;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.util.EnumSet;
+import junit.framework.TestCase;
 
-
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class OS2Tests extends TestCase {
 
   private static final File TEST_FONT_FILE = TestFont.TestFontNames.OPENSANS.getFile();
 
-  public OS2Tests() {
-  }
+  public OS2Tests() {}
 
   public OS2Tests(String name) {
     super(name);
@@ -52,16 +46,18 @@ public class OS2Tests extends TestCase {
     OS2Table.Builder os2TableBuilder = (OS2Table.Builder) fontBuilder.getTableBuilder(Tag.OS_2);
 
     os2TableBuilder.setAchVendId(achVendId_a);
-    assertTrue(TestUtils.equals(
-        achVendId_a_pad, 0, os2TableBuilder.achVendId(), 0, achVendId_a_pad.length));
+    assertTrue(
+        TestUtils.equals(
+            achVendId_a_pad, 0, os2TableBuilder.achVendId(), 0, achVendId_a_pad.length));
 
     os2TableBuilder.setAchVendId(achVendId_abcd);
     assertTrue(
         TestUtils.equals(achVendId_abcd, 0, os2TableBuilder.achVendId(), 0, achVendId_abcd.length));
 
     os2TableBuilder.setAchVendId(achVendId_a);
-    assertTrue(TestUtils.equals(
-        achVendId_a_pad, 0, os2TableBuilder.achVendId(), 0, achVendId_a_pad.length));
+    assertTrue(
+        TestUtils.equals(
+            achVendId_a_pad, 0, os2TableBuilder.achVendId(), 0, achVendId_a_pad.length));
   }
 
   public void testUnicodeRange() throws Exception {
@@ -102,5 +98,4 @@ public class OS2Tests extends TestCase {
     }
     return rSet;
   }
-
 }

@@ -1,7 +1,6 @@
 package com.google.typography.font.tools.fontviewer;
 
 import com.google.typography.font.sfntly.table.core.CMapFormat4;
-
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
 
@@ -33,8 +32,9 @@ class CMapFormat4Node extends AbstractNode {
     StringBuilder sb = new StringBuilder();
     sb.append(String.format("Number of segments: %d%n", this.cmap.getSegCount()));
     for (int i = 0, imax = this.cmap.getSegCount(); i < imax; i++) {
-      sb.append(String.format("%3d: from U+%04X until U+%04X%n",
-          i, this.cmap.startCode(i), this.cmap.endCode(i)));
+      sb.append(
+          String.format(
+              "%3d: from U+%04X until U+%04X%n", i, this.cmap.startCode(i), this.cmap.endCode(i)));
     }
 
     return new JTextArea(sb.toString());

@@ -13,8 +13,7 @@ public class ChainSubClassSet extends ChainSubGenericRuleSet<ChainSubClassRule> 
     return new ChainSubClassRule(data, base, dataIsCanonical);
   }
 
-  static class Builder
-      extends ChainSubGenericRuleSet.Builder<ChainSubClassSet, ChainSubClassRule> {
+  static class Builder extends ChainSubGenericRuleSet.Builder<ChainSubClassSet, ChainSubClassRule> {
     Builder() {
       super();
     }
@@ -48,6 +47,5 @@ public class ChainSubClassSet extends ChainSubGenericRuleSet<ChainSubClassRule> 
         ChainSubClassRule subTable) {
       return new ChainSubClassRule.Builder(subTable);
     }
-
   }
 }

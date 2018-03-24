@@ -20,7 +20,6 @@ import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,26 +65,28 @@ public final class FontFactory {
     // Prevent construction.
   }
 
-  public static FontFactory getInstance(/*buffer builder factory*/) {
+  public static FontFactory getInstance(/*buffer builder factory*/ ) {
     return new FontFactory();
   }
 
   // font building settings
 
   /**
-   * Toggle whether fonts that are loaded are fingerprinted with a SHA-1 hash.
-   * If a font is fingerprinted then a SHA-1 hash is generated at load time and stored in the
-   * font. This is useful for uniquely identifying fonts. By default this is turned on.
+   * Toggle whether fonts that are loaded are fingerprinted with a SHA-1 hash. If a font is
+   * fingerprinted then a SHA-1 hash is generated at load time and stored in the font. This is
+   * useful for uniquely identifying fonts. By default this is turned on.
+   *
    * @param fingerprint whether fingerprinting should be turned on or off
    * @see #fingerprintFont()
    * @see Font#digest()
    */
   public void fingerprintFont(boolean fingerprint) {
-    this.fingerprint= fingerprint;
+    this.fingerprint = fingerprint;
   }
 
   /**
    * Get the state of the fingerprinting option for fonts that are loaded.
+   *
    * @return true if fingerprinting is turned on; false otherwise
    * @see #fingerprintFont(boolean)
    * @see Font#digest()
@@ -97,11 +98,10 @@ public final class FontFactory {
   // input stream font loading
 
   /**
-   * Load the font(s) from the input stream. The current settings on the factory
-   * are used during the loading process. One or more fonts are returned if the
-   * stream contains valid font data. Some font container formats may have more
-   * than one font and in this case multiple font objects will be returned. If
-   * the data in the stream cannot be parsed or is invalid an array of size zero
+   * Load the font(s) from the input stream. The current settings on the factory are used during the
+   * loading process. One or more fonts are returned if the stream contains valid font data. Some
+   * font container formats may have more than one font and in this case multiple font objects will
+   * be returned. If the data in the stream cannot be parsed or is invalid an array of size zero
    * will be returned.
    *
    * @param is the input stream font data
@@ -109,31 +109,30 @@ public final class FontFactory {
    */
   public Font[] loadFonts(InputStream is) throws IOException {
     PushbackInputStream pbis =
-      new PushbackInputStream(new BufferedInputStream(is), FontFactory.LOOKAHEAD_SIZE);
+        new PushbackInputStream(new BufferedInputStream(is), FontFactory.LOOKAHEAD_SIZE);
     if (isCollection(pbis)) {
       return loadCollection(pbis);
     }
-    return new Font[] {loadSingleOTF(pbis) };
+    return new Font[] {loadSingleOTF(pbis)};
   }
 
   /**
-   * Load the font(s) from the input stream into font builders. The current
-   * settings on the factory are used during the loading process. One or more
-   * font builders are returned if the stream contains valid font data. Some
-   * font container formats may have more than one font and in this case
-   * multiple font builder objects will be returned. If the data in the stream
-   * cannot be parsed or is invalid an array of size zero will be returned.
+   * Load the font(s) from the input stream into font builders. The current settings on the factory
+   * are used during the loading process. One or more font builders are returned if the stream
+   * contains valid font data. Some font container formats may have more than one font and in this
+   * case multiple font builder objects will be returned. If the data in the stream cannot be parsed
+   * or is invalid an array of size zero will be returned.
    *
    * @param is the input stream font data
    * @return one or more font builders
    */
   public Builder[] loadFontsForBuilding(InputStream is) throws IOException {
     PushbackInputStream pbis =
-      new PushbackInputStream(new BufferedInputStream(is), FontFactory.LOOKAHEAD_SIZE);
+        new PushbackInputStream(new BufferedInputStream(is), FontFactory.LOOKAHEAD_SIZE);
     if (isCollection(pbis)) {
       return loadCollectionForBuilding(pbis);
     }
-    return new Builder[] {loadSingleOTFForBuilding(pbis) };
+    return new Builder[] {loadSingleOTFForBuilding(pbis)};
   }
 
   private Font loadSingleOTF(InputStream is) throws IOException {
@@ -183,11 +182,10 @@ public final class FontFactory {
 
   // ByteArray font loading
   /**
-   * Load the font(s) from the byte array. The current settings on the factory
-   * are used during the loading process. One or more fonts are returned if the
-   * stream contains valid font data. Some font container formats may have more
-   * than one font and in this case multiple font objects will be returned. If
-   * the data in the stream cannot be parsed or is invalid an array of size zero
+   * Load the font(s) from the byte array. The current settings on the factory are used during the
+   * loading process. One or more fonts are returned if the stream contains valid font data. Some
+   * font container formats may have more than one font and in this case multiple font objects will
+   * be returned. If the data in the stream cannot be parsed or is invalid an array of size zero
    * will be returned.
    *
    * @param b the font data
@@ -204,12 +202,11 @@ public final class FontFactory {
   }
 
   /**
-   * Load the font(s) from the byte array into font builders. The current
-   * settings on the factory are used during the loading process. One or more
-   * font builders are returned if the stream contains valid font data. Some
-   * font container formats may have more than one font and in this case
-   * multiple font builder objects will be returned. If the data in the stream
-   * cannot be parsed or is invalid an array of size zero will be returned.
+   * Load the font(s) from the byte array into font builders. The current settings on the factory
+   * are used during the loading process. One or more font builders are returned if the stream
+   * contains valid font data. Some font container formats may have more than one font and in this
+   * case multiple font builder objects will be returned. If the data in the stream cannot be parsed
+   * or is invalid an array of size zero will be returned.
    *
    * @param b the byte array font data
    * @return one or more font builders
@@ -252,8 +249,9 @@ public final class FontFactory {
 
     Font.Builder[] builders = new Font.Builder[numFonts];
     int offsetTableOffset = Offset.OffsetTable;
-    for (int fontNumber = 0; fontNumber < numFonts; fontNumber++,
-        offsetTableOffset += FontData.SizeOf.ULONG) {
+    for (int fontNumber = 0;
+        fontNumber < numFonts;
+        fontNumber++, offsetTableOffset += FontData.SizeOf.ULONG) {
       int offset = wfd.readULongAsInt(offsetTableOffset);
       builders[fontNumber] = this.loadSingleOTFForBuilding(wfd, offset);
     }
@@ -268,19 +266,16 @@ public final class FontFactory {
 
   // font serialization
 
-  /**
-   * Serialize the font to the output stream.
-   */
+  /** Serialize the font to the output stream. */
   public void serializeFont(Font font, OutputStream os) throws IOException {
     // TODO(stuartg) should have serialization options somewhere
     font.serialize(os, tableOrdering);
   }
 
   /**
-   * Set the table ordering to be used in serializing a font. The table ordering
-   * is an ordered list of table ids and tables will be serialized in the order
-   * given. Any tables whose id is not listed in the ordering will be placed in
-   * an unspecified order following those listed.
+   * Set the table ordering to be used in serializing a font. The table ordering is an ordered list
+   * of table ids and tables will be serialized in the order given. Any tables whose id is not
+   * listed in the ordering will be placed in an unspecified order following those listed.
    */
   public void setSerializationTableOrdering(List<Integer> tableOrdering) {
     this.tableOrdering = new ArrayList<Integer>(tableOrdering);

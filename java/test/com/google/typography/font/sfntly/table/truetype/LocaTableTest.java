@@ -4,9 +4,8 @@ import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 import com.google.typography.font.sfntly.testutils.SfAssert;
-import junit.framework.TestCase;
-
 import java.util.Arrays;
+import junit.framework.TestCase;
 
 public class LocaTableTest extends TestCase {
 
@@ -18,7 +17,8 @@ public class LocaTableTest extends TestCase {
     LocaTable table = builder.build();
 
     SfAssert.assertTableHexDumpEquals(
-        "00 00 00 05 00 0f 00 32 00 64",
+        "" //
+            + "00 00 00 05 00 0f 00 32 00 64",
         table);
 
     assertEquals(0, table.loca(0));
@@ -73,7 +73,8 @@ public class LocaTableTest extends TestCase {
     builder.setLocaList(Arrays.asList(0, 10, 30, 100, 1000 * 1000));
     LocaTable table = builder.build();
 
-    SfAssert.assertTableHexDumpEquals(""
+    SfAssert.assertTableHexDumpEquals(
+        "" //
             + "00 00 00 00 00 00 00 0a 00 00 00 1e 00 00 00 64\n"
             + "00 0f 42 40",
         table);

@@ -1,7 +1,6 @@
 package com.google.typography.font.sfntly.table.opentype.component;
 
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
-
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Iterator;
@@ -29,7 +28,7 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
 
   static GlyphGroup inverseGlyphGroup(Collection<GlyphGroup> glyphGroups) {
     GlyphGroup result = new GlyphGroup();
-    for(GlyphGroup glyphGroup : glyphGroups) {
+    for (GlyphGroup glyphGroup : glyphGroups) {
       result.or(glyphGroup);
     }
     result.inverse = true;
@@ -52,7 +51,7 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
 
   void copyTo(Collection<Integer> target) {
     List<Integer> list = new LinkedList<Integer>();
-    for ( int i = this.nextSetBit( 0 ); i >= 0; i = this.nextSetBit( i + 1 ) ) {
+    for (int i = this.nextSetBit(0); i >= 0; i = this.nextSetBit(i + 1)) {
       target.add(i);
     }
   }
@@ -89,9 +88,10 @@ public class GlyphGroup extends BitSet implements Iterable<Integer> {
   public Iterator<Integer> iterator() {
     return new Iterator<Integer>() {
       int i = 0;
+
       @Override
       public boolean hasNext() {
-        return nextSetBit(i) >= 0 ;
+        return nextSetBit(i) >= 0;
       }
 
       @Override

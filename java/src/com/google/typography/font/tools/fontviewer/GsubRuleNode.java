@@ -1,7 +1,6 @@
 package com.google.typography.font.tools.fontviewer;
 
 import com.google.typography.font.sfntly.table.opentype.component.Rule;
-
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
 

@@ -15,11 +15,10 @@
  */
 
 package com.google.typography.font.tools.conversion.eot;
+
 import java.io.ByteArrayOutputStream;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class BitIOWriter {
 
   private ByteArrayOutputStream buf;

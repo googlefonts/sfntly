@@ -19,6 +19,7 @@ enum LookupFlag {
   }
 
   private final int mask;
+
   private LookupFlag(int mask) {
     this.mask = mask;
   }
@@ -35,4 +36,3 @@ enum LookupFlag {
     return flags & ~mask;
   }
 }
-

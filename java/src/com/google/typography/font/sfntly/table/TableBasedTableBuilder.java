@@ -20,11 +20,10 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
 /**
- * An abstract base to be used building tables in which the builder can use the
- * table itself to build from.
+ * An abstract base to be used building tables in which the builder can use the table itself to
+ * build from.
  *
  * @author Stuart Gill
- *
  * @param <T> the type of table to be built
  */
 public abstract class TableBasedTableBuilder<T extends Table> extends Table.Builder<T> {

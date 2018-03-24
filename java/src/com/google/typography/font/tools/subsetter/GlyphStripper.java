@@ -71,21 +71,26 @@ public class GlyphStripper {
     SimpleGlyph simpleGlyph = (SimpleGlyph) glyph;
     ReadableFontData originalGlyfData = glyph.readFontData();
 
-    int dataWritten =
-        writeHeaderAndContoursSize(newGlyf, 0, originalGlyfData, 0, simpleGlyph);
+    int dataWritten = writeHeaderAndContoursSize(newGlyf, 0, originalGlyfData, 0, simpleGlyph);
     dataWritten += writeZeroInstructionLength(newGlyf, dataWritten);
     dataWritten +=
-        writeEndSimpleGlyph(newGlyf, dataWritten, originalGlyfData,
+        writeEndSimpleGlyph(
+            newGlyf,
+            dataWritten,
+            originalGlyfData,
             dataWritten + (simpleGlyph.instructionSize() * FontData.SizeOf.BYTE),
             size - dataWritten);
     return newGlyf;
   }
 
-  private int writeHeaderAndContoursSize(WritableFontData newGlyf, int newGlyfOffset,
-      ReadableFontData originalGlyfData, int glyphOffset, SimpleGlyph simpleGlyph) {
+  private int writeHeaderAndContoursSize(
+      WritableFontData newGlyf,
+      int newGlyfOffset,
+      ReadableFontData originalGlyfData,
+      int glyphOffset,
+      SimpleGlyph simpleGlyph) {
     int headerAndNumberOfContoursSize =
-        (FontData.SizeOf.SHORT * 5)
-            + (simpleGlyph.numberOfContours() * FontData.SizeOf.USHORT);
+        (FontData.SizeOf.SHORT * 5) + (simpleGlyph.numberOfContours() * FontData.SizeOf.USHORT);
     WritableFontData newGlyfSlice = newGlyf.slice(newGlyfOffset, headerAndNumberOfContoursSize);
 
     originalGlyfData.slice(glyphOffset, headerAndNumberOfContoursSize).copyTo(newGlyfSlice);
@@ -97,8 +102,12 @@ public class GlyphStripper {
     return FontData.SizeOf.USHORT;
   }
 
-  private int writeEndSimpleGlyph(WritableFontData newGlyf, int newGlyfOffset,
-      ReadableFontData originalGlyfData, int glyphOffset, int length) {
+  private int writeEndSimpleGlyph(
+      WritableFontData newGlyf,
+      int newGlyfOffset,
+      ReadableFontData originalGlyfData,
+      int glyphOffset,
+      int length) {
     ReadableFontData originalGlyfSlice = originalGlyfData.slice(glyphOffset, length);
     WritableFontData newGlyfSlice = newGlyf.slice(newGlyfOffset, length);
 

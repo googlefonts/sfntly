@@ -19,7 +19,6 @@ package com.google.typography.font.sfntly.table.bitmap;
 import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -68,8 +67,9 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
   @Override
   public int glyphStartOffset(int glyphId) {
     this.checkGlyphRange(glyphId);
-    int loca = this.readFontData().searchUShort(
-        Offset.glyphArray, FontData.SizeOf.USHORT, this.numGlyphs(), glyphId);
+    int loca =
+        this.readFontData()
+            .searchUShort(Offset.glyphArray, FontData.SizeOf.USHORT, this.numGlyphs(), glyphId);
     if (loca == -1) {
       return loca;
     }
@@ -195,8 +195,7 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
     private class BitmapGlyphInfoIterator implements Iterator<BitmapGlyphInfo> {
       private int offsetIndex;
 
-      public BitmapGlyphInfoIterator() {
-      }
+      public BitmapGlyphInfoIterator() {}
 
       @Override
       public boolean hasNext() {
@@ -208,12 +207,13 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
         if (!hasNext()) {
           throw new NoSuchElementException("No more characters to iterate.");
         }
-        BitmapGlyphInfo info = new BitmapGlyphInfo(
-            IndexSubTableFormat5.Builder.this.getGlyphArray().get(this.offsetIndex),
-            IndexSubTableFormat5.Builder.this.imageDataOffset(),
-            this.offsetIndex * IndexSubTableFormat5.Builder.this.imageSize(),
-            IndexSubTableFormat5.Builder.this.imageSize(),
-            IndexSubTableFormat5.Builder.this.imageFormat());
+        BitmapGlyphInfo info =
+            new BitmapGlyphInfo(
+                IndexSubTableFormat5.Builder.this.getGlyphArray().get(this.offsetIndex),
+                IndexSubTableFormat5.Builder.this.imageDataOffset(),
+                this.offsetIndex * IndexSubTableFormat5.Builder.this.imageSize(),
+                IndexSubTableFormat5.Builder.this.imageSize(),
+                IndexSubTableFormat5.Builder.this.imageFormat());
         this.offsetIndex++;
         return info;
       }
@@ -262,8 +262,8 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
     protected int subSerialize(WritableFontData newData) {
       int size = super.serializeIndexSubHeader(newData);
       if (!this.modelChanged()) {
-        size += this.internalReadData().slice(Offset.imageSize)
-            .copyTo(newData.slice(Offset.imageSize));
+        size +=
+            this.internalReadData().slice(Offset.imageSize).copyTo(newData.slice(Offset.imageSize));
       } else {
         size += newData.writeULong(Offset.imageSize, this.imageSize());
         size += this.bigMetrics().subSerialize(newData.slice(size));

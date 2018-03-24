@@ -15,17 +15,14 @@
  */
 package com.google.typography.font.sfntly.data;
 
+import java.util.Arrays;
 import junit.framework.TestCase;
 
-import java.util.Arrays;
-
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class OpenTypeDataTests extends TestCase {
 
   private static final byte[] testBytes =
-    new byte[] {(byte) 0xff, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01};
+      new byte[] {(byte) 0xff, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01};
 
   public OpenTypeDataTests(String name) {
     super(name);

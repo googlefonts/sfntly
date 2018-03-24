@@ -22,10 +22,10 @@ import javax.swing.tree.TreeModel;
 
 /**
  * The FontViewer application shows the hierarchy of some of the tables of a font.
- * <p>
- * Each node in the left tree corresponds to an {@link AbstractNode} object,
- * starting with the {@link FontNode} for a complete font.
- * To navigate to the child nodes, examine {@link FontNode#getChildAt(int)}.
+ *
+ * <p>Each node in the left tree corresponds to an {@link AbstractNode} object, starting with the
+ * {@link FontNode} for a complete font. To navigate to the child nodes, examine {@link
+ * FontNode#getChildAt(int)}.
  */
 public class FontViewer {
 
@@ -43,12 +43,13 @@ public class FontViewer {
     TreeModel model = new DefaultTreeModel(new FontNode(font));
     JTree fontTree = new JTree(model);
     fontTree.setBorder(new EmptyBorder(3, 3, 3, 3));
-    fontTree.addTreeSelectionListener(new TreeSelectionListener() {
-      @Override
-      public void valueChanged(TreeSelectionEvent e) {
-        render((AbstractNode) e.getPath().getLastPathComponent());
-      }
-    });
+    fontTree.addTreeSelectionListener(
+        new TreeSelectionListener() {
+          @Override
+          public void valueChanged(TreeSelectionEvent e) {
+            render((AbstractNode) e.getPath().getLastPathComponent());
+          }
+        });
 
     JScrollPane fontPane = new JScrollPane(fontTree);
     fontPane.setPreferredSize(new Dimension(300, 500));

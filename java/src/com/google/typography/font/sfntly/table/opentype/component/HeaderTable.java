@@ -3,7 +3,6 @@ package com.google.typography.font.sfntly.table.opentype.component;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -75,9 +74,8 @@ public abstract class HeaderTable extends SubTable {
     }
 
     /**
-     * Even though public, not to be used by the end users. Made public only
-     * make it available to packages under
-     * {@code com.google.typography.font.sfntly.table.opentype}.
+     * Even though public, not to be used by the end users. Made public only make it available to
+     * packages under {@code com.google.typography.font.sfntly.table.opentype}.
      */
     @Override
     public int subDataSizeToSerialize() {

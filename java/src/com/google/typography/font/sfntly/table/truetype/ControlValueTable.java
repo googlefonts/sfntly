@@ -34,16 +34,12 @@ public final class ControlValueTable extends Table {
     super(header, data);
   }
 
-  /**
-   * Get the data value at the specified index.
-   */
+  /** Get the data value at the specified index. */
   public int fword(int index) {
     return this.data.readFWord(index);
   }
 
-  /**
-   * Get the number of FWORDs in the data.
-   */
+  /** Get the number of FWORDs in the data. */
   public int fwordCount() {
     return this.dataLength() / FontData.SizeOf.FWORD;
   }

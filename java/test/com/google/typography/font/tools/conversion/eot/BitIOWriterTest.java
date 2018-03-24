@@ -18,9 +18,7 @@ package com.google.typography.font.tools.conversion.eot;
 
 import junit.framework.TestCase;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class BitIOWriterTest extends TestCase {
   // Note: if we use Guava, use MoreAsserts.assertEquals instead
   private void assertEqualsByteArray(byte[] expected, byte[] actual) {
@@ -43,7 +41,7 @@ public class BitIOWriterTest extends TestCase {
     writer.writeBit(1);
     writer.flush();
     byte[] result = writer.toByteArray();
-    byte[] expected = {(byte)0xb2, (byte)0x80};
+    byte[] expected = {(byte) 0xb2, (byte) 0x80};
     assertEqualsByteArray(expected, result);
   }
 
@@ -53,7 +51,7 @@ public class BitIOWriterTest extends TestCase {
     writer.writeValue(0x245, 10);
     writer.flush();
     byte[] result = writer.toByteArray();
-    byte[] expected = {(byte)0xab, (byte)0x22, (byte)0x80};
+    byte[] expected = {(byte) 0xab, (byte) 0x22, (byte) 0x80};
     assertEqualsByteArray(expected, result);
   }
 
@@ -70,7 +68,7 @@ public class BitIOWriterTest extends TestCase {
     writer.writeBit(true);
     writer.flush();
     byte[] result = writer.toByteArray();
-    byte[] expected = {(byte)0xb2, (byte)0x80};
+    byte[] expected = {(byte) 0xb2, (byte) 0x80};
     assertEqualsByteArray(expected, result);
   }
 }

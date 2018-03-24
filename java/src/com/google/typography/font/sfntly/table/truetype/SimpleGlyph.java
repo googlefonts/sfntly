@@ -64,10 +64,11 @@ public final class SimpleGlyph extends Glyph {
         this.yCoordinatesOffset = 0;
         return;
       }
-      this.instructionSize = this.data.readUShort(Offset.simpleEndPtsOfCountours
-          + this.numberOfContours() * FontData.SizeOf.USHORT);
-      this.instructionsOffset = Offset.simpleEndPtsOfCountours
-          + (this.numberOfContours() + 1) * FontData.SizeOf.USHORT;
+      this.instructionSize =
+          this.data.readUShort(
+              Offset.simpleEndPtsOfCountours + this.numberOfContours() * FontData.SizeOf.USHORT);
+      this.instructionsOffset =
+          Offset.simpleEndPtsOfCountours + (this.numberOfContours() + 1) * FontData.SizeOf.USHORT;
       this.flagsOffset = this.instructionsOffset + this.instructionSize * FontData.SizeOf.BYTE;
       this.numberOfPoints = this.contourEndPoint(this.numberOfContours() - 1) + 1;
       this.xCoordinates = new int[this.numberOfPoints];
@@ -144,8 +145,7 @@ public final class SimpleGlyph extends Glyph {
       // get the y coordinate
       if ((flag & FLAG_YSHORT) != 0) {
         if (fillArrays) {
-          this.yCoordinates[pointIndex] =
-              this.data.readUByte(this.yCoordinatesOffset + yByteIndex);
+          this.yCoordinates[pointIndex] = this.data.readUByte(this.yCoordinatesOffset + yByteIndex);
           this.yCoordinates[pointIndex] *= ((flag & FLAG_YREPEATSIGN) != 0) ? 1 : -1;
         }
         yByteIndex++;
@@ -217,8 +217,18 @@ public final class SimpleGlyph extends Glyph {
     sb.append("\tinstruction bytes = " + this.instructionSize() + "\n");
     for (int contour = 0; contour < this.numberOfContours(); contour++) {
       for (int point = 0; point < this.numberOfPoints(contour); point++) {
-        sb.append("\t" + contour + ":" + point + " = [" + this.xCoordinate(contour, point) + ", "
-            + this.yCoordinate(contour, point) + ", " + this.onCurve(contour, point) + "]\n");
+        sb.append(
+            "\t"
+                + contour
+                + ":"
+                + point
+                + " = ["
+                + this.xCoordinate(contour, point)
+                + ", "
+                + this.yCoordinate(contour, point)
+                + ", "
+                + this.onCurve(contour, point)
+                + "]\n");
       }
     }
     return sb.toString();

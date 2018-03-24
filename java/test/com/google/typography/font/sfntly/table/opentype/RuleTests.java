@@ -7,10 +7,6 @@ import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.opentype.component.GlyphGroup;
 import com.google.typography.font.sfntly.table.opentype.component.Rule;
 import com.google.typography.font.sfntly.table.opentype.testing.FontLoader;
-
-import org.junit.Assume;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,10 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import org.junit.Assume;
+import org.junit.Test;
 
 /**
- * Comparison data is generated from Harfbuzz by running:
- * util/hb-ot-shape-closure --no-glyph-names NotoSansMalayalam.ttf <text>
+ * Comparison data is generated from Harfbuzz by running: util/hb-ot-shape-closure --no-glyph-names
+ * NotoSansMalayalam.ttf <text>
  */
 public class RuleTests {
   private static final String FONTS_DIR = "/usr/local/google/home/cibu/sfntly/fonts";
@@ -78,8 +76,8 @@ public class RuleTests {
 
   @Test
   public void aFont() throws IOException {
-    File fontFile = new File("/usr/local/google/home/cibu/sfntly/fonts/noto/" +
-        "NotoSansBengali-Regular.ttf");
+    File fontFile =
+        new File("/usr/local/google/home/cibu/sfntly/fonts/noto/" + "NotoSansBengali-Regular.ttf");
     Assume.assumeTrue(fontFile.exists());
 
     Font font = FontLoader.getFont(fontFile);
@@ -93,8 +91,10 @@ public class RuleTests {
   }
 
   private static void assertClosure(
-      CMapTable cmap, Map<Integer, Set<Rule>> glyphRulesMap,
-      List<String> words, List<GlyphGroup> expecteds) {
+      CMapTable cmap,
+      Map<Integer, Set<Rule>> glyphRulesMap,
+      List<String> words,
+      List<GlyphGroup> expecteds) {
     for (int i = 0; i < expecteds.size() && i < TEST_COUNT; i++) {
       String word = words.get(i);
       GlyphGroup expected = expecteds.get(i);
@@ -106,7 +106,7 @@ public class RuleTests {
         System.err.println("Skipped: " + word);
       } else if (!expected.equals(closure)) {
         System.err.printf("'%s' failed:\n  %s HB\n  %s Snftly\n\n", word, expected, closure);
-        //Assert.assertEquals(word, expected, closure);
+        // Assert.assertEquals(word, expected, closure);
       }
     }
   }

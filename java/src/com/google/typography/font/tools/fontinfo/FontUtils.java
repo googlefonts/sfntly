@@ -24,26 +24,23 @@ import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
-
 import com.ibm.icu.lang.UCharacter;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
  * Font Utility functions
+ *
  * @author Brian Stell, Han-Wen Yeh
  */
 public class FontUtils {
   /**
    * Gets a Font object for a font file in the given path
    *
-   * @param fontFile
-   *          the path to the font file
+   * @param fontFile the path to the font file
    * @return the Font object representing the font
-   * @throws IOException
-   *           if font file does not exist or is invalid
+   * @throws IOException if font file does not exist or is invalid
    */
   public static Font[] getFonts(String fontFile) throws IOException {
     return getFonts(new FileInputStream(fontFile));
@@ -52,11 +49,9 @@ public class FontUtils {
   /**
    * Gets a Font object for a font file in the InputStream
    *
-   * @param is
-   *          an InputStream containing the font file
+   * @param is an InputStream containing the font file
    * @return the Font object representing the font
-   * @throws IOException
-   *           if font file or is invalid
+   * @throws IOException if font file or is invalid
    */
   public static Font[] getFonts(InputStream is) throws IOException {
     FontFactory fontFactory = FontFactory.getInstance();
@@ -75,13 +70,11 @@ public class FontUtils {
   /**
    * Gets the table with the specified tag for the given font
    *
-   * @param font
-   *          the source font
-   * @param tag
-   *          the tag for the table to return
+   * @param font the source font
+   * @param tag the tag for the table to return
    * @return the specified table for the given font
-   * @throws UnsupportedOperationException
-   *           if the font does not contain the table with the specified tag
+   * @throws UnsupportedOperationException if the font does not contain the table with the specified
+   *     tag
    * @see Tag
    */
   public static Table getTable(Font font, int tag) {
@@ -95,11 +88,9 @@ public class FontUtils {
   /**
    * Gets the cmap table for the given font
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return the cmap table for the given font
-   * @throws UnsupportedOperationException
-   *           if the font does not contain a valid cmap table
+   * @throws UnsupportedOperationException if the font does not contain a valid cmap table
    */
   public static CMapTable getCMapTable(Font font) {
     return (CMapTable) getTable(font, Tag.cmap);
@@ -108,22 +99,21 @@ public class FontUtils {
   /**
    * Gets either a UCS4 or UCS2 cmap, if available
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return the UCS4 or UCS2 cmap
-   * @throws UnsupportedOperationException
-   *           if font does not contain a UCS-4 or UCS-2 cmap
+   * @throws UnsupportedOperationException if font does not contain a UCS-4 or UCS-2 cmap
    */
   public static CMap getUCSCMap(Font font) {
     CMapTable cmapTable = getCMapTable(font);
 
     // Obtain the UCS-4 cmap. If it doesn't exist, then obtain the UCS-2 cmap
     CMap cmap = null;
-    cmap = cmapTable.cmap(
-        Font.PlatformId.Windows.value(), Font.WindowsEncodingId.UnicodeUCS4.value());
+    cmap =
+        cmapTable.cmap(Font.PlatformId.Windows.value(), Font.WindowsEncodingId.UnicodeUCS4.value());
     if (cmap == null) {
-      cmap = cmapTable.cmap(
-          Font.PlatformId.Windows.value(), Font.WindowsEncodingId.UnicodeUCS2.value());
+      cmap =
+          cmapTable.cmap(
+              Font.PlatformId.Windows.value(), Font.WindowsEncodingId.UnicodeUCS2.value());
     }
     if (cmap == null) {
       throw new UnsupportedOperationException("Font has no UCS-4 or UCS-2 cmap");
@@ -135,11 +125,9 @@ public class FontUtils {
   /**
    * Gets the loca table for the given font
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return the loca table for the given font
-   * @throws UnsupportedOperationException
-   *           if the font does not contain a valid loca table
+   * @throws UnsupportedOperationException if the font does not contain a valid loca table
    */
   public static LocaTable getLocaTable(Font font) {
     return (LocaTable) getTable(font, Tag.loca);
@@ -148,11 +136,9 @@ public class FontUtils {
   /**
    * Gets the glyph table for the given font
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return the glyph table for the given font
-   * @throws UnsupportedOperationException
-   *           if the font does not contain a valid glyph table
+   * @throws UnsupportedOperationException if the font does not contain a valid glyph table
    */
   public static GlyphTable getGlyphTable(Font font) {
     return (GlyphTable) getTable(font, Tag.glyf);
@@ -161,8 +147,7 @@ public class FontUtils {
   /**
    * Gets a string version of the code point formatted as "U+hhhh" or "U+hhhhhh"
    *
-   * @param codePoint
-   *          the code point to format
+   * @param codePoint the code point to format
    * @return a formatted version of the code point as a string
    */
   public static String getFormattedCodePointString(int codePoint) {

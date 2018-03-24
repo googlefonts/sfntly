@@ -1,9 +1,8 @@
 package com.google.typography.font.sfntly.data;
 
-import junit.framework.TestCase;
-
 import java.util.Arrays;
 import java.util.HashSet;
+import junit.framework.TestCase;
 
 public class SfStringUtilsTest extends TestCase {
 
@@ -14,7 +13,6 @@ public class SfStringUtilsTest extends TestCase {
 
     assertEquals(
         new HashSet<Integer>(Arrays.asList(0x1F645)),
-        SfStringUtils.getAllCodepoints(new String(new int[] { 0x1F645 }, 0, 1)));
+        SfStringUtils.getAllCodepoints(new String(new int[] {0x1F645}, 0, 1)));
   }
-
 }

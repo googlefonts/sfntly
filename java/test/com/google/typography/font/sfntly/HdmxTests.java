@@ -19,15 +19,11 @@ package com.google.typography.font.sfntly;
 import com.google.typography.font.sfntly.table.core.HorizontalDeviceMetricsTable;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.io.IOException;
+import junit.framework.TestCase;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class HdmxTests extends TestCase {
   private static final File TEST_FONT_FILE = TestFont.TestFontNames.DROIDSANS.getFile();
 
@@ -45,12 +41,12 @@ public class HdmxTests extends TestCase {
     assertEquals(7, hdmxTable.maxWidth(0));
     assertEquals(28, hdmxTable.maxWidth(18));
 
-    assertEquals(4, hdmxTable.width(0, 0));  // .notdef
+    assertEquals(4, hdmxTable.width(0, 0)); // .notdef
     assertEquals(4, hdmxTable.width(1, 0));
     assertEquals(5, hdmxTable.width(2, 0));
     assertEquals(14, hdmxTable.width(18, 0));
 
-    assertEquals(4, hdmxTable.width(0, 36));  // A
+    assertEquals(4, hdmxTable.width(0, 36)); // A
     assertEquals(5, hdmxTable.width(1, 36));
     assertEquals(6, hdmxTable.width(2, 36));
     assertEquals(15, hdmxTable.width(18, 36));
@@ -94,6 +90,5 @@ public class HdmxTests extends TestCase {
     } catch (IndexOutOfBoundsException e) {
       // expected
     }
-
   }
 }

@@ -29,7 +29,6 @@ import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
 import com.google.typography.font.sfntly.table.core.NameTable;
 import com.google.typography.font.sfntly.table.core.NameTable.NameEntry;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -40,19 +39,17 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class TestFontUtils {
 
-  private static final Logger logger =
-    Logger.getLogger(Font.class.getCanonicalName());
+  private static final Logger logger = Logger.getLogger(Font.class.getCanonicalName());
 
   private TestFontUtils() {}
 
   /**
-   * Open a file and read any fonts that it contains.
-   * In many cases this will be a single font but it may be multiple fonts.
+   * Open a file and read any fonts that it contains. In many cases this will be a single font but
+   * it may be multiple fonts.
+   *
    * @param file the file holding the font(s)
    * @return the fonts that came from the file
    */
@@ -61,8 +58,9 @@ public class TestFontUtils {
   }
 
   /**
-   * Open a file and read any fonts that it contains.
-   * In many cases this will be a single font but it may be multiple fonts.
+   * Open a file and read any fonts that it contains. In many cases this will be a single font but
+   * it may be multiple fonts.
+   *
    * @param file the file holding the font(s)
    * @return the fonts that came from the file
    */
@@ -80,6 +78,7 @@ public class TestFontUtils {
   /**
    * Open a file and read any fonts that it contains and check the fonts against supplied expected
    * fingerprints.
+   *
    * @param file the file holding the font(s)
    * @param expectedFingerprints array of expected fingerprints for each font in the file
    * @return the fonts that came from the file
@@ -88,16 +87,21 @@ public class TestFontUtils {
     Font[] fonts = loadFont(file, true);
     for (int i = 0; i < Math.min(fonts.length, expectedFingerprints.length); i++) {
       if (expectedFingerprints[i] != fonts[i].digest()) {
-        throw new IOException("Did not get the expected fingerprint for font#" +
-            i + " in " + file.getPath() + " Has the file changed?");
+        throw new IOException(
+            "Did not get the expected fingerprint for font#"
+                + i
+                + " in "
+                + file.getPath()
+                + " Has the file changed?");
       }
     }
     return fonts;
   }
 
   /**
-   * Open a file and read any fonts that it contains.
-   * In many cases this will be a single font but it may be multiple fonts.
+   * Open a file and read any fonts that it contains. In many cases this will be a single font but
+   * it may be multiple fonts.
+   *
    * @param file the file holding the font(s)
    * @return the fonts that came from the file
    */
@@ -106,8 +110,9 @@ public class TestFontUtils {
   }
 
   /**
-   * Open a file and read any fonts that it contains.
-   * In many cases this will be a single font but it may be multiple fonts.
+   * Open a file and read any fonts that it contains. In many cases this will be a single font but
+   * it may be multiple fonts.
+   *
    * @param file the file holding the font(s)
    * @return the fonts that came from the file
    */
@@ -118,14 +123,16 @@ public class TestFontUtils {
     return fontFactory.loadFonts(b);
   }
 
-  private static final Comparator<Table> TABLE_COMPARATOR_BY_OFFSET = new Comparator<Table>() {
-    @Override public int compare(Table o1, Table o2) {
-      return o1.header().offset() - o2.header().offset();
-    }
-  };
+  private static final Comparator<Table> TABLE_COMPARATOR_BY_OFFSET =
+      new Comparator<Table>() {
+        @Override
+        public int compare(Table o1, Table o2) {
+          return o1.header().offset() - o2.header().offset();
+        }
+      };
 
-  public static
-  Font[] buildAndCheckFont(FontFactory fontFactory, InputStream is, int debug) throws IOException {
+  public static Font[] buildAndCheckFont(FontFactory fontFactory, InputStream is, int debug)
+      throws IOException {
 
     Font[] fontArray = fontFactory.loadFonts(is);
 
@@ -203,8 +210,7 @@ public class TestFontUtils {
   }
 
   public static File serializeFont(Font font, String extension) throws Exception {
-    File serializedFontFile =
-      File.createTempFile("serializedFont_", extension);
+    File serializedFontFile = File.createTempFile("serializedFont_", extension);
     return TestFontUtils.serializeFont(font, serializedFontFile);
   }
 

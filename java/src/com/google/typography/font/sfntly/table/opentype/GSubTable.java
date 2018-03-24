@@ -20,23 +20,22 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
-
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * The 'GSUB' table handles glyph substitutions such as ligatures and
- * context-dependent display variants, such as Arabic.
+ * The 'GSUB' table handles glyph substitutions such as ligatures and context-dependent display
+ * variants, such as Arabic.
  *
  * @see "ISO/IEC 14496-22:2015, section 6.3.4"
  */
 public class GSubTable extends Table {
   private final GsubCommonTable gsub;
-  private final AtomicReference<ScriptListTable>
-      scriptListTable = new AtomicReference<ScriptListTable>();
-  private final AtomicReference<FeatureListTable>
-      featureListTable = new AtomicReference<FeatureListTable>();
-  private final AtomicReference<LookupListTable>
-      lookupListTable = new AtomicReference<LookupListTable>();
+  private final AtomicReference<ScriptListTable> scriptListTable =
+      new AtomicReference<ScriptListTable>();
+  private final AtomicReference<FeatureListTable> featureListTable =
+      new AtomicReference<FeatureListTable>();
+  private final AtomicReference<LookupListTable> lookupListTable =
+      new AtomicReference<LookupListTable>();
 
   private GSubTable(Header header, ReadableFontData data, boolean dataIsCanonical) {
     super(header, data);
@@ -71,9 +70,7 @@ public class GSubTable extends Table {
       return new Builder(header, data);
     }
 
-    /**
-     * Builds a table from the data, using copy-on-write if necessary.
-     */
+    /** Builds a table from the data, using copy-on-write if necessary. */
     private Builder(Header header, ReadableFontData data) {
       super(header, data);
       gsub = new GsubCommonTable.Builder(data, false);

@@ -23,17 +23,12 @@ import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
+import junit.framework.TestCase;
 
-
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class CMapEditingTests extends TestCase {
   private static final boolean DEBUG = false;
 
@@ -52,8 +47,7 @@ public class CMapEditingTests extends TestCase {
 
     CMapTable.Builder cmapTableBuilder = (CMapTable.Builder) fontBuilder.getTableBuilder(Tag.cmap);
 
-    Iterator<? extends CMap.Builder<? extends CMap>> cmapBuilderIter =
-      cmapTableBuilder.iterator();
+    Iterator<? extends CMap.Builder<? extends CMap>> cmapBuilderIter = cmapTableBuilder.iterator();
     while (cmapBuilderIter.hasNext()) {
       CMap.Builder<? extends CMap> cmapBuilder = cmapBuilderIter.next();
       if (cmapBuilder.cmapId().equals(CMapId.WINDOWS_BMP)) {
@@ -99,8 +93,7 @@ public class CMapEditingTests extends TestCase {
     Font.Builder fontBuilder = TestFontUtils.builderForFontFile(TEST_FONT_FILE);
     CMapTable.Builder cmapTableBuilder = (CMapTable.Builder) fontBuilder.getTableBuilder(Tag.cmap);
 
-    CMap.Builder<? extends CMap> cmapBuilder =
-        cmapTableBuilder.cmapBuilder(CMapId.WINDOWS_BMP);
+    CMap.Builder<? extends CMap> cmapBuilder = cmapTableBuilder.cmapBuilder(CMapId.WINDOWS_BMP);
     assertEquals(cmapBuilder.format(), CMapFormat.Format4);
 
     // build and test the changed font
@@ -119,8 +112,7 @@ public class CMapEditingTests extends TestCase {
     Font.Builder fontBuilder = TestFontUtils.builderForFontFile(TEST_FONT_FILE);
     CMapTable.Builder cmapTableBuilder = (CMapTable.Builder) fontBuilder.getTableBuilder(Tag.cmap);
 
-    CMap.Builder<? extends CMap> cmapBuilder =
-      cmapTableBuilder.cmapBuilder(CMapId.WINDOWS_BMP);
+    CMap.Builder<? extends CMap> cmapBuilder = cmapTableBuilder.cmapBuilder(CMapId.WINDOWS_BMP);
     if (cmapBuilder.format() != CMapFormat.Format4) {
       fail("Windows BMP CMap is not Format 4.");
     }
@@ -160,9 +152,9 @@ public class CMapEditingTests extends TestCase {
     CMapTable newCMapTable = newFont.getTable(Tag.cmap);
     CMap newCMap = newCMapTable.cmap(CMapId.WINDOWS_BMP);
 
-    //Font originalFont = TestFontUtils.loadFont(TEST_FONT_FILE)[0];
-    //CMapTable cmapTable = originalFont.table(Tag.cmap);
-    //CMapTable.CMap cmap = cmapTable.cmap(CMapId.WINDOWS_BMP);
+    // Font originalFont = TestFontUtils.loadFont(TEST_FONT_FILE)[0];
+    // CMapTable cmapTable = originalFont.table(Tag.cmap);
+    // CMapTable.CMap cmap = cmapTable.cmap(CMapId.WINDOWS_BMP);
     assertEquals(CMapFormat.Format4.value(), newCMap.format());
     assertTrue(segmentModified >= 0);
     CMapFormat4 cmap4 = (CMapFormat4) newCMap;

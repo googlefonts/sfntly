@@ -5,14 +5,13 @@ package com.google.typography.font.sfntly.table.opentype.component;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 public abstract class OffsetRecordTable<S extends SubTable> extends HeaderTable
-implements Iterable<S> {
+    implements Iterable<S> {
   public final NumRecordList recordList;
 
   // ///////////////
@@ -88,8 +87,8 @@ implements Iterable<S> {
   }
 
   public abstract static class Builder<
-  T extends OffsetRecordTable<? extends SubTable>, S extends SubTable>
-  extends HeaderTable.Builder<T> {
+          T extends OffsetRecordTable<? extends SubTable>, S extends SubTable>
+      extends HeaderTable.Builder<T> {
 
     private List<VisibleSubTable.Builder<S>> builders;
     private boolean dataIsCanonical;

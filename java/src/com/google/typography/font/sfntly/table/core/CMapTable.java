@@ -24,7 +24,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.SubTableContainerTable;
 import com.google.typography.font.sfntly.table.core.CMap.CMapFormat;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,14 +37,12 @@ import java.util.NoSuchElementException;
  */
 public final class CMapTable extends SubTableContainerTable implements Iterable<CMap> {
 
-  /**
-   * The .notdef glyph.
-   */
+  /** The .notdef glyph. */
   public static final int NOTDEF = 0;
 
   /**
-   * Offsets to specific elements in the underlying data. These offsets are relative to the
-   * start of the table or the start of sub-blocks within the table.
+   * Offsets to specific elements in the underlying data. These offsets are relative to the start of
+   * the table or the start of sub-blocks within the table.
    */
   private interface HeaderOffsets {
     int version = 0;
@@ -98,8 +95,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
         return false;
       }
       CMapId other = (CMapId) obj;
-      return this.platformId == other.platformId
-          && this.encodingId == other.encodingId;
+      return this.platformId == other.platformId && this.encodingId == other.encodingId;
     }
 
     @Override
@@ -136,7 +132,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
    *
    * @param id the id of the cmap to get the index for; this value cannot be null
    * @return the index of the cmap in the table or -1 if the cmap with the CMapId does not exist in
-   *         the table
+   *     the table
    */
   // TODO Modify the iterator to be index-based and used here
   public int getCmapIndex(CMapId id) {
@@ -150,8 +146,8 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
   }
 
   /**
-   * Gets the offset in the table data for the encoding record for the cmap with
-   * the given index. The offset is from the beginning of the table.
+   * Gets the offset in the table data for the encoding record for the cmap with the given index.
+   * The offset is from the beginning of the table.
    *
    * @param index the index of the cmap
    * @return offset in the table data
@@ -191,8 +187,8 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
   }
 
   /**
-   * Gets the offset in the table data for the cmap table with the given index.
-   * The offset is from the beginning of the table.
+   * Gets the offset in the table data for the cmap table with the given index. The offset is from
+   * the beginning of the table.
    *
    * @param index the index of the cmap
    * @return the offset in the table data
@@ -201,17 +197,15 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
     return this.data.readULongAsInt(offsetForEncodingRecord(index) + EncodingRecord.offset);
   }
 
-  /**
-   * Gets an iterator over all of the cmaps within this CMapTable.
-   */
+  /** Gets an iterator over all of the cmaps within this CMapTable. */
   @Override
   public Iterator<CMap> iterator() {
     return new CMapIterator();
   }
 
   /**
-   * Gets an iterator over the cmaps within this CMap table using the provided
-   * filter to select the cmaps returned.
+   * Gets an iterator over the cmaps within this CMap table using the provided filter to select the
+   * cmaps returned.
    */
   public Iterator<CMap> iterator(CMapFilter filter) {
     return new CMapIterator(filter);
@@ -231,13 +225,9 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
     return sb.toString();
   }
 
-  /**
-   * A filter on cmaps.
-   */
+  /** A filter on cmaps. */
   public interface CMapFilter {
-    /**
-     * Test on whether the cmap is acceptable or not.
-     */
+    /** Test on whether the cmap is acceptable or not. */
     boolean accept(CMapId cmapId);
   }
 
@@ -280,29 +270,27 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
     }
   }
 
-  /**
-   * Gets the cmap for the given index.
-   */
+  /** Gets the cmap for the given index. */
   public CMap cmap(int index) {
     CMap.Builder<? extends CMap> builder =
         CMapTable.Builder.cmapBuilder(this.readFontData(), index);
     return builder.build();
   }
 
-  /**
-   * Gets the cmap with the given ids if it exists.
-   */
+  /** Gets the cmap with the given ids if it exists. */
   public CMap cmap(int platformId, int encodingId) {
     return cmap(CMapId.getInstance(platformId, encodingId));
   }
 
   public CMap cmap(final CMapId cmapId) {
-    Iterator<CMap> cmapIter = this.iterator(new CMapFilter() {
-      @Override
-      public boolean accept(CMapId foundCMapId) {
-        return cmapId.equals(foundCMapId);
-      }
-    });
+    Iterator<CMap> cmapIter =
+        this.iterator(
+            new CMapFilter() {
+              @Override
+              public boolean accept(CMapId foundCMapId) {
+                return cmapId.equals(foundCMapId);
+              }
+            });
     // can only be one cmap for each set of ids
     if (cmapIter.hasNext()) {
       return cmapIter.next();
@@ -310,9 +298,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
     return null;
   }
 
-  /**
-   * CMap Table Builder.
-   */
+  /** CMap Table Builder. */
   public static class Builder extends SubTableContainerTable.Builder<CMapTable> {
 
     private int version = 0; // TODO(stuartg): make a CMapTable constant
@@ -326,9 +312,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
       super(header, data);
     }
 
-    /**
-     * Builds a table from the data, using copy-on-write if necessary.
-     */
+    /** Builds a table from the data, using copy-on-write if necessary. */
     protected Builder(Header header, ReadableFontData data) {
       super(header, data);
     }
@@ -464,14 +448,13 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
     }
 
     /**
-     * Gets a new cmap builder for this cmap table. The new cmap builder will be
-     * for the cmap id specified and initialized with the data given. The data
-     * will be copied and the original data will not be modified.
+     * Gets a new cmap builder for this cmap table. The new cmap builder will be for the cmap id
+     * specified and initialized with the data given. The data will be copied and the original data
+     * will not be modified.
      *
      * @param cmapId the id for the new cmap builder
      * @param data the data to copy for the new cmap builder
-     * @return a new cmap builder initialized with the cmap id and a copy of the
-     *         data
+     * @return a new cmap builder initialized with the cmap id and a copy of the data
      */
     public CMap.Builder<? extends CMap> newCMapBuilder(CMapId cmapId, ReadableFontData data)
         throws IOException {
@@ -494,6 +477,5 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
       Map<CMapId, CMap.Builder<? extends CMap>> cmapBuilders = this.getCMapBuilders();
       return cmapBuilders.get(cmapId);
     }
-
   }
 }

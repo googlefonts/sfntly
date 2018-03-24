@@ -1,10 +1,8 @@
 package com.google.typography.font.tools.fontviewer;
 
 import com.google.typography.font.sfntly.table.opentype.GSubTable;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
 

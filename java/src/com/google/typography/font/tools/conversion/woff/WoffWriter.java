@@ -22,16 +22,13 @@ import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.core.FontHeaderTable;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.zip.Deflater;
 
-/**
- * @author Jeremie Lenfant-Engelmann
- */
+/** @author Jeremie Lenfant-Engelmann */
 public class WoffWriter {
 
   protected boolean woff_compression_faster = false;
@@ -43,18 +40,21 @@ public class WoffWriter {
   public WritableFontData convert(Font font) {
     List<TableDirectoryEntry> tableDirectoryEntries = createTableDirectoryEntries(font);
     int length =
-        WOFF_HEADER_SIZE + computeTableDirectoryEntriesLength(tableDirectoryEntries)
+        WOFF_HEADER_SIZE
+            + computeTableDirectoryEntriesLength(tableDirectoryEntries)
             + computeTablesLength(tableDirectoryEntries);
     WritableFontData writableFontData = WritableFontData.createWritableFontData(length);
     int index = 0;
 
-    index += writeWoffHeader(writableFontData,
-        index,
-        tableDirectoryEntries,
-        font.sfntVersion(),
-        length,
-        extractMajorVersion(font),
-        extractMinorVersion(font));
+    index +=
+        writeWoffHeader(
+            writableFontData,
+            index,
+            tableDirectoryEntries,
+            font.sfntVersion(),
+            length,
+            extractMajorVersion(font),
+            extractMinorVersion(font));
     index += writeTableDirectoryEntries(writableFontData, index, tableDirectoryEntries);
     index += writeTables(writableFontData, index, tableDirectoryEntries);
     return writableFontData;
@@ -74,8 +74,7 @@ public class WoffWriter {
     return (value + 3) & -4;
   }
 
-  private int computeTableDirectoryEntriesLength(
-      List<TableDirectoryEntry> tableDirectoryEntries) {
+  private int computeTableDirectoryEntriesLength(List<TableDirectoryEntry> tableDirectoryEntries) {
     return TableDirectoryEntry.ENTRY_SIZE * tableDirectoryEntries.size();
   }
 
@@ -88,7 +87,8 @@ public class WoffWriter {
     return length;
   }
 
-  private int writeWoffHeader(WritableFontData writableFontData,
+  private int writeWoffHeader(
+      WritableFontData writableFontData,
       int start,
       List<TableDirectoryEntry> tableDirectoryEntries,
       int flavor,
@@ -104,8 +104,10 @@ public class WoffWriter {
 
     // totalSfntSize
     index +=
-        writableFontData.writeULong(index, computeUncompressedTablesLength(tableDirectoryEntries)
-            + computeTableSfntHeaderLength(tableDirectoryEntries));
+        writableFontData.writeULong(
+            index,
+            computeUncompressedTablesLength(tableDirectoryEntries)
+                + computeTableSfntHeaderLength(tableDirectoryEntries));
 
     index += writableFontData.writeUShort(index, 1); // majorVersion
     index += writableFontData.writeUShort(index, 1); // minorVersion
@@ -118,7 +120,8 @@ public class WoffWriter {
   }
 
   private int computeTableSfntHeaderLength(List<TableDirectoryEntry> tableDirectoryEntries) {
-    return FontData.SizeOf.ULONG + (4 * FontData.SizeOf.USHORT)
+    return FontData.SizeOf.ULONG
+        + (4 * FontData.SizeOf.USHORT)
         + ((4 * FontData.SizeOf.ULONG) * tableDirectoryEntries.size());
   }
 
@@ -131,7 +134,9 @@ public class WoffWriter {
     return length;
   }
 
-  private int writeTableDirectoryEntries(WritableFontData writableFontData, int start,
+  private int writeTableDirectoryEntries(
+      WritableFontData writableFontData,
+      int start,
       List<TableDirectoryEntry> tableDirectoryEntries) {
     int index = start;
     int tableOffset = align4(start + computeTableDirectoryEntriesLength(tableDirectoryEntries));
@@ -143,7 +148,9 @@ public class WoffWriter {
     return computeTableDirectoryEntriesLength(tableDirectoryEntries);
   }
 
-  private int writeTables(WritableFontData writableFontData, int start,
+  private int writeTables(
+      WritableFontData writableFontData,
+      int start,
       List<TableDirectoryEntry> tableDirectoryEntries) {
     int index = align4(start);
     for (TableDirectoryEntry entry : tableDirectoryEntries) {
@@ -183,8 +190,9 @@ public class WoffWriter {
       compresser.finish();
       int compLength = compresser.deflate(output);
       tableDirectoryEntry.setCompTable(
-          compLength == length || !compresser.finished() ? input : Arrays.copyOfRange(
-              output, 0, compLength));
+          compLength == length || !compresser.finished()
+              ? input
+              : Arrays.copyOfRange(output, 0, compLength));
     }
   }
 

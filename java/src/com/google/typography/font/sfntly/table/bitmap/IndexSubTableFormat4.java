@@ -19,7 +19,6 @@ package com.google.typography.font.sfntly.table.bitmap;
 import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -118,8 +117,8 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
     }
   }
 
-  private static final class CodeOffsetPairGlyphCodeComparator implements Comparator<
-      CodeOffsetPair> {
+  private static final class CodeOffsetPairGlyphCodeComparator
+      implements Comparator<CodeOffsetPair> {
     private CodeOffsetPairGlyphCodeComparator() {
       // Prevent construction.
     }
@@ -257,8 +256,7 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
     private class BitmapGlyphInfoIterator implements Iterator<BitmapGlyphInfo> {
       private int codeOffsetPairIndex;
 
-      public BitmapGlyphInfoIterator() {
-      }
+      public BitmapGlyphInfoIterator() {}
 
       @Override
       public boolean hasNext() {
@@ -273,12 +271,14 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
         }
         List<CodeOffsetPairBuilder> offsetArray =
             IndexSubTableFormat4.Builder.this.getOffsetArray();
-        CodeOffsetPair pair =
-            offsetArray.get(this.codeOffsetPairIndex);
-        BitmapGlyphInfo info = new BitmapGlyphInfo(pair.glyphCode(),
-            IndexSubTableFormat4.Builder.this.imageDataOffset(), pair.offset(),
-            offsetArray.get(this.codeOffsetPairIndex + 1).offset() - pair.offset(),
-            IndexSubTableFormat4.Builder.this.imageFormat());
+        CodeOffsetPair pair = offsetArray.get(this.codeOffsetPairIndex);
+        BitmapGlyphInfo info =
+            new BitmapGlyphInfo(
+                pair.glyphCode(),
+                IndexSubTableFormat4.Builder.this.imageDataOffset(),
+                pair.offset(),
+                offsetArray.get(this.codeOffsetPairIndex + 1).offset() - pair.offset(),
+                IndexSubTableFormat4.Builder.this.imageFormat());
         this.codeOffsetPairIndex++;
         return info;
       }
@@ -315,7 +315,8 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
       if (this.offsetPairArray == null) {
         return this.internalReadData().length();
       }
-      return EblcTable.HeaderOffsets.SIZE + FontData.SizeOf.ULONG
+      return EblcTable.HeaderOffsets.SIZE
+          + FontData.SizeOf.ULONG
           + this.offsetPairArray.size() * PairOffset.SIZE;
     }
 
@@ -328,8 +329,8 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
     protected int subSerialize(WritableFontData newData) {
       int size = super.serializeIndexSubHeader(newData);
       if (!this.modelChanged()) {
-        size += this.internalReadData().slice(Offset.numGlyphs)
-            .copyTo(newData.slice(Offset.numGlyphs));
+        size +=
+            this.internalReadData().slice(Offset.numGlyphs).copyTo(newData.slice(Offset.numGlyphs));
       } else {
 
         size += newData.writeLong(size, this.offsetPairArray.size() - 1);

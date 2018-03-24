@@ -13,7 +13,8 @@ public class FontTest extends TestCase {
   public void testToStringWithDigest() throws IOException {
     Font[] fonts = TestFontUtils.loadFont(TestFont.TestFontNames.OPENSANS.getFile());
 
-    assertEquals(""
+    assertEquals(
+        ""
             + "digest = 3564ed0b5363df5cf277c16e0c6bedc5a682217f\n"
             + "[1.0, 19]\n"
             + "\t[DSIG, cs=0x9e12441d, offset=0x00033b9c, size=0x00001574]\n"
@@ -42,7 +43,8 @@ public class FontTest extends TestCase {
   public void testToStringWithoutDigest() throws IOException {
     Font[] fonts = TestFontUtils.loadFont(TestFont.TestFontNames.OPENSANS.getFile(), false);
 
-    assertEquals(""
+    assertEquals(
+        ""
             + "[1.0, 19]\n"
             + "\t[DSIG, cs=0x9e12441d, offset=0x00033b9c, size=0x00001574]\n"
             + "\t[GDEF, cs=0x002603af, offset=0x0003377c, size=0x0000001e]\n"
@@ -69,7 +71,8 @@ public class FontTest extends TestCase {
 
   // https://github.com/rillig/sfntly/issues/3
   public void testReadInvalidFile() throws IOException {
-    String svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"100\" height=\"100\"></svg>";
+    String svg =
+        "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"100\" height=\"100\"></svg>";
 
     try {
       InputStream is = new ByteArrayInputStream(svg.getBytes("ASCII"));
@@ -87,11 +90,10 @@ public class FontTest extends TestCase {
   // Just a smoke test to see whether the validity checks influence real-life files.
   public void testLoadSystemFonts() throws IOException {
     String osName = System.getProperty("os.name");
-    File fontsDir = osName.startsWith("Windows")
-        ? new File("C:/Windows/Fonts")
-        : osName.startsWith("Mac")
-        ? new File("/Library/Fonts")
-        : new File("/usr/share/fonts");
+    File fontsDir =
+        osName.startsWith("Windows")
+            ? new File("C:/Windows/Fonts")
+            : osName.startsWith("Mac") ? new File("/Library/Fonts") : new File("/usr/share/fonts");
     assertTrue("Directory " + fontsDir + " must exist.", fontsDir.exists());
 
     int numberOfLoadedFonts = loadFontsRecursively(fontsDir);
@@ -116,5 +118,4 @@ public class FontTest extends TestCase {
 
     return numberOfLoadedFonts;
   }
-
 }

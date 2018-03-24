@@ -8,9 +8,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A table of language names and their corresponding codes.
- * The OpenType ISO standard contains several typos in the language
- * names and is not as detailed as the ISO 639-3 languages list.
+ * A table of language names and their corresponding codes. The OpenType ISO standard contains
+ * several typos in the language names and is not as detailed as the ISO 639-3 languages list.
  * Therefore the latter takes precedence.
  *
  * @see "ISO-IEC 14496-22:2015, c066391_ISO_IEC_14496-22_2015.pdf, pages 318 to 338"
@@ -37,7 +36,10 @@ enum LanguageTag {
   ARK("Rakhine", null /* ambiguous */, "mhv,rmz,rki"),
   ASM("Assamese", "Assamese", "asm"),
   AST("Asturian", "Asturian", "ast"),
-  ATH("Athapaskan", null /* ambiguous */, ""
+  ATH(
+      "Athapaskan",
+      null /* ambiguous */,
+      ""
           + "apk,apj,apl,apm,apw,nav,bea,sek,bcr,caf,"
           + "crx,clc,gwi,haa,chp,dgr,scs,xsl,srs,ing,"
           + "hoi,koy,hup,ktw,mvb,wlk,coq,ctc,gce,tol,"
@@ -451,7 +453,10 @@ enum LanguageTag {
   PRO("Provencal", "Old Provençal (to 1500)", "pro"),
   PTG("Portuguese", "Portuguese", "por"),
   PWO("Western Pwo Karen", "Pwo Western Karen", "pwo"),
-  QIN("Chin", null /* ambiguous */, ""
+  QIN(
+      "Chin",
+      null /* ambiguous */,
+      ""
           + "bgr,cnh,cnw,czt,sez,tcp,csy,ctd,flm,pck,"
           + "tcz,zom,cmr,dao,hlt,cka,cnk,mrh,mwg,cbl,"
           + "cnb,csh"),

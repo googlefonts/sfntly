@@ -84,9 +84,7 @@ public class HorizontalDeviceMetricsTable extends Table {
     return HeaderOffset.SIZE + index * this.recordSize();
   }
 
-  /**
-   * Builder for a Horizontal Device Metrics Table - 'hdmx'.
-   */
+  /** Builder for a Horizontal Device Metrics Table - 'hdmx'. */
   public static class Builder extends TableBasedTableBuilder<HorizontalDeviceMetricsTable> {
     private int numGlyphs = -1;
 

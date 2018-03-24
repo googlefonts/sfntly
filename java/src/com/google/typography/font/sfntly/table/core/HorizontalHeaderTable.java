@@ -22,7 +22,6 @@ import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.TableBasedTableBuilder;
 
-
 /**
  * A Horizontal Header table - 'hhea'.
  *

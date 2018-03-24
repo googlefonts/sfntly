@@ -21,9 +21,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public abstract class BitmapGlyph extends SubTable {
 
   protected interface Offset {
@@ -59,7 +57,6 @@ public abstract class BitmapGlyph extends SubTable {
     // format 9
     int glyphFormat9_numComponents = bigGlyphMetricsLength;
     int glyphFormat9_componentArray = glyphFormat9_numComponents + FontData.SizeOf.USHORT;
-
 
     // ebdtComponent
     int ebdtComponentLength = FontData.SizeOf.USHORT + 2 * FontData.SizeOf.CHAR;

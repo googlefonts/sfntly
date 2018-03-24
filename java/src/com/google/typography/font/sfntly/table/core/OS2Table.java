@@ -21,7 +21,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.TableBasedTableBuilder;
-
 import java.util.EnumSet;
 
 /**
@@ -169,9 +168,7 @@ public final class OS2Table extends Table {
     return this.data.readUShort(Offset.usWidthClass);
   }
 
-  /**
-   * Flags to indicate the embedding licensing rights for a font.
-   */
+  /** Flags to indicate the embedding licensing rights for a font. */
   public enum EmbeddingFlags {
     Reserved0,
     RestrictedLicenseEmbedding,
@@ -190,17 +187,12 @@ public final class OS2Table extends Table {
     Reserved14,
     Reserved15;
 
-    /**
-     * @return the bit mask corresponding to this embedding flag
-     */
+    /** @return the bit mask corresponding to this embedding flag */
     public int mask() {
       return 1 << this.ordinal();
     }
 
-    /**
-     * Generates an EnumSet&lt;EmbeddingFlags&gt; representation of the supplied
-     * unsigned short.
-     */
+    /** Generates an EnumSet&lt;EmbeddingFlags&gt; representation of the supplied unsigned short. */
     public static EnumSet<EmbeddingFlags> asSet(int value) {
       EnumSet<EmbeddingFlags> set = EnumSet.noneOf(EmbeddingFlags.class);
       for (EmbeddingFlags flag : EmbeddingFlags.values()) {
@@ -211,9 +203,7 @@ public final class OS2Table extends Table {
       return set;
     }
 
-    /**
-     * Generates an unsigned short representation of the provided flags.
-     */
+    /** Generates an unsigned short representation of the provided flags. */
     public static int asUShort(EnumSet<EmbeddingFlags> flagSet) {
       int flags = 0;
       for (EmbeddingFlags flag : flagSet) {
@@ -448,7 +438,7 @@ public final class OS2Table extends Table {
 
     public static EnumSet<UnicodeRange> asSet(long range1, long range2, long range3, long range4) {
       EnumSet<UnicodeRange> set = EnumSet.noneOf(UnicodeRange.class);
-      long[] range = { range1, range2, range3, range4 };
+      long[] range = {range1, range2, range3, range4};
       int rangeBit = 0;
       int rangeIndex = -1;
       for (UnicodeRange ur : UnicodeRange.values()) {
@@ -642,7 +632,7 @@ public final class OS2Table extends Table {
 
     public static EnumSet<CodePageRange> asSet(long range1, long range2) {
       EnumSet<CodePageRange> set = EnumSet.noneOf(CodePageRange.class);
-      long[] range = { range1, range2 };
+      long[] range = {range1, range2};
       int rangeBit = 0;
       int rangeIndex = -1;
       for (CodePageRange cpr : CodePageRange.values()) {
@@ -895,8 +885,11 @@ public final class OS2Table extends Table {
     }
 
     public EnumSet<UnicodeRange> ulUnicodeRange() {
-      return UnicodeRange.asSet(this.ulUnicodeRange1(), this.ulUnicodeRange2(),
-          this.ulUnicodeRange3(), this.ulUnicodeRange4());
+      return UnicodeRange.asSet(
+          this.ulUnicodeRange1(),
+          this.ulUnicodeRange2(),
+          this.ulUnicodeRange3(),
+          this.ulUnicodeRange4());
     }
 
     public void setUlUnicodeRange(EnumSet<UnicodeRange> rangeSet) {
@@ -916,15 +909,15 @@ public final class OS2Table extends Table {
     /**
      * Sets the achVendId field.
      *
-     *  This field is 4 bytes in length and only the first 4 bytes of the byte
-     * array will be written. If the byte array is less than 4 bytes it will be
-     * padded out with space characters (0x20).
+     * <p>This field is 4 bytes in length and only the first 4 bytes of the byte array will be
+     * written. If the byte array is less than 4 bytes it will be padded out with space characters
+     * (0x20).
      *
      * @param b ach Vendor Id
      */
     public void setAchVendId(byte[] b) {
-      this.internalWriteData().writeBytesPad(
-          Offset.achVendId, b, 0, Offset.achVendIdLength, (byte) ' ');
+      this.internalWriteData()
+          .writeBytesPad(Offset.achVendId, b, 0, Offset.achVendIdLength, (byte) ' ');
     }
 
     public int fsSelectionAsInt() {

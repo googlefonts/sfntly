@@ -27,16 +27,12 @@ import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
 import com.google.typography.font.sfntly.testutils.TestUtils;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import junit.framework.TestCase;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class GlyphEditingTests extends TestCase {
 
   private static final boolean DEBUG = false;
@@ -144,7 +140,9 @@ public class GlyphEditingTests extends TestCase {
     assertEquals(locaTable.loca(locaTable.numLocas() - 1), lastLoca - firstGlyphLength);
     if (DEBUG) {
       System.out.println(
-          "glyphTable.dataLength() = " + glyphTable.dataLength() + ", glyphTableSize = "
+          "glyphTable.dataLength() = "
+              + glyphTable.dataLength()
+              + ", glyphTableSize = "
               + glyphTableSize);
     }
     assertEquals(glyphTable.dataLength(), glyphTableSize - firstGlyphLength);

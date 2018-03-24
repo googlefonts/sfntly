@@ -2,7 +2,6 @@ package com.google.typography.font.sfntly.table.opentype.component;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,13 +24,13 @@ public abstract class RecordList<T extends Record> implements Iterable<T> {
    * RECORD_BASE_DEFAULT; if (writeData != null) {
    * writeData.writeUShort(COUNT_OFFSET, 0); } }
    */
-  protected RecordList(ReadableFontData data, int countDecrement, int countOffset,
-      int valuesOffset) {
+  protected RecordList(
+      ReadableFontData data, int countDecrement, int countOffset, int valuesOffset) {
     this.readData = data;
     this.writeData = null;
     this.base = countOffset;
     this.recordBase = valuesOffset; // base + RECORD_BASE_DEFAULT +
-                                    // recordBaseOffset;
+    // recordBaseOffset;
     if (readData != null) {
       this.count = data.readUShort(countOffset + COUNT_OFFSET) - countDecrement;
     }

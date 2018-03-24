@@ -3,7 +3,6 @@ package com.google.typography.font.sfntly.table.truetype;
 import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -146,8 +145,10 @@ public final class CompositeGlyph extends Glyph {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(String.format("%s\ncontourOffset.length = %d\ninstructionSize = %d\n",
-        super.toString(), this.contourIndex.size(), this.instructionSize));
+    sb.append(
+        String.format(
+            "%s\ncontourOffset.length = %d\ninstructionSize = %d\n",
+            super.toString(), this.contourIndex.size(), this.instructionSize));
     sb.append("\tcontour index = [");
     for (int contour = 0; contour < this.contourIndex.size(); contour++) {
       if (contour != 0) {
@@ -157,8 +158,10 @@ public final class CompositeGlyph extends Glyph {
     }
     sb.append("]\n");
     for (int contour = 0; contour < this.contourIndex.size(); contour++) {
-      sb.append(String.format("\t%d = [gid = %d, arg1 = %d, arg2 = %d]\n",
-          contour, this.glyphIndex(contour), this.argument1(contour), this.argument2(contour)));
+      sb.append(
+          String.format(
+              "\t%d = [gid = %d, arg1 = %d, arg2 = %d]\n",
+              contour, this.glyphIndex(contour), this.argument1(contour), this.argument2(contour)));
     }
     return sb.toString();
   }

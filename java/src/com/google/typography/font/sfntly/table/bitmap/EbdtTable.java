@@ -20,16 +20,13 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.SubTableContainerTable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public final class EbdtTable extends SubTableContainerTable {
 
   private interface HeaderOffsets {
@@ -96,8 +93,9 @@ public final class EbdtTable extends SubTableContainerTable {
             builderMap.entrySet()) {
           BitmapGlyph.Builder<? extends BitmapGlyph> builder = glyphEntry.getValue();
           int size = builder.subDataSizeToSerialize();
-          BitmapGlyphInfo info = new BitmapGlyphInfo(
-              glyphEntry.getKey(), startOffset + glyphOffset, size, builder.format());
+          BitmapGlyphInfo info =
+              new BitmapGlyphInfo(
+                  glyphEntry.getKey(), startOffset + glyphOffset, size, builder.format());
           newLocaMap.put(glyphEntry.getKey(), info);
           glyphOffset += size;
         }
@@ -108,15 +106,13 @@ public final class EbdtTable extends SubTableContainerTable {
     }
 
     /**
-     * Gets the List of glyph builders for the glyph table builder. These may be
-     * manipulated in any way by the caller and the changes will be reflected in
-     * the final glyph table produced.
+     * Gets the List of glyph builders for the glyph table builder. These may be manipulated in any
+     * way by the caller and the changes will be reflected in the final glyph table produced.
      *
-     *  If there is no current data for the glyph builder or the glyph builders
-     * have not been previously set then this will return an empty glyph builder
-     * List. If there is current data (i.e. data read from an existing font) and
-     * the <code>loca</code> list has not been set or is null, empty, or
-     * invalid, then an empty glyph builder List will be returned.
+     * <p>If there is no current data for the glyph builder or the glyph builders have not been
+     * previously set then this will return an empty glyph builder List. If there is current data
+     * (i.e. data read from an existing font) and the <code>loca</code> list has not been set or is
+     * null, empty, or invalid, then an empty glyph builder List will be returned.
      *
      * @return the list of glyph builders
      */
@@ -125,13 +121,13 @@ public final class EbdtTable extends SubTableContainerTable {
     }
 
     /**
-     * Replace the internal glyph builders with the one provided. The provided
-     * list and all contained objects belong to this builder.
+     * Replace the internal glyph builders with the one provided. The provided list and all
+     * contained objects belong to this builder.
      *
-     *  This call is only required if the entire set of glyphs in the glyph
-     * table builder are being replaced. If the glyph builder list provided from
-     * the {@link EbdtTable.Builder#glyphBuilders()} is being used and modified
-     * then those changes will already be reflected in the glyph table builder.
+     * <p>This call is only required if the entire set of glyphs in the glyph table builder are
+     * being replaced. If the glyph builder list provided from the {@link
+     * EbdtTable.Builder#glyphBuilders()} is being used and modified then those changes will already
+     * be reflected in the glyph table builder.
      *
      * @param glyphBuilders the new glyph builders
      */

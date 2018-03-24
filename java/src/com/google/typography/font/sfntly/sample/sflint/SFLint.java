@@ -30,14 +30,11 @@ import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class SFLint {
 
   private FontFactory fontFactory;
@@ -99,13 +96,17 @@ public class SFLint {
       // System.out.println(entry);
       if (entry.nameId() == NameId.FontFamilyName.value()) {
         for (NameEntry entry2 : name) {
-          if (entry2.nameId() == NameId.FullFontName.value() &&
-              entry.platformId() == entry2.platformId() &&
-              entry.encodingId() == entry2.encodingId() &&
-              entry.languageId() == entry2.languageId()) {
+          if (entry2.nameId() == NameId.FullFontName.value()
+              && entry.platformId() == entry2.platformId()
+              && entry.encodingId() == entry2.encodingId()
+              && entry.languageId() == entry2.languageId()) {
             if (!entry2.name().startsWith(entry.name())) {
-              reportProblem("Full font name doesn't begin with family name: " +
-                  "FontFamilyName = " + entry.name() + "; FullFontName = " + entry2.name());
+              reportProblem(
+                  "Full font name doesn't begin with family name: "
+                      + "FontFamilyName = "
+                      + entry.name()
+                      + "; FullFontName = "
+                      + entry2.name());
             }
           }
         }
@@ -170,20 +171,22 @@ public class SFLint {
   }
 
   private void lintCompositeGlyph(Font font, CompositeGlyph glyph, int glyphId) {
-    final int VAR_FLAGS = CompositeGlyph.FLAG_WE_HAVE_A_SCALE |
-        CompositeGlyph.FLAG_WE_HAVE_AN_X_AND_Y_SCALE |
-        CompositeGlyph.FLAG_WE_HAVE_A_TWO_BY_TWO;
-    final int MASK = ~(CompositeGlyph.FLAG_MORE_COMPONENTS |
-        CompositeGlyph.FLAG_WE_HAVE_INSTRUCTIONS |
-        CompositeGlyph.FLAG_USE_MY_METRICS);
+    final int VAR_FLAGS =
+        CompositeGlyph.FLAG_WE_HAVE_A_SCALE
+            | CompositeGlyph.FLAG_WE_HAVE_AN_X_AND_Y_SCALE
+            | CompositeGlyph.FLAG_WE_HAVE_A_TWO_BY_TWO;
+    final int MASK =
+        ~(CompositeGlyph.FLAG_MORE_COMPONENTS
+            | CompositeGlyph.FLAG_WE_HAVE_INSTRUCTIONS
+            | CompositeGlyph.FLAG_USE_MY_METRICS);
     for (int i = 0; i < glyph.numGlyphs(); i++) {
       if ((glyph.flags(i) & VAR_FLAGS) == 0) {
         // check for duplicate occurrences of same reference
         for (int j = 0; j < i; j++) {
-          if ((glyph.flags(i) & MASK) == (glyph.flags(j) & MASK) &&
-              glyph.glyphIndex(i) == glyph.glyphIndex(j) &&
-              glyph.argument1(i) == glyph.argument1(j) &&
-              glyph.argument2(i) == glyph.argument2(j)) {
+          if ((glyph.flags(i) & MASK) == (glyph.flags(j) & MASK)
+              && glyph.glyphIndex(i) == glyph.glyphIndex(j)
+              && glyph.argument1(i) == glyph.argument1(j)
+              && glyph.argument2(i) == glyph.argument2(j)) {
             reportProblem("glyph " + glyphId + " contains duplicate references");
           }
         }
@@ -201,7 +204,7 @@ public class SFLint {
       Glyph glyph = glyphTable.glyph(offset, length);
       if (glyph != null) {
         if (glyph.glyphType() == GlyphType.Composite) {
-          lintCompositeGlyph(font, (CompositeGlyph)glyph, glyphId);
+          lintCompositeGlyph(font, (CompositeGlyph) glyph, glyphId);
         }
       }
     }

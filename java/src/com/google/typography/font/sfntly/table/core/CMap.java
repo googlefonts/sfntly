@@ -8,29 +8,24 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
  * The abstract base class for all cmaps.
  *
- * CMap equality is based on the equality of the (@link {@link CMapId} that
- * defines the CMap. In the cmap table for a font there can only be one cmap
- * with a given cmap id (pair of platform and encoding ids) no matter what the
- * type of the cmap is.
+ * <p>CMap equality is based on the equality of the (@link {@link CMapId} that defines the CMap. In
+ * the cmap table for a font there can only be one cmap with a given cmap id (pair of platform and
+ * encoding ids) no matter what the type of the cmap is.
  *
- * The cmap implements {@code Iterable<Integer>} to allow iteration over
- * characters that are mapped by the cmap. This iteration mostly returns the
- * characters mapped by the cmap. It will return all characters mapped by the
- * cmap to anything but .notdef <b>but</b> it may return some that are not
- * mapped or are mapped to .notdef. Various cmap tables provide ranges and
- * such to describe characters for lookup but without going the full way to
- * mapping to the glyph id it isn't always possible to tell if a character
- * will end up with a valid glyph id. So, some of the characters returned from
- * the iterator may still end up pointing to the .notdef glyph. However, the
- * number of such characters should be small in most cases with well designed
- * cmaps.
+ * <p>The cmap implements {@code Iterable<Integer>} to allow iteration over characters that are
+ * mapped by the cmap. This iteration mostly returns the characters mapped by the cmap. It will
+ * return all characters mapped by the cmap to anything but .notdef <b>but</b> it may return some
+ * that are not mapped or are mapped to .notdef. Various cmap tables provide ranges and such to
+ * describe characters for lookup but without going the full way to mapping to the glyph id it isn't
+ * always possible to tell if a character will end up with a valid glyph id. So, some of the
+ * characters returned from the iterator may still end up pointing to the .notdef glyph. However,
+ * the number of such characters should be small in most cases with well designed cmaps.
  */
 public abstract class CMap extends SubTable implements Iterable<Integer> {
   protected final int format;
@@ -90,9 +85,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     return this.cmapId;
   }
 
-  /**
-   * @see PlatformId
-   */
+  /** @see PlatformId */
   public int platformId() {
     return this.cmapId().platformId();
   }
@@ -182,7 +175,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     protected abstract int getRangeEnd(int rangeIndex);
   }
 
-   @Override
+  @Override
   public int hashCode() {
     return this.cmapId.hashCode();
   }
@@ -201,15 +194,13 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
   /**
    * Gets the language of the cmap.
    *
-   *  Note on the language field in 'cmap' subtables: The language field must
-   * be set to zero for all cmap subtables whose platform IDs are other than
-   * Macintosh (platform ID 1). For cmap subtables whose platform IDs are
-   * Macintosh, set this field to the Macintosh language ID of the cmap
-   * subtable plus one, or to zero if the cmap subtable is not
-   * language-specific. For example, a Mac OS Turkish cmap subtable must set
-   * this field to 18, since the Macintosh language ID for Turkish is 17. A
-   * Mac OS Roman cmap subtable must set this field to 0, since Mac OS Roman
-   * is not a language-specific encoding.
+   * <p>Note on the language field in 'cmap' subtables: The language field must be set to zero for
+   * all cmap subtables whose platform IDs are other than Macintosh (platform ID 1). For cmap
+   * subtables whose platform IDs are Macintosh, set this field to the Macintosh language ID of the
+   * cmap subtable plus one, or to zero if the cmap subtable is not language-specific. For example,
+   * a Mac OS Turkish cmap subtable must set this field to 18, since the Macintosh language ID for
+   * Turkish is 17. A Mac OS Roman cmap subtable must set this field to 0, since Mac OS Roman is not
+   * a language-specific encoding.
    *
    * @return the language id
    */
@@ -218,7 +209,7 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
   /**
    * Gets the glyph id for the character code provided.
    *
-   * The character code provided must be in the encoding used by the cmap table.
+   * <p>The character code provided must be in the encoding used by the cmap table.
    *
    * @param character character value using the encoding of the cmap table
    * @return glyph id for the character code
@@ -227,7 +218,8 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
 
   @Override
   public String toString() {
-    return String.format("cmap: %s, %s, Data Size=%#x",
+    return String.format(
+        "cmap: %s, %s, Data Size=%#x",
         this.cmapId(), CMapFormat.valueOf(this.format()), this.data.length());
   }
 
@@ -248,8 +240,8 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     }
 
     /**
-     * Gets the encoding id for the cmap. The encoding will from one of a
-     * number of different sets depending on the platform id.
+     * Gets the encoding id for the cmap. The encoding will from one of a number of different sets
+     * depending on the platform id.
      *
      * @return the encoding id
      * @see MacintoshEncodingId
@@ -308,12 +300,13 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
       return this.internalReadData().copyTo(newData);
     }
 
-    static CMap.Builder<? extends CMap> getBuilder(ReadableFontData data, int offset, CMapId cmapId) {
+    static CMap.Builder<? extends CMap> getBuilder(
+        ReadableFontData data, int offset, CMapId cmapId) {
       // read from the front of the cmap - 1st entry is always the format
       int rawFormat = data.readUShort(offset);
       CMapFormat format = CMapFormat.valueOf(rawFormat);
 
-      switch(format) {
+      switch (format) {
         case Format0:
           return new CMapFormat0.Builder(data, offset, cmapId);
         case Format2:
@@ -342,8 +335,8 @@ public abstract class CMap extends SubTable implements Iterable<Integer> {
     // builders should get created
     // from static factory methods in each subclass
     static CMap.Builder<? extends CMap> getBuilder(CMapFormat cmapFormat, CMapId cmapId) {
-      switch(cmapFormat) {
-        // TODO: builders for other formats, as they're implemented
+      switch (cmapFormat) {
+          // TODO: builders for other formats, as they're implemented
         case Format0:
           return new CMapFormat0.Builder(null, 0, cmapId);
         case Format4:

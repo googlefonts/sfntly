@@ -19,14 +19,10 @@ package com.google.typography.font.tools.subsetter;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
-
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class PostScriptTableSubsetter extends TableSubsetterImpl {
 
   protected PostScriptTableSubsetter() {

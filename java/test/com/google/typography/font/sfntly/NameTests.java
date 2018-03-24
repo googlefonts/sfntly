@@ -22,30 +22,23 @@ import com.google.typography.font.sfntly.table.core.NameTable.NameId;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFont.TestFontNames;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
-
+import java.io.File;
 import junit.framework.TestCase;
 
-import java.io.File;
-
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class NameTests extends TestCase {
 
   private static final boolean DEBUG = false;
 
-  public NameTests() {
-  }
+  public NameTests() {}
 
   public NameTests(String name) {
     super(name);
   }
 
-  private static final TestFontNames testFonts[] = {
-    TestFont.TestFontNames.OPENSANS
-  };
+  private static final TestFontNames testFonts[] = {TestFont.TestFontNames.OPENSANS};
   // total, mac, win
-  private static final int[][] nameTestResults = { {26, 13, 13} };
+  private static final int[][] nameTestResults = {{26, 13, 13}};
 
   public void testNameEntries() throws Exception {
     for (int i = 0; i < testFonts.length; i++) {

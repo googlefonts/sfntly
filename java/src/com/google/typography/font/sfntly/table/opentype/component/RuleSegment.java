@@ -1,7 +1,6 @@
 package com.google.typography.font.sfntly.table.opentype.component;
 
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
-
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -35,7 +34,7 @@ class RuleSegment extends LinkedList<GlyphGroup> {
 
   @Override
   public boolean addAll(Collection<? extends GlyphGroup> glyphGroups) {
-    for(GlyphGroup glyphGroup : glyphGroups) {
+    for (GlyphGroup glyphGroup : glyphGroups) {
       if (glyphGroup == null) {
         throw new IllegalArgumentException("Null GlyphGroup not allowed");
       }
@@ -67,5 +66,4 @@ class RuleSegment extends LinkedList<GlyphGroup> {
     }
     return sb.toString();
   }
-
 }

@@ -5,7 +5,6 @@ package com.google.typography.font.sfntly.table.opentype.component;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
-
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;

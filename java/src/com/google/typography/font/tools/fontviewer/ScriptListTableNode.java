@@ -3,12 +3,10 @@ package com.google.typography.font.tools.fontviewer;
 import com.google.typography.font.sfntly.table.opentype.ScriptListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTag;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
 import javax.swing.JComponent;
 import javax.swing.JTable;
 
@@ -17,8 +15,9 @@ public class ScriptListTableNode extends AbstractNode {
   private final List<Map.Entry<ScriptTag, ScriptTable>> children;
 
   public ScriptListTableNode(ScriptListTable table) {
-    this.children = new ArrayList<Map.Entry<ScriptTag, ScriptTable>>(
-        new TreeMap<ScriptTag, ScriptTable>(table.map()).entrySet());
+    this.children =
+        new ArrayList<Map.Entry<ScriptTag, ScriptTable>>(
+            new TreeMap<ScriptTag, ScriptTable>(table.map()).entrySet());
   }
 
   @Override
@@ -45,12 +44,12 @@ public class ScriptListTableNode extends AbstractNode {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
       switch (columnIndex) {
-      case 0:
-        return ScriptListTableNode.this.children.get(rowIndex).getKey();
-      case 1:
-        return ScriptListTableNode.this.children.get(rowIndex).getValue();
-      default:
-        throw new IllegalStateException();
+        case 0:
+          return ScriptListTableNode.this.children.get(rowIndex).getKey();
+        case 1:
+          return ScriptListTableNode.this.children.get(rowIndex).getValue();
+        default:
+          throw new IllegalStateException();
       }
     }
   }

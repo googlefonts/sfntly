@@ -22,19 +22,16 @@ import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.truetype.ControlValueTable;
-
 import junit.framework.TestCase;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class CvtEncoderTest extends TestCase {
   public void testCvtEncoder() {
     CvtEncoder e = new CvtEncoder();
     FontFactory factory = FontFactory.getInstance();
     // Font.Builder fontBuilder = Font.Builder.getOTFBuilder(factory);
     Font.Builder fontBuilder = factory.newFontBuilder();
-    byte[] cvtData = {(byte)0x00, (byte)0x01, (byte)0x12, (byte)0x34};
+    byte[] cvtData = {(byte) 0x00, (byte) 0x01, (byte) 0x12, (byte) 0x34};
     WritableFontData data = WritableFontData.createWritableFontData(cvtData);
     Table.Builder<ControlValueTable> builder =
         (Table.Builder<ControlValueTable>) fontBuilder.newTableBuilder(Tag.cvt);

@@ -18,25 +18,27 @@ package com.google.typography.font.sfntly;
 
 import java.io.UnsupportedEncodingException;
 
-
 /**
  * Font identification tags used for tables, features, etc.
  *
- * Tag names are consistent with the OpenType and sfnt specs.
+ * <p>Tag names are consistent with the OpenType and sfnt specs.
  *
  * @author Stuart Gill
  */
 public final class Tag {
   public static final int ttcf = Tag.intValue("ttcf");
 
-  /***********************************************************************************
+  /**
+   * *********************************************************************************
    *
-   * Table Type Tags
+   * <p>Table Type Tags
    *
-   ***********************************************************************************/
+   * <p>*********************************************************************************
+   */
 
   // required tables
   public static final int cmap = Tag.intValue("cmap");
+
   public static final int head = Tag.intValue("head");
   public static final int hhea = Tag.intValue("hhea");
   public static final int hmtx = Tag.intValue("hmtx");
@@ -139,6 +141,7 @@ public final class Tag {
 
   /**
    * Determines whether the tag is that for the header table.
+   *
    * @param tag table tag
    * @return true if the tag represents the font header table
    */

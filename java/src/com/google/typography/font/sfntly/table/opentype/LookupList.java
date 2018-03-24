@@ -6,13 +6,10 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 import com.google.typography.font.sfntly.table.opentype.component.LookupType;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author dougfelt@google.com (Doug Felt)
- */
+/** @author dougfelt@google.com (Doug Felt) */
 abstract class LookupList extends SubTable {
   private LookupList(ReadableFontData data, boolean dataIsCanonical) {
     super(data);
@@ -36,8 +33,8 @@ abstract class LookupList extends SubTable {
     return data.readUShort(LOOKUP_OFFSET_BASE + index * LOOKUP_OFFSET_SIZE);
   }
 
-  private static ReadableFontData readLookupData(ReadableFontData data, boolean dataIsCanonical,
-      int index) {
+  private static ReadableFontData readLookupData(
+      ReadableFontData data, boolean dataIsCanonical, int index) {
     ReadableFontData newData;
     int offset = readLookupOffsetAt(data, index);
     if (dataIsCanonical) {
@@ -73,8 +70,7 @@ abstract class LookupList extends SubTable {
       this(null, false);
     }
 
-    protected abstract LookupTable.Builder createLookupBuilder(
-        ReadableFontData lookupData);
+    protected abstract LookupTable.Builder createLookupBuilder(ReadableFontData lookupData);
 
     private void initFromData(ReadableFontData data) {
       int count = readLookupCount(data);

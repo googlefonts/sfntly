@@ -91,9 +91,7 @@ public final class HorizontalMetricsTable extends Table {
     return this.lsbTableEntry(glyphId - this.numHMetrics);
   }
 
-  /**
-   * Builder for a Horizontal Metrics Table - 'hmtx'.
-   */
+  /** Builder for a Horizontal Metrics Table - 'hmtx'. */
   public static class Builder extends TableBasedTableBuilder<HorizontalMetricsTable> {
     private int numHMetrics = -1;
     private int numGlyphs = -1;

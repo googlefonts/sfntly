@@ -17,7 +17,6 @@
 package com.google.typography.font.sfntly.data;
 
 import com.google.typography.font.sfntly.math.FontMath;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,16 +36,14 @@ final class SegmentedGrowableMemoryByteArray extends ByteArray<SegmentedGrowable
   }
 
   /**
-   * The low bits parameter is used to set the initial size of the first
-   * chained memory buffer used internally. That initial buffer is 2^(low bits)
-   * in size and each subsequent buffer is roughly double the preceding one. If
-   * this is too small then there will be a number of small buffers and the cost
-   * of access will increase. If it's too large then there will a lot of
-   * allocated but unused space.
+   * The low bits parameter is used to set the initial size of the first chained memory buffer used
+   * internally. That initial buffer is 2^(low bits) in size and each subsequent buffer is roughly
+   * double the preceding one. If this is too small then there will be a number of small buffers and
+   * the cost of access will increase. If it's too large then there will a lot of allocated but
+   * unused space.
    *
    * @param lowBits the number of bits to use as the initial buffer index
-   * @throws IndexOutOfBoundsException if the given bounds don't fit within the
-   *         byte array given
+   * @throws IndexOutOfBoundsException if the given bounds don't fit within the byte array given
    */
   public SegmentedGrowableMemoryByteArray(int lowBits) {
     super(0, Integer.MAX_VALUE, true /*growable*/);
@@ -105,11 +102,11 @@ final class SegmentedGrowableMemoryByteArray extends ByteArray<SegmentedGrowable
   @Override
   public void close() {
     this.buffers = null;
- }
+  }
 
   /**
-   * Calculate the offset within a given buffer from the buffer index and the
-   * overall index in the overall "virtual" buffer.
+   * Calculate the offset within a given buffer from the buffer index and the overall index in the
+   * overall "virtual" buffer.
    *
    * @param bufferIndex the index of the buffer where the data is found
    * @param index the index into the overall "virtual" buffer
@@ -132,9 +129,9 @@ final class SegmentedGrowableMemoryByteArray extends ByteArray<SegmentedGrowable
   }
 
   /**
-   * Get the buffer at the buffer index specified. If the buffer has not
-   * previously been allocated then it is allocated. Any buffers between this
-   * buffer and the last previously allocated buffer are also allocated.
+   * Get the buffer at the buffer index specified. If the buffer has not previously been allocated
+   * then it is allocated. Any buffers between this buffer and the last previously allocated buffer
+   * are also allocated.
    *
    * @param index the buffer index
    * @return the buffer specified

@@ -16,5 +16,4 @@ public enum JTableUtils {
     table.getColumnModel().getColumn(column).setResizable(false);
     table.getColumnModel().getColumn(column).setCellRenderer(rightAligned);
   }
-
 }

@@ -55,5 +55,4 @@ public class DebuggingOutputStream extends FilterOutputStream {
     }
     super.write(b);
   }
-
 }

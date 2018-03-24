@@ -20,9 +20,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.SfObjects;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class CompositeBitmapGlyph extends BitmapGlyph {
 
   public static final class Component {
@@ -100,8 +98,7 @@ public class CompositeBitmapGlyph extends BitmapGlyph {
   }
 
   public Component component(int componentNum) {
-    int componentOffset =
-        this.componentArrayOffset + componentNum * Offset.ebdtComponentLength;
+    int componentOffset = this.componentArrayOffset + componentNum * Offset.ebdtComponentLength;
     return new Component(
         this.data.readUShort(componentOffset + Offset.ebdtComponent_glyphCode),
         this.data.readChar(componentOffset + Offset.ebdtComponent_xOffset),

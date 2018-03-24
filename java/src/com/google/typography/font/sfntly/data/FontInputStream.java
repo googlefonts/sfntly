@@ -23,7 +23,8 @@ import java.io.InputStream;
 /**
  * An input stream for reading font data.
  *
- * The data types used are as listed:
+ * <p>The data types used are as listed:
+ *
  * <table>
  * <tr>
  * <td>BYTE</td>
@@ -86,12 +87,10 @@ import java.io.InputStream;
  */
 public class FontInputStream extends FilterInputStream {
   private long position;
-  private long length;  // bound on length of data to read
+  private long length; // bound on length of data to read
   private boolean bounded;
 
-  /**
-   * @param is input stream to wrap
-   */
+  /** @param is input stream to wrap */
   public FontInputStream(InputStream is) {
     super(is);
   }
@@ -145,9 +144,7 @@ public class FontInputStream extends FilterInputStream {
     return this.position;
   }
 
-  /**
-   * Read a Char value.
-   */
+  /** Read a Char value. */
   public int readChar() throws IOException {
     return this.read();
   }
@@ -170,16 +167,12 @@ public class FontInputStream extends FilterInputStream {
     return ((this.read() << 8 | this.read()) << 16) >> 16;
   }
 
-  /**
-   * Read a UInt24 value.
-   */
+  /** Read a UInt24 value. */
   public int readUInt24() throws IOException {
     return 0xffffff & (this.read() << 16 | this.read() << 8 | this.read());
   }
 
-  /**
-   * Read a ULong value.
-   */
+  /** Read a ULong value. */
   public long readULong() throws IOException {
     return 0xffffffffL & this.readLong();
   }
@@ -197,25 +190,19 @@ public class FontInputStream extends FilterInputStream {
     return ((int) ulong) & ~0x80000000;
   }
 
-  /**
-   * Read a Long value.
-   */
+  /** Read a Long value. */
   public int readLong() throws IOException {
     return this.read() << 24 | this.read() << 16 | this.read() << 8 | this.read();
   }
 
-  /**
-   * Read a Fixed value.
-   */
+  /** Read a Fixed value. */
   public int readFixed() throws IOException {
     return this.readLong();
   }
 
-  /**
-   * Read a DateTime value as a long.
-   */
+  /** Read a DateTime value as a long. */
   public long readDateTimeAsLong() throws IOException {
-    return this.readULong() << 32 | this.readULong() ;
+    return this.readULong() << 32 | this.readULong();
   }
 
   @Override

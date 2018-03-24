@@ -24,7 +24,6 @@ import java.io.OutputStream;
  * An abstraction to a contiguous array of bytes.
  *
  * @param <T> the concrete sub-class of ByteArray
- *
  * @author Stuart Gill
  */
 abstract class ByteArray<T extends ByteArray<T>> {
@@ -70,9 +69,8 @@ abstract class ByteArray<T extends ByteArray<T>> {
   }
 
   /**
-   * Gets the bytes from the given index and fill the buffer with them.
-   * As many bytes as will fit into the buffer are read unless that
-   * would go past the end of the array.
+   * Gets the bytes from the given index and fill the buffer with them. As many bytes as will fit
+   * into the buffer are read unless that would go past the end of the array.
    *
    * @param index the index into the byte array
    * @param b the buffer to put the bytes read into
@@ -110,9 +108,8 @@ abstract class ByteArray<T extends ByteArray<T>> {
   }
 
   /**
-   * Gets the maximum size of the array. This is the maximum number of bytes that
-   * the array can hold and all of it may not be filled with data or even fully
-   * allocated yet.
+   * Gets the maximum size of the array. This is the maximum number of bytes that the array can hold
+   * and all of it may not be filled with data or even fully allocated yet.
    *
    * @return the size of this array
    */
@@ -135,9 +132,8 @@ abstract class ByteArray<T extends ByteArray<T>> {
   }
 
   /**
-   * Puts the specified byte into the array at the given index unless that would
-   * be beyond the length of the array and it
-   * isn't growable.
+   * Puts the specified byte into the array at the given index unless that would be beyond the
+   * length of the array and it isn't growable.
    *
    * @param index the index into the byte array
    * @param b the byte to put into the array
@@ -152,9 +148,9 @@ abstract class ByteArray<T extends ByteArray<T>> {
   }
 
   /**
-   * Puts the specified bytes into the array at the given index.
-   * The entire buffer is put into the array unless that would
-   * extend beyond the length and the array isn't growable.
+   * Puts the specified bytes into the array at the given index. The entire buffer is put into the
+   * array unless that would extend beyond the length and the array isn't growable.
+   *
    * @param index the index into the byte array
    * @param b the bytes to put into the array
    * @return the number of bytes actually written
@@ -165,10 +161,10 @@ abstract class ByteArray<T extends ByteArray<T>> {
   }
 
   /**
-   * Puts the specified bytes into the array at the given index. All of the bytes
-   * specified are put into the array unless that would extend beyond the length
-   * and the array isn't growable. The bytes to be put into the array are those
-   * in the buffer from the given offset and for the given length.
+   * Puts the specified bytes into the array at the given index. All of the bytes specified are put
+   * into the array unless that would extend beyond the length and the array isn't growable. The
+   * bytes to be put into the array are those in the buffer from the given offset and for the given
+   * length.
    *
    * @param index the index into the ByteArray
    * @param b the bytes to put into the array
@@ -188,8 +184,8 @@ abstract class ByteArray<T extends ByteArray<T>> {
   }
 
   /**
-   * Fully copies this ByteArray to another ByteArray to the extent that the
-   * destination array has storage for the data copied.
+   * Fully copies this ByteArray to another ByteArray to the extent that the destination array has
+   * storage for the data copied.
    *
    * @return the number of bytes copied
    */
@@ -204,8 +200,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
    * @param length the maximum length in bytes to copy
    * @return the number of bytes copied
    */
-  public int
-  copyTo(ByteArray<? extends ByteArray<?>> array, int offset, int length) {
+  public int copyTo(ByteArray<? extends ByteArray<?>> array, int offset, int length) {
     return this.copyTo(0, array, offset, length);
   }
 
@@ -235,6 +230,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
 
   /**
    * Copies this ByteArray to an OutputStream.
+   *
    * @return the number of bytes copied
    */
   public int copyTo(OutputStream os) throws IOException {
@@ -260,9 +256,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
     return index;
   }
 
-  /**
-   * Copies from the InputStream into this ByteArray.
-   */
+  /** Copies from the InputStream into this ByteArray. */
   public void copyFrom(InputStream is, int length) throws IOException {
     byte[] b = new byte[COPY_BUFFER_SIZE];
     int bytesRead = 0;
@@ -278,9 +272,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
     }
   }
 
-  /**
-   * Copies everything from the InputStream into this ByteArray.
-   */
+  /** Copies everything from the InputStream into this ByteArray. */
   public void copyFrom(InputStream is) throws IOException {
     byte[] b = new byte[COPY_BUFFER_SIZE];
     int bytesRead = 0;
@@ -336,9 +328,7 @@ abstract class ByteArray<T extends ByteArray<T>> {
    */
   protected abstract int internalGet(int index, byte[] b, int offset, int length);
 
-  /**
-   * Close this instance of the ByteArray.
-   */
+  /** Close this instance of the ByteArray. */
   public abstract void close();
 
   /**

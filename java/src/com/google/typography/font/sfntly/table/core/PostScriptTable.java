@@ -21,7 +21,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.TableBasedTableBuilder;
-
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,7 @@ public final class PostScriptTable extends Table {
     // TODO: add support for these versions of the table?
     // Version 2.0 table
     int numberOfGlyphs = 32;
-    int glyphNameIndex = 34;  // start of table
+    int glyphNameIndex = 34; // start of table
 
     // Version 2.5 table
 
@@ -397,11 +396,10 @@ public final class PostScriptTable extends Table {
   // Defer the actual parsing of the name strings until first use. Note that this
   // method can therefore throw various runtime exceptions if the table is corrupted.
   /**
-   * Get a list containing the names in the table. Since parsing this list is potentially
-   * expensive and may throw an exception when data is corrupted, parsing is deferred until
-   * first use.
+   * Get a list containing the names in the table. Since parsing this list is potentially expensive
+   * and may throw an exception when data is corrupted, parsing is deferred until first use.
    *
-   * Also note that the return value is only valid for version 2 tables (potentially to be
+   * <p>Also note that the return value is only valid for version 2 tables (potentially to be
    * expanded to other versions later). A non-null value is guaranteed for version 2 (only).
    */
   private List<String> getNames() {

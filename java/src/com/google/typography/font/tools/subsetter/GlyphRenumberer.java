@@ -20,7 +20,6 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
-
 import java.util.Map;
 
 /**
@@ -57,23 +56,21 @@ public class GlyphRenumberer {
    *
    * @return renumbered glyph data
    */
-  public static ReadableFontData renumberGlyph(ReadableFontData glyph,
-                                               Map<Integer, Integer> mapping) {
-    return isCompositeGlyph(glyph)
-        ? renumberCompositeGlyph(glyph, mapping)
-        : glyph;
+  public static ReadableFontData renumberGlyph(
+      ReadableFontData glyph, Map<Integer, Integer> mapping) {
+    return isCompositeGlyph(glyph) ? renumberCompositeGlyph(glyph, mapping) : glyph;
   }
 
   /**
-   * Determine whether the glyph data is a composite glyph. Should always give the same answer
-   * as {@code parsedGlyph instanceof GlyphTable.CompositeGlyph}, but faster.
+   * Determine whether the glyph data is a composite glyph. Should always give the same answer as
+   * {@code parsedGlyph instanceof GlyphTable.CompositeGlyph}, but faster.
    */
   private static boolean isCompositeGlyph(ReadableFontData glyph) {
     return glyph.length() > 0 && glyph.readShort(Offset.numberOfContours) < 0;
   }
 
-  private static ReadableFontData renumberCompositeGlyph(ReadableFontData glyph,
-                                                         Map<Integer, Integer> mapping) {
+  private static ReadableFontData renumberCompositeGlyph(
+      ReadableFontData glyph, Map<Integer, Integer> mapping) {
     WritableFontData result = WritableFontData.createWritableFontData(glyph.length());
     glyph.copyTo(result);
 
@@ -90,9 +87,7 @@ public class GlyphRenumberer {
     return result;
   }
 
-  /**
-   * Compute the size, in bytes, of a single composite reference.
-   */
+  /** Compute the size, in bytes, of a single composite reference. */
   private static int compositeReferenceSize(int flags) {
     int result = 6;
     if ((flags & CompositeGlyph.FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {

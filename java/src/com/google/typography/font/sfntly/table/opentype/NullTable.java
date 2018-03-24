@@ -20,14 +20,11 @@ public final class NullTable extends SubstSubtable {
   }
 
   public static final class Builder extends VisibleSubTable.Builder<NullTable> {
-    private Builder() {
-    }
+    private Builder() {}
 
-    private Builder(ReadableFontData data, boolean dataIsCanonical) {
-    }
+    private Builder(ReadableFontData data, boolean dataIsCanonical) {}
 
-    private Builder(NullTable table) {
-    }
+    private Builder(NullTable table) {}
 
     @Override
     public int subDataSizeToSerialize() {
@@ -45,8 +42,7 @@ public final class NullTable extends SubstSubtable {
     }
 
     @Override
-    public void subDataSet() {
-    }
+    public void subDataSet() {}
 
     @Override
     protected boolean subReadyToSerialize() {

@@ -18,22 +18,19 @@ package com.google.typography.font.sfntly.table;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-
 import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * An abstract base for any table that contains a FontData. This is the root of
- * the table class hierarchy.
+ * An abstract base for any table that contains a FontData. This is the root of the table class
+ * hierarchy.
  *
  * @author Stuart Gill
  */
 public abstract class FontDataTable {
   protected ReadableFontData data;
 
-  /**
-   * @param data the data to back this table
-   */
+  /** @param data the data to back this table */
   FontDataTable(ReadableFontData data) {
     this.data = data;
   }
@@ -53,9 +50,8 @@ public abstract class FontDataTable {
   }
 
   /**
-   * Gets the length of the data for this table in bytes. This is the full
-   * allocated length of the data underlying the table and may or may not
-   * include any padding.
+   * Gets the length of the data for this table in bytes. This is the full allocated length of the
+   * data underlying the table and may or may not include any padding.
    *
    * @return the data length in bytes
    */
@@ -79,13 +75,12 @@ public abstract class FontDataTable {
     private boolean dataChanged;
 
     /**
-     * Construct a FontDataTable.Builder with a WritableFontData backing store
-     * of size given. A positive size will create a fixed size backing store and
-     * a 0 or less size is an estimate for a growable backing store with the
-     * estimate being the absolute of the size.
+     * Construct a FontDataTable.Builder with a WritableFontData backing store of size given. A
+     * positive size will create a fixed size backing store and a 0 or less size is an estimate for
+     * a growable backing store with the estimate being the absolute of the size.
      *
-     * @param dataSize if positive then a fixed size; if 0 or less then an
-     *        estimate for a growable size
+     * @param dataSize if positive then a fixed size; if 0 or less then an estimate for a growable
+     *     size
      */
     protected Builder(int dataSize) {
       this.wData = WritableFontData.createWritableFontData(dataSize);
@@ -102,10 +97,9 @@ public abstract class FontDataTable {
     /**
      * Gets a snapshot copy of the internal data of the builder.
      *
-     *  This causes any internal data structures to be serialized to a new data
-     * object. No changes are made to the builder and any changes to the
-     * data directly do not affect the internal state. To do that a subsequent
-     * call must be made to {@link #setData(WritableFontData)}.
+     * <p>This causes any internal data structures to be serialized to a new data object. No changes
+     * are made to the builder and any changes to the data directly do not affect the internal
+     * state. To do that a subsequent call must be made to {@link #setData(WritableFontData)}.
      *
      * @return a copy of the internal data of the builder
      * @see FontDataTable.Builder#setData(WritableFontData)
@@ -241,9 +235,7 @@ public abstract class FontDataTable {
 
     // subclass API
 
-    /**
-     * Notification to subclasses that a table was built.
-     */
+    /** Notification to subclasses that a table was built. */
     protected void notifyPostTableBuild(T table) {
       // NOP -
     }
@@ -256,24 +248,18 @@ public abstract class FontDataTable {
      */
     protected abstract int subSerialize(WritableFontData newData);
 
-    /**
-     * @return true if the subclass is ready to serialize it's structure into
-     *         data
-     */
+    /** @return true if the subclass is ready to serialize it's structure into data */
     protected abstract boolean subReadyToSerialize();
 
     /**
      * Query if the subclass needs to serialize and how much data is required.
      *
-     * @return positive bytes needed to serialize if a fixed size; and zero or
-     *         negative bytes as an estimate if growable data is needed
+     * @return positive bytes needed to serialize if a fixed size; and zero or negative bytes as an
+     *     estimate if growable data is needed
      */
     protected abstract int subDataSizeToSerialize();
 
-    /**
-     * Tell the subclass that the data has been changed and any structures must
-     * be discarded.
-     */
+    /** Tell the subclass that the data has been changed and any structures must be discarded. */
     protected abstract void subDataSet();
 
     /**

@@ -19,7 +19,6 @@ package com.google.typography.font.sfntly.table.bitmap;
 import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -32,8 +31,10 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
   private final int imageSize;
 
   private interface Offset {
-    int SIZE = EblcTable.HeaderOffsets.SIZE + FontData.SizeOf.ULONG
-        + BitmapGlyph.Offset.bigGlyphMetricsLength;
+    int SIZE =
+        EblcTable.HeaderOffsets.SIZE
+            + FontData.SizeOf.ULONG
+            + BitmapGlyph.Offset.bigGlyphMetricsLength;
     int imageSize = EblcTable.HeaderOffsets.SIZE;
     int bigGlyphMetrics = imageSize + FontData.SizeOf.ULONG;
   }
@@ -133,8 +134,8 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
 
     public BigGlyphMetrics.Builder bigMetrics() {
       if (this.metrics == null) {
-        WritableFontData data = this.internalWriteData()
-            .slice(Offset.bigGlyphMetrics, BigGlyphMetrics.SIZE);
+        WritableFontData data =
+            this.internalWriteData().slice(Offset.bigGlyphMetrics, BigGlyphMetrics.SIZE);
         this.metrics = new BigGlyphMetrics.Builder(data);
       }
       return this.metrics;
@@ -158,7 +159,9 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
           throw new NoSuchElementException("No more characters to iterate.");
         }
         BitmapGlyphInfo info =
-            new BitmapGlyphInfo(this.glyphId, IndexSubTableFormat2.Builder.this.imageDataOffset(),
+            new BitmapGlyphInfo(
+                this.glyphId,
+                IndexSubTableFormat2.Builder.this.imageDataOffset(),
                 IndexSubTableFormat2.Builder.this.glyphStartOffset(this.glyphId),
                 IndexSubTableFormat2.Builder.this.glyphLength(this.glyphId),
                 IndexSubTableFormat2.Builder.this.imageFormat());

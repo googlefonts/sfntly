@@ -37,11 +37,10 @@ import com.google.typography.font.sfntly.table.truetype.ControlValueTable;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 
-
 /**
- * A concrete implementation of a root level table in the font. This is the base
- * class used for all specific table implementations and is used as the generic
- * table for all tables which have no specific implementations.
+ * A concrete implementation of a root level table in the font. This is the base class used for all
+ * specific table implementations and is used as the generic table for all tables which have no
+ * specific implementations.
  *
  * @author Stuart Gill
  */
@@ -54,9 +53,7 @@ public class Table extends FontDataTable {
     this.header = header;
   }
 
-  /**
-   * Get the calculated checksum for the data in the table.
-   */
+  /** Get the calculated checksum for the data in the table. */
   public long calculatedChecksum() {
     return this.data.checksum();
   }
@@ -142,20 +139,22 @@ public class Table extends FontDataTable {
       return "Table Builder for - " + this.header.toString();
     }
 
-    /***********************************************************************************
+    /**
+     * *********************************************************************************
      *
-     * Public Interface for Table Building
+     * <p>Public Interface for Table Building
      *
-     ***********************************************************************************/
-
+     * <p>*********************************************************************************
+     */
     public final Header header() {
       return this.header;
     }
 
-    /***********************************************************************************
-     * Internal Interface for Table Building
-     ***********************************************************************************/
-
+    /**
+     * ********************************************************************************* Internal
+     * Interface for Table Building
+     * *********************************************************************************
+     */
     @Override
     protected void notifyPostTableBuild(T table) {
       if (this.modelChanged() || this.dataChanged()) {

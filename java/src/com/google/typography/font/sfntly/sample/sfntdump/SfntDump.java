@@ -31,7 +31,6 @@ import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -51,8 +50,10 @@ public class SfntDump {
   private boolean cmapMapping;
   private boolean dumpPost;
   private boolean dumpEblc;
+
   @SuppressWarnings("unused")
   private boolean dumpAllGlyphs;
+
   private List<String> tablesToBinaryDump = new ArrayList<String>();
   private BitSet glyphSet;
   private boolean dumpAllChars;
@@ -60,15 +61,15 @@ public class SfntDump {
   private CMapId cmapId = CMapId.WINDOWS_BMP;
   private FontFactory fontFactory;
 
-  /**
-   * Dump a font with various options based on the command line.
-   */
+  /** Dump a font with various options based on the command line. */
   public static void main(String[] args) throws IOException {
     SfntDump dumper = new SfntDump();
     int optionCount = 0;
 
     if (args.length == 0
-      || args[0].equals("-h") || args[0].equals("-help") || args[0].equals("-?")) {
+        || args[0].equals("-h")
+        || args[0].equals("-help")
+        || args[0].equals("-?")) {
       printUsage();
       System.exit(0);
     }
@@ -206,38 +207,43 @@ public class SfntDump {
   }
 
   private static void printUsage() {
-    System.out.println("FontDumper [-all|-a] [-table] [-t tag] [-name] [-cmap] " +
-      "[-g|-glyph range|list] [-c|-char range|list] " +
-      "[-?|-h|-help] fontfile | directory");
+    System.out.println(
+        "FontDumper [-all|-a] [-table] [-t tag] [-name] [-cmap] "
+            + "[-g|-glyph range|list] [-c|-char range|list] "
+            + "[-?|-h|-help] fontfile | directory");
     System.out.println("dump information about the font file or all fonts in a directory");
     System.out.println("\t-all,-a\t\tdump all information");
     System.out.println("\t-table\t\tdump all table indexes");
-    System.out.println("\t-t tag\t\t" +
-      "binary dump the table with the tag specified if it exists in the font");
+    System.out.println(
+        "\t-t tag\t\t" + "binary dump the table with the tag specified if it exists in the font");
     System.out.println("\t-name\t\tdump all name entries");
     System.out.println("\t-cmap [mapping]\t\tdump all cmap subtables");
     System.out.println(
-      "\tif 'mapping' specified then dump the character to glyph mapping for the cmap(s)");
-    System.out.println("\t-cm pid,eid\t\t" +
-      "use the cmap with the given platform id and " +
-      "encoding id when looking for glyphs from character ids");
+        "\tif 'mapping' specified then dump the character to glyph mapping for the cmap(s)");
+    System.out.println(
+        "\t-cm pid,eid\t\t"
+            + "use the cmap with the given platform id and "
+            + "encoding id when looking for glyphs from character ids");
     System.out.println("\t-post\t\tdump the PostScript name table");
     System.out.println("\t-eblc\t\tdump the EBLC table - bitmap location");
     System.out.println("\t-g,-glyph\t\tdump the glyphs specified");
-    System.out.println("\t-c,-char\t\t" +
-      "dump the characters specified using the Windows English Unicode " +
-      "cmap or the cmap specified with the -cm option");
-    System.out.println("\trange\t\t" +
-      "two 1 to 4 digit numbers separated by a hyphen that are " +
-      "optionally preceded by an x indicating hex - e.g. x12-234");
-    System.out.println("\tlist\t\t" +
-      "one or more 1 to 4 digit numbers separated by commas that are " +
-      "optionally preceded by an x indicating hex - e.g. x12,234,666,x1234");
+    System.out.println(
+        "\t-c,-char\t\t"
+            + "dump the characters specified using the Windows English Unicode "
+            + "cmap or the cmap specified with the -cm option");
+    System.out.println(
+        "\trange\t\t"
+            + "two 1 to 4 digit numbers separated by a hyphen that are "
+            + "optionally preceded by an x indicating hex - e.g. x12-234");
+    System.out.println(
+        "\tlist\t\t"
+            + "one or more 1 to 4 digit numbers separated by commas that are "
+            + "optionally preceded by an x indicating hex - e.g. x12,234,666,x1234");
     System.out.println("\t-?,-h,-help\tprint this help information");
   }
 
   private static final Pattern RANGE_PATTERN =
-    Pattern.compile("(x?)([\\da-fA-F]{1,5})-(x?)([\\da-fA-F]{1,5})");
+      Pattern.compile("(x?)([\\da-fA-F]{1,5})-(x?)([\\da-fA-F]{1,5})");
 
   private static BitSet parseRange(String range) {
     BitSet set = null;
@@ -336,7 +342,7 @@ public class SfntDump {
   public void useCMap(String cmap) {
     String[] cmapParams = cmap.split("\\D");
     this.cmapId =
-      CMapId.getInstance(Integer.parseInt(cmapParams[0]), Integer.parseInt(cmapParams[1]));
+        CMapId.getInstance(Integer.parseInt(cmapParams[0]), Integer.parseInt(cmapParams[1]));
   }
 
   public void dumpFont(File fontFile) throws IOException {
@@ -408,8 +414,8 @@ public class SfntDump {
             Table table = font.getTable(tableTag);
             if (table != null) {
               System.out.println();
-              System.out.printf("------ Dump Data - Table = %s, length = %x%n",
-                tag, table.dataLength());
+              System.out.printf(
+                  "------ Dump Data - Table = %s, length = %x%n", tag, table.dataLength());
               ReadableFontData data = table.readFontData();
               for (int i = 0; i < data.length(); i += 16) {
                 System.out.printf("%08x: ", i);
@@ -438,7 +444,8 @@ public class SfntDump {
           System.out.println();
           System.out.println("------ Glyphs");
           for (int glyphId = this.glyphSet.nextSetBit(0);
-               glyphId >= 0; glyphId = this.glyphSet.nextSetBit(glyphId + 1)) {
+              glyphId >= 0;
+              glyphId = this.glyphSet.nextSetBit(glyphId + 1)) {
             int offset = locaTable.glyphOffset(glyphId);
             int length = locaTable.glyphLength(glyphId);
             Glyph glyph = glyphTable.glyph(offset, length);
@@ -485,7 +492,8 @@ public class SfntDump {
       System.out.println();
       System.out.println("------ Characters");
       for (int charId = this.charSet.nextSetBit(0);
-           charId >= 0; charId = this.charSet.nextSetBit(charId + 1)) {
+          charId >= 0;
+          charId = this.charSet.nextSetBit(charId + 1)) {
         dumpChar(charId, cmap, locaTable, glyphTable);
       }
     }
@@ -510,7 +518,7 @@ public class SfntDump {
       int length = locaTable.glyphLength(glyphId);
       Glyph glyph = glyphTable.glyph(offset, length);
       if (glyph instanceof SimpleGlyph) {
-        SimpleGlyph simple = (SimpleGlyph)glyph;
+        SimpleGlyph simple = (SimpleGlyph) glyph;
         if (simple.numberOfContours() != 2) {
           continue;
         }

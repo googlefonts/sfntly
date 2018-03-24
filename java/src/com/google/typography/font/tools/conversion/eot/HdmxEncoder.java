@@ -25,8 +25,8 @@ import com.google.typography.font.sfntly.table.core.HorizontalMetricsTable;
 import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
 
 /**
- * Implementation of compression of CTF horizontal device metrics data, as per
- * section 5.4 of the MicroType Express spec.
+ * Implementation of compression of CTF horizontal device metrics data, as per section 5.4 of the
+ * MicroType Express spec.
  *
  * @author Raph Levien
  */

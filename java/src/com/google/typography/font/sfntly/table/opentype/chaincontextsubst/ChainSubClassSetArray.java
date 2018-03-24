@@ -73,7 +73,8 @@ public class ChainSubClassSetArray extends OffsetRecordTable<ChainSubClassSet> {
     }
 
     @Override
-    protected VisibleSubTable.Builder<ChainSubClassSet> createSubTableBuilder(ChainSubClassSet subTable) {
+    protected VisibleSubTable.Builder<ChainSubClassSet> createSubTableBuilder(
+        ChainSubClassSet subTable) {
       return new ChainSubClassSet.Builder(subTable);
     }
 

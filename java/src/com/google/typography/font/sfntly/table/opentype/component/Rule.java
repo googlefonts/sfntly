@@ -13,7 +13,6 @@ import com.google.typography.font.sfntly.table.opentype.LangSysTable;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,7 +60,7 @@ public class Rule {
   }
 
   private void addMatchingTargetGlyphs(GlyphGroup glyphs) {
-    for (RuleSegment seg : new RuleSegment[] { input, backtrack, lookAhead }) {
+    for (RuleSegment seg : new RuleSegment[] {input, backtrack, lookAhead}) {
       if (seg == null) {
         continue;
       }
@@ -101,7 +100,7 @@ public class Rule {
 
   private static Set<Rule> rulesForGlyph(Map<Integer, Set<Rule>> glyphRuleMap, GlyphGroup glyphs) {
     Set<Rule> set = new HashSet<Rule>();
-    for(int glyph : glyphs) {
+    for (int glyph : glyphs) {
       if (glyphRuleMap.containsKey(glyph)) {
         set.addAll(glyphRuleMap.get(glyph));
       }
@@ -109,8 +108,7 @@ public class Rule {
     return set;
   }
 
-  private static Set<Rule> featuredRules(
-      Set<Integer> lookupIds, Map<Integer, Set<Rule>> ruleMap) {
+  private static Set<Rule> featuredRules(Set<Integer> lookupIds, Map<Integer, Set<Rule>> ruleMap) {
     Set<Rule> rules = new LinkedHashSet<Rule>();
     for (int lookupId : lookupIds) {
       Set<Rule> ruleForLookup = ruleMap.get(lookupId);
@@ -174,14 +172,17 @@ public class Rule {
     Set<Integer> codes = SfStringUtils.getAllCodepoints(str);
     for (int code : codes) {
       for (CMap cmap : cmapTable) {
-        if (cmap.platformId() == 3 && cmap.encodingId() == 1 || // Unicode BMP
-            cmap.platformId() == 3 && cmap.encodingId() == 10 || // UCS2
+        if (cmap.platformId() == 3 && cmap.encodingId() == 1
+            || // Unicode BMP
+            cmap.platformId() == 3 && cmap.encodingId() == 10
+            || // UCS2
             cmap.platformId() == 0 && cmap.encodingId() == 5) { // Variation
           int glyph = cmap.glyphId(code);
           if (glyph != CMapTable.NOTDEF) {
             glyphGroup.add(glyph);
           }
-          // System.out.println("code: " + code + " glyph: " + glyph + " platform: " + cmap.platformId() + " encodingId: " + cmap.encodingId() + " format: " + cmap.format());
+          // System.out.println("code: " + code + " glyph: " + glyph + " platform: " +
+          // cmap.platformId() + " encodingId: " + cmap.encodingId() + " format: " + cmap.format());
 
         }
       }
@@ -208,10 +209,13 @@ public class Rule {
     if (at <= targetRule.subst.size()) {
       RuleSegment newInput = new RuleSegment();
       newInput.addAll(targetRule.input);
-      newInput.addAll(matchSegment.subList(backtrackSize + targetRule.subst.size(), backtrackSize + at + input.size()));
+      newInput.addAll(
+          matchSegment.subList(
+              backtrackSize + targetRule.subst.size(), backtrackSize + at + input.size()));
 
       RuleSegment newLookAhead = new RuleSegment();
-      newLookAhead.addAll(matchSegment.subList(backtrackSize + at + input.size(), matchSegment.size()));
+      newLookAhead.addAll(
+          matchSegment.subList(backtrackSize + at + input.size(), matchSegment.size()));
 
       RuleSegment newSubst = new RuleSegment();
       newSubst.addAll(targetRule.subst.subList(0, at));
@@ -226,11 +230,13 @@ public class Rule {
     }
 
     if (at >= targetRule.subst.size()) {
-      List<GlyphGroup> skippedLookAheadPart = matchSegment.subList(backtrackSize + targetRule.subst.size(), at);
+      List<GlyphGroup> skippedLookAheadPart =
+          matchSegment.subList(backtrackSize + targetRule.subst.size(), at);
       Set<RuleSegment> intermediateSegments = permuteToSegments(skippedLookAheadPart);
 
       RuleSegment newLookAhead = new RuleSegment();
-      List<GlyphGroup> remainingLookAhead = matchSegment.subList(backtrackSize + at + input.size(), matchSegment.size());
+      List<GlyphGroup> remainingLookAhead =
+          matchSegment.subList(backtrackSize + at + input.size(), matchSegment.size());
       newLookAhead.addAll(remainingLookAhead);
 
       for (RuleSegment interRuleSegment : intermediateSegments) {
@@ -279,24 +285,25 @@ public class Rule {
 
     int backtrackSize = targetRule.backtrack != null ? targetRule.backtrack.size() : 0;
 
-    RuleSegment newBacktrack =  new RuleSegment();
+    RuleSegment newBacktrack = new RuleSegment();
     newBacktrack.addAll(matchSegment.subList(0, backtrackSize + at));
 
     RuleSegment newLookAhead = new RuleSegment();
-    newLookAhead.addAll(matchSegment.subList(backtrackSize + at + ruleToApply.input.size(), matchSegment.size()));
+    newLookAhead.addAll(
+        matchSegment.subList(backtrackSize + at + ruleToApply.input.size(), matchSegment.size()));
 
     return new Rule(newBacktrack, ruleToApply.input, newLookAhead, ruleToApply.subst);
   }
 
-  private static void applyRulesOnRuleWithSubst(Set<Rule> rulesToApply, Rule targetRule, int at,
-      LinkedList<Rule> accumulateTo) {
+  private static void applyRulesOnRuleWithSubst(
+      Set<Rule> rulesToApply, Rule targetRule, int at, LinkedList<Rule> accumulateTo) {
     for (Rule ruleToApply : rulesToApply) {
       ruleToApply.applyRuleOnRuleWithSubst(targetRule, at, accumulateTo);
     }
   }
 
-  private static void applyRulesOnRuleWithoutSubst(Set<Rule> rulesToApply, Rule targetRule, int at,
-      LinkedList<Rule> accumulateTo) {
+  private static void applyRulesOnRuleWithoutSubst(
+      Set<Rule> rulesToApply, Rule targetRule, int at, LinkedList<Rule> accumulateTo) {
     for (Rule ruleToApply : rulesToApply) {
       Rule newRule = applyRuleOnRuleWithoutSubst(ruleToApply, targetRule, at);
       if (newRule != null) {
@@ -305,8 +312,8 @@ public class Rule {
     }
   }
 
-  static LinkedList<Rule> applyRulesOnRules(Set<Rule> rulesToApply, List<Rule> targetRules,
-      int at) {
+  static LinkedList<Rule> applyRulesOnRules(
+      Set<Rule> rulesToApply, List<Rule> targetRules, int at) {
     LinkedList<Rule> result = new LinkedList<Rule>();
     for (Rule targetRule : targetRules) {
       if (targetRule.subst != null) {
@@ -357,7 +364,7 @@ public class Rule {
       return null;
     }
 
-    for(int i = 0; i < otherAllSegments.size(); i++) {
+    for (int i = 0; i < otherAllSegments.size(); i++) {
       GlyphGroup thisGlyphs = thisAllSegments.get(i + initialPos);
       GlyphGroup otherGlyphs = otherAllSegments.get(i);
 
@@ -365,7 +372,7 @@ public class Rule {
       if (intersection.isEmpty()) {
         return null;
       }
-      thisAllSegments.set(i+initialPos, intersection);
+      thisAllSegments.set(i + initialPos, intersection);
     }
 
     return thisAllSegments;
@@ -396,8 +403,8 @@ public class Rule {
     return result;
   }
 
-  static Set<Rule> oneToOneRules(RuleSegment backtrack, List<Integer> inputs,
-      RuleSegment lookAhead, List<Integer> substs) {
+  static Set<Rule> oneToOneRules(
+      RuleSegment backtrack, List<Integer> inputs, RuleSegment lookAhead, List<Integer> substs) {
     if (inputs.size() != substs.size()) {
       throw new IllegalArgumentException("input - subst should have same count");
     }

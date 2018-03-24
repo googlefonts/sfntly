@@ -4,7 +4,6 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.InnerArrayFmt1;
 import com.google.typography.font.sfntly.table.opentype.ligaturesubst.LigatureSet;
-
 import java.util.Iterator;
 
 public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet> {
@@ -71,8 +70,6 @@ public class LigatureSubst extends SubstSubtable implements Iterable<LigatureSet
 
     // /////////////////////////////
     // private methods for builders
-
-
 
     // ///////////////////////////////
     // private methods to serialize

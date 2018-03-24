@@ -22,15 +22,12 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.math.FontMath;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.SubTableContainerTable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class EblcTable extends SubTableContainerTable {
   private static final boolean DEBUG = false;
 
@@ -49,10 +46,9 @@ public class EblcTable extends SubTableContainerTable {
     int SIZE = 8;
   }
 
-  /**
-   * Lock on all operations that will affect the value of the bitmapSizeTable.
-   */
+  /** Lock on all operations that will affect the value of the bitmapSizeTable. */
   private final Object bitmapSizeTableLock = new Object();
+
   private volatile List<BitmapSizeTable> bitmapSizeTable;
 
   protected EblcTable(Header header, ReadableFontData data) {
@@ -105,9 +101,11 @@ public class EblcTable extends SubTableContainerTable {
     List<BitmapSizeTable> bitmapSizeTable = new ArrayList<BitmapSizeTable>();
     for (int i = 0; i < numSizes; i++) {
       BitmapSizeTable.Builder sizeBuilder =
-          BitmapSizeTable.Builder.createBuilder(data.slice(
-              HeaderOffsets.SIZE + i * BitmapSizeTable.Offset.SIZE,
-              BitmapSizeTable.Offset.SIZE), data);
+          BitmapSizeTable.Builder.createBuilder(
+              data.slice(
+                  HeaderOffsets.SIZE + i * BitmapSizeTable.Offset.SIZE,
+                  BitmapSizeTable.Offset.SIZE),
+              data);
       BitmapSizeTable size = sizeBuilder.build();
       bitmapSizeTable.add(size);
     }
@@ -144,11 +142,10 @@ public class EblcTable extends SubTableContainerTable {
     }
 
     /**
-     * Generates the loca list for the EBDT table. The list is intended to be
-     * used by the EBDT to allow it to parse the glyph data and generate glyph
-     * objects. After returning from this method the list belongs to the caller.
-     * The list entries are in the same order as the size table builders are at
-     * the time of this call.
+     * Generates the loca list for the EBDT table. The list is intended to be used by the EBDT to
+     * allow it to parse the glyph data and generate glyph objects. After returning from this method
+     * the list belongs to the caller. The list entries are in the same order as the size table
+     * builders are at the time of this call.
      *
      * @return the list of loca maps with one for each size table builder
      */
@@ -183,9 +180,10 @@ public class EblcTable extends SubTableContainerTable {
       if (data != null) {
         int numSizes = data.readULongAsInt(HeaderOffsets.numSizes);
         for (int i = 0; i < numSizes; i++) {
-          ReadableFontData slice = data.slice(
-              HeaderOffsets.SIZE + i * BitmapSizeTable.Offset.SIZE,
-              BitmapSizeTable.Offset.SIZE);
+          ReadableFontData slice =
+              data.slice(
+                  HeaderOffsets.SIZE + i * BitmapSizeTable.Offset.SIZE,
+                  BitmapSizeTable.Offset.SIZE);
           sizeBuilders.add(BitmapSizeTable.Builder.createBuilder(slice, data));
         }
       }
@@ -213,8 +211,8 @@ public class EblcTable extends SubTableContainerTable {
       for (BitmapSizeTable.Builder sizeBuilder : this.sizeTableBuilders) {
         int sizeBuilderSize = sizeBuilder.subDataSizeToSerialize();
         if (DEBUG) {
-          System.out.printf("sizeIndex = 0x%x, sizeBuilderSize = 0x%x%n", sizeIndex++,
-              sizeBuilderSize);
+          System.out.printf(
+              "sizeIndex = 0x%x, sizeBuilderSize = 0x%x%n", sizeIndex++, sizeBuilderSize);
         }
         variable = sizeBuilderSize > 0 ? variable : true;
         size += Math.abs(sizeBuilderSize);
@@ -264,8 +262,8 @@ public class EblcTable extends SubTableContainerTable {
         // walking offset within the current subTable array
         int indexSubTableArrayOffset = currentSubTableBlockStartOffset;
         // walking offset within the subTable entries
-        int indexSubTableOffset = indexSubTableArrayOffset
-            + indexSubTableBuilderList.size() * HeaderOffsets.SIZE;
+        int indexSubTableOffset =
+            indexSubTableArrayOffset + indexSubTableBuilderList.size() * HeaderOffsets.SIZE;
 
         if (DEBUG) {
           System.out.printf(
@@ -278,9 +276,11 @@ public class EblcTable extends SubTableContainerTable {
         for (IndexSubTable.Builder<? extends IndexSubTable> indexSubTableBuilder :
             indexSubTableBuilderList) {
           if (DEBUG) {
-            System.out.printf("\tsubTableIndex %d: format = %x, ", subTableIndex,
-                indexSubTableBuilder.indexFormat());
-            System.out.printf("indexSubTableArrayOffset = %x, indexSubTableOffset = %x%n",
+            System.out.printf(
+                "\tsubTableIndex %d: format = %x, ",
+                subTableIndex, indexSubTableBuilder.indexFormat());
+            System.out.printf(
+                "indexSubTableArrayOffset = %x, indexSubTableOffset = %x%n",
                 indexSubTableArrayOffset, indexSubTableOffset);
             subTableIndex++;
           }
@@ -289,8 +289,9 @@ public class EblcTable extends SubTableContainerTable {
               newData.writeUShort(indexSubTableArrayOffset, indexSubTableBuilder.firstGlyphIndex());
           indexSubTableArrayOffset +=
               newData.writeUShort(indexSubTableArrayOffset, indexSubTableBuilder.lastGlyphIndex());
-          indexSubTableArrayOffset += newData.writeULong(
-              indexSubTableArrayOffset, indexSubTableOffset - currentSubTableBlockStartOffset);
+          indexSubTableArrayOffset +=
+              newData.writeULong(
+                  indexSubTableArrayOffset, indexSubTableOffset - currentSubTableBlockStartOffset);
 
           // index sub table
           int currentSubTableSize =

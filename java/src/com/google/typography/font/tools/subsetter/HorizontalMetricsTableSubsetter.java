@@ -20,13 +20,10 @@ import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.HorizontalMetricsTable;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class HorizontalMetricsTableSubsetter extends TableSubsetterImpl {
 
   protected HorizontalMetricsTableSubsetter() {

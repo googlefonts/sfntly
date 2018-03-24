@@ -4,13 +4,12 @@ import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
-
 import java.util.Iterator;
 
 /**
  * The cmap format 2 subtable maps multi-byte character codes to glyph IDs.
- * <p>
- * This format is typically used for encodings such as SJIS, EUC-JP/KR/CN, Big5, etc.
+ *
+ * <p>This format is typically used for encodings such as SJIS, EUC-JP/KR/CN, Big5, etc.
  *
  * @see "ISO/IEC 14496-22:2015, section 5.2.1.3.2"
  */
@@ -35,8 +34,7 @@ public final class CMapFormat2 extends CMap {
   }
 
   private int subHeaderOffset(int subHeaderIndex) {
-    return this.data.readUShort(
-        Header.subHeaderKeys + subHeaderIndex * FontData.SizeOf.USHORT);
+    return this.data.readUShort(Header.subHeaderKeys + subHeaderIndex * FontData.SizeOf.USHORT);
   }
 
   private int firstCode(int subHeaderIndex) {
@@ -60,12 +58,11 @@ public final class CMapFormat2 extends CMap {
   }
 
   /**
-   * Returns how many bytes would be consumed by a lookup of this character
-   * with this cmap. This comes about because the cmap format 2 table is
-   * designed around multi-byte encodings such as SJIS, EUC-JP, Big5, etc.
+   * Returns how many bytes would be consumed by a lookup of this character with this cmap. This
+   * comes about because the cmap format 2 table is designed around multi-byte encodings such as
+   * SJIS, EUC-JP, Big5, etc.
    *
-   * @return the number of bytes consumed from this "character" - either 1 or
-   *         2
+   * @return the number of bytes consumed from this "character" - either 1 or 2
    */
   public int bytesConsumed(int character) {
     int highByte = (character >> 8) & 0xff;
@@ -104,8 +101,10 @@ public final class CMapFormat2 extends CMap {
 
     // position of idRangeOffset + value of idRangeOffset + index for low byte
     // = firstcode
-    int pLocation = (offset + SubHeader.idRangeOffset) + idRangeOffset
-        + (lowByte - firstCode) * FontData.SizeOf.USHORT;
+    int pLocation =
+        (offset + SubHeader.idRangeOffset)
+            + idRangeOffset
+            + (lowByte - firstCode) * FontData.SizeOf.USHORT;
     int p = this.data.readUShort(pLocation);
     if (p == 0) {
       return CMapTable.NOTDEF;
@@ -130,13 +129,17 @@ public final class CMapFormat2 extends CMap {
 
   public static class Builder extends CMap.Builder<CMapFormat2> {
     protected Builder(WritableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
-          CMapFormat.Format2, cmapId);
+      super(
+          data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
+          CMapFormat.Format2,
+          cmapId);
     }
 
     protected Builder(ReadableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
-          CMapFormat.Format2, cmapId);
+      super(
+          data == null ? null : data.slice(offset, data.readUShort(offset + Header.length)),
+          CMapFormat.Format2,
+          cmapId);
     }
 
     @Override

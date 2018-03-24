@@ -65,5 +65,4 @@ public class SbitLineMetrics extends SubTable {
   public int minAfterBL() {
     return this.data.readChar(Offset.minAfterBL);
   }
-
 }

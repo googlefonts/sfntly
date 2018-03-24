@@ -30,8 +30,7 @@ public abstract class SubTableContainerTable extends Table {
     super(header, data);
   }
 
-  public abstract static class Builder<T extends SubTableContainerTable>
-  extends Table.Builder<T> {
+  public abstract static class Builder<T extends SubTableContainerTable> extends Table.Builder<T> {
 
     protected Builder(Header header, WritableFontData data) {
       super(header, data);

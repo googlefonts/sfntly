@@ -17,13 +17,10 @@
 package com.google.typography.font.tools.subsetter;
 
 import com.google.typography.font.sfntly.Font;
-
 import java.io.IOException;
 import java.util.Set;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public interface TableSubsetter {
 
   public Set<Integer> tagsHandled();

@@ -23,14 +23,11 @@ import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMap.CMapFormat;
 import com.google.typography.font.sfntly.table.core.CMapFormat4;
 import com.google.typography.font.sfntly.table.core.CMapTable;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class RenumberingCMapTableSubsetter extends TableSubsetterImpl {
 
   public RenumberingCMapTableSubsetter() {
@@ -70,5 +67,4 @@ public class RenumberingCMapTableSubsetter extends TableSubsetterImpl {
     cmapBuilder.build();
     return true;
   }
-
 }

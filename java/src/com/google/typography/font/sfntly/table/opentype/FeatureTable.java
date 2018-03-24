@@ -25,8 +25,7 @@ public class FeatureTable extends RecordsTable<NumRecord> {
     return FIELD_COUNT;
   }
 
-  static class Builder extends
-  RecordsTable.Builder<FeatureTable, NumRecord> {
+  static class Builder extends RecordsTable.Builder<FeatureTable, NumRecord> {
 
     Builder() {
       super();
@@ -63,4 +62,3 @@ public class FeatureTable extends RecordsTable<NumRecord> {
     }
   }
 }
-

@@ -28,12 +28,10 @@ import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.tools.fontinfo.DataDisplayTable.Align;
-
 import com.ibm.icu.impl.IllegalIcuArgumentException;
 import com.ibm.icu.lang.UCharacter;
 import com.ibm.icu.lang.UScript;
 import com.ibm.icu.text.UnicodeSet;
-
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,8 +50,7 @@ import java.util.TreeSet;
 public class FontInfo {
 
   /**
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return the sfnt version of the font
    */
   public static String sfntVersion(Font font) {
@@ -65,11 +62,10 @@ public class FontInfo {
   }
 
   /**
-   * Gets a list of information regarding various dimensions about the given
-   * font from the head, hhea, and OS/2 font tables
+   * Gets a list of information regarding various dimensions about the given font from the head,
+   * hhea, and OS/2 font tables
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return a list of dimensional information about the font
    */
   public static DataDisplayTable listFontMetrics(Font font) {
@@ -100,12 +96,11 @@ public class FontInfo {
   /**
    * Gets a list of tables in the font as well as their sizes.
    *
-   *  This function returns a list of tables in the given font as well as their
-   * sizes, both in bytes and as fractions of the overall font size. The
-   * information for each font is contained in a TableInfo object.
+   * <p>This function returns a list of tables in the given font as well as their sizes, both in
+   * bytes and as fractions of the overall font size. The information for each font is contained in
+   * a TableInfo object.
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return a list of information about tables in the font provided
    */
   public static DataDisplayTable listTables(Font font) {
@@ -142,17 +137,15 @@ public class FontInfo {
   }
 
   /**
-   * Gets a list of entries in the name table of a font. These entries contain
-   * information related to the font, such as the font name, style name, and
-   * copyright notices.
+   * Gets a list of entries in the name table of a font. These entries contain information related
+   * to the font, such as the font name, style name, and copyright notices.
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return a list of entries in the name table of the font
    */
   public static DataDisplayTable listNameEntries(Font font) {
-    DataDisplayTable table = new DataDisplayTable(
-        "Platform", "Encoding", "Language", "Name", "Value");
+    DataDisplayTable table =
+        new DataDisplayTable("Platform", "Encoding", "Language", "Name", "Value");
     table.setAlignment(Align.Left, Align.Left, Align.Left, Align.Left, Align.Left);
 
     NameTable nameTable = (NameTable) FontUtils.getTable(font, Tag.name);
@@ -162,20 +155,20 @@ public class FontInfo {
       String lidEntry = ""; // Language
 
       switch (PlatformId.valueOf(entry.platformId())) {
-      case Unicode:
-        eidEntry = UnicodeEncodingId.valueOf(entry.encodingId()).toString();
-        lidEntry = UnicodeLanguageId.valueOf(entry.languageId()).toString();
-        break;
-      case Macintosh:
-        eidEntry = MacintoshEncodingId.valueOf(entry.encodingId()).toString();
-        lidEntry = MacintoshLanguageId.valueOf(entry.languageId()).toString();
-        break;
-      case Windows:
-        eidEntry = WindowsEncodingId.valueOf(entry.encodingId()).toString();
-        lidEntry = WindowsLanguageId.valueOf(entry.languageId()).toString();
-        break;
-      default:
-        break;
+        case Unicode:
+          eidEntry = UnicodeEncodingId.valueOf(entry.encodingId()).toString();
+          lidEntry = UnicodeLanguageId.valueOf(entry.languageId()).toString();
+          break;
+        case Macintosh:
+          eidEntry = MacintoshEncodingId.valueOf(entry.encodingId()).toString();
+          lidEntry = MacintoshLanguageId.valueOf(entry.languageId()).toString();
+          break;
+        case Windows:
+          eidEntry = WindowsEncodingId.valueOf(entry.encodingId()).toString();
+          lidEntry = WindowsLanguageId.valueOf(entry.languageId()).toString();
+          break;
+        default:
+          break;
       }
 
       table.add(
@@ -190,11 +183,9 @@ public class FontInfo {
   }
 
   /**
-   * Gets a list containing the platform ID, encoding ID, and format of all the
-   * cmaps in a font
+   * Gets a list containing the platform ID, encoding ID, and format of all the cmaps in a font
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return a list of information about the cmaps in the font
    */
   public static DataDisplayTable listCmaps(Font font) {
@@ -216,11 +207,9 @@ public class FontInfo {
   /**
    * Gets the number of valid characters in the given font
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return the number of valid characters in the given font
-   * @throws UnsupportedOperationException
-   *           if font does not contain a UCS-4 or UCS-2 cmap
+   * @throws UnsupportedOperationException if font does not contain a UCS-4 or UCS-2 cmap
    */
   public static int numChars(Font font) {
     int numChars = 0;
@@ -238,19 +227,15 @@ public class FontInfo {
   }
 
   /**
-   * Gets a list of code points of valid characters and their names in the given
-   * font.
+   * Gets a list of code points of valid characters and their names in the given font.
    *
-   * @param font
-   *          the source font
-   * @return a list of code points of valid characters and their names in the
-   *         given font.
-   * @throws UnsupportedOperationException
-   *           if font does not contain a UCS-4 or UCS-2 cmap
+   * @param font the source font
+   * @return a list of code points of valid characters and their names in the given font.
+   * @throws UnsupportedOperationException if font does not contain a UCS-4 or UCS-2 cmap
    */
   public static DataDisplayTable listChars(Font font) {
-    DataDisplayTable table = new DataDisplayTable(
-        "Code point", "Glyph ID", "Unicode-designated name for code point");
+    DataDisplayTable table =
+        new DataDisplayTable("Code point", "Glyph ID", "Unicode-designated name for code point");
     table.setAlignment(Align.Right, Align.Right, Align.Left);
 
     // Iterate through all code points
@@ -273,11 +258,9 @@ public class FontInfo {
   // TODO public static DataDisplayTable listChars(Font font, String charString)
 
   /**
-   * Gets a list of Unicode blocks covered by the font and the amount each block
-   * is covered.
+   * Gets a list of Unicode blocks covered by the font and the amount each block is covered.
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return a list of Unicode blocks covered by the font
    */
   // FIXME Find more elegant method of retrieving block data
@@ -304,10 +287,9 @@ public class FontInfo {
       }
       if (count > 0) {
         table.add(
-            String.format("%s [%s, %s]",
-                block,
-                UnicodeBlockData.getBlockStartCode(i),
-                UnicodeBlockData.getBlockEndCode(i)),
+            String.format(
+                "%s [%s, %s]",
+                block, UnicodeBlockData.getBlockStartCode(i), UnicodeBlockData.getBlockEndCode(i)),
             String.format("%d / %d", count, set.size()));
       }
       totalCount += count;
@@ -330,11 +312,9 @@ public class FontInfo {
   }
 
   /**
-   * Gets a list of scripts covered by the font and the amount each block is
-   * covered.
+   * Gets a list of scripts covered by the font and the amount each block is covered.
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return a list of scripts covered by the font
    */
   public static DataDisplayTable listScriptCoverage(Font font) {
@@ -379,13 +359,10 @@ public class FontInfo {
   }
 
   /**
-   * Gets a list of characters needed to fully cover scripts partially covered
-   * by the font
+   * Gets a list of characters needed to fully cover scripts partially covered by the font
    *
-   * @param font
-   *          the source font
-   * @return a list of characters needed to fully cover partially-covered
-   *         scripts
+   * @param font the source font
+   * @return a list of characters needed to fully cover partially-covered scripts
    */
   public static DataDisplayTable listCharsNeededToCoverScript(Font font) {
     DataDisplayTable table = new DataDisplayTable("Script", "Code Point", "Name");
@@ -405,8 +382,9 @@ public class FontInfo {
         if (!coveredScripts.containsKey(scriptCode)) {
           // New covered script found, create set
           try {
-            scriptSet = new UnicodeSet(
-                "[[:" + UScript.getName(scriptCode) + ":]-[:gc=Unassigned:]-[:gc=Control:]]");
+            scriptSet =
+                new UnicodeSet(
+                    "[[:" + UScript.getName(scriptCode) + ":]-[:gc=Unassigned:]-[:gc=Control:]]");
           } catch (IllegalIcuArgumentException e) {
             continue;
           }
@@ -438,23 +416,19 @@ public class FontInfo {
   /**
    * Gets the number of glyphs in the given font
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return the number of glyphs in the font
-   * @throws UnsupportedOperationException
-   *           if font does not contain a valid glyf table
+   * @throws UnsupportedOperationException if font does not contain a valid glyf table
    */
   public static int numGlyphs(Font font) {
     return ((MaximumProfileTable) FontUtils.getTable(font, Tag.maxp)).numGlyphs();
   }
 
   /**
-   * Gets a list of minimum and maximum x and y dimensions for the glyphs in the
-   * font. This is based on the reported min and max values for each glyph and
-   * not on the actual outline sizes.
+   * Gets a list of minimum and maximum x and y dimensions for the glyphs in the font. This is based
+   * on the reported min and max values for each glyph and not on the actual outline sizes.
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return a list of glyph dimensions for the font
    */
   public static DataDisplayTable listGlyphDimensionBounds(Font font) {
@@ -492,11 +466,10 @@ public class FontInfo {
   }
 
   /**
-   * Gets the size of hinting instructions in the glyph table, both in bytes and
-   * as a fraction of the glyph table size.
+   * Gets the size of hinting instructions in the glyph table, both in bytes and as a fraction of
+   * the glyph table size.
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return the amount of hinting that is contained in the font
    */
   public static String hintingSize(Font font) {
@@ -516,13 +489,12 @@ public class FontInfo {
   }
 
   /**
-   * Gets a list of glyphs in the font that are used as subglyphs and the number
-   * of times each subglyph is used as a subglyph
+   * Gets a list of glyphs in the font that are used as subglyphs and the number of times each
+   * subglyph is used as a subglyph
    *
-   * @param font
-   *          the source font
-   * @return the number of glyphs in the font that are used as subglyphs of
-   *         other glyphs more than once
+   * @param font the source font
+   * @return the number of glyphs in the font that are used as subglyphs of other glyphs more than
+   *     once
    */
   public static DataDisplayTable listSubglyphFrequency(Font font) {
     DataDisplayTable table = new DataDisplayTable("Glyph ID", "Frequency");
@@ -562,8 +534,7 @@ public class FontInfo {
   /**
    * Gets a list of IDs for glyphs that are not mapped by any cmap in the font
    *
-   * @param font
-   *          the source font
+   * @param font the source font
    * @return a list of unmapped glyphs
    */
   public static DataDisplayTable listUnmappedGlyphs(Font font) {

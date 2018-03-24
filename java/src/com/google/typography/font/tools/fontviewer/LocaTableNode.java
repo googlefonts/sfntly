@@ -1,7 +1,6 @@
 package com.google.typography.font.tools.fontviewer;
 
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
-
 import javax.swing.JComponent;
 import javax.swing.JTable;
 
@@ -42,14 +41,14 @@ class LocaTableNode extends AbstractNode {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
       switch (columnIndex) {
-      case 0:
-        return rowIndex;
-      case 1:
-        return LocaTableNode.this.loca.glyphOffset(rowIndex);
-      case 2:
-        return LocaTableNode.this.loca.glyphLength(rowIndex);
-      default:
-        throw new IllegalStateException();
+        case 0:
+          return rowIndex;
+        case 1:
+          return LocaTableNode.this.loca.glyphOffset(rowIndex);
+        case 2:
+          return LocaTableNode.this.loca.glyphLength(rowIndex);
+        default:
+          throw new IllegalStateException();
       }
     }
   }

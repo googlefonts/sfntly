@@ -22,7 +22,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.core.FontHeaderTable.IndexToLocFormat;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -58,13 +57,12 @@ public final class LocaTable extends Table {
   }
 
   /**
-   * Return the offset for the given glyph id. Valid glyph ids are from 0 to the
-   * one less than the number of glyphs. The zero entry is the special entry for
-   * the notdef glyph. The final entry beyond the last glyph id is used to
-   * calculate the size of the last glyph.
+   * Return the offset for the given glyph id. Valid glyph ids are from 0 to the one less than the
+   * number of glyphs. The zero entry is the special entry for the notdef glyph. The final entry
+   * beyond the last glyph id is used to calculate the size of the last glyph.
    *
-   * @param glyphId the glyph id to get the offset for; must be less than or
-   *        equal to one more than the number of glyph ids
+   * @param glyphId the glyph id to get the offset for; must be less than or equal to one more than
+   *     the number of glyph ids
    * @return the offset in the glyph table to the specified glyph id
    */
   public int glyphOffset(int glyphId) {
@@ -76,8 +74,9 @@ public final class LocaTable extends Table {
 
   /**
    * Get the length of the data in the glyph table for the specified glyph id.
-   * @param glyphId the glyph id to get the offset for; must be greater than or
-   *        equal to 0 and less than the number of glyphs in the font
+   *
+   * @param glyphId the glyph id to get the offset for; must be greater than or equal to 0 and less
+   *     than the number of glyphs in the font
    * @return the length of the data in the glyph table for the specified glyph id
    */
   public int glyphLength(int glyphId) {
@@ -88,9 +87,8 @@ public final class LocaTable extends Table {
   }
 
   /**
-   * Get the number of locations or locas. This will be one more than the number
-   * of glyphs for this table since the last loca position is used to indicate
-   * the size of the final glyph.
+   * Get the number of locations or locas. This will be one more than the number of glyphs for this
+   * table since the last loca position is used to indicate the size of the final glyph.
    *
    * @return the number of locas
    */
@@ -99,10 +97,9 @@ public final class LocaTable extends Table {
   }
 
   /**
-   * Get the value from the loca table for the index specified. These are the
-   * raw values from the table that are used to compute the offset and size of a
-   * glyph in the glyph table. Valid index values run from 0 to the number of
-   * glyphs in the font.
+   * Get the value from the loca table for the index specified. These are the raw values from the
+   * table that are used to compute the offset and size of a glyph in the glyph table. Valid index
+   * values run from 0 to the number of glyphs in the font.
    *
    * @param index the loca table index
    * @return the loca table value
@@ -118,8 +115,8 @@ public final class LocaTable extends Table {
   }
 
   /**
-   * Get an iterator over the loca values for the table. The iterator returned
-   * does not support the delete operation.
+   * Get an iterator over the loca values for the table. The iterator returned does not support the
+   * delete operation.
    *
    * @return loca iterator
    * @see #loca
@@ -128,14 +125,11 @@ public final class LocaTable extends Table {
     return new LocaIterator();
   }
 
-  /**
-   * Iterator over the raw loca values.
-   */
+  /** Iterator over the raw loca values. */
   private final class LocaIterator implements Iterator<Integer> {
     int index;
 
-    private LocaIterator() {
-    }
+    private LocaIterator() {}
 
     @Override
     public boolean hasNext() {
@@ -153,9 +147,7 @@ public final class LocaTable extends Table {
     }
   }
 
-  /**
-   * Builder for a loca table.
-   */
+  /** Builder for a loca table. */
   public static class Builder extends Table.Builder<LocaTable> {
 
     // values that need to be set to properly parse an existing loca table
@@ -178,9 +170,8 @@ public final class LocaTable extends Table {
     }
 
     /**
-     * Initialize the internal state from the data. Done lazily since in many
-     * cases the builder will be just creating a table object with no parsing
-     * required.
+     * Initialize the internal state from the data. Done lazily since in many cases the builder will
+     * be just creating a table object with no parsing required.
      *
      * @param data the data to initialize from
      */
@@ -204,8 +195,8 @@ public final class LocaTable extends Table {
 
     /**
      * Checks that the glyph id is within the correct range.
-     * @throws IndexOutOfBoundsException if the glyph id is not within the
-     *         correct range
+     *
+     * @throws IndexOutOfBoundsException if the glyph id is not within the correct range
      */
     private int checkGlyphRange(int glyphId) {
       if (glyphId < 0 || glyphId > this.lastGlyphIndex()) {
@@ -219,8 +210,8 @@ public final class LocaTable extends Table {
     }
 
     /**
-     * Internal method to get the loca list if already generated and if not to
-     * initialize the state of the builder.
+     * Internal method to get the loca list if already generated and if not to initialize the state
+     * of the builder.
      *
      * @return the loca list
      */
@@ -242,29 +233,23 @@ public final class LocaTable extends Table {
       this.setModelChanged(false);
     }
 
-    /**
-     * Get the format version that will be used when the loca table is
-     * generated.
-     */
+    /** Get the format version that will be used when the loca table is generated. */
     public IndexToLocFormat formatVersion() {
       return this.formatVersion;
     }
 
-    /**
-     * Set the format version to be used when generating the loca table.
-     */
+    /** Set the format version to be used when generating the loca table. */
     public void setFormatVersion(IndexToLocFormat formatVersion) {
       this.formatVersion = formatVersion;
     }
 
     /**
-     * Gets the List of locas for loca table builder. These may be manipulated
-     * in any way by the caller and the changes will be reflected in the final
-     * loca table produced as long as no subsequent call is made to the
-     * {@link #setLocaList(List)} method.
+     * Gets the List of locas for loca table builder. These may be manipulated in any way by the
+     * caller and the changes will be reflected in the final loca table produced as long as no
+     * subsequent call is made to the {@link #setLocaList(List)} method.
      *
-     *  If there is no current data for the loca table builder or the loca list
-     * have not been previously set then this will return an empty List.
+     * <p>If there is no current data for the loca table builder or the loca list have not been
+     * previously set then this will return an empty List.
      *
      * @return the list of glyph builders
      * @see #setLocaList(List)
@@ -274,9 +259,9 @@ public final class LocaTable extends Table {
     }
 
     /**
-     * Set the list of locas to be used for building this table. If any existing
-     * list was already retrieved with the {@link #locaList()} method then the
-     * connection of that previous list to this builder will be broken.
+     * Set the list of locas to be used for building this table. If any existing list was already
+     * retrieved with the {@link #locaList()} method then the connection of that previous list to
+     * this builder will be broken.
      *
      * @see #locaList()
      */
@@ -286,13 +271,12 @@ public final class LocaTable extends Table {
     }
 
     /**
-     * Return the offset for the given glyph id. Valid glyph ids are from 0 to
-     * one more than the number of glyphs. The zero entry is the special entry
-     * for the notdef glyph. The final entry beyond the last glyph id is used to
-     * calculate the size of the last glyph.
+     * Return the offset for the given glyph id. Valid glyph ids are from 0 to one more than the
+     * number of glyphs. The zero entry is the special entry for the notdef glyph. The final entry
+     * beyond the last glyph id is used to calculate the size of the last glyph.
      *
-     * @param glyphId the glyph id to get the offset for; must be less than or
-     *        equal to one more than the number of glyph ids
+     * @param glyphId the glyph id to get the offset for; must be less than or equal to one more
+     *     than the number of glyph ids
      * @return the offset in the glyph table to the specified glyph id
      */
     public int glyphOffset(int glyphId) {
@@ -301,13 +285,12 @@ public final class LocaTable extends Table {
     }
 
     /**
-     * Get the length of the data in the glyph table for the specified glyph id.
-     * This is a convenience method that uses the specified glyph id
+     * Get the length of the data in the glyph table for the specified glyph id. This is a
+     * convenience method that uses the specified glyph id
      *
-     * @param glyphId the glyph id to get the offset for; must be less than or
-     *        equal to the number of glyphs
-     * @return the length of the data in the glyph table for the specified glyph
-     *         id
+     * @param glyphId the glyph id to get the offset for; must be less than or equal to the number
+     *     of glyphs
+     * @return the length of the data in the glyph table for the specified glyph id
      */
     public int glyphLength(int glyphId) {
       this.checkGlyphRange(glyphId);
@@ -317,11 +300,10 @@ public final class LocaTable extends Table {
     /**
      * Set the number of glyphs.
      *
-     *  This method sets the number of glyphs that the builder will attempt to
-     * parse location data for from the raw binary data. This method only needs
-     * to be called (and <b>must</b> be) when the raw data for this builder has
-     * been changed. It does not by itself reset the data or clear any set loca
-     * list.
+     * <p>This method sets the number of glyphs that the builder will attempt to parse location data
+     * for from the raw binary data. This method only needs to be called (and <b>must</b> be) when
+     * the raw data for this builder has been changed. It does not by itself reset the data or clear
+     * any set loca list.
      *
      * @param numGlyphs the number of glyphs represented by the data
      */
@@ -339,10 +321,10 @@ public final class LocaTable extends Table {
     }
 
     /**
-     * Revert the loca table builder to the state contained in the last raw data
-     * set on the builder. That raw data may be that read from a font file when
-     * the font builder was created, that set by a user of the loca table
-     * builder, or null data if this builder was created as a new empty builder.
+     * Revert the loca table builder to the state contained in the last raw data set on the builder.
+     * That raw data may be that read from a font file when the font builder was created, that set
+     * by a user of the loca table builder, or null data if this builder was created as a new empty
+     * builder.
      */
     public void revert() {
       this.loca = null;
@@ -350,9 +332,8 @@ public final class LocaTable extends Table {
     }
 
     /**
-     * Get the number of locations or locas. This will be one more than the
-     * number of glyphs for this table since the last loca position is used to
-     * indicate the size of the final glyph.
+     * Get the number of locations or locas. This will be one more than the number of glyphs for
+     * this table since the last loca position is used to indicate the size of the final glyph.
      *
      * @return the number of locas
      */
@@ -361,10 +342,9 @@ public final class LocaTable extends Table {
     }
 
     /**
-     * Get the value from the loca table for the index specified. These are the
-     * raw values from the table that are used to compute the offset and size of
-     * a glyph in the glyph table. Valid index values run from 0 to the number
-     * of glyphs in the font.
+     * Get the value from the loca table for the index specified. These are the raw values from the
+     * table that are used to compute the offset and size of a glyph in the glyph table. Valid index
+     * values run from 0 to the number of glyphs in the font.
      *
      * @param index the loca table index
      * @return the loca table value

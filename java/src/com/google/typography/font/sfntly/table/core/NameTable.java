@@ -26,7 +26,6 @@ import com.google.typography.font.sfntly.data.SfObjects;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.SubTableContainerTable;
-
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -45,12 +44,10 @@ import java.util.TreeMap;
  *
  * @author Stuart Gill
  */
-public final class NameTable extends SubTableContainerTable implements Iterable<
-    NameTable.NameEntry> {
+public final class NameTable extends SubTableContainerTable
+    implements Iterable<NameTable.NameEntry> {
 
-  /**
-   * Offsets to specific elements in the underlying data, relative to the start of the table.
-   */
+  /** Offsets to specific elements in the underlying data, relative to the start of the table. */
   private interface HeaderOffsets {
     int format = 0;
     int count = 2;
@@ -125,7 +122,8 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
   public enum UnicodeLanguageId {
     // Unicode Language IDs (platform ID = 0)
-    Unknown(-1), All(0);
+    Unknown(-1),
+    All(0);
 
     private final int value;
 
@@ -151,9 +149,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
     }
   }
 
-  /**
-   * Macinstosh Language IDs (platform ID = 1)
-   */
+  /** Macinstosh Language IDs (platform ID = 1) */
   public enum MacintoshLanguageId {
     Unknown(-1),
     English(0),
@@ -299,9 +295,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
     }
   }
 
-  /**
-   * Windows Language IDs (platform ID = 3)
-   */
+  /** Windows Language IDs (platform ID = 3) */
   public enum WindowsLanguageId {
     Unknown(-1),
     Afrikaans_SouthAfrica(0x0436),
@@ -544,6 +538,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
   /**
    * Get the number of names in the name table.
+   *
    * @return the number of names
    */
   public int nameCount() {
@@ -552,6 +547,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
   /**
    * Get the offset to the string data in the name table.
+   *
    * @return the string offset
    */
   private int stringOffset() {
@@ -560,6 +556,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
   /**
    * Get the offset for the given name record.
+   *
    * @param index the index of the name record
    * @return the offset of the name record
    */
@@ -583,7 +580,6 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
    *
    * @param index the index of the name record
    * @return the encoding id
-   *
    * @see MacintoshEncodingId
    * @see WindowsEncodingId
    * @see UnicodeEncodingId
@@ -594,6 +590,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
   /**
    * Get the language id for the given name record.
+   *
    * @param index the index of the name record
    * @return the language id
    */
@@ -603,6 +600,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
   /**
    * Get the name id for given name record.
+   *
    * @param index the index of the name record
    * @return the name id
    */
@@ -612,6 +610,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
   /**
    * Get the length of the string data for the given name record.
+   *
    * @param index the index of the name record
    * @return the length of the string data in bytes
    */
@@ -621,16 +620,18 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
   /**
    * Get the offset of the string data for the given name record.
+   *
    * @param index the index of the name record
    * @return the offset of the string data from the start of the table
    */
   private int nameOffset(int index) {
-    return this.data.readUShort(
-        NameRecord.stringOffset + this.offsetForNameRecord(index)) + this.stringOffset();
+    return this.data.readUShort(NameRecord.stringOffset + this.offsetForNameRecord(index))
+        + this.stringOffset();
   }
 
   /**
    * Get the name as bytes for the given name record.
+   *
    * @param index the index of the name record
    * @return the bytes for the name
    */
@@ -642,8 +643,8 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
   }
 
   /**
-   * Get the name as bytes for the specified name. If there is no entry for the requested name
-   * then <code>null</code> is returned.
+   * Get the name as bytes for the specified name. If there is no entry for the requested name then
+   * <code>null</code> is returned.
    */
   public byte[] nameAsBytes(int platformId, int encodingId, int languageId, int nameId) {
     NameEntry entry = this.nameEntry(platformId, encodingId, languageId, nameId);
@@ -656,6 +657,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
   /**
    * Get the name as a String for the given name record. If there is no encoding conversion
    * available for the name record then a best attempt String will be returned.
+   *
    * @param index the index of the name record
    */
   public String name(int index) {
@@ -665,8 +667,8 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
   /**
    * Get the name as a String for the specified name. If there is no entry for the requested name
-   * then <code>null</code> is returned. If there is no encoding conversion
-   * available for the name then a best attempt String will be returned.
+   * then <code>null</code> is returned. If there is no encoding conversion available for the name
+   * then a best attempt String will be returned.
    */
   public String name(int platformId, int encodingId, int languageId, int nameId) {
     NameEntry entry = this.nameEntry(platformId, encodingId, languageId, nameId);
@@ -678,13 +680,17 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
   /**
    * Get the name entry record for the given name entry.
+   *
    * @param index the index of the name record
    * @return the name entry
    */
   public NameEntry nameEntry(int index) {
     return new NameEntry(
-        this.platformId(index), this.encodingId(index), this.languageId(index),
-        this.nameId(index), this.nameAsBytes(index));
+        this.platformId(index),
+        this.encodingId(index),
+        this.languageId(index),
+        this.nameId(index),
+        this.nameAsBytes(index));
   }
 
   /**
@@ -693,12 +699,14 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
    */
   public NameEntry nameEntry(
       final int platformId, final int encodingId, final int languageId, final int nameId) {
-    Iterator<NameEntry> nameEntryIter = this.iterator(new NameEntryFilter() {
-      @Override
-      public boolean accept(int pid, int eid, int lid, int nid) {
-        return pid == platformId && eid == encodingId && lid == languageId && nid == nameId;
-      }
-    });
+    Iterator<NameEntry> nameEntryIter =
+        this.iterator(
+            new NameEntryFilter() {
+              @Override
+              public boolean accept(int pid, int eid, int lid, int nid) {
+                return pid == platformId && eid == encodingId && lid == languageId && nid == nameId;
+              }
+            });
     // can only be one name for each set of ids
     if (nameEntryIter.hasNext()) {
       return nameEntryIter.next();
@@ -708,6 +716,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
   /**
    * Get all the name entry records.
+   *
    * @return the set of all name entry records
    */
   public Set<NameEntry> names() {
@@ -800,18 +809,18 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
        * the ranges do change then we will potentially generate non-unique hash
        * values which is a common result
        */
-      return ((this.encodingId & 0x3f) << 26) | ((this.nameId & 0x3f) << 16)
-          | ((this.platformId & 0x0f) << 12) | (this.languageId & 0xff);
+      return ((this.encodingId & 0x3f) << 26)
+          | ((this.nameId & 0x3f) << 16)
+          | ((this.platformId & 0x0f) << 12)
+          | (this.languageId & 0xff);
     }
 
     /**
-     * Name entries are sorted by platform id, encoding id, language id, and
-     * name id in order of decreasing importance.
+     * Name entries are sorted by platform id, encoding id, language id, and name id in order of
+     * decreasing importance.
      *
-     * @return less than zero if this entry is less than the other; greater than
-     *         zero if this entry is greater than the other; and zero if they
-     *         are equal
-     *
+     * @return less than zero if this entry is less than the other; greater than zero if this entry
+     *     is greater than the other; and zero if they are equal
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
@@ -832,21 +841,19 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
     public String toString() {
       NameId nameId = NameId.valueOf(this.nameId);
       String nameIdStr = nameId != null ? nameId.toString() : Integer.toHexString(this.nameId);
-      return String.format("P=%s, E=%#x, L=%#x, N=%s",
+      return String.format(
+          "P=%s, E=%#x, L=%#x, N=%s",
           PlatformId.valueOf(this.platformId), this.encodingId, this.languageId, nameIdStr);
     }
   }
 
-  /**
-   * Class to represent a name entry in the name table.
-   */
+  /** Class to represent a name entry in the name table. */
   public static class NameEntry {
     NameEntryId nameEntryId;
     protected int length;
     protected byte[] nameBytes;
 
-    protected NameEntry() {
-    }
+    protected NameEntry() {}
 
     protected NameEntry(NameEntryId nameEntryId, byte[] nameBytes) {
       this.nameEntryId = nameEntryId;
@@ -864,6 +871,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
     /**
      * Get the platform id.
+     *
      * @return the platform id
      */
     public int platformId() {
@@ -872,6 +880,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
     /**
      * Get the encoding id.
+     *
      * @return the encoding id
      */
     public int encodingId() {
@@ -880,6 +889,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
     /**
      * Get the language id.
+     *
      * @return the language id
      */
     public int languageId() {
@@ -888,6 +898,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
     /**
      * Get the name id.
+     *
      * @return the name id
      */
     public int nameId() {
@@ -896,6 +907,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
     /**
      * Get the bytes for name.
+     *
      * @return the name bytes
      */
     public byte[] nameAsBytes() {
@@ -903,8 +915,8 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
     }
 
     /**
-     * Get the name as a String. If there is no encoding conversion
-     * available for the name bytes then a best attempt String will be returned.
+     * Get the name as a String. If there is no encoding conversion available for the name bytes
+     * then a best attempt String will be returned.
      */
     public String name() {
       return NameTable.convertFromNameBytes(this.nameBytes, this.platformId(), this.encodingId());
@@ -954,8 +966,9 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
         this.nameBytes = new byte[0];
         return;
       }
-      this.nameBytes = NameTable.convertToNameBytes(
-          name, this.nameEntryId.getPlatformId(), this.nameEntryId.getEncodingId());
+      this.nameBytes =
+          NameTable.convertToNameBytes(
+              name, this.nameEntryId.getPlatformId(), this.nameEntryId.getEncodingId());
     }
 
     public void setName(byte[] nameBytes) {
@@ -968,12 +981,13 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
   }
 
   /**
-   * An interface for a filter to use with the name entry iterator. This allows
-   * name entries to be iterated and only those acceptable to the filter will be returned.
+   * An interface for a filter to use with the name entry iterator. This allows name entries to be
+   * iterated and only those acceptable to the filter will be returned.
    */
   public interface NameEntryFilter {
     /**
      * Callback to determine if a name entry is acceptable.
+     *
      * @return true if the name entry is acceptable; false otherwise
      */
     boolean accept(int platformId, int encodingId, int languageId, int nameId);
@@ -1027,6 +1041,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
 
   /**
    * Get an iterator over name entries in the name table.
+   *
    * @param filter a filter to select acceptable name entries
    * @return an iterator over name entries
    */
@@ -1242,10 +1257,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
       return this.nameEntryMap;
     }
 
-    /**
-     * Revert the name builders for the name table to the last version that came
-     * from data.
-     */
+    /** Revert the name builders for the name table to the last version that came from data. */
     public void revertNames() {
       this.nameEntryMap = null;
       this.setModelChanged(false);
@@ -1255,9 +1267,7 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
       return this.getNameBuilders().size();
     }
 
-    /**
-     * Clear the name builders for the name table.
-     */
+    /** Clear the name builders for the name table. */
     public void clear() {
       this.getNameBuilders().clear();
     }
@@ -1340,8 +1350,8 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
         // string table
         byte[] nameBytes = builder.nameAsBytes();
         if (nameBytes.length > 0) {
-          stringOffset += newData.writeBytes(
-              stringOffset + stringTableStartOffset, builder.nameAsBytes());
+          stringOffset +=
+              newData.writeBytes(stringOffset + stringTableStartOffset, builder.nameAsBytes());
         }
       }
       return stringOffset + stringTableStartOffset;

@@ -19,7 +19,6 @@ package com.google.typography.font.sfntly.table.bitmap;
 import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -83,8 +82,8 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
 
     private static int dataLength(
         ReadableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
-      return EblcTable.HeaderOffsets.SIZE + (lastGlyphIndex - firstGlyphIndex + 1 + 1)
-          * FontData.SizeOf.USHORT;
+      return EblcTable.HeaderOffsets.SIZE
+          + (lastGlyphIndex - firstGlyphIndex + 1 + 1) * FontData.SizeOf.USHORT;
     }
 
     private Builder() {
@@ -168,7 +167,9 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
           throw new NoSuchElementException("No more characters to iterate.");
         }
         BitmapGlyphInfo info =
-            new BitmapGlyphInfo(this.glyphId, IndexSubTableFormat3.Builder.this.imageDataOffset(),
+            new BitmapGlyphInfo(
+                this.glyphId,
+                IndexSubTableFormat3.Builder.this.imageDataOffset(),
                 IndexSubTableFormat3.Builder.this.glyphStartOffset(this.glyphId),
                 IndexSubTableFormat3.Builder.this.glyphLength(this.glyphId),
                 IndexSubTableFormat3.Builder.this.imageFormat());
@@ -220,8 +221,10 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
     protected int subSerialize(WritableFontData newData) {
       int size = super.serializeIndexSubHeader(newData);
       if (!this.modelChanged()) {
-        size += this.internalReadData().slice(Offset.offsetArray)
-            .copyTo(newData.slice(Offset.offsetArray));
+        size +=
+            this.internalReadData()
+                .slice(Offset.offsetArray)
+                .copyTo(newData.slice(Offset.offsetArray));
       } else {
 
         for (Integer loca : this.offsetArray) {

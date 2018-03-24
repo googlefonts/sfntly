@@ -34,16 +34,12 @@ public final class ControlProgramTable extends Table {
     super(header, data);
   }
 
-  /**
-   * Get the data value at the specified index.
-   */
+  /** Get the data value at the specified index. */
   public int data(int index) {
     return this.data.readByte(index);
   }
 
-  /**
-   * Get the number of bytes that may be in the table.
-   */
+  /** Get the number of bytes that may be in the table. */
   public int byteCount() {
     return this.dataLength() / FontData.SizeOf.BYTE;
   }

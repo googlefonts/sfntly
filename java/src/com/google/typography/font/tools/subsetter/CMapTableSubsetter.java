@@ -21,12 +21,9 @@ import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
-
 import java.io.IOException;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class CMapTableSubsetter extends TableSubsetterImpl {
 
   public CMapTableSubsetter() {
@@ -41,8 +38,8 @@ public class CMapTableSubsetter extends TableSubsetterImpl {
     }
 
     CMapTable.Builder cmapTableBuilder =
-        (com.google.typography.font.sfntly.table.core.CMapTable.Builder) fontBuilder
-            .newTableBuilder(Tag.cmap);
+        (com.google.typography.font.sfntly.table.core.CMapTable.Builder)
+            fontBuilder.newTableBuilder(Tag.cmap);
 
     for (CMapTable.CMapId cmapId : subsetter.cmapId()) {
       CMap cmap = cmapTable.cmap(cmapId);

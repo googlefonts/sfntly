@@ -20,34 +20,28 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
 /**
- * An abstract base class for subtables. Subtables are smaller tables nested
- * within other tables and don't have an entry in the main font index. Examples
- * of these are the CMap subtables within CMap table (cmap) or a glyph within
- * the glyph table (glyf).
+ * An abstract base class for subtables. Subtables are smaller tables nested within other tables and
+ * don't have an entry in the main font index. Examples of these are the CMap subtables within CMap
+ * table (cmap) or a glyph within the glyph table (glyf).
  *
  * @author Stuart Gill
  */
 public abstract class SubTable extends FontDataTable {
-  /**
-   * The data for the whole table in which this subtable is contained.
-   */
+  /** The data for the whole table in which this subtable is contained. */
   private final ReadableFontData masterData;
 
   private int padding = 0;
 
   /**
    * @param data the data representing the subtable
-   * @param masterData the data representing the full table containing this
-   *        subtable
+   * @param masterData the data representing the full table containing this subtable
    */
   protected SubTable(ReadableFontData data, ReadableFontData masterData) {
     super(data);
     this.masterData = masterData;
   }
 
-  /**
-   * @param data the data representing the subtable
-   */
+  /** @param data the data representing the subtable */
   protected SubTable(ReadableFontData data) {
     this(data, null);
   }
@@ -73,9 +67,7 @@ public abstract class SubTable extends FontDataTable {
   protected abstract static class Builder<T extends SubTable> extends FontDataTable.Builder<T> {
     private ReadableFontData masterData;
 
-    /**
-     * @param masterData the data for the full table
-     */
+    /** @param masterData the data for the full table */
     protected Builder(WritableFontData data, ReadableFontData masterData) {
       super(data);
       this.masterData = masterData;
@@ -101,8 +93,8 @@ public abstract class SubTable extends FontDataTable {
     /**
      * Creates a new empty sub-table.
      *
-     * @param dataSize the initial size for the data; if it is positive then the
-     *        size is fixed; if it is negative then it is variable sized
+     * @param dataSize the initial size for the data; if it is positive then the size is fixed; if
+     *     it is negative then it is variable sized
      */
     protected Builder(int dataSize) {
       super(dataSize);
@@ -114,8 +106,8 @@ public abstract class SubTable extends FontDataTable {
   }
 
   /**
-   * Get the number of bytes of padding used in the table. The padding bytes are
-   * used to align the table length to a 4 byte boundary.
+   * Get the number of bytes of padding used in the table. The padding bytes are used to align the
+   * table length to a 4 byte boundary.
    *
    * @return the number of padding bytes
    */
@@ -123,10 +115,7 @@ public abstract class SubTable extends FontDataTable {
     return this.padding;
   }
 
-  /**
-   * Sets the amount of padding that is part of the data being used by this
-   * subtable.
-   */
+  /** Sets the amount of padding that is part of the data being used by this subtable. */
   // TODO(stuartg): move to constructor
   protected void setPadding(int padding) {
     this.padding = padding;

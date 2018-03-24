@@ -20,10 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public abstract class TableSubsetterImpl implements TableSubsetter {
 
   protected final Set<Integer> tags;

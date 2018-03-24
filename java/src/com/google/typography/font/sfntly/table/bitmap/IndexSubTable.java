@@ -19,7 +19,6 @@ package com.google.typography.font.sfntly.table.bitmap;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
-
 import java.util.Iterator;
 
 public abstract class IndexSubTable extends SubTable {
@@ -94,8 +93,12 @@ public abstract class IndexSubTable extends SubTable {
       return null;
     }
 
-    return new BitmapGlyphInfo(glyphId, this.imageDataOffset(), this.glyphStartOffset(glyphId),
-        this.glyphLength(glyphId), this.imageFormat());
+    return new BitmapGlyphInfo(
+        glyphId,
+        this.imageDataOffset(),
+        this.glyphStartOffset(glyphId),
+        this.glyphLength(glyphId),
+        this.imageFormat());
   }
 
   public final int glyphOffset(int glyphId) {
@@ -106,9 +109,7 @@ public abstract class IndexSubTable extends SubTable {
     return this.imageDataOffset() + glyphStartOffset;
   }
 
-  /**
-   * Gets the offset of the glyph relative to the block for this index subtable.
-   */
+  /** Gets the offset of the glyph relative to the block for this index subtable. */
   public abstract int glyphStartOffset(int glyphId);
 
   public abstract int glyphLength(int glyphId);
@@ -128,10 +129,14 @@ public abstract class IndexSubTable extends SubTable {
 
   @Override
   public String toString() {
-    String s = String.format(
-        "IndexSubTable: [%#x : %#x], format = %d, image format = %s, imageOff = %#x%n",
-        this.firstGlyphIndex(), this.lastGlyphIndex(),
-        this.indexFormat, this.imageFormat(), this.imageDataOffset());
+    String s =
+        String.format(
+            "IndexSubTable: [%#x : %#x], format = %d, image format = %s, imageOff = %#x%n",
+            this.firstGlyphIndex(),
+            this.lastGlyphIndex(),
+            this.indexFormat,
+            this.imageFormat(),
+            this.imageDataOffset());
 
     if (DEBUG) {
       for (int g = this.firstGlyphIndex(); g < this.lastGlyphIndex(); g++) {
@@ -171,12 +176,13 @@ public abstract class IndexSubTable extends SubTable {
 
       int entryOffset = offsetToIndexSubTableArray + arrayIndex * EblcTable.IndexSubTableEntry.SIZE;
 
-      int firstGlyphIndex = data.readUShort(
-          entryOffset + EblcTable.IndexSubTableEntry.firstGlyphIndex);
-      int lastGlyphIndex = data.readUShort(
-          entryOffset + EblcTable.IndexSubTableEntry.lastGlyphIndex);
-      int additionOffsetToIndexSubtable = data.readULongAsInt(
-          entryOffset + EblcTable.IndexSubTableEntry.additionalOffsetToIndexSubtable);
+      int firstGlyphIndex =
+          data.readUShort(entryOffset + EblcTable.IndexSubTableEntry.firstGlyphIndex);
+      int lastGlyphIndex =
+          data.readUShort(entryOffset + EblcTable.IndexSubTableEntry.lastGlyphIndex);
+      int additionOffsetToIndexSubtable =
+          data.readULongAsInt(
+              entryOffset + EblcTable.IndexSubTableEntry.additionalOffsetToIndexSubtable);
 
       int indexSubTableOffset = offsetToIndexSubTableArray + additionOffsetToIndexSubtable;
 
@@ -234,10 +240,9 @@ public abstract class IndexSubTable extends SubTable {
       this.imageDataOffset = data.readULongAsInt(SubOffset.imageDataOffset);
     }
 
-
     /**
-     * Unable to fully revert unless some changes happen to hold the original
-     * data. Until then keep as protected.
+     * Unable to fully revert unless some changes happen to hold the original data. Until then keep
+     * as protected.
      */
     protected void revert() {
       this.setModelChanged(false);
@@ -282,40 +287,34 @@ public abstract class IndexSubTable extends SubTable {
 
     public abstract int numGlyphs();
 
-    /**
-     * Gets the glyph info for the specified glyph id.
-     */
+    /** Gets the glyph info for the specified glyph id. */
     // TODO(stuartg): could be optimized by pushing down into subclasses
     public BitmapGlyphInfo glyphInfo(int glyphId) {
-      return new BitmapGlyphInfo(glyphId, this.imageDataOffset(), this.glyphStartOffset(glyphId),
-          this.glyphLength(glyphId), this.imageFormat());
+      return new BitmapGlyphInfo(
+          glyphId,
+          this.imageDataOffset(),
+          this.glyphStartOffset(glyphId),
+          this.glyphLength(glyphId),
+          this.imageFormat());
     }
 
-    /**
-     * Gets the full offset of the glyph within the EBDT table.
-     */
+    /** Gets the full offset of the glyph within the EBDT table. */
     public final int glyphOffset(int glyphId) {
       return this.imageDataOffset() + this.glyphStartOffset(glyphId);
     }
 
-    /**
-     * Gets the offset of the glyph relative to the block for this index
-     * subtable.
-     */
+    /** Gets the offset of the glyph relative to the block for this index subtable. */
     public abstract int glyphStartOffset(int glyphId);
 
-    /**
-     * Gets the length of the glyph within the EBDT table.
-     */
+    /** Gets the length of the glyph within the EBDT table. */
     public abstract int glyphLength(int glyphId);
 
     /**
-     * Checks that the glyph id is within the correct range. If it returns the
-     * offset of the glyph id from the start of the range.
+     * Checks that the glyph id is within the correct range. If it returns the offset of the glyph
+     * id from the start of the range.
      *
      * @return the offset of the glyphId from the start of the glyph range
-     * @throws IndexOutOfBoundsException if the glyph id is not within the
-     *         correct range
+     * @throws IndexOutOfBoundsException if the glyph id is not within the correct range
      */
     protected int checkGlyphRange(int glyphId) {
       return IndexSubTable.checkGlyphRange(glyphId, this.firstGlyphIndex(), this.lastGlyphIndex());
@@ -345,7 +344,6 @@ public abstract class IndexSubTable extends SubTable {
       // NOP
     }
 
-
     @Override
     protected int subDataSizeToSerialize() {
       return 0;
@@ -363,10 +361,14 @@ public abstract class IndexSubTable extends SubTable {
 
     @Override
     public String toString() {
-      String s = String.format(
-          "IndexSubTable: [%#x : %#x], format = %d, image format = %s, imageOff = %#x%n",
-          this.firstGlyphIndex(), this.lastGlyphIndex(),
-          this.indexFormat, this.imageFormat(), this.imageDataOffset());
+      String s =
+          String.format(
+              "IndexSubTable: [%#x : %#x], format = %d, image format = %s, imageOff = %#x%n",
+              this.firstGlyphIndex(),
+              this.lastGlyphIndex(),
+              this.indexFormat,
+              this.imageFormat(),
+              this.imageDataOffset());
 
       if (DEBUG) {
         for (int g = this.firstGlyphIndex(); g < this.lastGlyphIndex(); g++) {

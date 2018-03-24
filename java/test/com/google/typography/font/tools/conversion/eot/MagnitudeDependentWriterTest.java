@@ -18,9 +18,7 @@ package com.google.typography.font.tools.conversion.eot;
 
 import junit.framework.TestCase;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class MagnitudeDependentWriterTest extends TestCase {
   // Note: if we use Guava, use MoreAsserts.assertEquals instead
   private void assertEqualsByteArray(byte[] expected, byte[] actual) {
@@ -50,7 +48,7 @@ public class MagnitudeDependentWriterTest extends TestCase {
     writer.flush();
     byte[] result = writer.toByteArray();
     // Note: the spec says 0x90, 0x48, 0x84, but the spec is wrong.
-    byte[] expected = {(byte)0x90, (byte)0x48, (byte)0x04};
+    byte[] expected = {(byte) 0x90, (byte) 0x48, (byte) 0x04};
     assertEqualsByteArray(expected, result);
   }
 
@@ -62,7 +60,7 @@ public class MagnitudeDependentWriterTest extends TestCase {
     writer.writeValue(-3);
     writer.flush();
     byte[] result = writer.toByteArray();
-    byte[] expected = {(byte)0x3a, (byte)0x17};
+    byte[] expected = {(byte) 0x3a, (byte) 0x17};
     assertEqualsByteArray(expected, result);
   }
 }

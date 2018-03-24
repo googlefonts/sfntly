@@ -20,21 +20,20 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Writable font data wrapper. Supports writing of data primitives in the
- * TrueType / OpenType spec.
+ * Writable font data wrapper. Supports writing of data primitives in the TrueType / OpenType spec.
  *
  * @author Stuart Gill
  */
 public final class WritableFontData extends ReadableFontData {
 
   /**
-   * Constructs a writable font data object. If the length is specified as
-   * positive then a fixed size font data object will be created. If the length
-   * is zero or less then a growable font data object will be created and the
-   * size will be used as an estimate to help in allocating the original space.
+   * Constructs a writable font data object. If the length is specified as positive then a fixed
+   * size font data object will be created. If the length is zero or less then a growable font data
+   * object will be created and the size will be used as an estimate to help in allocating the
+   * original space.
    *
-   * @param length if length &gt; 0, create a fixed length font data; otherwise
-   *        create a growable font data
+   * @param length if length &gt; 0, create a fixed length font data; otherwise create a growable
+   *     font data
    * @return a new writable font data
    */
   public static WritableFontData createWritableFontData(int length) {
@@ -50,9 +49,9 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Constructs a writable font data object. The new font data object will wrap
-   * the bytes passed in to the factory and it will take ownership of those
-   * bytes. They should not be used again by the caller.
+   * Constructs a writable font data object. The new font data object will wrap the bytes passed in
+   * to the factory and it will take ownership of those bytes. They should not be used again by the
+   * caller.
    *
    * @param b the byte array to wrap
    * @return a new writable font data
@@ -64,15 +63,16 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Constructs a writable font data object. The new font data object will wrap
-   * a copy of the the data used by the original writable font data object passed in.
+   * Constructs a writable font data object. The new font data object will wrap a copy of the the
+   * data used by the original writable font data object passed in.
    *
    * @param original the source font data
    * @return a new writable font data
    */
   public static WritableFontData createWritableFontData(ReadableFontData original) {
     ByteArray<?> ba = null;
-    // TODO(stuartg): push this down into the BAs - maybe remove the difference between growable and fixed
+    // TODO(stuartg): push this down into the BAs - maybe remove the difference between growable and
+    // fixed
     if (original.array.growable()) {
       ba = new GrowableMemoryByteArray();
     } else {
@@ -85,9 +85,7 @@ public final class WritableFontData extends ReadableFontData {
     return wfd;
   }
 
-  /**
-   * @param array byte array to wrap
-   */
+  /** @param array byte array to wrap */
   private WritableFontData(ByteArray<? extends ByteArray<?>> array) {
     super(array);
   }
@@ -110,8 +108,8 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Makes a slice of this FontData. The returned slice will share the data with
-   * the original <code>FontData</code>.
+   * Makes a slice of this FontData. The returned slice will share the data with the original <code>
+   * FontData</code>.
    *
    * @param offset the start of the slice
    * @param length the number of bytes in the slice
@@ -119,8 +117,10 @@ public final class WritableFontData extends ReadableFontData {
    */
   @Override
   public WritableFontData slice(int offset, int length) {
-    if (offset < 0 || length < 0 || offset > Integer.MAX_VALUE - length ||
-        (offset + length) > this.size()) {
+    if (offset < 0
+        || length < 0
+        || offset > Integer.MAX_VALUE - length
+        || (offset + length) > this.size()) {
       throw new IndexOutOfBoundsException("Attempt to bind data outside of its limits.");
     }
     WritableFontData slice = new WritableFontData(this, offset, length);
@@ -128,8 +128,8 @@ public final class WritableFontData extends ReadableFontData {
   }
 
   /**
-   * Makes a bottom bound only slice of this array. The returned slice will
-   * share the data with the original <code>FontData</code>.
+   * Makes a bottom bound only slice of this array. The returned slice will share the data with the
+   * original <code>FontData</code>.
    *
    * @param offset the start of the slice
    * @return a slice of the original FontData
@@ -162,8 +162,7 @@ public final class WritableFontData extends ReadableFontData {
    * @param b the source for the bytes to be written
    * @param offset offset in the byte array
    * @param length the length of the bytes to be written
-   * @return the number of bytes actually written; -1 if the index is outside
-   *         the FontData's range
+   * @return the number of bytes actually written; -1 if the index is outside the FontData's range
    */
   public int writeBytes(int index, byte[] b, int offset, int length) {
     return this.array.put(this.boundOffset(index), b, offset, this.boundLength(index, length));
@@ -172,9 +171,8 @@ public final class WritableFontData extends ReadableFontData {
   /**
    * Writes the bytes from the array and pad if necessary.
    *
-   *  Writes to the length given using the byte array provided and if there are
-   * not enough bytes in the array then pad to the requested length using the
-   * pad byte specified.
+   * <p>Writes to the length given using the byte array provided and if there are not enough bytes
+   * in the array then pad to the requested length using the pad byte specified.
    *
    * @param index index into the font data
    * @param b the source for the bytes to be written
@@ -184,8 +182,12 @@ public final class WritableFontData extends ReadableFontData {
    * @return the number of bytes actually written
    */
   public int writeBytesPad(int index, byte[] b, int offset, int length, byte pad) {
-    int written = this.array.put(this.boundOffset(index), b, offset,
-        this.boundLength(index, Math.min(length, b.length - offset)));
+    int written =
+        this.array.put(
+            this.boundOffset(index),
+            b,
+            offset,
+            this.boundLength(index, Math.min(length, b.length - offset)));
     written += this.writePadding(written + index, length - written, pad);
     return written;
   }
@@ -221,8 +223,7 @@ public final class WritableFontData extends ReadableFontData {
    *
    * @param index index into the font data
    * @param b the source for the bytes to be written
-   * @return the number of bytes actually written; -1 if the index is outside
-   *         the FontData's range
+   * @return the number of bytes actually written; -1 if the index is outside the FontData's range
    */
   public int writeBytes(int index, byte[] b) {
     return this.writeBytes(index, b, 0, b.length);

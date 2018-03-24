@@ -2,10 +2,8 @@ package com.google.typography.font.tools.fontviewer;
 
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JComponent;
 import javax.swing.JTable;
 
@@ -18,7 +16,7 @@ class GlyfTableNode extends AbstractNode {
   GlyfTableNode(GlyphTable glyf, LocaTable loca) {
     this.glyf = glyf;
     this.loca = loca;
-    for (int i = 0, imax = loca.numGlyphs(); i<imax;i++){
+    for (int i = 0, imax = loca.numGlyphs(); i < imax; i++) {
       int offset = loca.glyphOffset(i);
       int length = loca.glyphLength(i);
       if (length != 0) {
@@ -65,16 +63,16 @@ class GlyfTableNode extends AbstractNode {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
       switch (columnIndex) {
-      case 0:
-        return rowIndex;
-      case 1:
-        return GlyfTableNode.this.loca.glyphOffset(rowIndex);
-      case 2:
-        return GlyfTableNode.this.loca.glyphLength(rowIndex);
-      case 3:
-        int length = GlyfTableNode.this.loca.glyphLength(rowIndex);
-        int offset = GlyfTableNode.this.loca.glyphOffset(rowIndex);
-        return length != 0 ? GlyfTableNode.this.glyf.glyph(offset, length) : "(empty)";
+        case 0:
+          return rowIndex;
+        case 1:
+          return GlyfTableNode.this.loca.glyphOffset(rowIndex);
+        case 2:
+          return GlyfTableNode.this.loca.glyphLength(rowIndex);
+        case 3:
+          int length = GlyfTableNode.this.loca.glyphLength(rowIndex);
+          int offset = GlyfTableNode.this.loca.glyphOffset(rowIndex);
+          return length != 0 ? GlyfTableNode.this.glyf.glyph(offset, length) : "(empty)";
       }
       throw new IllegalStateException();
     }

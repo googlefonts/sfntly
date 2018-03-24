@@ -19,7 +19,6 @@ package com.google.typography.font.tools.subsetter;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -29,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Builder for PostScript table. This is currently outside the main sfntly
- * builder hierarchy, but should be migrated into it.
+ * Builder for PostScript table. This is currently outside the main sfntly builder hierarchy, but
+ * should be migrated into it.
  *
  * @author Raph Levien
  */
@@ -57,7 +56,7 @@ public class PostScriptTableBuilder {
     // TODO: add support for these versions of the table?
     // Version 2.0 table
     int numberOfGlyphs = 32;
-    int glyphNameIndex = 34;  // start of table
+    int glyphNameIndex = 34; // start of table
 
     // Version 2.5 table
 
@@ -65,8 +64,8 @@ public class PostScriptTableBuilder {
   }
 
   /**
-   * These are the standard PostScript names from the OpenType spec. They are a prefix of the
-   * Adobe Glyph List.
+   * These are the standard PostScript names from the OpenType spec. They are a prefix of the Adobe
+   * Glyph List.
    */
   private static final String[] STANDARD_NAMES = {
     ".notdef",
@@ -347,8 +346,7 @@ public class PostScriptTableBuilder {
   }
 
   /**
-   * Initialize the scalar values (underline position, etc) to those from the source post
-   * table.
+   * Initialize the scalar values (underline position, etc) to those from the source post table.
    *
    * @param src The source table to initialize from.
    */

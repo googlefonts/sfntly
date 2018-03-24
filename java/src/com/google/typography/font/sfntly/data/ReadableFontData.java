@@ -22,12 +22,11 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 
-
 /**
- * Readable font data wrapper. Supports reading of data primitives in the
- * TrueType / OpenType spec.
+ * Readable font data wrapper. Supports reading of data primitives in the TrueType / OpenType spec.
  *
  * <p>The data types used are:
+ *
  * <table>
  * <tr>
  * <td>BYTE</td>
@@ -95,28 +94,22 @@ public class ReadableFontData extends FontData {
     return new ReadableFontData(ba);
   }
 
-
-  /**
-   * Flag on whether the checksum has been set.
-   */
+  /** Flag on whether the checksum has been set. */
   private volatile boolean checksumSet = false;
-  /**
-   * Lock on all operations that will affect the value of the checksum.
-   */
+  /** Lock on all operations that will affect the value of the checksum. */
   private final Object checksumLock = new Object();
+
   private volatile long checksum;
   private volatile int[] checksumRange;
 
-  /**
-   * @param array byte array to wrap
-   */
+  /** @param array byte array to wrap */
   protected ReadableFontData(ByteArray<? extends ByteArray<?>> array) {
     super(array);
   }
 
   /**
-   * Creates a bounded wrapper of another ReadableFontData from the
-   * given offset until the end of the original ReadableFontData.
+   * Creates a bounded wrapper of another ReadableFontData from the given offset until the end of
+   * the original ReadableFontData.
    *
    * @param data data to wrap
    * @param offset the start of this data's view of the original data
@@ -126,8 +119,7 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Creates a bounded wrapper of another ReadableFontData from the
-   * given offset and length.
+   * Creates a bounded wrapper of another ReadableFontData from the given offset and length.
    *
    * @param data data to wrap
    * @param offset the start of this data's view of the original data
@@ -138,8 +130,8 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Makes a slice of this FontData. The returned slice will share the data with
-   * the original {@code FontData}.
+   * Makes a slice of this FontData. The returned slice will share the data with the original {@code
+   * FontData}.
    *
    * @param offset the start of the slice
    * @param length the number of bytes in the slice
@@ -147,8 +139,10 @@ public class ReadableFontData extends FontData {
    */
   @Override
   public ReadableFontData slice(int offset, int length) {
-    if (offset < 0 || length < 0 || offset > Integer.MAX_VALUE - length ||
-        (offset + length) > this.size()) {
+    if (offset < 0
+        || length < 0
+        || offset > Integer.MAX_VALUE - length
+        || (offset + length) > this.size()) {
       throw new IndexOutOfBoundsException("Attempt to bind data outside of its limits.");
     }
     ReadableFontData slice = new ReadableFontData(this, offset, length);
@@ -156,8 +150,8 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Makes a bottom bound only slice of this array. The returned slice will
-   * share the data with the original <code>FontData</code>.
+   * Makes a bottom bound only slice of this array. The returned slice will share the data with the
+   * original <code>FontData</code>.
    *
    * @param offset the start of the slice
    * @return a slice of the original FontData
@@ -172,15 +166,16 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Generates a String representation of the object with a certain number of
-   * data bytes.
+   * Generates a String representation of the object with a certain number of data bytes.
    *
    * @param length number of bytes of the data to include in the String
    * @return String representation of the object
    */
   public String toString(int length) {
-    return String.format("[l=%d, cs=%d]\n%s",
-        this.length(), this.checksum(),
+    return String.format(
+        "[l=%d, cs=%d]\n%s",
+        this.length(),
+        this.checksum(),
         this.array.toString(this.boundOffset(0), this.boundLength(0, length)));
   }
 
@@ -190,11 +185,10 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Gets a computed checksum for the data. This checksum uses the OpenType spec
-   * calculation. Every ULong value (32 bit unsigned) in the data is summed and
-   * the resulting value is truncated to 32 bits. If the data length in bytes is
-   * not an integral multiple of 4 then any remaining bytes are treated as the
-   * start of a 4 byte sequence whose remaining bytes are zero.
+   * Gets a computed checksum for the data. This checksum uses the OpenType spec calculation. Every
+   * ULong value (32 bit unsigned) in the data is summed and the resulting value is truncated to 32
+   * bits. If the data length in bytes is not an integral multiple of 4 then any remaining bytes are
+   * treated as the start of a 4 byte sequence whose remaining bytes are zero.
    */
   public long checksum() {
     if (!this.checksumSet) {
@@ -204,8 +198,8 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Computes the checksum for the font data using any ranges set for the
-   * calculation. Updates the internal state of this object in a threadsafe way.
+   * Computes the checksum for the font data using any ranges set for the calculation. Updates the
+   * internal state of this object in a threadsafe way.
    */
   private void computeChecksum() {
     synchronized (this.checksumLock) {
@@ -220,8 +214,9 @@ public class ReadableFontData extends FontData {
         for (int lowBoundIndex = 0; lowBoundIndex < this.checksumRange.length; lowBoundIndex += 2) {
           int lowBound = this.checksumRange[lowBoundIndex];
           int highBound =
-              (lowBoundIndex == this.checksumRange.length - 1) ? this.length() : this.checksumRange[
-                  lowBoundIndex + 1];
+              (lowBoundIndex == this.checksumRange.length - 1)
+                  ? this.length()
+                  : this.checksumRange[lowBoundIndex + 1];
           sum += computeCheckSum(lowBound, highBound);
         }
       }
@@ -231,14 +226,12 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Do the actual computation of the checksum for a range using the
-   * TrueType/OpenType checksum algorithm. The range used is from the low bound
-   * to the high bound in steps of four bytes. If any of the bytes within that 4
-   * byte segment are not readable then it will considered a zero for
+   * Do the actual computation of the checksum for a range using the TrueType/OpenType checksum
+   * algorithm. The range used is from the low bound to the high bound in steps of four bytes. If
+   * any of the bytes within that 4 byte segment are not readable then it will considered a zero for
    * calculation.
    *
-   * <p>Only called from within a synchronized method so it does not need to be
-   * synchronized itself.
+   * <p>Only called from within a synchronized method so it does not need to be synchronized itself.
    *
    * @param lowBound first position to start a 4 byte segment on
    * @param highBound last possible position to start a 4 byte segment on
@@ -263,10 +256,9 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Sets the ranges to use for computing the checksum. These ranges are in
-   * begin and end pairs. If an odd number is given then the final range is
-   * assumed to extend to the end of the data. The lengths of each range must be
-   * a multiple of 4.
+   * Sets the ranges to use for computing the checksum. These ranges are in begin and end pairs. If
+   * an odd number is given then the final range is assumed to extend to the end of the data. The
+   * lengths of each range must be a multiple of 4.
    *
    * @param ranges the range bounds to use for the checksum
    */
@@ -282,10 +274,9 @@ public class ReadableFontData extends FontData {
   }
 
   /**
-   * Gets the ranges that are used for computing the checksum. These ranges are in
-   * begin and end pairs. If an odd number is given then the final range is
-   * assumed to extend to the end of the data. The lengths of each range must be
-   * a multiple of 4.
+   * Gets the ranges that are used for computing the checksum. These ranges are in begin and end
+   * pairs. If an odd number is given then the final range is assumed to extend to the end of the
+   * data. The lengths of each range must be a multiple of 4.
    *
    * @return the range bounds used for the checksum
    */
@@ -346,8 +337,8 @@ public class ReadableFontData extends FontData {
    * @param b the destination for the bytes read
    * @param offset offset in the byte array to place the bytes
    * @param length the length of bytes to read
-   * @return the number of bytes actually read; -1 if the index is outside the
-   *         bounds of the font data
+   * @return the number of bytes actually read; -1 if the index is outside the bounds of the font
+   *     data
    */
   public int readBytes(int index, byte[] b, int offset, int length) {
     int bytesRead =
@@ -396,8 +387,10 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readUInt24(int index) {
-    return 0xffffff & (this.readUByte(index) << 16 | this.readUByte(index + 1) << 8
-        | this.readUByte(index + 2));
+    return 0xffffff
+        & (this.readUByte(index) << 16
+            | this.readUByte(index + 1) << 8
+            | this.readUByte(index + 2));
   }
 
   /**
@@ -407,8 +400,11 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public long readULong(int index) {
-    return 0xffffffffL & (this.readUByte(index) << 24 | this.readUByte(index + 1) << 16
-        | this.readUByte(index + 2) << 8 | this.readUByte(index + 3));
+    return 0xffffffffL
+        & (this.readUByte(index) << 24
+            | this.readUByte(index + 1) << 16
+            | this.readUByte(index + 2) << 8
+            | this.readUByte(index + 3));
   }
 
   /**
@@ -433,8 +429,11 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public long readULongLE(int index) {
-    return 0xffffffffL & (this.readUByte(index) | this.readUByte(index + 1) << 8
-        | this.readUByte(index + 2) << 16 | this.readUByte(index + 3) << 24);
+    return 0xffffffffL
+        & (this.readUByte(index)
+            | this.readUByte(index + 1) << 8
+            | this.readUByte(index + 2) << 16
+            | this.readUByte(index + 3) << 24);
   }
 
   /**
@@ -444,8 +443,10 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readLong(int index) {
-    return this.readByte(index) << 24 | this.readUByte(index + 1) << 16 |
-    this.readUByte(index + 2) << 8 | this.readUByte(index + 3);
+    return this.readByte(index) << 24
+        | this.readUByte(index + 1) << 16
+        | this.readUByte(index + 2) << 8
+        | this.readUByte(index + 3);
   }
 
   /**
@@ -540,9 +541,9 @@ public class ReadableFontData extends FontData {
   /**
    * Search for the key value in the range tables provided.
    *
-   *  The search looks through the start-end pairs looking for the key value. It
-   * is assumed that the start-end pairs are both represented by UShort values,
-   * ranges do not overlap, and are monotonically increasing.
+   * <p>The search looks through the start-end pairs looking for the key value. It is assumed that
+   * the start-end pairs are both represented by UShort values, ranges do not overlap, and are
+   * monotonically increasing.
    *
    * @param startIndex the position to read the first start value from
    * @param startOffset the offset between subsequent start values
@@ -550,15 +551,10 @@ public class ReadableFontData extends FontData {
    * @param endOffset the offset between subsequent end values
    * @param length the number of start-end pairs
    * @param key the value to search for
-   * @return the index of the start-end pairs in which the key was found; -1
-   *         otherwise
+   * @return the index of the start-end pairs in which the key was found; -1 otherwise
    */
-  public int searchUShort(int startIndex,
-      int startOffset,
-      int endIndex,
-      int endOffset,
-      int length,
-      int key) {
+  public int searchUShort(
+      int startIndex, int startOffset, int endIndex, int endOffset, int length, int key) {
     int location = 0;
     int bottom = 0;
     int top = length;
@@ -584,10 +580,9 @@ public class ReadableFontData extends FontData {
   /**
    * Search for the key value in the range tables provided.
    *
-   *  The search looks through the start-end pairs looking for the key value. It
-   * is assumed that the start-end pairs are both represented by ULong values
-   * that can be represented within 31 bits, ranges do not overlap, and are
-   * monotonically increasing.
+   * <p>The search looks through the start-end pairs looking for the key value. It is assumed that
+   * the start-end pairs are both represented by ULong values that can be represented within 31
+   * bits, ranges do not overlap, and are monotonically increasing.
    *
    * @param startIndex the position to read the first start value from
    * @param startDelta the offset between subsequent start values
@@ -595,15 +590,10 @@ public class ReadableFontData extends FontData {
    * @param endDelta the offset between subsequent end values
    * @param length the number of start-end pairs
    * @param key the value to search for
-   * @return the index of the start-end pairs in which the key was found; -1
-   *         otherwise
+   * @return the index of the start-end pairs in which the key was found; -1 otherwise
    */
-  public int searchULong(int startIndex,
-      int startDelta,
-      int endIndex,
-      int endDelta,
-      int length,
-      int key) {
+  public int searchULong(
+      int startIndex, int startDelta, int endIndex, int endDelta, int length, int key) {
     int location = 0;
     int bottom = 0;
     int top = length;
@@ -629,16 +619,14 @@ public class ReadableFontData extends FontData {
   /**
    * Search for the key value in the table provided.
    *
-   *  The search looks through the values looking for the key value. It is
-   * assumed that the are represented by UShort values and are monotonically
-   * increasing.
+   * <p>The search looks through the values looking for the key value. It is assumed that the are
+   * represented by UShort values and are monotonically increasing.
    *
    * @param startIndex the position to read the first start value from
    * @param startOffset the offset between subsequent start values
    * @param length the number of start-end pairs
    * @param key the value to search for
-   * @return the index of the start-end pairs in which the key was found; -1
-   *         otherwise
+   * @return the index of the start-end pairs in which the key was found; -1 otherwise
    */
   public int searchUShort(int startIndex, int startOffset, int length, int key) {
     int location = 0;

@@ -22,7 +22,6 @@ import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
-
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ public class Subsetter {
   protected final Font font;
 
   // TODO(stuartg): add SmartFontBuilder
-  //private SmartFontBuilder fontBuilder;
+  // private SmartFontBuilder fontBuilder;
   private FontFactory fontFactory;
   // TODO(stuartg): can TableSubsetter become TableProcessor?
   protected Set<TableSubsetter> tableSubsetters;
@@ -66,23 +65,21 @@ public class Subsetter {
   }
 
   /**
-   * Set the cmaps to be used in the subsetted font. The cmaps are listed in
-   * order of priority and the number parameter gives a count of how many of the
-   * list should be put into the subsetted font. If there are no matches in the
-   * font for any of the provided cmap ids which would lead to a font with no
-   * cmap then an error will be thrown during subsetting.
+   * Set the cmaps to be used in the subsetted font. The cmaps are listed in order of priority and
+   * the number parameter gives a count of how many of the list should be put into the subsetted
+   * font. If there are no matches in the font for any of the provided cmap ids which would lead to
+   * a font with no cmap then an error will be thrown during subsetting.
    *
-   * The two most common cases would be:
+   * <p>The two most common cases would be:
+   *
    * <ul>
-   * <li>
-   * a list of one or more cmap ids with a count setting of 1 <br>This will use
-   * the list of cmap ids as an ordered priority and look for an available cmap
-   * in the font that matches the requests. Only the first such match will be
-   * placed in the subsetted font.
-   * <li>
-   * a list of one or more cmap ids with a count setting equal to the list
-   * length <br>This will use the list of cmap ids and try to place each one
-   * specified into the subsetted font.
+   *   <li>a list of one or more cmap ids with a count setting of 1 <br>
+   *       This will use the list of cmap ids as an ordered priority and look for an available cmap
+   *       in the font that matches the requests. Only the first such match will be placed in the
+   *       subsetted font.
+   *   <li>a list of one or more cmap ids with a count setting equal to the list length <br>
+   *       This will use the list of cmap ids and try to place each one specified into the subsetted
+   *       font.
    * </ul>
    *
    * @param cmapIds the cmap ids to use for the subsetted font
@@ -170,6 +167,5 @@ public class Subsetter {
   }
 
   // A hook for subclasses to override, to set up tables.
-  protected void setUpTables(Font.Builder fontBuilder) {
-  }
+  protected void setUpTables(Font.Builder fontBuilder) {}
 }

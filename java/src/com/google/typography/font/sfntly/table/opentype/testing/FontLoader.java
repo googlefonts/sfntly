@@ -2,7 +2,6 @@ package com.google.typography.font.sfntly.table.opentype.testing;
 
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

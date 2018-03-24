@@ -20,9 +20,7 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 abstract class GlyphMetrics extends SubTable {
 
   protected GlyphMetrics(ReadableFontData data) {
@@ -30,16 +28,12 @@ abstract class GlyphMetrics extends SubTable {
   }
 
   abstract static class Builder<T extends GlyphMetrics> extends SubTable.Builder<T> {
-    /**
-     * @param data the data for the subtable being built
-     */
+    /** @param data the data for the subtable being built */
     protected Builder(WritableFontData data) {
       super(data);
     }
 
-    /**
-     * @param data the data for the subtable being built
-     */
+    /** @param data the data for the subtable being built */
     protected Builder(ReadableFontData data) {
       super(data);
     }

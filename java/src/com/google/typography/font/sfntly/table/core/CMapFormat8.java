@@ -3,7 +3,6 @@ package com.google.typography.font.sfntly.table.core;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.CMapTable.CMapId;
-
 import java.util.Iterator;
 
 /**
@@ -36,24 +35,25 @@ public final class CMapFormat8 extends CMap {
   }
 
   private int firstChar(int groupIndex) {
-    return this.readFontData().readULongAsInt(
-        Header.SIZE + groupIndex * Group.SIZE + Group.startCharCode);
+    return this.readFontData()
+        .readULongAsInt(Header.SIZE + groupIndex * Group.SIZE + Group.startCharCode);
   }
 
   private int endChar(int groupIndex) {
-    return this.readFontData().readULongAsInt(
-        Header.SIZE + groupIndex * Group.SIZE + Group.endCharCode);
+    return this.readFontData()
+        .readULongAsInt(Header.SIZE + groupIndex * Group.SIZE + Group.endCharCode);
   }
 
   @Override
   public int glyphId(int character) {
-    return this.readFontData().searchULong(
-        Header.SIZE + Group.startCharCode,
-        Group.SIZE,
-        Header.SIZE + Group.endCharCode,
-        Group.SIZE,
-        numberOfGroups,
-        character);
+    return this.readFontData()
+        .searchULong(
+            Header.SIZE + Group.startCharCode,
+            Group.SIZE,
+            Header.SIZE + Group.endCharCode,
+            Group.SIZE,
+            numberOfGroups,
+            character);
   }
 
   @Override
@@ -84,13 +84,17 @@ public final class CMapFormat8 extends CMap {
 
   public static class Builder extends CMap.Builder<CMapFormat8> {
     protected Builder(WritableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(offset, data.readULongAsInt(offset + Header.length)),
-          CMapFormat.Format8, cmapId);
+      super(
+          data == null ? null : data.slice(offset, data.readULongAsInt(offset + Header.length)),
+          CMapFormat.Format8,
+          cmapId);
     }
 
     protected Builder(ReadableFontData data, int offset, CMapId cmapId) {
-      super(data == null ? null : data.slice(offset, data.readULongAsInt(offset + Header.length)),
-          CMapFormat.Format8, cmapId);
+      super(
+          data == null ? null : data.slice(offset, data.readULongAsInt(offset + Header.length)),
+          CMapFormat.Format8,
+          cmapId);
     }
 
     @Override
