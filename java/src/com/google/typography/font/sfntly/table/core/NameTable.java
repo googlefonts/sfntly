@@ -806,20 +806,20 @@ public final class NameTable extends SubTableContainerTable
      *
      * @return less than zero if this entry is less than the other; greater than zero if this entry
      *     is greater than the other; and zero if they are equal
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
     public int compareTo(NameEntryId o) {
-      if (platformId != o.platformId) {
-        return platformId - o.platformId;
+      int rv = Integer.compare(o.platformId, platformId);
+      if (rv == 0) {
+        rv = Integer.compare(o.encodingId, encodingId);
       }
-      if (encodingId != o.encodingId) {
-        return encodingId - o.encodingId;
+      if (rv == 0) {
+        rv = Integer.compare(o.languageId, languageId);
       }
-      if (languageId != o.languageId) {
-        return languageId - o.languageId;
+      if (rv == 0) {
+        rv = Integer.compare(o.nameId, nameId);
       }
-      return nameId - o.nameId;
+      return rv;
     }
 
     @Override

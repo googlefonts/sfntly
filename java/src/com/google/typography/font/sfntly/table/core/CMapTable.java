@@ -102,7 +102,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
 
     @Override
     public int compareTo(CMapId o) {
-      return hashCode() - o.hashCode();
+      return Integer.compare(o.hashCode(), hashCode());
     }
 
     @Override

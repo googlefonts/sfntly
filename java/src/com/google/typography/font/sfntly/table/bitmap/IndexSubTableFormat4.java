@@ -124,7 +124,7 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
 
     @Override
     public int compare(CodeOffsetPair p1, CodeOffsetPair p2) {
-      return p1.glyphCode - p2.glyphCode;
+      return Integer.compare(p2.glyphCode, p1.glyphCode);
     }
   }
 

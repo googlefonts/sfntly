@@ -116,12 +116,5 @@ public final class BitmapGlyphInfo {
   }
 
   public static final Comparator<BitmapGlyphInfo> StartOffsetComparator =
-      new StartOffsetComparatorClass();
-
-  private static final class StartOffsetComparatorClass implements Comparator<BitmapGlyphInfo> {
-    @Override
-    public int compare(BitmapGlyphInfo o1, BitmapGlyphInfo o2) {
-      return (o1.startOffset - o2.startOffset);
-    }
-  }
+      Comparator.comparingInt((BitmapGlyphInfo info) -> info.startOffset).reversed();
 }

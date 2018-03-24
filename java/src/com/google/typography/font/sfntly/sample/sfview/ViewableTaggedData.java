@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 /** @author dougfelt@google.com (Doug Felt) */
@@ -658,7 +659,7 @@ class ViewableTaggedData {
 
     private int lowestEquality(WidthUsageRecord other) {
       for (int i = 0; widthUsage.containsKey(i); i++) {
-        if (other.widthUsage.get(i) == widthUsage.get(i)) {
+        if (Objects.equals(other.widthUsage.get(i), widthUsage.get(i))) {
           return i;
         }
       }
@@ -735,17 +736,14 @@ class ViewableTaggedData {
 
     @Override
     public int compareTo(Marker rhs) {
-      int result = position - rhs.position;
-      if (result != 0) {
-        return result;
+      int result = Integer.compare(rhs.position, position);
+      if (result == 0) {
+        result = Integer.compare(classOrder(rhs.getClass()), classOrder(getClass()));
       }
-      Class<? extends Marker> thisClass = getClass();
-      Class<? extends Marker> thatClass = rhs.getClass();
-      result = classOrder(thisClass) - classOrder(thatClass);
-      if (result != 0) {
-        return result;
+      if (result == 0) {
+        result = order(rhs);
       }
-      return order(rhs);
+      return result;
     }
 
     private static final Object[] classOrder = {
