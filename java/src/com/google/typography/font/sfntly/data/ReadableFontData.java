@@ -174,9 +174,7 @@ public class ReadableFontData extends FontData {
   public String toString(int length) {
     return String.format(
         "[l=%d, cs=%d]\n%s",
-        length(),
-        checksum(),
-        array.toString(boundOffset(0), boundLength(0, length)));
+        length(), checksum(), array.toString(boundOffset(0), boundLength(0, length)));
   }
 
   @Override
@@ -341,8 +339,7 @@ public class ReadableFontData extends FontData {
    *     data
    */
   public int readBytes(int index, byte[] b, int offset, int length) {
-    int bytesRead =
-        array.get(boundOffset(index), b, offset, boundLength(index, length));
+    int bytesRead = array.get(boundOffset(index), b, offset, boundLength(index, length));
     if (bytesRead < 0) {
       throw new IndexOutOfBoundsException(
           "Index attempted to be read from is out of bounds: " + Integer.toHexString(index));
@@ -387,10 +384,7 @@ public class ReadableFontData extends FontData {
    * @throws IndexOutOfBoundsException if index is outside the FontData's range
    */
   public int readUInt24(int index) {
-    return 0xffffff
-        & (readUByte(index) << 16
-            | readUByte(index + 1) << 8
-            | readUByte(index + 2));
+    return 0xffffff & (readUByte(index) << 16 | readUByte(index + 1) << 8 | readUByte(index + 2));
   }
 
   /**

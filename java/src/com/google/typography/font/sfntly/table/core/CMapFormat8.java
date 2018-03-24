@@ -40,8 +40,7 @@ public final class CMapFormat8 extends CMap {
   }
 
   private int endChar(int groupIndex) {
-    return readFontData()
-        .readULongAsInt(Header.SIZE + groupIndex * Group.SIZE + Group.endCharCode);
+    return readFontData().readULongAsInt(Header.SIZE + groupIndex * Group.SIZE + Group.endCharCode);
   }
 
   @Override

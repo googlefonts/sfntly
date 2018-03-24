@@ -84,8 +84,7 @@ public final class EbdtTable extends SubTableContainerTable {
       List<Map<Integer, BitmapGlyphInfo>> newLocaList = new ArrayList<>(glyphBuilders.size());
 
       int startOffset = HeaderOffsets.SIZE;
-      for (Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> builderMap :
-          glyphBuilders) {
+      for (Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> builderMap : glyphBuilders) {
         Map<Integer, BitmapGlyphInfo> newLocaMap = new TreeMap<>();
         int glyphOffset = 0;
         for (Map.Entry<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> glyphEntry :
@@ -193,8 +192,7 @@ public final class EbdtTable extends SubTableContainerTable {
 
       boolean fixed = true;
       int size = HeaderOffsets.SIZE;
-      for (Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> builderMap :
-          glyphBuilders) {
+      for (Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> builderMap : glyphBuilders) {
         Map<Integer, BitmapGlyphInfo> newLocaMap = new TreeMap<>();
         for (Map.Entry<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> glyphEntry :
             builderMap.entrySet()) {
@@ -217,8 +215,7 @@ public final class EbdtTable extends SubTableContainerTable {
       int size = 0;
       size += newData.writeFixed(HeaderOffsets.version, version);
 
-      for (Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> builderMap :
-          glyphBuilders) {
+      for (Map<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> builderMap : glyphBuilders) {
         Map<Integer, BitmapGlyphInfo> newLocaMap = new TreeMap<>();
         for (Map.Entry<Integer, BitmapGlyph.Builder<? extends BitmapGlyph>> glyphEntry :
             builderMap.entrySet()) {

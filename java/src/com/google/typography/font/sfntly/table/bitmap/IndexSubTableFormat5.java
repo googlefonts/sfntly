@@ -262,8 +262,7 @@ public final class IndexSubTableFormat5 extends IndexSubTable {
     protected int subSerialize(WritableFontData newData) {
       int size = super.serializeIndexSubHeader(newData);
       if (!modelChanged()) {
-        size +=
-            internalReadData().slice(Offset.imageSize).copyTo(newData.slice(Offset.imageSize));
+        size += internalReadData().slice(Offset.imageSize).copyTo(newData.slice(Offset.imageSize));
       } else {
         size += newData.writeULong(Offset.imageSize, imageSize());
         size += bigMetrics().subSerialize(newData.slice(size));

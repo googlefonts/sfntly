@@ -272,8 +272,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
 
   /** Gets the cmap for the given index. */
   public CMap cmap(int index) {
-    CMap.Builder<? extends CMap> builder =
-        CMapTable.Builder.cmapBuilder(readFontData(), index);
+    CMap.Builder<? extends CMap> builder = CMapTable.Builder.cmapBuilder(readFontData(), index);
     return builder.build();
   }
 

@@ -184,10 +184,7 @@ public final class WritableFontData extends ReadableFontData {
   public int writeBytesPad(int index, byte[] b, int offset, int length, byte pad) {
     int written =
         array.put(
-            boundOffset(index),
-            b,
-            offset,
-            boundLength(index, Math.min(length, b.length - offset)));
+            boundOffset(index), b, offset, boundLength(index, Math.min(length, b.length - offset)));
     written += writePadding(written + index, length - written, pad);
     return written;
   }

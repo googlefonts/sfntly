@@ -100,8 +100,7 @@ public class GlyphNode extends AbstractNode {
     private void paintSimpleGlyph(Graphics2D g, SimpleGlyph glyph, int deltaX, int deltaY) {
       for (int c = 0, cmax = glyph.numberOfContours(); c < cmax; c++) {
         ScreenCoordinateMapper screen =
-            new ScreenCoordinateMapper(
-                glyph, c, MARGIN, scale, minX - deltaX, maxY - deltaY);
+            new ScreenCoordinateMapper(glyph, c, MARGIN, scale, minX - deltaX, maxY - deltaY);
         int pmax = glyph.numberOfPoints(c);
 
         int firstOn = 0;

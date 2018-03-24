@@ -864,8 +864,7 @@ public class Font {
 
       if (sfntVersion != SFNTVERSION_1 && sfntVersion != 0x4F54544F /* OTTO */) {
         String msg =
-            String.format(
-                "Wrong sfntVersion 0x%08x, must be 0x%#08x", sfntVersion, SFNTVERSION_1);
+            String.format("Wrong sfntVersion 0x%08x, must be 0x%#08x", sfntVersion, SFNTVERSION_1);
         throw new IllegalStateException(msg);
       }
 

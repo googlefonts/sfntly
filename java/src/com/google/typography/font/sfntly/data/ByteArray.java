@@ -212,8 +212,7 @@ abstract class ByteArray {
    * @param length the maximum length in bytes to copy
    * @return the number of bytes copied
    */
-  public int copyTo(
-      int dstOffset, ByteArray array, int srcOffset, int length) {
+  public int copyTo(int dstOffset, ByteArray array, int srcOffset, int length) {
     byte[] b = new byte[COPY_BUFFER_SIZE];
     int bytesRead = 0;
     int index = 0;

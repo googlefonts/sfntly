@@ -33,8 +33,7 @@ class CMapFormat4Node extends AbstractNode {
     sb.append(String.format("Number of segments: %d%n", cmap.getSegCount()));
     for (int i = 0, imax = cmap.getSegCount(); i < imax; i++) {
       sb.append(
-          String.format(
-              "%3d: from U+%04X until U+%04X%n", i, cmap.startCode(i), cmap.endCode(i)));
+          String.format("%3d: from U+%04X until U+%04X%n", i, cmap.startCode(i), cmap.endCode(i)));
     }
 
     return new JTextArea(sb.toString());

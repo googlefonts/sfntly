@@ -169,7 +169,6 @@ public final class Header {
 
   @Override
   public String toString() {
-    return String.format(
-        "[%s, %x, %x, %x]", Tag.stringValue(tag), checksum, offset, length);
+    return String.format("[%s, %x, %x, %x]", Tag.stringValue(tag), checksum, offset, length);
   }
 }

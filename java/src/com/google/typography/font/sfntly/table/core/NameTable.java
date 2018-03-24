@@ -625,8 +625,7 @@ public final class NameTable extends SubTableContainerTable
    * @return the offset of the string data from the start of the table
    */
   private int nameOffset(int index) {
-    return data.readUShort(NameRecord.stringOffset + offsetForNameRecord(index))
-        + stringOffset();
+    return data.readUShort(NameRecord.stringOffset + offsetForNameRecord(index)) + stringOffset();
   }
 
   /**
@@ -661,8 +660,7 @@ public final class NameTable extends SubTableContainerTable
    * @param index the index of the name record
    */
   public String name(int index) {
-    return convertFromNameBytes(
-        nameAsBytes(index), platformId(index), encodingId(index));
+    return convertFromNameBytes(nameAsBytes(index), platformId(index), encodingId(index));
   }
 
   /**
@@ -686,19 +684,14 @@ public final class NameTable extends SubTableContainerTable
    */
   public NameEntry nameEntry(int index) {
     return new NameEntry(
-        platformId(index),
-        encodingId(index),
-        languageId(index),
-        nameId(index),
-        nameAsBytes(index));
+        platformId(index), encodingId(index), languageId(index), nameId(index), nameAsBytes(index));
   }
 
   /**
    * Get the name entry record for the specified name. If there is no entry for the requested name
    * then <code>null</code> is returned.
    */
-  public NameEntry nameEntry(
-      int platformId, int encodingId, int languageId, int nameId) {
+  public NameEntry nameEntry(int platformId, int encodingId, int languageId, int nameId) {
     Iterator<NameEntry> nameEntryIter =
         iterator(
             new NameEntryFilter() {

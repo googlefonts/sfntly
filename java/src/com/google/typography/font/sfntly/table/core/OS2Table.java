@@ -886,10 +886,7 @@ public final class OS2Table extends Table {
 
     public EnumSet<UnicodeRange> ulUnicodeRange() {
       return UnicodeRange.asSet(
-          ulUnicodeRange1(),
-          ulUnicodeRange2(),
-          ulUnicodeRange3(),
-          ulUnicodeRange4());
+          ulUnicodeRange1(), ulUnicodeRange2(), ulUnicodeRange3(), ulUnicodeRange4());
     }
 
     public void setUlUnicodeRange(EnumSet<UnicodeRange> rangeSet) {
@@ -916,8 +913,7 @@ public final class OS2Table extends Table {
      * @param b ach Vendor Id
      */
     public void setAchVendId(byte[] b) {
-      internalWriteData()
-          .writeBytesPad(Offset.achVendId, b, 0, Offset.achVendIdLength, (byte) ' ');
+      internalWriteData().writeBytesPad(Offset.achVendId, b, 0, Offset.achVendIdLength, (byte) ' ');
     }
 
     public int fsSelectionAsInt() {

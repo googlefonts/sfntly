@@ -16,8 +16,7 @@ class CmapSegmentNode extends AbstractNode {
 
   @Override
   public String getNodeName() {
-    return String.format(
-        "U+%04X to U+%04X", cmap.startCode(index), cmap.endCode(index));
+    return String.format("U+%04X to U+%04X", cmap.startCode(index), cmap.endCode(index));
   }
 
   @Override

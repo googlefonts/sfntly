@@ -124,12 +124,7 @@ public abstract class Glyph extends SubTable {
   public String toString() {
     return String.format(
         "%s, contours=%d, [xmin=%d, ymin=%d, xmax=%d, ymax=%d]\n",
-        glyphType(),
-        numberOfContours(),
-        xMin(),
-        yMin(),
-        xMax(),
-        yMax());
+        glyphType(), numberOfContours(), xMin(), yMin(), xMax(), yMax());
   }
 
   // TODO(stuartg): interface? need methods from Composite?

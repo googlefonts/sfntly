@@ -111,10 +111,7 @@ public class Table extends FontDataTable {
   public String toString() {
     return String.format(
         "[%-4s, cs=0x%08x, offset=0x%08x, size=0x%08x]",
-        Tag.stringValue(header.tag()),
-        header.checksum(),
-        header.offset(),
-        header.length());
+        Tag.stringValue(header.tag()), header.checksum(), header.offset(), header.length());
   }
 
   public abstract static class Builder<T extends Table> extends FontDataTable.Builder<T> {

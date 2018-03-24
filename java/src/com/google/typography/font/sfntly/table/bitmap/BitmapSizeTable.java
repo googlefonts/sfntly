@@ -188,8 +188,7 @@ public final class BitmapSizeTable extends SubTable {
   }
 
   private IndexSubTable createIndexSubTable(int index) {
-    return IndexSubTable.createIndexSubTable(
-        masterReadData(), indexSubTableArrayOffset(), index);
+    return IndexSubTable.createIndexSubTable(masterReadData(), indexSubTableArrayOffset(), index);
   }
 
   private List<IndexSubTable> getIndexSubTableList() {
@@ -215,10 +214,7 @@ public final class BitmapSizeTable extends SubTable {
     sb.append(
         String.format(
             "BitmapSizeTable: [s=%#x, e=%#x, ppemx=%d, index subtables count=%d]\n",
-            startGlyphIndex(),
-            endGlyphIndex(),
-            ppemX(),
-            numberOfIndexSubTables()));
+            startGlyphIndex(), endGlyphIndex(), ppemX(), numberOfIndexSubTables()));
 
     for (int i = 0; i < subtables.size(); i++) {
       sb.append(String.format("\t%d: %s\n", i, subtables.get(i)));

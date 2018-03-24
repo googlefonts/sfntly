@@ -73,8 +73,7 @@ public final class HorizontalMetricsTable extends Table {
     if (entry > numberOfLSBs()) {
       throw new IndexOutOfBoundsException();
     }
-    return data.readShort(
-        numHMetrics * MetricOffset.SIZE + entry * FontData.SizeOf.SHORT);
+    return data.readShort(numHMetrics * MetricOffset.SIZE + entry * FontData.SizeOf.SHORT);
   }
 
   public int advanceWidth(int glyphId) {

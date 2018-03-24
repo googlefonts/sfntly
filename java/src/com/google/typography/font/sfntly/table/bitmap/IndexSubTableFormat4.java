@@ -65,8 +65,7 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
     if (pairIndex < 0) {
       return -1;
     }
-    return data.readUShort(
-        Offset.glyphArray + pairIndex * PairOffset.SIZE + PairOffset.offset);
+    return data.readUShort(Offset.glyphArray + pairIndex * PairOffset.SIZE + PairOffset.offset);
   }
 
   @Override
@@ -260,8 +259,7 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
 
       @Override
       public boolean hasNext() {
-        return codeOffsetPairIndex
-            < getOffsetArray().size() - 1;
+        return codeOffsetPairIndex < getOffsetArray().size() - 1;
       }
 
       @Override
@@ -269,8 +267,7 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
         if (!hasNext()) {
           throw new NoSuchElementException("No more characters to iterate.");
         }
-        List<CodeOffsetPairBuilder> offsetArray =
-            getOffsetArray();
+        List<CodeOffsetPairBuilder> offsetArray = getOffsetArray();
         CodeOffsetPair pair = offsetArray.get(codeOffsetPairIndex);
         BitmapGlyphInfo info =
             new BitmapGlyphInfo(
@@ -329,8 +326,7 @@ public final class IndexSubTableFormat4 extends IndexSubTable {
     protected int subSerialize(WritableFontData newData) {
       int size = super.serializeIndexSubHeader(newData);
       if (!modelChanged()) {
-        size +=
-            internalReadData().slice(Offset.numGlyphs).copyTo(newData.slice(Offset.numGlyphs));
+        size += internalReadData().slice(Offset.numGlyphs).copyTo(newData.slice(Offset.numGlyphs));
       } else {
 
         size += newData.writeLong(size, offsetPairArray.size() - 1);

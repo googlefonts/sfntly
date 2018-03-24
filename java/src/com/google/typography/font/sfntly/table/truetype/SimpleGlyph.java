@@ -132,8 +132,7 @@ public final class SimpleGlyph extends Glyph {
         // double byte coord value
         if ((flag & FLAG_XREPEATSIGN) == 0) {
           if (fillArrays) {
-            xCoordinates[pointIndex] =
-                data.readShort(xCoordinatesOffset + xByteIndex);
+            xCoordinates[pointIndex] = data.readShort(xCoordinatesOffset + xByteIndex);
           }
           xByteIndex += 2;
         }
@@ -152,8 +151,7 @@ public final class SimpleGlyph extends Glyph {
       } else {
         if ((flag & FLAG_YREPEATSIGN) == 0) {
           if (fillArrays) {
-            yCoordinates[pointIndex] =
-                data.readShort(yCoordinatesOffset + yByteIndex);
+            yCoordinates[pointIndex] = data.readShort(yCoordinatesOffset + yByteIndex);
           }
           yByteIndex += 2;
         }

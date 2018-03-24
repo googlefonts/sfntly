@@ -223,9 +223,7 @@ public final class IndexSubTableFormat1 extends IndexSubTable {
       int size = super.serializeIndexSubHeader(newData);
       if (!modelChanged()) {
         size +=
-            internalReadData()
-                .slice(Offset.offsetArray)
-                .copyTo(newData.slice(Offset.offsetArray));
+            internalReadData().slice(Offset.offsetArray).copyTo(newData.slice(Offset.offsetArray));
       } else {
         for (Integer loca : offsetArray) {
           size += newData.writeULong(size, loca);

@@ -222,9 +222,7 @@ public final class IndexSubTableFormat3 extends IndexSubTable {
       int size = super.serializeIndexSubHeader(newData);
       if (!modelChanged()) {
         size +=
-            internalReadData()
-                .slice(Offset.offsetArray)
-                .copyTo(newData.slice(Offset.offsetArray));
+            internalReadData().slice(Offset.offsetArray).copyTo(newData.slice(Offset.offsetArray));
       } else {
 
         for (Integer loca : offsetArray) {

@@ -58,9 +58,7 @@ public class ByteArrayTests extends TestCase {
     readComparison(ba, growableCopy);
   }
 
-  private void readComparison(
-      ByteArray ba1, ByteArray ba2)
-      throws Exception {
+  private void readComparison(ByteArray ba1, ByteArray ba2) throws Exception {
     // single byte reads
     for (int i = 0; i < ba1.length(); i++) {
       int b = ba1.get(i);
@@ -92,8 +90,7 @@ public class ByteArrayTests extends TestCase {
     }
   }
 
-  private static byte[] readByteArrayWithBuffer(
-      ByteArray ba, byte[] buffer) {
+  private static byte[] readByteArrayWithBuffer(ByteArray ba, byte[] buffer) {
     byte[] b = new byte[ba.length()];
 
     int index = 0;
@@ -105,8 +102,7 @@ public class ByteArrayTests extends TestCase {
     return b;
   }
 
-  private static byte[] readByteArrayWithSlidingWindow(
-      ByteArray ba, int windowSize) {
+  private static byte[] readByteArrayWithSlidingWindow(ByteArray ba, int windowSize) {
     byte[] b = new byte[ba.length()];
 
     int index = 0;
@@ -118,8 +114,7 @@ public class ByteArrayTests extends TestCase {
     return b;
   }
 
-  private static ByteArray fillTestByteArray(
-      ByteArray ba, int size) {
+  private static ByteArray fillTestByteArray(ByteArray ba, int size) {
     for (int i = 0; i < size; i++) {
       ba.put(i, (byte) (i % 256));
     }

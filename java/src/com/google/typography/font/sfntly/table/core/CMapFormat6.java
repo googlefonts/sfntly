@@ -36,8 +36,7 @@ public final class CMapFormat6 extends CMap {
     if (character < firstCode || character >= firstCode + entryCount) {
       return CMapTable.NOTDEF;
     }
-    return data.readUShort(
-        Header.glyphIdArray + (character - firstCode) * FontData.SizeOf.USHORT);
+    return data.readUShort(Header.glyphIdArray + (character - firstCode) * FontData.SizeOf.USHORT);
   }
 
   @Override

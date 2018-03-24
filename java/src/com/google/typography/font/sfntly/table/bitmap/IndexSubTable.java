@@ -94,11 +94,7 @@ public abstract class IndexSubTable extends SubTable {
     }
 
     return new BitmapGlyphInfo(
-        glyphId,
-        imageDataOffset(),
-        glyphStartOffset(glyphId),
-        glyphLength(glyphId),
-        imageFormat());
+        glyphId, imageDataOffset(), glyphStartOffset(glyphId), glyphLength(glyphId), imageFormat());
   }
 
   public final int glyphOffset(int glyphId) {
@@ -132,11 +128,7 @@ public abstract class IndexSubTable extends SubTable {
     String s =
         String.format(
             "IndexSubTable: [%#x : %#x], format = %d, image format = %s, imageOff = %#x%n",
-            firstGlyphIndex(),
-            lastGlyphIndex(),
-            indexFormat,
-            imageFormat(),
-            imageDataOffset());
+            firstGlyphIndex(), lastGlyphIndex(), indexFormat, imageFormat(), imageDataOffset());
 
     if (DEBUG) {
       for (int g = firstGlyphIndex(); g < lastGlyphIndex(); g++) {
@@ -364,11 +356,7 @@ public abstract class IndexSubTable extends SubTable {
       String s =
           String.format(
               "IndexSubTable: [%#x : %#x], format = %d, image format = %s, imageOff = %#x%n",
-              firstGlyphIndex(),
-              lastGlyphIndex(),
-              indexFormat,
-              imageFormat(),
-              imageDataOffset());
+              firstGlyphIndex(), lastGlyphIndex(), indexFormat, imageFormat(), imageDataOffset());
 
       if (DEBUG) {
         for (int g = firstGlyphIndex(); g < lastGlyphIndex(); g++) {

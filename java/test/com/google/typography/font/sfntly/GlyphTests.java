@@ -60,12 +60,7 @@ public class GlyphTests extends TestCase {
       this.highChar = highChar;
     }
 
-    public TestSet(
-        File fontFile,
-        int platformId,
-        int encodingId,
-        int lowChar,
-        int highChar) {
+    public TestSet(File fontFile, int platformId, int encodingId, int lowChar, int highChar) {
       this(fontFile, platformId, encodingId, "", lowChar, highChar);
     }
   }
