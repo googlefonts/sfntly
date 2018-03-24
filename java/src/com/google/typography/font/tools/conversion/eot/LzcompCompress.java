@@ -199,7 +199,7 @@ public class LzcompCompress {
 
   // consider refactoring signature to return PotentialMatch object with fields set...
   int findMatch(int index, int[] distOut, int[] gainOut, int[] costPerByteOut) {
-    final int maxCostCacheLength = 32;
+    int maxCostCacheLength = 32;
     int[] literalCostCache = new int[maxCostCacheLength + 1];
     int maxIndexMinusIndex = buf.length - index;
     int bestLength = 0;
@@ -377,7 +377,7 @@ public class LzcompCompress {
 
   private void encodeDistance2(int value, int distRanges) {
     value -= DIST_MIN;
-    final int mask = (1 << DIST_WIDTH) - 1;
+    int mask = (1 << DIST_WIDTH) - 1;
     for (int i = (distRanges - 1) * DIST_WIDTH; i >= 0; i -= DIST_WIDTH) {
       distEncoder.writeSymbol((value >> i) & mask);
     }
@@ -386,7 +386,7 @@ public class LzcompCompress {
   private int encodeDistance2Cost(int value, int distRanges) {
     int cost = 0;
     value -= DIST_MIN;
-    final int mask = (1 << DIST_WIDTH) - 1;
+    int mask = (1 << DIST_WIDTH) - 1;
     for (int i = (distRanges - 1) * DIST_WIDTH; i >= 0; i -= DIST_WIDTH) {
       cost += distEncoder.writeSymbolCost((value >> i) & mask);
     }

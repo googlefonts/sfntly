@@ -15,7 +15,7 @@ public class CMapCharIteratorsTest extends TestCase {
   }
 
   public void testCharRangesIterator() {
-    final int[][] ranges = {{0, 5}, {8, 8}, {10, 11}, {0, 3}};
+    int[][] ranges = {{0, 5}, {8, 8}, {10, 11}, {0, 3}};
 
     CMap.CharacterRangesIterator it =
         new CMap.CharacterRangesIterator(ranges.length) {

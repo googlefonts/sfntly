@@ -37,7 +37,7 @@ public class GlyphNode extends AbstractNode {
 
   @Override
   JComponent render() {
-    final JTabbedPane pane = new JTabbedPane(SwingConstants.TOP);
+    JTabbedPane pane = new JTabbedPane(SwingConstants.TOP);
     pane.addTab("Graphical", new GlyphRenderer());
     pane.add("Text", new JScrollPane(new JTextArea(glyph.toString())));
 

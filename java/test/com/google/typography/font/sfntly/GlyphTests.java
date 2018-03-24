@@ -46,12 +46,12 @@ public class GlyphTests extends TestCase {
     private final int highChar;
 
     public TestSet(
-        final File fontFile,
-        final int platformId,
-        final int encodingId,
-        final String charSetName,
-        final int lowChar,
-        final int highChar) {
+        File fontFile,
+        int platformId,
+        int encodingId,
+        String charSetName,
+        int lowChar,
+        int highChar) {
       this.fontFile = fontFile;
       this.platformId = platformId;
       this.encodingId = encodingId;
@@ -61,11 +61,11 @@ public class GlyphTests extends TestCase {
     }
 
     public TestSet(
-        final File fontFile,
-        final int platformId,
-        final int encodingId,
-        final int lowChar,
-        final int highChar) {
+        File fontFile,
+        int platformId,
+        int encodingId,
+        int lowChar,
+        int highChar) {
       this(fontFile, platformId, encodingId, "", lowChar, highChar);
     }
   }

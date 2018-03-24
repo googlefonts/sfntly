@@ -282,7 +282,7 @@ public final class CMapTable extends SubTableContainerTable implements Iterable<
     return cmap(CMapId.getInstance(platformId, encodingId));
   }
 
-  public CMap cmap(final CMapId cmapId) {
+  public CMap cmap(CMapId cmapId) {
     Iterator<CMap> cmapIter =
         iterator(
             new CMapFilter() {

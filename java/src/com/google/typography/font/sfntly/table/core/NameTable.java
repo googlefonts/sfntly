@@ -698,7 +698,7 @@ public final class NameTable extends SubTableContainerTable
    * then <code>null</code> is returned.
    */
   public NameEntry nameEntry(
-      final int platformId, final int encodingId, final int languageId, final int nameId) {
+      int platformId, int encodingId, int languageId, int nameId) {
     Iterator<NameEntry> nameEntryIter =
         iterator(
             new NameEntryFilter() {

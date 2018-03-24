@@ -171,11 +171,11 @@ public class SFLint {
   }
 
   private void lintCompositeGlyph(Font font, CompositeGlyph glyph, int glyphId) {
-    final int VAR_FLAGS =
+    int VAR_FLAGS =
         CompositeGlyph.FLAG_WE_HAVE_A_SCALE
             | CompositeGlyph.FLAG_WE_HAVE_AN_X_AND_Y_SCALE
             | CompositeGlyph.FLAG_WE_HAVE_A_TWO_BY_TWO;
-    final int MASK =
+    int MASK =
         ~(CompositeGlyph.FLAG_MORE_COMPONENTS
             | CompositeGlyph.FLAG_WE_HAVE_INSTRUCTIONS
             | CompositeGlyph.FLAG_USE_MY_METRICS);
