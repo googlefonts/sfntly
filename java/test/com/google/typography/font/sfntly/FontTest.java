@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import junit.framework.TestCase;
-import org.junit.Assume;
 
 public class FontTest extends TestCase {
 
@@ -87,41 +86,35 @@ public class FontTest extends TestCase {
 
   // Just a smoke test to see whether the validity checks influence real-life files.
   public void testLoadSystemFonts() throws IOException {
-    File fontsDir;
-    if (isWindows()) {
-      fontsDir = new File("C:/Windows/Fonts");
-    } else if (isLinux()) {
-      fontsDir = new File("/usr/share/fonts");
-    } else {
-      fail("System is not supported");
-      return;
-    }
-
-    Assume.assumeTrue(fontsDir.exists());
+    String osName = System.getProperty("os.name");
+    File fontsDir = osName.startsWith("Windows")
+        ? new File("C:/Windows/Fonts")
+        : osName.startsWith("Mac")
+        ? new File("/Library/Fonts")
+        : new File("/usr/share/fonts");
+    assertTrue("Directory " + fontsDir + " must exist.", fontsDir.exists());
 
     int numberOfLoadedFonts = loadFontsRecursively(fontsDir);
-    Assume.assumeTrue(numberOfLoadedFonts > 0);
+    assertTrue("No fonts found in " + fontsDir, numberOfLoadedFonts > 0);
   }
 
   private int loadFontsRecursively(File fontsDir) throws IOException {
-      int numberOfLoadedFonts = 0;
-      for (File fontFile : fontsDir.listFiles()) {
-          if (fontFile.isDirectory()) {
-              numberOfLoadedFonts += loadFontsRecursively(fontFile);
-          } else if (fontFile.getName().endsWith(".ttf")) {
-              TestFontUtils.loadFont(fontFile);
-              numberOfLoadedFonts += 1;
-          }
+    File[] files = fontsDir.listFiles();
+    if (files == null) {
+      return 0; // Ignore non-accessible subdirectories
+    }
+
+    int numberOfLoadedFonts = 0;
+    for (File fontFile : files) {
+      if (fontFile.isDirectory()) {
+        numberOfLoadedFonts += loadFontsRecursively(fontFile);
+      } else if (fontFile.getName().endsWith(".ttf")) {
+        TestFontUtils.loadFont(fontFile);
+        numberOfLoadedFonts++;
       }
+    }
 
-      return numberOfLoadedFonts;
+    return numberOfLoadedFonts;
   }
 
-  private boolean isLinux() {
-    return System.getProperty("os.name").contains("Linux");
-  }
-
-  private boolean isWindows() {
-    return System.getProperty("os.name").contains("Windows");
-  }
 }
