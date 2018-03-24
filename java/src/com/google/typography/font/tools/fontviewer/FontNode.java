@@ -8,8 +8,6 @@ import com.google.typography.font.sfntly.table.opentype.GSubTable;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JComponent;
@@ -31,14 +29,7 @@ class FontNode extends AbstractNode {
       Table table = it.next();
       tableNodes.add(nodeFor(font, table));
     }
-    Collections.sort(
-        tableNodes,
-        new Comparator<AbstractNode>() {
-          @Override
-          public int compare(AbstractNode o1, AbstractNode o2) {
-            return o1.getNodeName().compareToIgnoreCase(o2.getNodeName());
-          }
-        });
+    tableNodes.sort((o1, o2) -> o1.getNodeName().compareToIgnoreCase(o2.getNodeName()));
     return tableNodes;
   }
 

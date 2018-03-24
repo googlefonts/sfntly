@@ -14,8 +14,6 @@ import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -44,12 +42,7 @@ public class FontViewer {
     JTree fontTree = new JTree(model);
     fontTree.setBorder(new EmptyBorder(3, 3, 3, 3));
     fontTree.addTreeSelectionListener(
-        new TreeSelectionListener() {
-          @Override
-          public void valueChanged(TreeSelectionEvent e) {
-            render((AbstractNode) e.getPath().getLastPathComponent());
-          }
-        });
+        e -> render((AbstractNode) e.getPath().getLastPathComponent()));
 
     JScrollPane fontPane = new JScrollPane(fontTree);
     fontPane.setPreferredSize(new Dimension(300, 500));

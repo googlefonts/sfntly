@@ -124,12 +124,7 @@ public class TestFontUtils {
   }
 
   private static final Comparator<Table> TABLE_COMPARATOR_BY_OFFSET =
-      new Comparator<Table>() {
-        @Override
-        public int compare(Table o1, Table o2) {
-          return o1.header().offset() - o2.header().offset();
-        }
-      };
+      Comparator.comparingInt(o -> o.header().offset());
 
   public static Font[] buildAndCheckFont(FontFactory fontFactory, InputStream is, int debug)
       throws IOException {

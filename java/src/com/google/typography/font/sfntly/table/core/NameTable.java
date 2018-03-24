@@ -694,12 +694,8 @@ public final class NameTable extends SubTableContainerTable
   public NameEntry nameEntry(int platformId, int encodingId, int languageId, int nameId) {
     Iterator<NameEntry> nameEntryIter =
         iterator(
-            new NameEntryFilter() {
-              @Override
-              public boolean accept(int pid, int eid, int lid, int nid) {
-                return pid == platformId && eid == encodingId && lid == languageId && nid == nameId;
-              }
-            });
+            (pid, eid, lid, nid) ->
+                pid == platformId && eid == encodingId && lid == languageId && nid == nameId);
     // can only be one name for each set of ids
     if (nameEntryIter.hasNext()) {
       return nameEntryIter.next();

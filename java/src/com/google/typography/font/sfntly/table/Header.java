@@ -38,20 +38,9 @@ public final class Header {
   private final boolean checksumValid;
 
   public static final Comparator<Header> COMPARATOR_BY_OFFSET =
-      new Comparator<Header>() {
-        @Override
-        public int compare(Header h1, Header h2) {
-          return h1.offset - h2.offset;
-        }
-      };
+      Comparator.comparingInt(h -> h.offset);
 
-  public static final Comparator<Header> COMPARATOR_BY_TAG =
-      new Comparator<Header>() {
-        @Override
-        public int compare(Header h1, Header h2) {
-          return h1.tag - h2.tag;
-        }
-      };
+  public static final Comparator<Header> COMPARATOR_BY_TAG = Comparator.comparingInt(h -> h.tag);
 
   /** Make a full header as read from an existing font. */
   public Header(int tag, long checksum, int offset, int length) {

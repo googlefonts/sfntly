@@ -720,12 +720,7 @@ class OtTableTagger {
   }
 
   private static final Comparator<Class<? extends FontDataTable>> CLASS_NAME_COMPARATOR =
-      new Comparator<Class<? extends FontDataTable>>() {
-        @Override
-        public int compare(Class<? extends FontDataTable> o1, Class<? extends FontDataTable> o2) {
-          return o1.getName().compareTo(o2.getName());
-        }
-      };
+      Comparator.comparing(Class::getName);
 
   private static Set<Class<? extends FontDataTable>> missedClasses =
       new TreeSet<>(CLASS_NAME_COMPARATOR);
