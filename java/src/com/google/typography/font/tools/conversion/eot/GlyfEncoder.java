@@ -183,24 +183,27 @@ public class GlyfEncoder {
   // As per 6.1.1 of spec
   // visible for testing
   static void write255Short(OutputStream os, int value) throws IOException {
-    int absValue = Math.abs(value);
-    if (value < 0) {
-      // spec is unclear about whether words should be signed. This code is conservative, but we
-      // can test once the implementation is working.
-      os.write(250);
-    }
-    if (absValue < 250) {
-      os.write((byte)absValue);
-    } else if (absValue < 500) {
-      os.write(255);
-      os.write((byte)(absValue - 250));
-    } else if (absValue < 756) {
-      os.write(254);
-      os.write((byte)(absValue - 500));
-    } else {
+    short lowestCode = 250;
+    short shortValue = (short) value;
+    if (shortValue >= (3 * lowestCode) || shortValue <= (3 * -lowestCode)) {
       os.write(253);
-      os.write((byte)(absValue >> 8));
-      os.write((byte)(absValue & 0xff));
+      os.write((byte) (shortValue >> 8));
+      os.write((byte) (shortValue & 0xff));
+    } else {
+      if (shortValue < 0) {
+        os.write(250);
+        shortValue = (short) -shortValue;
+      }
+      if (shortValue >= lowestCode) {
+        shortValue = (short) (shortValue - lowestCode);
+        if (shortValue >= lowestCode) {
+          shortValue = (short) (shortValue - lowestCode);
+          os.write(254);
+        } else {
+          os.write(255);
+        }
+      }
+      os.write((byte) shortValue);
     }
   }
   
