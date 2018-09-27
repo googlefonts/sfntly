@@ -67,21 +67,37 @@ public class GlyfEncoderTest extends TestCase {
 
   public void test255Short1() throws IOException {
     ByteArrayOutputStream os = new ByteArrayOutputStream();
-    GlyfEncoder.write255Short(os, 142);
+    GlyfEncoder.write255Short(os, 249);
     byte[] actual = os.toByteArray();
-    byte[] expected = {(byte)142};
+    byte[] expected = {(byte) 249};
     assertEqualsByteArray(expected, actual);
   }
 
   public void test255Short2() throws IOException {
     ByteArrayOutputStream os = new ByteArrayOutputStream();
-    GlyfEncoder.write255Short(os, -142);
+    GlyfEncoder.write255Short(os, -249);
     byte[] actual = os.toByteArray();
-    byte[] expected = {(byte) 250, (byte)142};
+    byte[] expected = {(byte) 250, (byte) 249};
     assertEqualsByteArray(expected, actual);
   }
 
   public void test255Short3() throws IOException {
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    GlyfEncoder.write255Short(os, 250);
+    byte[] actual = os.toByteArray();
+    byte[] expected = {(byte) 255, (byte) 0};
+    assertEqualsByteArray(expected, actual);
+  }
+
+  public void test255Short4() throws IOException {
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    GlyfEncoder.write255Short(os, -250);
+    byte[] actual = os.toByteArray();
+    byte[] expected = {(byte) 250, (byte) 255, (byte) 0};
+    assertEqualsByteArray(expected, actual);
+  }
+
+  public void test255Short5() throws IOException {
     ByteArrayOutputStream os = new ByteArrayOutputStream();
     GlyfEncoder.write255Short(os, 251);
     byte[] actual = os.toByteArray();
@@ -89,7 +105,79 @@ public class GlyfEncoderTest extends TestCase {
     assertEqualsByteArray(expected, actual);
   }
 
-  public void test255Short4() throws IOException {
+  public void test255Short6() throws IOException {
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    GlyfEncoder.write255Short(os, 499);
+    byte[] actual = os.toByteArray();
+    byte[] expected = {(byte) 255, (byte) 249};
+    assertEqualsByteArray(expected, actual);
+  }
+
+  public void test255Short7() throws IOException {
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    GlyfEncoder.write255Short(os, -499);
+    byte[] actual = os.toByteArray();
+    byte[] expected = {(byte) 250, (byte) 255, (byte) 249};
+    assertEqualsByteArray(expected, actual);
+  }
+
+  public void test255Short8() throws IOException {
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    GlyfEncoder.write255Short(os, 500);
+    byte[] actual = os.toByteArray();
+    byte[] expected = {(byte) 254, (byte) 0};
+    assertEqualsByteArray(expected, actual);
+  }
+
+  public void test255Short9() throws IOException {
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    GlyfEncoder.write255Short(os, -500);
+    byte[] actual = os.toByteArray();
+    byte[] expected = {(byte) 250, (byte) 254, (byte) 0};
+    assertEqualsByteArray(expected, actual);
+  }
+
+  public void test255Short10() throws IOException {
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    GlyfEncoder.write255Short(os, 749);
+    byte[] actual = os.toByteArray();
+    byte[] expected = {(byte) 254, (byte) 249};
+    assertEqualsByteArray(expected, actual);
+  }
+
+  public void test255Short11() throws IOException {
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    GlyfEncoder.write255Short(os, -749);
+    byte[] actual = os.toByteArray();
+    byte[] expected = {(byte) 250, (byte) 254, (byte) 249};
+    assertEqualsByteArray(expected, actual);
+  }
+
+  public void test255Short12() throws IOException {
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    GlyfEncoder.write255Short(os, 750);
+    byte[] actual = os.toByteArray();
+    byte[] expected = {(byte) 253, (byte) 0x02, (byte) 0xEE};
+    assertEqualsByteArray(expected, actual);
+  }
+
+  public void test255Short13() throws IOException {
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    GlyfEncoder.write255Short(os, -750);
+    byte[] actual = os.toByteArray();
+    byte[] expected = {(byte) 253, (byte) 0xFD, (byte) 0x12};
+    assertEqualsByteArray(expected, actual);
+  }
+
+  public void test255Short14() throws IOException {
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    GlyfEncoder.write255Short(os, -984);
+    byte[] actual = os.toByteArray();
+    byte[] expected = {(byte) 253, (byte) 0xFC, (byte) 0x28};
+    assertEqualsByteArray(expected, actual);
+  }
+
+  public void test255Short15() throws IOException {
     ByteArrayOutputStream os = new ByteArrayOutputStream();
     GlyfEncoder.write255Short(os, 0x1234);
     byte[] actual = os.toByteArray();
