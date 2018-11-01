@@ -34,8 +34,8 @@ import java.util.List;
  */
 public final class LocaTable extends Table {
 
-  private FontHeaderTable.IndexToLocFormat version;
-  private int numGlyphs;
+  private final FontHeaderTable.IndexToLocFormat version;
+  private final int numGlyphs;
 
   private LocaTable(
       Header header,

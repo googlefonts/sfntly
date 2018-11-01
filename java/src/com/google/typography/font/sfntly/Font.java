@@ -552,7 +552,7 @@ public class Font {
   public static final class Builder {
 
     private Map<Integer, Table.Builder<? extends Table>> tableBuilders;
-    private FontFactory factory;
+    private final FontFactory factory;
     private int sfntVersion = SFNTVERSION_1;
     private int numTables;
 

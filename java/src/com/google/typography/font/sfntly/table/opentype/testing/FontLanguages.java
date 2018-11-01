@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 class FontLanguages {
-  private static String[][] langScriptData = {
+  private static final String[][] langScriptData = {
     {"aa", "Latn"},
     {"ab", "Cyrl"},
     {"abq", "Cyrl"},
@@ -606,7 +606,7 @@ class FontLanguages {
     {"zza", "Arab"},
   };
 
-  private static Map<String, ScriptTag> fontSpecificScript = new HashMap<>();
+  private static final Map<String, ScriptTag> fontSpecificScript = new HashMap<>();
   private final Map<ScriptTag, Set<String>> scriptLangMap = new EnumMap<>(ScriptTag.class);
 
   static {

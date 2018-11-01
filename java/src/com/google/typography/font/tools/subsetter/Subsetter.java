@@ -43,7 +43,7 @@ public class Subsetter {
 
   // TODO(stuartg): add SmartFontBuilder
   // private SmartFontBuilder fontBuilder;
-  private FontFactory fontFactory;
+  private final FontFactory fontFactory;
   // TODO(stuartg): can TableSubsetter become TableProcessor?
   protected Set<TableSubsetter> tableSubsetters;
 

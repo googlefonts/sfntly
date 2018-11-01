@@ -722,7 +722,7 @@ class OtTableTagger {
   private static final Comparator<Class<? extends FontDataTable>> CLASS_NAME_COMPARATOR =
       Comparator.comparing(Class::getName);
 
-  private static Set<Class<? extends FontDataTable>> missedClasses =
+  private static final Set<Class<? extends FontDataTable>> missedClasses =
       new TreeSet<>(CLASS_NAME_COMPARATOR);
 
   private TagMethod getTagMethod(FontDataTable table) {

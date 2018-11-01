@@ -52,12 +52,12 @@ public class SfntDump {
   @SuppressWarnings("unused")
   private boolean dumpAllGlyphs;
 
-  private List<String> tablesToBinaryDump = new ArrayList<>();
+  private final List<String> tablesToBinaryDump = new ArrayList<>();
   private BitSet glyphSet;
   private boolean dumpAllChars;
   private BitSet charSet;
   private CMapTable.CMapId cmapId = CMapTable.CMapId.WINDOWS_BMP;
-  private FontFactory fontFactory;
+  private final FontFactory fontFactory;
 
   /** Dump a font with various options based on the command line. */
   public static void main(String[] args) throws IOException {

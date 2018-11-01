@@ -57,7 +57,7 @@ abstract class LookupList extends SubTable {
 
   abstract static class Builder extends SubTable.Builder<LookupList> {
     private List<LookupTable.Builder> builders;
-    private boolean dataIsCanonical;
+    private final boolean dataIsCanonical;
     private int serializedCount;
     private int serializedLength;
 

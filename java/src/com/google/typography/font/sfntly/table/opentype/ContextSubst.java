@@ -10,7 +10,7 @@ import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRuleSetA
 
 public class ContextSubst extends SubstSubtable {
   private final SubRuleSetArray ruleSets;
-  private SubClassSetArray classSets;
+  private final SubClassSetArray classSets;
 
   // //////////////
   // Constructors

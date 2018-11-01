@@ -65,7 +65,7 @@ public abstract class BitmapGlyph extends SubTable {
     int ebdtComponent_yOffset = 3;
   }
 
-  private int format;
+  private final int format;
 
   public static BitmapGlyph createGlyph(ReadableFontData data, int format) {
     BitmapGlyph glyph = null;

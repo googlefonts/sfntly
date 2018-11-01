@@ -28,8 +28,8 @@ public class MtxFontBuilder {
   private static final int FONT_HEADER_BASE_SIZE = 12;
   private static final int FONT_HEADER_PER_TABLE_SIZE = 16;
   private static final int TABLE_ALIGN = 4;
-  private Map<Integer, ReadableFontData> tables;
-  private MtxHeadBuilder headBuilder;
+  private final Map<Integer, ReadableFontData> tables;
+  private final MtxHeadBuilder headBuilder;
 
   public MtxFontBuilder() {
     tables = new HashMap<>();

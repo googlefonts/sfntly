@@ -115,7 +115,7 @@ public class Table extends FontDataTable {
   }
 
   public abstract static class Builder<T extends Table> extends FontDataTable.Builder<T> {
-    private Header header;
+    private final Header header;
 
     protected Builder(Header header, WritableFontData data) {
       super(data);

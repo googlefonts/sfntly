@@ -38,19 +38,19 @@ class ViewableTaggedData {
   }
 
   private static class Style {
-    private int marginScale;
-    private int marginOffset;
-    private int marginPad;
-    private int columnPad;
-    private Font dataFont;
-    private Font labelFont;
-    private Color positionColor;
-    private Color dataColor;
-    private Color altColor;
-    private Color labelColor;
+    private final int marginScale;
+    private final int marginOffset;
+    private final int marginPad;
+    private final int columnPad;
+    private final Font dataFont;
+    private final Font labelFont;
+    private final Color positionColor;
+    private final Color dataColor;
+    private final Color altColor;
+    private final Color labelColor;
     // shades of blue hue 221.8 saturation 5% to 35% value 93.5 (yafla)
     // E3E6EE, D7DEEE, CBD6EE, BFCDEE, B3C5EE, A7BDEE, 9BB4EE
-    private Color[] depthColors = {
+    private final Color[] depthColors = {
       new Color(0x9BB4EE), new Color(0xB3C5EE), new Color(0xCBD6EE), new Color(0xE3E6EE)
     };
 
@@ -327,7 +327,7 @@ class ViewableTaggedData {
     private final Style style;
     private final Metrics metrics;
     private final Graphics g; // if null, we are measuring
-    private FontRenderContext frc; // used when measuring
+    private final FontRenderContext frc; // used when measuring
     private final int x; // current position of 'position' column (margin is to
     // left)
     private int y; // current base of line
@@ -432,7 +432,7 @@ class ViewableTaggedData {
       return REF_COLORS[m % REF_COLORS.length];
     }
 
-    private RefWidthFinder refWidthFinder = new RefWidthFinder();
+    private final RefWidthFinder refWidthFinder = new RefWidthFinder();
 
     private void drawRef(Reference ref) {
       int m = refWidthFinder.add(ref);
@@ -597,7 +597,7 @@ class ViewableTaggedData {
     private final String name;
     private final int start;
     private final int length;
-    private int depth;
+    private final int depth;
 
     private Range(String name, int start, int length, int depth) {
       this.name = name;

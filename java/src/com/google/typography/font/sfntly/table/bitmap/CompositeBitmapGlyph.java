@@ -25,8 +25,8 @@ public class CompositeBitmapGlyph extends BitmapGlyph {
 
   public static final class Component {
     private final int glyphCode;
-    private int xOffset;
-    private int yOffset;
+    private final int xOffset;
+    private final int yOffset;
 
     protected Component(int glyphCode, int xOffset, int yOffset) {
       this.glyphCode = glyphCode;

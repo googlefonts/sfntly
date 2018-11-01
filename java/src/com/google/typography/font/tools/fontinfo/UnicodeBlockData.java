@@ -8,7 +8,7 @@ package com.google.typography.font.tools.fontinfo;
  */
 // FIXME Find more elegant method of retrieving this data
 public class UnicodeBlockData {
-  private static String[] blockNames = {
+  private static final String[] blockNames = {
     "Basic Latin",
     "Latin-1 Supplement",
     "Latin Extended-A",
@@ -231,7 +231,7 @@ public class UnicodeBlockData {
     "Supplementary Private Use Area-B"
   };
 
-  private static String[] blockStartCode = {
+  private static final String[] blockStartCode = {
     "U+0000",
     "U+0080",
     "U+0100",
@@ -454,7 +454,7 @@ public class UnicodeBlockData {
     "U+100000"
   };
 
-  private static String[] blockEndCode = {
+  private static final String[] blockEndCode = {
     "U+007F",
     "U+00FF",
     "U+017F",

@@ -25,11 +25,11 @@ public class HuffmanEncoder {
 
   private static final int ROOT = 1;
 
-  private TreeNode[] tree;
-  private short[] symbolIndex;
-  private int bitCount2;
-  private int range;
-  private BitIOWriter bits;
+  private final TreeNode[] tree;
+  private final short[] symbolIndex;
+  private final int bitCount2;
+  private final int range;
+  private final BitIOWriter bits;
 
   private static class TreeNode {
     short up;

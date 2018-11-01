@@ -31,8 +31,8 @@ import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
  * @author Raph Levien
  */
 public class HdmxEncoder {
-  private static int HEADER_SIZE = 8;
-  private static int RECORD_SIZE = 2;
+  private static final int HEADER_SIZE = 8;
+  private static final int RECORD_SIZE = 2;
 
   public WritableFontData encode(Font sourceFont) {
     HorizontalDeviceMetricsTable hdmx = sourceFont.getTable(Tag.hdmx);

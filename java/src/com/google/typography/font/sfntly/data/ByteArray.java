@@ -28,9 +28,9 @@ import java.io.OutputStream;
 abstract class ByteArray {
   private static final int COPY_BUFFER_SIZE = 8192;
 
-  private int storageLength;
+  private final int storageLength;
   private int filledLength;
-  private boolean growable;
+  private final boolean growable;
 
   /**
    * @param filledLength the length that is "filled" and readable counting from the offset

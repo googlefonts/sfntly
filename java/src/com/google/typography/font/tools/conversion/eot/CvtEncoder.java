@@ -31,7 +31,8 @@ public class CvtEncoder {
   private static final int CVT_NEG0 = CVT_NEG1 - 1;
   private static final int CVT_WORDCODE = CVT_NEG0 - 1;
   private static final int CVT_LOWESTCODE = CVT_WORDCODE;
-  private ByteArrayOutputStream cvtStream;
+
+  private final ByteArrayOutputStream cvtStream;
 
   public CvtEncoder() {
     cvtStream = new ByteArrayOutputStream();

@@ -25,7 +25,7 @@ public class DebuggingOutputStream extends FilterOutputStream {
   private static final int LINE_LENGTH = 20;
 
   private int lineLength;
-  private boolean debug;
+  private final boolean debug;
 
   public DebuggingOutputStream(OutputStream out, boolean debug) {
     super(out);

@@ -58,7 +58,7 @@ public final class PostScriptTable extends Table {
     // Version 4.0 table
   }
 
-  private AtomicReference<List<String>> names = new AtomicReference<>();
+  private final AtomicReference<List<String>> names = new AtomicReference<>();
 
   private static final String[] STANDARD_NAMES = {
     ".notdef",

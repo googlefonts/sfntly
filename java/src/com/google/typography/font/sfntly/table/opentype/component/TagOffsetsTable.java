@@ -45,7 +45,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
   @Override
   public Iterator<S> iterator() {
     return new Iterator<S>() {
-      private Iterator<TagOffsetRecord> recordIterator = recordList.iterator();
+      private final Iterator<TagOffsetRecord> recordIterator = recordList.iterator();
 
       @Override
       public boolean hasNext() {

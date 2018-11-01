@@ -34,7 +34,7 @@ import java.io.IOException;
 /** @author Raph Levien */
 public class SFLint {
 
-  private FontFactory fontFactory;
+  private final FontFactory fontFactory;
   private int problemCount;
 
   public static void main(String[] args) throws IOException {

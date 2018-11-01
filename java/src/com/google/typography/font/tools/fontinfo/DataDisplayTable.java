@@ -14,11 +14,11 @@ import java.util.List;
  * @author Han-Wen Yeh
  */
 public class DataDisplayTable {
-  private List<String> header;
-  private List<List<String>> data;
-  private List<Integer> maxColLengths;
+  private final List<String> header;
+  private final List<List<String>> data;
+  private final List<Integer> maxColLengths;
   private List<Align> displayAlignment;
-  private int numCols;
+  private final int numCols;
   private int numRows;
 
   /** Enum representing the alignment of the text when being displayed */

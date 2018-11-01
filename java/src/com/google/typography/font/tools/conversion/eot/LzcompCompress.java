@@ -36,10 +36,10 @@ public class LzcompCompress {
   private static final int PRELOAD_SIZE = 2 * 32 * 96 + 4 * 256;
   private static final int DEFAULT_MAX_COPY_DIST = 0x7fffffff;
 
-  private BitIOWriter bits;
-  private boolean usingRunLength;
+  private final BitIOWriter bits;
+  private final boolean usingRunLength;
   private int length1;
-  private int maxCopyDist = DEFAULT_MAX_COPY_DIST;
+  private final int maxCopyDist = DEFAULT_MAX_COPY_DIST;
   private HuffmanEncoder distEncoder;
   private HuffmanEncoder lenEncoder;
   private HuffmanEncoder symEncoder;

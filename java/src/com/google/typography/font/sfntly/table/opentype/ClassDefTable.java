@@ -8,7 +8,7 @@ import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
 
 public class ClassDefTable extends SubstSubtable {
   public final RecordsTable<?> array;
-  private boolean dataIsCanonical;
+  private final boolean dataIsCanonical;
 
   // //////////////
   // Constructors

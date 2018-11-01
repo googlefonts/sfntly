@@ -21,7 +21,7 @@ import java.io.ByteArrayOutputStream;
 /** @author Raph Levien */
 public class BitIOWriter {
 
-  private ByteArrayOutputStream buf;
+  private final ByteArrayOutputStream buf;
   private byte byteBuf;
   private int bitCount;
 
