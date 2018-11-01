@@ -89,10 +89,18 @@ public class GlyphNode extends AbstractNode {
         int offset = loca.glyphOffset(glyphIndex);
         int length = loca.glyphLength(glyphIndex);
         if (length != 0) {
-          SimpleGlyph simple = (SimpleGlyph) glyf.glyph(offset, length);
-          int deltaX = composite.argument1(i);
-          int deltaY = composite.argument2(i);
-          paintSimpleGlyph(g, simple, deltaX, deltaY);
+          Glyph glyph = glyf.glyph(offset, length);
+          if (glyph instanceof SimpleGlyph) {
+            SimpleGlyph simple = (SimpleGlyph) glyph;
+            int deltaX = composite.argument1(i);
+            int deltaY = composite.argument2(i);
+            paintSimpleGlyph(g, simple, deltaX, deltaY);
+          } else {
+            CompositeGlyph part = (CompositeGlyph) glyph;
+            // XXX: Probably deltaX and deltaY need to be interpreted relative to its parent glyph,
+            // not relative to the top-level glyph.
+            paintCompositeGlyph(g, part);
+          }
         }
       }
     }
