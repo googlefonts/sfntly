@@ -18,6 +18,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 public class GlyphNode extends AbstractNode {
+
   private final int glyphId;
   private final Glyph glyph;
   private final GlyphTable glyf;
@@ -120,19 +121,19 @@ public class GlyphNode extends AbstractNode {
         }
 
         Path2D path = new Path2D.Double(Path2D.WIND_EVEN_ODD);
-        path.moveTo(screen.x(firstOn), screen.y(firstOn));
+        path.moveTo(screen.cx(firstOn), screen.cy(firstOn));
 
         for (int i = 0; i < pmax; i++) {
           int icurr = firstOn + i + 1;
           int inext = firstOn + i + 2;
 
-          int currx = screen.x(icurr);
-          int curry = screen.y(icurr);
+          int currx = screen.cx(icurr);
+          int curry = screen.cy(icurr);
           if (screen.onCurve(icurr)) {
             path.lineTo(currx, curry);
           } else {
-            double nextx = screen.x(inext);
-            double nexty = screen.y(inext);
+            double nextx = screen.cx(inext);
+            double nexty = screen.cy(inext);
             if (!screen.onCurve(inext)) {
               nextx = 0.5 * (currx + nextx);
               nexty = 0.5 * (curry + nexty);
@@ -148,14 +149,18 @@ public class GlyphNode extends AbstractNode {
 
         for (int p = 0; p < pmax; p++) {
           g.setColor(screen.onCurve(p) ? Color.BLACK : Color.GREEN);
-          g.drawOval(screen.x(p) - 2, screen.y(p) - 2, 4, 4);
-          g.drawString(c + ":" + p, screen.x(p) + 5, screen.y(p) - 5);
+          g.drawOval(screen.cx(p) - 2, screen.cy(p) - 2, 4, 4);
+          g.drawString(c + ":" + p, screen.cx(p) + 5, screen.cy(p) - 5);
         }
       }
     }
   }
 
+  /**
+   * Translates coordinates from the glyph coordinate for a specific contour system to the screen.
+   */
   private static class ScreenCoordinateMapper {
+
     private final SimpleGlyph glyph;
     private final int contour;
     private final int points;
@@ -177,12 +182,18 @@ public class GlyphNode extends AbstractNode {
       this.maxY = maxY;
     }
 
-    int x(int point) {
+    /**
+     * The x coordinate on the screen for the given point on the contour.
+     */
+    int cx(int point) {
       int x = glyph.xCoordinate(contour, index(point));
       return margin + (int) Math.round(scale * (x - minX));
     }
 
-    int y(int point) {
+    /**
+     * The y coordinate for the given point on the contour.
+     */
+    int cy(int point) {
       int y = glyph.yCoordinate(contour, index(point));
       return margin + (int) Math.round(scale * (maxY - y));
     }
