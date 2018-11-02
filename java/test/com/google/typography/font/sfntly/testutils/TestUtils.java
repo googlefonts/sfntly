@@ -250,4 +250,33 @@ public class TestUtils {
     }
     return new String(chars);
   }
+
+  /** Converts a sequence of hex strings like {@code "00 12 34 56} to a block of font data. */
+  public static ReadableFontData fromHex(String... lines) {
+    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+      for (String line : lines) {
+        char[] chs = line.toCharArray();
+        int i = 0;
+        int len = chs.length;
+        while (i < len && chs[i] == ' ') {
+          i++;
+        }
+        while (i < len) {
+          int hi = Character.getNumericValue(chs[i]);
+          int lo = Character.getNumericValue(chs[i + 1]);
+          i += 2;
+          if (hi < 0 || hi > 15 || lo < 0 || lo > 15) {
+            throw new IllegalArgumentException("Invalid hex byte at index " + i);
+          }
+          baos.write(hi * 16 + lo);
+          while (i < len && chs[i] == ' ') {
+            i++;
+          }
+        }
+      }
+      return ReadableFontData.createReadableFontData(baos.toByteArray());
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
+  }
 }
