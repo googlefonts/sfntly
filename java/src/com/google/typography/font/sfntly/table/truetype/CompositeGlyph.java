@@ -91,7 +91,9 @@ public final class CompositeGlyph extends Glyph {
     int index = 2 * FontData.SizeOf.USHORT + contourIndex.get(contour);
     int flags = flags(contour);
     if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
-      return data.readUShort(index);
+      return (flags & FLAG_ARGS_ARE_XY_VALUES) != 0
+          ? data.readShort(index)
+          : data.readUShort(index);
     }
     return data.readByte(index);
   }
@@ -100,7 +102,9 @@ public final class CompositeGlyph extends Glyph {
     int index = 2 * FontData.SizeOf.USHORT + contourIndex.get(contour);
     int flags = flags(contour);
     if ((flags & FLAG_ARG_1_AND_2_ARE_WORDS) != 0) {
-      return data.readUShort(index + FontData.SizeOf.USHORT);
+      return (flags & FLAG_ARGS_ARE_XY_VALUES) != 0
+          ? data.readShort(index + FontData.SizeOf.SHORT)
+          : data.readUShort(index + FontData.SizeOf.USHORT);
     }
     return data.readByte(index + FontData.SizeOf.BYTE);
   }

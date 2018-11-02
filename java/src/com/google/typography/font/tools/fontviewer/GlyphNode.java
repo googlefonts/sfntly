@@ -92,8 +92,8 @@ public class GlyphNode extends AbstractNode {
           Glyph glyph = glyf.glyph(offset, length);
           if (glyph instanceof SimpleGlyph) {
             SimpleGlyph simple = (SimpleGlyph) glyph;
-            int deltaX = (short) composite.argument1(i);
-            int deltaY = (short) composite.argument2(i);
+            int deltaX = composite.argument1(i);
+            int deltaY = composite.argument2(i);
             paintSimpleGlyph(g, simple, deltaX, deltaY);
           } else {
             CompositeGlyph part = (CompositeGlyph) glyph;
