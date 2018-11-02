@@ -55,16 +55,12 @@ public class GlyphNode extends AbstractNode {
 
     private static final int MARGIN = 10;
 
-    private final int minX = glyph.xMin();
-    private final int minY = glyph.yMin();
-    private final int maxX = glyph.xMax();
-    private final int maxY = glyph.yMax();
-
     private double scale;
 
     private void updateScale() {
       int size = Math.min(getWidth(), getHeight()) - MARGIN - MARGIN;
-      this.scale = (double) size / Math.max(maxX - minX, maxY - minY);
+      this.scale =
+          (double) size / Math.max(glyph.xMax() - glyph.xMin(), glyph.yMax() - glyph.yMin());
     }
 
     @Override
@@ -78,7 +74,7 @@ public class GlyphNode extends AbstractNode {
 
       Glyph glyph = GlyphNode.this.glyph;
       if (glyph instanceof SimpleGlyph) {
-        paintSimpleGlyph(g, (SimpleGlyph) glyph, 0, 0);
+        paintSimpleGlyph(g, (SimpleGlyph) glyph);
       } else {
         paintCompositeGlyph(g, (CompositeGlyph) glyph);
       }
@@ -92,24 +88,18 @@ public class GlyphNode extends AbstractNode {
         if (length != 0) {
           Glyph glyph = glyf.glyph(offset, length);
           if (glyph instanceof SimpleGlyph) {
-            SimpleGlyph simple = (SimpleGlyph) glyph;
-            int deltaX = composite.argument1(i);
-            int deltaY = composite.argument2(i);
-            paintSimpleGlyph(g, simple, deltaX, deltaY);
+            paintSimpleGlyph(g, (SimpleGlyph) glyph);
           } else {
-            CompositeGlyph part = (CompositeGlyph) glyph;
-            // XXX: Probably deltaX and deltaY need to be interpreted relative to its parent glyph,
-            // not relative to the top-level glyph.
-            paintCompositeGlyph(g, part);
+            paintCompositeGlyph(g, (CompositeGlyph) glyph);
           }
         }
       }
     }
 
-    private void paintSimpleGlyph(Graphics2D g, SimpleGlyph glyph, int deltaX, int deltaY) {
+    private void paintSimpleGlyph(Graphics2D g, SimpleGlyph glyph) {
       for (int c = 0, cmax = glyph.numberOfContours(); c < cmax; c++) {
         ScreenCoordinateMapper screen =
-            new ScreenCoordinateMapper(glyph, c, MARGIN, scale, minX - deltaX, maxY - deltaY);
+            new ScreenCoordinateMapper(glyph, c, MARGIN, scale, glyph.xMin(), glyph.yMax());
         int pmax = glyph.numberOfPoints(c);
 
         int firstOn = 0;
