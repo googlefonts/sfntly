@@ -37,7 +37,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -513,7 +512,7 @@ public class RuleExtractor {
       LookupListTable lookupListTable,
       Map<Integer, Set<Rule>> allLookupRules) {
 
-    LinkedList<Rule> targetRules = new LinkedList<>();
+    List<Rule> targetRules = new ArrayList<>();
     targetRules.add(ruleSansSubst);
     for (SubstLookupRecord lookup : lookups) {
       int at = lookup.sequenceIndex;
@@ -523,9 +522,9 @@ public class RuleExtractor {
         throw new IllegalArgumentException(
             "Out of bound lookup index for chaining lookup: " + lookupIndex);
       }
-      LinkedList<Rule> newRules = Rule.applyRulesOnRules(rulesToApply, targetRules, at);
+      List<Rule> newRules = Rule.applyRulesOnRules(rulesToApply, targetRules, at);
 
-      LinkedList<Rule> result = new LinkedList<>();
+      List<Rule> result = new ArrayList<>();
       result.addAll(newRules);
       result.addAll(targetRules);
       targetRules = result;

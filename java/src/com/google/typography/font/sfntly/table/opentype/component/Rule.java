@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -192,7 +191,7 @@ public class Rule {
 
   // Rule operation
 
-  private void applyRuleOnRuleWithSubst(Rule targetRule, int at, LinkedList<Rule> accumulateTo) {
+  private void applyRuleOnRuleWithSubst(Rule targetRule, int at, ArrayList<Rule> accumulateTo) {
     RuleSegment matchSegment = targetRule.match(this, at);
     if (matchSegment == null) {
       return;
@@ -296,14 +295,14 @@ public class Rule {
   }
 
   private static void applyRulesOnRuleWithSubst(
-      Set<Rule> rulesToApply, Rule targetRule, int at, LinkedList<Rule> accumulateTo) {
+      Set<Rule> rulesToApply, Rule targetRule, int at, ArrayList<Rule> accumulateTo) {
     for (Rule ruleToApply : rulesToApply) {
       ruleToApply.applyRuleOnRuleWithSubst(targetRule, at, accumulateTo);
     }
   }
 
   private static void applyRulesOnRuleWithoutSubst(
-      Set<Rule> rulesToApply, Rule targetRule, int at, LinkedList<Rule> accumulateTo) {
+      Set<Rule> rulesToApply, Rule targetRule, int at, ArrayList<Rule> accumulateTo) {
     for (Rule ruleToApply : rulesToApply) {
       Rule newRule = applyRuleOnRuleWithoutSubst(ruleToApply, targetRule, at);
       if (newRule != null) {
@@ -312,9 +311,9 @@ public class Rule {
     }
   }
 
-  static LinkedList<Rule> applyRulesOnRules(
+  static ArrayList<Rule> applyRulesOnRules(
       Set<Rule> rulesToApply, List<Rule> targetRules, int at) {
-    LinkedList<Rule> result = new LinkedList<>();
+    ArrayList<Rule> result = new ArrayList<>();
     for (Rule targetRule : targetRules) {
       if (targetRule.subst != null) {
         applyRulesOnRuleWithSubst(rulesToApply, targetRule, at, result);

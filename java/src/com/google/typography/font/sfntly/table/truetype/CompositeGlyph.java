@@ -3,7 +3,7 @@ package com.google.typography.font.sfntly.table.truetype;
 import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class CompositeGlyph extends Glyph {
@@ -21,7 +21,7 @@ public final class CompositeGlyph extends Glyph {
   public static final int FLAG_SCALED_COMPONENT_OFFSET = 0x01 << 11;
   public static final int FLAG_UNSCALED_COMPONENT_OFFSET = 0x01 << 12;
 
-  private final List<Integer> contourIndex = new LinkedList<>();
+  private final List<Integer> contourIndex = new ArrayList<>();
   private int instructionsOffset;
   private int instructionSize;
 
