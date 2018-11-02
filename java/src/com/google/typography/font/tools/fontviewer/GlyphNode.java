@@ -161,7 +161,8 @@ public class GlyphNode extends AbstractNode {
    */
   private static class ScreenCoordinateMapper {
 
-    private final SimpleGlyph glyph;
+    private final Glyph glyph;
+    private final SimpleGlyph simple;
     private final int contour;
     private final int points;
 
@@ -173,6 +174,7 @@ public class GlyphNode extends AbstractNode {
     ScreenCoordinateMapper(
         SimpleGlyph glyph, int contour, int margin, double scale, double minX, double maxY) {
       this.glyph = glyph;
+      this.simple = glyph instanceof SimpleGlyph ? glyph : null;
       this.contour = contour;
       this.points = glyph.numberOfPoints(contour);
 
@@ -182,28 +184,35 @@ public class GlyphNode extends AbstractNode {
       this.maxY = maxY;
     }
 
-    /**
-     * The x coordinate on the screen for the given point on the contour.
-     */
-    int cx(int point) {
-      int x = glyph.xCoordinate(contour, index(point));
+    /** The x coordinate on the screen for the given x coordinate in the glyph coordinate system. */
+    private int x(double x) {
       return margin + (int) Math.round(scale * (x - minX));
     }
 
-    /**
-     * The y coordinate for the given point on the contour.
-     */
-    int cy(int point) {
-      int y = glyph.yCoordinate(contour, index(point));
+    /** The y coordinate on the screen for the given y coordinate in the glyph coordinate system. */
+    private int y(int y) {
       return margin + (int) Math.round(scale * (maxY - y));
+    }
+
+    /** For a simple glyph, the x screen coordinate for the given point on the contour. */
+    int cx(int point) {
+      int x = simple.xCoordinate(contour, index(point));
+      return x(x);
+    }
+
+    /** For a simple glyph, the y screen coordinate for the given point on the contour. */
+    int cy(int point) {
+      int y = simple.yCoordinate(contour, index(point));
+      return y(y);
     }
 
     private int index(int point) {
       return (point + points) % points;
     }
 
+    /** For a simple glyph, whether the point is on the curve, or off the curve. */
     boolean onCurve(int point) {
-      return glyph.onCurve(contour, index(point));
+      return simple.onCurve(contour, index(point));
     }
   }
 }
