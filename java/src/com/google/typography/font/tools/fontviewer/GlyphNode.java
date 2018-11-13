@@ -17,6 +17,12 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+/**
+ * Shows the graphical representation of a glyph, as well as a textual description of the contours.
+ *
+ * <p>Note: the drawing code is based on trial-and-error and does not follow the OpenType standard.
+ * It might work or not.
+ */
 public class GlyphNode extends AbstractNode {
 
   private final int glyphId;
@@ -80,6 +86,10 @@ public class GlyphNode extends AbstractNode {
       }
     }
 
+    /**
+     * Note: the drawing code is based on trial-and-error and does not follow the OpenType standard.
+     * It might work or not.
+     */
     private void paintCompositeGlyph(Graphics2D g, CompositeGlyph composite) {
       for (int i = 0; i < composite.numGlyphs(); i++) {
         int glyphIndex = composite.glyphIndex(i);
@@ -96,6 +106,10 @@ public class GlyphNode extends AbstractNode {
       }
     }
 
+    /**
+     * Note: the drawing code is based on trial-and-error and does not follow the OpenType standard.
+     * It might work or not.
+     */
     private void paintSimpleGlyph(Graphics2D g, SimpleGlyph glyph) {
       for (int c = 0, cmax = glyph.numberOfContours(); c < cmax; c++) {
         ScreenCoordinateMapper screen =
