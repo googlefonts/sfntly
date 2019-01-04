@@ -19,8 +19,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <unicode/unistr.h>
-
 #include "sfntly/font.h"
 #include "sfntly/port/exception_type.h"
 
