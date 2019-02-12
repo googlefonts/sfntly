@@ -19,7 +19,7 @@ package com.google.typography.font.tools.conversion.eot;
 /**
  * Implement LZCOMP compression algorithm as defined in MicroType Express, part of the EOT
  * draft spec at {@link "http://www.w3.org/Submission/MTX/"}
- * 
+ *
  * Java implementation based on http://www.w3.org/Submission/MTX/ reference code
  *
  * @author Raph Levien
@@ -56,12 +56,12 @@ public class LzcompCompress {
     int index;
     HashNode next;
   }
-  
+
   private LzcompCompress() {
     bits = new BitIOWriter();
     usingRunLength = false;
   }
-  
+
   private void write(byte[] dataIn) {
     bits.writeBit(usingRunLength);
     length1 = dataIn.length;
@@ -79,7 +79,7 @@ public class LzcompCompress {
   void setDistRange(int length) {
     numDistRanges = 1;
     distMax = DIST_MIN + (1 << (DIST_WIDTH * numDistRanges)) - 1;
-    while (distMax < length1) {
+    while (distMax < length) {
       numDistRanges++;
       distMax = DIST_MIN + (1 << (DIST_WIDTH * numDistRanges)) - 1;
     }
@@ -214,7 +214,7 @@ public class LzcompCompress {
         int i = hNode.index;
         int dist = index - i;
         hNodeCount++;
-        if (hNodeCount > 256 || dist > maxCopyDist) {
+        if (hNodeCount > 256 || dist > maxCopyDist || dist > distMax) {
           if (hashTable[pos] == hNode) {
             hashTable[pos] = null;
           } else {
