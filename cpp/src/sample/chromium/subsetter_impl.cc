@@ -133,7 +133,7 @@ bool HasName(const char* font_name, Font* font) {
   UCharString font_string = ConvertFromUtf8(font_name);
   if (font_string.empty())
     return false;
-  UCharString regular_suffix = ConvertFromUtf8("Regular");
+  UCharString regular_suffix = ConvertFromUtf8(" Regular");
   UCharString alt_font_string = font_string;
   alt_font_string += regular_suffix;
 
