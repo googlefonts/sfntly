@@ -27,13 +27,7 @@ public final class FontMath {
   }
 
   public static int log2(int a) {
-    int r = 0; // r will be lg(a)
-
-    while (a != 0) {
-      a >>= 1;
-      r++;
-    }
-    return r - 1;
+    return 31 - Integer.numberOfLeadingZeros(a);
   }
 
   /**
