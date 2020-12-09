@@ -649,6 +649,9 @@ public final class NameTable extends SubTableContainerTable implements Iterable<
   public byte[] nameAsBytes(int index) {
     int length = this.nameLength(index);
     byte[] b = new byte[length];
+    if (length <= 0) {
+      return b;
+    }
     this.data.readBytes(this.nameOffset(index), b, 0, length);
     return b;
   }
