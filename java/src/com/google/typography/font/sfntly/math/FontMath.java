@@ -18,22 +18,20 @@ package com.google.typography.font.sfntly.math;
 
 /**
  * Utility math for fonts.
- * 
+ *
  * @author Stuart Gill
  */
-public final class FontMath {
-  private FontMath() {
-    // Prevent construction.
-  }
+public enum FontMath {
+  ;
 
   public static int log2(int a) {
     return 31 - Integer.numberOfLeadingZeros(a);
   }
 
   /**
-   * Calculates the amount of padding needed. The values provided need to be in
-   * the same units. So, if the size is given as the number of bytes then the
-   * alignment size must also be specified as byte size to align to.
+   * Calculates the amount of padding needed. The values provided need to be in the same units. So,
+   * if the size is given as the number of bytes then the alignment size must also be specified as
+   * byte size to align to.
    *
    * @param size the size of the data that may need padding
    * @param alignmentSize the number of units to align to

@@ -16,16 +16,13 @@
 
 package com.google.typography.font.sfntly.testutils;
 
-
 import java.io.File;
 
 /**
- * Holds TestFontNames enums which can be loaded into Fonts. Later, this will
- * have support for checking the fingerprints to make sure that the fonts
- * haven't been changed.
+ * Holds TestFontNames enums which can be loaded into Fonts. Later, this will have support for
+ * checking the fingerprints to make sure that the fonts haven't been changed.
  *
  * @author Vinay Shah
- *
  */
 public class TestFont {
 
@@ -36,7 +33,7 @@ public class TestFont {
     OPENSANS("OpenSans-Regular.ttf"),
     ROBOTO("Roboto-Regular.ttf");
 
-    private String path;
+    private final String path;
 
     private TestFontNames(String path) {
       this.path = path;

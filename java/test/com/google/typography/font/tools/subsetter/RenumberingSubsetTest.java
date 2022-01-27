@@ -27,46 +27,41 @@ import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
-import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
-import com.google.typography.font.sfntly.testutils.TestFont.TestFontNames;
+import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import junit.framework.TestCase;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class RenumberingSubsetTest extends TestCase {
 
-  private static final File fontFile = TestFontNames.OPENSANS.getFile();
+  private static final File fontFile = TestFont.TestFontNames.OPENSANS.getFile();
 
   // The subsetted font - individual tests will query and validate aspects of it
   Font dstFont;
-  
+
   @Override
   public void setUp() throws IOException {
     Font srcFont = TestFontUtils.loadFont(fontFile)[0];
 
     FontFactory factory = FontFactory.getInstance();
     Subsetter subsetter = new RenumberingSubsetter(srcFont, factory);
-    List<Integer> glyphs = new ArrayList<Integer>();
+    List<Integer> glyphs = new ArrayList<>();
     glyphs.add(0);
     glyphs.add(67); // grave, u+0060
     glyphs.add(68); // a, u+0061
     glyphs.add(162); // agrave, u+00e0
     subsetter.setGlyphs(glyphs);
 
-    Set<Integer> removeTables = new HashSet<Integer>();
+    Set<Integer> removeTables = new HashSet<>();
     removeTables.add(Tag.GPOS);
     removeTables.add(Tag.GSUB);
     removeTables.add(Tag.kern);
@@ -75,7 +70,7 @@ public class RenumberingSubsetTest extends TestCase {
 
     dstFont = dstFontBuilder.build();
   }
-  
+
   public void testNumGlyphs() {
     MaximumProfileTable maxpTable = dstFont.getTable(Tag.maxp);
     assertEquals(4, maxpTable.numGlyphs());
@@ -83,7 +78,7 @@ public class RenumberingSubsetTest extends TestCase {
     LocaTable locaTable = dstFont.getTable(Tag.loca);
     assertEquals(4, locaTable.numGlyphs());
   }
-  
+
   public void testCmap() throws IOException {
     CMapTable cmapTable = dstFont.getTable(Tag.cmap);
     assertEquals(1, cmapTable.numCMaps(), 1);
@@ -93,7 +88,7 @@ public class RenumberingSubsetTest extends TestCase {
     assertEquals(2, cmap.glyphId(0x61));
     assertEquals(3, cmap.glyphId(0xe0));
   }
-  
+
   public void testHorizontalMetrics() {
     HorizontalMetricsTable hmtxTable = dstFont.getTable(Tag.hmtx);
     assertEquals(1229, hmtxTable.advanceWidth(0));
@@ -105,13 +100,13 @@ public class RenumberingSubsetTest extends TestCase {
     assertEquals(1139, hmtxTable.advanceWidth(3));
     assertEquals(94, hmtxTable.leftSideBearing(3));
   }
-  
+
   public void testHorizontalHeader() {
     HorizontalHeaderTable hheaTable = dstFont.getTable(Tag.hhea);
     assertEquals(3, hheaTable.numberOfHMetrics());
     assertEquals(1229, hheaTable.advanceWidthMax());
   }
-  
+
   public void testPostScriptTable() {
     PostScriptTable postTable = dstFont.getTable(Tag.post);
     assertEquals(4, postTable.numberOfGlyphs());
@@ -120,11 +115,11 @@ public class RenumberingSubsetTest extends TestCase {
     assertEquals("a", postTable.glyphName(2));
     assertEquals("agrave", postTable.glyphName(3));
   }
-  
+
   public void testSimpleGlyph1() {
     // grave
     Glyph glyph = getGlyph(dstFont, 1);
-    assertEquals(GlyphType.Simple, glyph.glyphType());
+    assertEquals(Glyph.GlyphType.Simple, glyph.glyphType());
     SimpleGlyph simple = (SimpleGlyph) glyph;
     assertEquals(1, simple.numberOfContours());
     assertEquals(10, simple.numberOfPoints(0));
@@ -145,7 +140,7 @@ public class RenumberingSubsetTest extends TestCase {
   public void testSimpleGlyph2() {
     // lowercase a
     Glyph glyph = getGlyph(dstFont, 2);
-    assertEquals(GlyphType.Simple, glyph.glyphType());
+    assertEquals(Glyph.GlyphType.Simple, glyph.glyphType());
     SimpleGlyph simple = (SimpleGlyph) glyph;
     assertEquals(2, simple.numberOfContours());
     assertEquals(26, simple.numberOfPoints(0));
@@ -158,25 +153,25 @@ public class RenumberingSubsetTest extends TestCase {
   public void testCompositeGlyph() {
     // agrave
     Glyph glyph = getGlyph(dstFont, 3);
-    assertEquals(GlyphType.Composite, glyph.glyphType());
+    assertEquals(Glyph.GlyphType.Composite, glyph.glyphType());
     CompositeGlyph composite = (CompositeGlyph) glyph;
     assertEquals(2, composite.numGlyphs());
-    assertEquals(2, composite.glyphIndex(0));  // a
+    assertEquals(2, composite.glyphIndex(0)); // a
     assertEquals(0, composite.argument1(0));
     assertEquals(0, composite.argument2(0));
-    assertEquals(1, composite.glyphIndex(1));  // grave
+    assertEquals(1, composite.glyphIndex(1)); // grave
     assertEquals(-114, composite.argument1(1));
     assertEquals(0, composite.argument2(1));
     assertEquals(8, composite.instructionSize());
     assertEquals(0, composite.padding());
   }
-  
+
   public void testTablesRemoved() {
     assertNull(dstFont.getTable(Tag.GPOS));
     assertNull(dstFont.getTable(Tag.GSUB));
     assertNull(dstFont.getTable(Tag.kern));
   }
-  
+
   // TODO: this really needs to be a utility method somewhere
   private static Glyph getGlyph(Font font, int glyphId) {
     LocaTable locaTable = font.getTable(Tag.loca);

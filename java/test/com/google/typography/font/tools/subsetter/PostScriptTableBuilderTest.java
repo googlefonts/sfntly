@@ -20,21 +20,17 @@ import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
-
-import junit.framework.TestCase;
-
 import java.util.ArrayList;
 import java.util.List;
+import junit.framework.TestCase;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class PostScriptTableBuilderTest extends TestCase {
 
   public void testPostTableBuilding() {
     FontFactory fontFactory = FontFactory.getInstance();
     Font.Builder fontBuilder = fontFactory.newFontBuilder();
-    List<String> names = new ArrayList<String>();
+    List<String> names = new ArrayList<>();
     names.add(".notdef");
     names.add("numbersign");
     names.add("nonstandardglyph");
@@ -43,7 +39,7 @@ public class PostScriptTableBuilderTest extends TestCase {
     PostScriptTableBuilder postBuilder = new PostScriptTableBuilder();
     postBuilder.setNames(names);
     fontBuilder.newTableBuilder(Tag.post, postBuilder.build());
-    
+
     Font font = fontBuilder.build();
     PostScriptTable post = font.getTable(Tag.post);
     assertEquals(0x20000, post.version());
@@ -57,6 +53,6 @@ public class PostScriptTableBuilderTest extends TestCase {
     assertEquals(79, post.dataLength());
     assertEquals(79, post.headerLength());
   }
-  
+
   // TODO: test initV1From()
 }

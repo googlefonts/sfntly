@@ -23,21 +23,15 @@ import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class GlyphTableSubsetter extends TableSubsetterImpl {
 
   private static final boolean DEBUG = false;
 
-  /**
-   * Constructor.
-   */
   protected GlyphTableSubsetter() {
     // Note: doesn't actually create the maxp table, that should be done in the
     // setUpTables method of the invoking subsetter.
@@ -87,7 +81,6 @@ public class GlyphTableSubsetter extends TableSubsetterImpl {
         System.out.println("\tnew glyph builder = " + glyphBuilder);
       }
       glyphBuilders.add(glyphBuilder);
-
     }
     List<Integer> locaList = glyphTableBuilder.generateLocaList();
     if (DEBUG) {
@@ -95,7 +88,7 @@ public class GlyphTableSubsetter extends TableSubsetterImpl {
     }
     locaTableBuilder.setLocaList(locaList);
     MaximumProfileTable.Builder maxpBuilder =
-      (MaximumProfileTable.Builder) fontBuilder.getTableBuilder(Tag.maxp);
+        (MaximumProfileTable.Builder) fontBuilder.getTableBuilder(Tag.maxp);
     maxpBuilder.setNumGlyphs(locaTableBuilder.numGlyphs());
     return true;
   }

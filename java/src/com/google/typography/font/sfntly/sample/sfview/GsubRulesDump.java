@@ -6,7 +6,6 @@ import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.opentype.component.GlyphGroup;
 import com.google.typography.font.sfntly.table.opentype.component.Rule;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,14 +32,11 @@ public class GsubRulesDump {
   private static Font[] loadFont(File file) throws IOException {
     FontFactory fontFactory = FontFactory.getInstance();
     fontFactory.fingerprintFont(true);
-    FileInputStream is = new FileInputStream(file);
-    try {
+    try (FileInputStream is = new FileInputStream(file)) {
       return fontFactory.loadFonts(is);
     } catch (FileNotFoundException e) {
       System.err.println("Could not load the font: " + file.getName());
       return null;
-    } finally {
-      is.close();
     }
   }
 }

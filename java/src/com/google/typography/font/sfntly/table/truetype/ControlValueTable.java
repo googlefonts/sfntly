@@ -25,78 +25,42 @@ import com.google.typography.font.sfntly.table.Table;
 
 /**
  * A Control Value table.
- * 
+ *
  * @author Stuart Gill
  */
 public final class ControlValueTable extends Table {
 
-  /**
-   * Constructor.
-   *
-   * @param header table header
-   * @param data the font data block for this table
-   */
   protected ControlValueTable(Header header, ReadableFontData data) {
     super(header, data);
   }
 
-  /**
-   * Get the data value at the specified index.
-   * @param index the location to get the data from
-   * @return the data at the index
-   */
+  /** Get the data value at the specified index. */
   public int fword(int index) {
-    return this.data.readFWord(index);
+    return data.readFWord(index);
   }
 
-  /**
-   * Get the number of FWORDs in the data.
-   * @return the number of FWORDs in the data
-   */
+  /** Get the number of FWORDs in the data. */
   public int fwordCount() {
-    return this.dataLength() / FontData.DataSize.FWORD.size();
+    return dataLength() / FontData.SizeOf.FWORD;
   }
 
-  /**
-   * Builder for Control Value tables.
-   *
-   */
   public static class Builder extends ByteArrayTableBuilder<ControlValueTable> {
 
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
 
-    /**
-     * Constructor.
-     *
-     * @param header the table header
-     * @param data the writable data for the table
-     */
     protected Builder(Header header, WritableFontData data) {
       super(header, data);
     }
 
-    /**
-     * Constructor.
-     *
-     * @param header the table header
-     * @param data the readable data for the table
-     */
     protected Builder(Header header, ReadableFontData data) {
       super(header, data);
     }
 
     @Override
     protected ControlValueTable subBuildTable(ReadableFontData data) {
-      return new ControlValueTable(this.header(), data);
+      return new ControlValueTable(header(), data);
     }
   }
 }

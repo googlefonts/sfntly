@@ -15,14 +15,14 @@ public class CoverageTable extends SubstSubtable {
   public CoverageTable(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     switch (format) {
-    case 1:
-      array = new NumRecordTable(data, headerSize(), dataIsCanonical);
-      break;
-    case 2:
-      array = new RangeRecordTable(data, headerSize(), dataIsCanonical);
-      break;
-    default:
-      throw new IllegalArgumentException("coverage format " + format + " unexpected");
+      case 1:
+        array = new NumRecordTable(data, headerSize(), dataIsCanonical);
+        break;
+      case 2:
+        array = new RangeRecordTable(data, headerSize(), dataIsCanonical);
+        break;
+      default:
+        throw new IllegalArgumentException("coverage format " + format + " unexpected");
     }
   }
 
@@ -31,19 +31,19 @@ public class CoverageTable extends SubstSubtable {
 
   public NumRecordTable fmt1Table() {
     switch (format) {
-    case 1:
-      return (NumRecordTable) array;
-    default:
-      throw new IllegalArgumentException("unexpected format table requested: " + format);
+      case 1:
+        return (NumRecordTable) array;
+      default:
+        throw new IllegalArgumentException("unexpected format table requested: " + format);
     }
   }
 
   public RangeRecordTable fmt2Table() {
     switch (format) {
-    case 2:
-      return (RangeRecordTable) array;
-    default:
-      throw new IllegalArgumentException("unexpected format table requested: " + format);
+      case 2:
+        return (RangeRecordTable) array;
+      default:
+        throw new IllegalArgumentException("unexpected format table requested: " + format);
     }
   }
 
@@ -58,14 +58,14 @@ public class CoverageTable extends SubstSubtable {
     public Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       switch (format) {
-      case 1:
-        arrayBuilder = new NumRecordTable.Builder(data, headerSize(), dataIsCanonical);
-        break;
-      case 2:
-        arrayBuilder = new RangeRecordTable.Builder(data, headerSize(), dataIsCanonical);
-        break;
-      default:
-        throw new IllegalArgumentException("coverage format " + format + " unexpected");
+        case 1:
+          arrayBuilder = new NumRecordTable.Builder(data, headerSize(), dataIsCanonical);
+          break;
+        case 2:
+          arrayBuilder = new RangeRecordTable.Builder(data, headerSize(), dataIsCanonical);
+          break;
+        default:
+          throw new IllegalArgumentException("coverage format " + format + " unexpected");
       }
     }
 

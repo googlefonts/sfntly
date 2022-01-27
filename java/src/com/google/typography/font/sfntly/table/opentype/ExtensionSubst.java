@@ -15,8 +15,8 @@ public class ExtensionSubst extends SubstSubtable {
     if (format != 1) {
       throw new IllegalArgumentException("illegal extension format " + format);
     }
-    lookupType = GsubLookupType.forTypeNum(
-        data.readUShort(base + headerSize() + LOOKUP_TYPE_OFFSET));
+    lookupType =
+        GsubLookupType.forTypeNum(data.readUShort(base + headerSize() + LOOKUP_TYPE_OFFSET));
     lookupOffset = data.readULongAsInt(base + headerSize() + LOOKUP_OFFSET_OFFSET);
   }
 
@@ -27,22 +27,22 @@ public class ExtensionSubst extends SubstSubtable {
   public SubstSubtable subTable() {
     ReadableFontData data = this.data.slice(lookupOffset);
     switch (lookupType) {
-    case GSUB_LIGATURE:
-      return new LigatureSubst(data, 0, dataIsCanonical);
-    case GSUB_SINGLE:
-      return new SingleSubst(data, 0, dataIsCanonical);
-    case GSUB_MULTIPLE:
-      return new MultipleSubst(data, 0, dataIsCanonical);
-    case GSUB_ALTERNATE:
-      return new AlternateSubst(data, 0, dataIsCanonical);
-    case GSUB_CONTEXTUAL:
-      return new ContextSubst(data, 0, dataIsCanonical);
-    case GSUB_CHAINING_CONTEXTUAL:
-      return new ChainContextSubst(data, 0, dataIsCanonical);
-    case GSUB_REVERSE_CHAINING_CONTEXTUAL_SINGLE:
-      return new ReverseChainSingleSubst(data, 0, dataIsCanonical);
-    default:
-      throw new IllegalArgumentException("LookupType is " + lookupType);
+      case GSUB_LIGATURE:
+        return new LigatureSubst(data, 0, dataIsCanonical);
+      case GSUB_SINGLE:
+        return new SingleSubst(data, 0, dataIsCanonical);
+      case GSUB_MULTIPLE:
+        return new MultipleSubst(data, 0, dataIsCanonical);
+      case GSUB_ALTERNATE:
+        return new AlternateSubst(data, 0, dataIsCanonical);
+      case GSUB_CONTEXTUAL:
+        return new ContextSubst(data, 0, dataIsCanonical);
+      case GSUB_CHAINING_CONTEXTUAL:
+        return new ChainContextSubst(data, 0, dataIsCanonical);
+      case GSUB_REVERSE_CHAINING_CONTEXTUAL_SINGLE:
+        return new ReverseChainSingleSubst(data, 0, dataIsCanonical);
+      default:
+        throw new IllegalArgumentException("LookupType is " + lookupType);
     }
   }
 

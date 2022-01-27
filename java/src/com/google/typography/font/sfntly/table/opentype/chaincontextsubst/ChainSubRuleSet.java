@@ -13,8 +13,7 @@ public class ChainSubRuleSet extends ChainSubGenericRuleSet<ChainSubRule> {
     return new ChainSubRule(data, base, dataIsCanonical);
   }
 
-  static class Builder
-      extends ChainSubGenericRuleSet.Builder<ChainSubRuleSet, ChainSubRule> {
+  static class Builder extends ChainSubGenericRuleSet.Builder<ChainSubRuleSet, ChainSubRule> {
 
     Builder() {
       super();

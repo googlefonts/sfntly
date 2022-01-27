@@ -8,7 +8,7 @@ import com.google.typography.font.sfntly.table.opentype.component.RecordsTable;
 
 public class ClassDefTable extends SubstSubtable {
   public final RecordsTable<?> array;
-  private boolean dataIsCanonical;
+  private final boolean dataIsCanonical;
 
   // //////////////
   // Constructors
@@ -18,14 +18,14 @@ public class ClassDefTable extends SubstSubtable {
     this.dataIsCanonical = dataIsCanonical;
 
     switch (format) {
-    case 1:
-      array = new InnerArrayFmt1(data, headerSize(), dataIsCanonical);
-      break;
-    case 2:
-      array = new RangeRecordTable(data, headerSize(), dataIsCanonical);
-      break;
-    default:
-      throw new IllegalArgumentException("class def format " + format + " unexpected");
+      case 1:
+        array = new InnerArrayFmt1(data, headerSize(), dataIsCanonical);
+        break;
+      case 2:
+        array = new RangeRecordTable(data, headerSize(), dataIsCanonical);
+        break;
+      default:
+        throw new IllegalArgumentException("class def format " + format + " unexpected");
     }
   }
 
@@ -34,19 +34,19 @@ public class ClassDefTable extends SubstSubtable {
 
   public InnerArrayFmt1 fmt1Table() {
     switch (format) {
-    case 1:
-      return (InnerArrayFmt1) array;
-    default:
-      throw new IllegalArgumentException("unexpected format table requested: " + format);
+      case 1:
+        return (InnerArrayFmt1) array;
+      default:
+        throw new IllegalArgumentException("unexpected format table requested: " + format);
     }
   }
 
   public RangeRecordTable fmt2Table() {
     switch (format) {
-    case 2:
-      return (RangeRecordTable) array;
-    default:
-      throw new IllegalArgumentException("unexpected format table requested: " + format);
+      case 2:
+        return (RangeRecordTable) array;
+      default:
+        throw new IllegalArgumentException("unexpected format table requested: " + format);
     }
   }
 
@@ -56,14 +56,14 @@ public class ClassDefTable extends SubstSubtable {
     protected Builder(ReadableFontData data, boolean dataIsCanonical) {
       super(data, dataIsCanonical);
       switch (format) {
-      case 1:
-        arrayBuilder = new InnerArrayFmt1.Builder(data, headerSize(), dataIsCanonical);
-        break;
-      case 2:
-        arrayBuilder = new RangeRecordTable.Builder(data, headerSize(), dataIsCanonical);
-        break;
-      default:
-        throw new IllegalArgumentException("class def format " + format + " unexpected");
+        case 1:
+          arrayBuilder = new InnerArrayFmt1.Builder(data, headerSize(), dataIsCanonical);
+          break;
+        case 2:
+          arrayBuilder = new RangeRecordTable.Builder(data, headerSize(), dataIsCanonical);
+          break;
+        default:
+          throw new IllegalArgumentException("class def format " + format + " unexpected");
       }
     }
 
@@ -88,11 +88,6 @@ public class ClassDefTable extends SubstSubtable {
     @Override
     public ClassDefTable subBuildTable(ReadableFontData data) {
       return new ClassDefTable(data, 0, false);
-    }
-
-    @Override
-    protected boolean subReadyToSerialize() {
-      return super.subReadyToSerialize() && true;
     }
 
     @Override

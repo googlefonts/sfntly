@@ -17,36 +17,29 @@
 package com.google.typography.font.tools.subsetter;
 
 import com.google.typography.font.sfntly.Font;
-import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
-
 import java.io.IOException;
 
-/**
- * @author Stuart Gill
- *
- */
+/** @author Stuart Gill */
 public class CMapTableSubsetter extends TableSubsetterImpl {
 
-  /**
-   * Constructor.
-   */
   public CMapTableSubsetter() {
     super(Tag.cmap);
   }
 
   @Override
-  public boolean subset(Subsetter subsetter, Font font, Builder fontBuilder) throws IOException {
+  public boolean subset(Subsetter subsetter, Font font, Font.Builder fontBuilder)
+      throws IOException {
     CMapTable cmapTable = font.getTable(Tag.cmap);
     if (cmapTable == null) {
       throw new RuntimeException("Font to subset is not valid.");
     }
 
     CMapTable.Builder cmapTableBuilder =
-        (com.google.typography.font.sfntly.table.core.CMapTable.Builder) fontBuilder
-            .newTableBuilder(Tag.cmap);
+        (com.google.typography.font.sfntly.table.core.CMapTable.Builder)
+            fontBuilder.newTableBuilder(Tag.cmap);
 
     for (CMapTable.CMapId cmapId : subsetter.cmapId()) {
       CMap cmap = cmapTable.cmap(cmapId);

@@ -20,22 +20,16 @@ import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.util.Map;
+import junit.framework.TestCase;
 
-/**
- * @author Stuart Gill
- *
- */
+/** @author Stuart Gill */
 public class LoadingTests extends TestCase {
 
   private static final File TEST_FONT_FILE = TestFont.TestFontNames.OPENSANS.getFile();
 
-  public LoadingTests() {
-  }
+  public LoadingTests() {}
 
   public LoadingTests(String name) {
     super(name);

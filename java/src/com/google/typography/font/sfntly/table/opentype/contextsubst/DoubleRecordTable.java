@@ -26,7 +26,8 @@ public class DoubleRecordTable extends SubTable {
     this(data, 0, dataIsCanonical);
   }
 
-  public abstract static class Builder<T extends DoubleRecordTable> extends VisibleSubTable.Builder<T> {
+  public abstract static class Builder<T extends DoubleRecordTable>
+      extends VisibleSubTable.Builder<T> {
     protected NumRecordList inputGlyphIdsBuilder;
     protected SubstLookupRecordList substLookupRecordsBuilder;
     protected int serializedLength;
@@ -97,8 +98,8 @@ public class DoubleRecordTable extends SubTable {
     private void initFromData(ReadableFontData data) {
       if (inputGlyphIdsBuilder == null || substLookupRecordsBuilder == null) {
         inputGlyphIdsBuilder = new NumRecordList(data, 1, 0, 4);
-        substLookupRecordsBuilder = new SubstLookupRecordList(
-            data, 2, inputGlyphIdsBuilder.limit());
+        substLookupRecordsBuilder =
+            new SubstLookupRecordList(data, 2, inputGlyphIdsBuilder.limit());
       }
     }
 

@@ -23,7 +23,7 @@ import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 /**
  * Builder for "head" table. Most of the fields will be initialized from the head table of an
  * existing font, and setters are provided for fields that will change in the subsetted font.
- * 
+ *
  * @author Raph Levien
  */
 public class MtxHeadBuilder {
@@ -33,34 +33,28 @@ public class MtxHeadBuilder {
    * Offsets adapted from sfntly {@link FontHeaderTable}. Note that offsets are capitalized
    * according to the OpenType spec, rather than the usual Java constant convention.
    */
-  private enum Offset {
-    tableVersion(0),
-    fontRevision(4),
-    checkSumAdjustment(8),
-    magicNumber(12),
-    flags(16),
-    unitsPerEm(18),
-    created(20),
-    modified(28),
-    xMin(36),
-    yMin(38),
-    xMax(40),
-    yMax(42),
-    macStyle(44),
-    lowestRecPPEM(46),
-    fontDirectionHint(48),
-    indexToLocFormat(50),
-    glyphDataFormat(52);
-    
-    private final int offset;
-    
-    private Offset(int offset) {
-      this.offset = offset;
-    }
+  private interface Offset {
+    int tableVersion = 0;
+    int fontRevision = 4;
+    int checkSumAdjustment = 8;
+    int magicNumber = 12;
+    int flags = 16;
+    int unitsPerEm = 18;
+    int created = 20;
+    int modified = 28;
+    int xMin = 36;
+    int yMin = 38;
+    int xMax = 40;
+    int yMax = 42;
+    int macStyle = 44;
+    int lowestRecPPEM = 46;
+    int fontDirectionHint = 48;
+    int indexToLocFormat = 50;
+    int glyphDataFormat = 52;
   }
 
   private final WritableFontData data;
-  
+
   public MtxHeadBuilder() {
     data = WritableFontData.createWritableFontData(HEAD_TABLE_SIZE);
   }
@@ -73,10 +67,10 @@ public class MtxHeadBuilder {
   }
 
   public MtxHeadBuilder setIndexToLOCFormat(int fmt) {
-    this.data.writeUShort(Offset.indexToLocFormat.offset, fmt);
+    data.writeUShort(Offset.indexToLocFormat, fmt);
     return this;
   }
-  
+
   public ReadableFontData build() {
     return data;
   }

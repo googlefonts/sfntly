@@ -10,7 +10,7 @@ import com.google.typography.font.sfntly.table.opentype.contextsubst.SubRuleSetA
 
 public class ContextSubst extends SubstSubtable {
   private final SubRuleSetArray ruleSets;
-  private SubClassSetArray classSets;
+  private final SubClassSetArray classSets;
 
   // //////////////
   // Constructors
@@ -18,16 +18,16 @@ public class ContextSubst extends SubstSubtable {
   ContextSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     switch (format) {
-    case 1:
-      ruleSets = new SubRuleSetArray(data, headerSize(), dataIsCanonical);
-      classSets = null;
-      break;
-    case 2:
-      ruleSets = null;
-      classSets = new SubClassSetArray(data, headerSize(), dataIsCanonical);
-      break;
-    default:
-      throw new IllegalStateException("Subt format value is " + format + " (should be 1 or 2).");
+      case 1:
+        ruleSets = new SubRuleSetArray(data, headerSize(), dataIsCanonical);
+        classSets = null;
+        break;
+      case 2:
+        ruleSets = null;
+        classSets = new SubClassSetArray(data, headerSize(), dataIsCanonical);
+        break;
+      default:
+        throw new IllegalStateException("Subst format value is " + format + " (should be 1 or 2).");
     }
   }
 
@@ -36,19 +36,19 @@ public class ContextSubst extends SubstSubtable {
 
   public SubRuleSetArray fmt1Table() {
     switch (format) {
-    case 1:
-      return ruleSets;
-    default:
-      throw new IllegalArgumentException("unexpected format table requested: " + format);
+      case 1:
+        return ruleSets;
+      default:
+        throw new IllegalArgumentException("unexpected format table requested: " + format);
     }
   }
 
   public SubClassSetArray fmt2Table() {
     switch (format) {
-    case 2:
-      return classSets;
-    default:
-      throw new IllegalArgumentException("unexpected format table requested: " + format);
+      case 2:
+        return classSets;
+      default:
+        throw new IllegalArgumentException("unexpected format table requested: " + format);
     }
   }
 
@@ -90,9 +90,8 @@ public class ContextSubst extends SubstSubtable {
     }
 
     /**
-     * Even though public, not to be used by the end users. Made public only
-     * make it available to packages under
-     * {@code com.google.typography.font.sfntly.table.opentype}.
+     * Even though public, not to be used by the end users. Made public only make it available to
+     * packages under {@code com.google.typography.font.sfntly.table.opentype}.
      */
     @Override
     public int subDataSizeToSerialize() {

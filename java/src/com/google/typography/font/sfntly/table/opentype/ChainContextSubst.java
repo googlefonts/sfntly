@@ -19,23 +19,23 @@ public class ChainContextSubst extends SubstSubtable {
   ChainContextSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     switch (format) {
-    case 1:
-      ruleSets = new ChainSubRuleSetArray(data, headerSize(), dataIsCanonical);
-      classSets = null;
-      fmt3Array = null;
-      break;
-    case 2:
-      ruleSets = null;
-      classSets = new ChainSubClassSetArray(data, headerSize(), dataIsCanonical);
-      fmt3Array = null;
-      break;
-    case 3:
-      ruleSets = null;
-      classSets = null;
-      fmt3Array = new InnerArraysFmt3(data, headerSize(), dataIsCanonical);
-      break;
-    default:
-      throw new IllegalStateException("Subt format value is " + format + " (should be 1 or 2).");
+      case 1:
+        ruleSets = new ChainSubRuleSetArray(data, headerSize(), dataIsCanonical);
+        classSets = null;
+        fmt3Array = null;
+        break;
+      case 2:
+        ruleSets = null;
+        classSets = new ChainSubClassSetArray(data, headerSize(), dataIsCanonical);
+        fmt3Array = null;
+        break;
+      case 3:
+        ruleSets = null;
+        classSets = null;
+        fmt3Array = new InnerArraysFmt3(data, headerSize(), dataIsCanonical);
+        break;
+      default:
+        throw new IllegalStateException("Subst format value is " + format + " (should be 1 or 2).");
     }
   }
 
@@ -44,66 +44,64 @@ public class ChainContextSubst extends SubstSubtable {
 
   public ChainSubRuleSetArray fmt1Table() {
     switch (format) {
-    case 1:
-      return ruleSets;
-    default:
-      throw new IllegalArgumentException("unexpected format table requested: " + format);
+      case 1:
+        return ruleSets;
+      default:
+        throw new IllegalArgumentException("unexpected format table requested: " + format);
     }
   }
 
   public ChainSubClassSetArray fmt2Table() {
     switch (format) {
-    case 2:
-      return classSets;
-    default:
-      throw new IllegalArgumentException("unexpected format table requested: " + format);
+      case 2:
+        return classSets;
+      default:
+        throw new IllegalArgumentException("unexpected format table requested: " + format);
     }
   }
 
   public InnerArraysFmt3 fmt3Table() {
     switch (format) {
-    case 3:
-      return fmt3Array;
-    default:
-      throw new IllegalArgumentException("unexpected format table requested: " + format);
+      case 3:
+        return fmt3Array;
+      default:
+        throw new IllegalArgumentException("unexpected format table requested: " + format);
     }
   }
 
   public NumRecordList recordList() {
     switch (format) {
-    case 1:
-      return ruleSets.recordList;
-    case 2:
-      return classSets.recordList;
-    default:
-      return null;
+      case 1:
+        return ruleSets.recordList;
+      case 2:
+        return classSets.recordList;
+      default:
+        return null;
     }
   }
 
   public ChainSubGenericRuleSet<?> subTableAt(int index) {
     switch (format) {
-    case 1:
-      return ruleSets.subTableAt(index);
-    case 2:
-      return classSets.subTableAt(index);
-    default:
-      return null;
+      case 1:
+        return ruleSets.subTableAt(index);
+      case 2:
+        return classSets.subTableAt(index);
+      default:
+        return null;
     }
   }
-
-
 
   // //////////////////////////////////
   // Methods specific to this class
 
   public CoverageTable coverage() {
     switch (format) {
-    case 1:
-      return ruleSets.coverage;
-    case 2:
-      return classSets.coverage;
-    default:
-      return null;
+      case 1:
+        return ruleSets.coverage;
+      case 2:
+        return classSets.coverage;
+      default:
+        return null;
     }
   }
 

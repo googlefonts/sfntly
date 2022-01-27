@@ -37,11 +37,10 @@ import com.google.typography.font.sfntly.table.truetype.ControlValueTable;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 
-
 /**
- * A concrete implementation of a root level table in the font. This is the base
- * class used for all specific table implementations and is used as the generic
- * table for all tables which have no specific implementations.
+ * A concrete implementation of a root level table in the font. This is the base class used for all
+ * specific table implementations and is used as the generic table for all tables which have no
+ * specific implementations.
  *
  * @author Stuart Gill
  */
@@ -54,13 +53,9 @@ public class Table extends FontDataTable {
     this.header = header;
   }
 
-  /**
-   * Get the calculated checksum for the data in the table.
-   *
-   * @return the checksum
-   */
+  /** Get the calculated checksum for the data in the table. */
   public long calculatedChecksum() {
-    return this.data.checksum();
+    return data.checksum();
   }
 
   /**
@@ -69,7 +64,7 @@ public class Table extends FontDataTable {
    * @return the table header
    */
   public Header header() {
-    return this.header;
+    return header;
   }
 
   /**
@@ -79,7 +74,7 @@ public class Table extends FontDataTable {
    * @see #header
    */
   public int headerTag() {
-    return this.header().tag();
+    return header().tag();
   }
 
   /**
@@ -89,7 +84,7 @@ public class Table extends FontDataTable {
    * @see #header
    */
   public int headerOffset() {
-    return this.header().offset();
+    return header().offset();
   }
 
   /**
@@ -99,7 +94,7 @@ public class Table extends FontDataTable {
    * @see #header
    */
   public int headerLength() {
-    return this.header().length();
+    return header().length();
   }
 
   /**
@@ -109,26 +104,18 @@ public class Table extends FontDataTable {
    * @see #header
    */
   public long headerChecksum() {
-    return this.header().checksum();
+    return header().checksum();
   }
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("[");
-    sb.append(Tag.stringValue(this.header.tag()));
-    sb.append(", cs=0x");
-    sb.append(Long.toHexString(this.header.checksum()));
-    sb.append(", offset=0x");
-    sb.append(Integer.toHexString(this.header.offset()));
-    sb.append(", size=0x");
-    sb.append(Integer.toHexString(this.header.length()));
-    sb.append("]");
-    return sb.toString();
+    return String.format(
+        "[%-4s, cs=0x%08x, offset=0x%08x, size=0x%08x]",
+        Tag.stringValue(header.tag()), header.checksum(), header.offset(), header.length());
   }
 
   public abstract static class Builder<T extends Table> extends FontDataTable.Builder<T> {
-    private Header header;
+    private final Header header;
 
     protected Builder(Header header, WritableFontData data) {
       super(data);
@@ -146,27 +133,29 @@ public class Table extends FontDataTable {
 
     @Override
     public String toString() {
-      return "Table Builder for - " + this.header.toString();
+      return "Table Builder for - " + header.toString();
     }
 
-    /***********************************************************************************
-     * 
-     * Public Interface for Table Building
-     * 
-     ***********************************************************************************/
-
+    /**
+     * *********************************************************************************
+     *
+     * <p>Public Interface for Table Building
+     *
+     * <p>*********************************************************************************
+     */
     public final Header header() {
-      return this.header;
+      return header;
     }
 
-    /***********************************************************************************
-     * Internal Interface for Table Building
-     ***********************************************************************************/
-
+    /**
+     * ********************************************************************************* Internal
+     * Interface for Table Building
+     * *********************************************************************************
+     */
     @Override
     protected void notifyPostTableBuild(T table) {
-      if (this.modelChanged() || this.dataChanged()) {
-        Header header = new Header(this.header().tag(), table.dataLength());
+      if (modelChanged() || dataChanged()) {
+        Header header = new Header(header().tag(), table.dataLength());
         ((Table) table).header = header;
       }
     }
@@ -176,9 +165,7 @@ public class Table extends FontDataTable {
     /**
      * Get a builder for the table type specified by the data in the header.
      *
-     * @param header the header for the table
      * @param tableData the data to be used to build the table from
-     * @return builder for the table specified
      */
     public static Table.Builder<? extends Table> getBuilder(
         Header header, WritableFontData tableData) {

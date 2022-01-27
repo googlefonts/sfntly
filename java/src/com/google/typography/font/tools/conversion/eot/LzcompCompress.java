@@ -17,10 +17,10 @@
 package com.google.typography.font.tools.conversion.eot;
 
 /**
- * Implement LZCOMP compression algorithm as defined in MicroType Express, part of the EOT
- * draft spec at {@link "http://www.w3.org/Submission/MTX/"}
+ * Implement LZCOMP compression algorithm as defined in MicroType Express, part of the EOT draft
+ * spec at <a href="http://www.w3.org/Submission/MTX/">MTX</a>.
  *
- * Java implementation based on http://www.w3.org/Submission/MTX/ reference code
+ * <p>Based on the MTX reference code.
  *
  * @author Raph Levien
  */
@@ -36,10 +36,10 @@ public class LzcompCompress {
   private static final int PRELOAD_SIZE = 2 * 32 * 96 + 4 * 256;
   private static final int DEFAULT_MAX_COPY_DIST = 0x7fffffff;
 
-  private BitIOWriter bits;
-  private boolean usingRunLength;
+  private final BitIOWriter bits;
+  private final boolean usingRunLength;
   private int length1;
-  private int maxCopyDist = DEFAULT_MAX_COPY_DIST;
+  private final int maxCopyDist = DEFAULT_MAX_COPY_DIST;
   private HuffmanEncoder distEncoder;
   private HuffmanEncoder lenEncoder;
   private HuffmanEncoder symEncoder;
@@ -88,9 +88,8 @@ public class LzcompCompress {
     dup6 = dup4 + 1;
     numSyms = dup6 + 1;
   }
-  
+
   private void encode() {
-    int maxIndex = length1 + PRELOAD_SIZE;
     initializeModel();
     bits.writeValue(length1, 24);
     int limit = length1 + PRELOAD_SIZE;
@@ -119,25 +118,26 @@ public class LzcompCompress {
       }
     }
   }
+
   void initializeModel() {
     hashTable = new HashNode[0x10000];
     int i = 0;
     for (int k = 0; k < 32; k++) {
       for (int j = 0; j < 96; j++) {
-        buf[i] = (byte)k;
+        buf[i] = (byte) k;
         updateModel(i++);
-        buf[i]= (byte)j;
+        buf[i] = (byte) j;
         updateModel(i++);
       }
     }
     for (int j = 0; i < PRELOAD_SIZE && j < 256; j++) {
-      buf[i] = (byte)j;
+      buf[i] = (byte) j;
       updateModel(i++);
-      buf[i] = (byte)j;
+      buf[i] = (byte) j;
       updateModel(i++);
-      buf[i] = (byte)j;
+      buf[i] = (byte) j;
       updateModel(i++);
-      buf[i] = (byte)j;
+      buf[i] = (byte) j;
       updateModel(i++);
     }
   }
@@ -155,8 +155,8 @@ public class LzcompCompress {
       int[] costPerByte2 = new int[1];
       int len2 = findMatch(index, dist2, gain2, costPerByte2);
       int symbolCost = symEncoder.writeSymbolCost(buf[here] & 0xff);
-      if (gain2[0] >= gain1[0] && costPerByte1[0] > (costPerByte2[0] * len2 + symbolCost) /
-          (len2 + 1)) {
+      if (gain2[0] >= gain1[0]
+          && costPerByte1[0] > (costPerByte2[0] * len2 + symbolCost) / (len2 + 1)) {
         len1 = 0;
       } else if (len1 > 3) {
         len2 = findMatch(here + len1, dist2, gain2, costPerByte2);
@@ -198,7 +198,7 @@ public class LzcompCompress {
 
   // consider refactoring signature to return PotentialMatch object with fields set...
   int findMatch(int index, int[] distOut, int[] gainOut, int[] costPerByteOut) {
-    final int maxCostCacheLength = 32;
+    int maxCostCacheLength = 32;
     int[] literalCostCache = new int[maxCostCacheLength + 1];
     int maxIndexMinusIndex = buf.length - index;
     int bestLength = 0;
@@ -238,7 +238,7 @@ public class LzcompCompress {
           continue;
         }
         dist = dist - length + 1;
-        if (dist > distMax || (length == 2&& dist >= MAX_2BYTE_DIST)) {
+        if (dist > distMax || (length == 2 && dist >= MAX_2BYTE_DIST)) {
           continue;
         }
         if (length <= bestLength && dist > bestDist) {
@@ -296,7 +296,7 @@ public class LzcompCompress {
     int distRanges = (bitsNeeded + DIST_WIDTH - 1) / DIST_WIDTH;
     return distRanges;
   }
-  
+
   private void encodeLength(int value, int dist, int numDistRanges) {
     if (dist >= MAX_2BYTE_DIST) {
       value -= LEN_MIN3;
@@ -334,7 +334,7 @@ public class LzcompCompress {
       lenEncoder.writeSymbol(symbol);
     }
   }
-  
+
   private int encodeLengthCost(int value, int dist, int numDistRanges) {
     if (dist >= MAX_2BYTE_DIST) {
       value -= LEN_MIN3;
@@ -376,7 +376,7 @@ public class LzcompCompress {
 
   private void encodeDistance2(int value, int distRanges) {
     value -= DIST_MIN;
-    final int mask = (1 << DIST_WIDTH) - 1;
+    int mask = (1 << DIST_WIDTH) - 1;
     for (int i = (distRanges - 1) * DIST_WIDTH; i >= 0; i -= DIST_WIDTH) {
       distEncoder.writeSymbol((value >> i) & mask);
     }
@@ -385,13 +385,13 @@ public class LzcompCompress {
   private int encodeDistance2Cost(int value, int distRanges) {
     int cost = 0;
     value -= DIST_MIN;
-    final int mask = (1 << DIST_WIDTH) - 1;
+    int mask = (1 << DIST_WIDTH) - 1;
     for (int i = (distRanges - 1) * DIST_WIDTH; i >= 0; i -= DIST_WIDTH) {
       cost += distEncoder.writeSymbolCost((value >> i) & mask);
     }
     return cost;
   }
-  
+
   private void updateModel(int index) {
     byte c = buf[index];
     if (index > 0) {
@@ -407,13 +407,13 @@ public class LzcompCompress {
   private byte[] toByteArray() {
     return bits.toByteArray();
   }
-  
+
   public static byte[] compress(byte[] dataIn) {
     LzcompCompress compressor = new LzcompCompress();
     compressor.write(dataIn);
     return compressor.toByteArray();
   }
-  
+
   public static int getPreloadSize() {
     return PRELOAD_SIZE;
   }

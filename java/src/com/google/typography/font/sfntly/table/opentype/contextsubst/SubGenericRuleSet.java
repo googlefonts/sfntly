@@ -13,8 +13,8 @@ public abstract class SubGenericRuleSet<T extends DoubleRecordTable> extends Off
     return 0;
   }
 
-  protected abstract static class Builder<T extends SubGenericRuleSet<S>,
-      S extends DoubleRecordTable>
+  protected abstract static class Builder<
+          T extends SubGenericRuleSet<S>, S extends DoubleRecordTable>
       extends OffsetRecordTable.Builder<T, S> {
 
     protected Builder(ReadableFontData data, boolean dataIsCanonical) {
@@ -30,8 +30,7 @@ public abstract class SubGenericRuleSet<T extends DoubleRecordTable> extends Off
     }
 
     @Override
-    protected void initFields() {
-    }
+    protected void initFields() {}
 
     @Override
     protected int fieldCount() {

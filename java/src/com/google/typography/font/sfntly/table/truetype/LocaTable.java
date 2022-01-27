@@ -21,23 +21,27 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
-import com.google.typography.font.sfntly.table.core.FontHeaderTable.IndexToLocFormat;
-
+import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * A Loca table - 'loca'.
+ * The 'loca' table maps glyphIds to their location in the 'glyf' table.
  *
  * @author Stuart Gill
+ * @see "ISO/IEC 14496-22:2015, section 5.3.4"
  */
 public final class LocaTable extends Table {
 
-  private IndexToLocFormat version;
-  private int numGlyphs;
+  private final FontHeaderTable.IndexToLocFormat version;
+  private final int numGlyphs;
 
-  private LocaTable(Header header, ReadableFontData data, IndexToLocFormat version, int numGlyphs) {
+  private LocaTable(
+      Header header,
+      ReadableFontData data,
+      FontHeaderTable.IndexToLocFormat version,
+      int numGlyphs) {
     super(header, data);
     this.version = version;
     this.numGlyphs = numGlyphs;
@@ -48,77 +52,75 @@ public final class LocaTable extends Table {
    *
    * @return the table version
    */
-  public IndexToLocFormat formatVersion() {
-    return this.version;
+  public FontHeaderTable.IndexToLocFormat formatVersion() {
+    return version;
   }
 
   public int numGlyphs() {
-    return this.numGlyphs;
+    return numGlyphs;
   }
 
   /**
-   * Return the offset for the given glyph id. Valid glyph ids are from 0 to the
-   * one less than the number of glyphs. The zero entry is the special entry for
-   * the notdef glyph. The final entry beyond the last glyph id is used to
-   * calculate the size of the last glyph.
+   * Return the offset for the given glyph id. Valid glyph ids are from 0 to the one less than the
+   * number of glyphs. The zero entry is the special entry for the notdef glyph. The final entry
+   * beyond the last glyph id is used to calculate the size of the last glyph.
    *
-   * @param glyphId the glyph id to get the offset for; must be less than or
-   *        equal to one more than the number of glyph ids
+   * @param glyphId the glyph id to get the offset for; must be less than or equal to one more than
+   *     the number of glyph ids
    * @return the offset in the glyph table to the specified glyph id
    */
   public int glyphOffset(int glyphId) {
-    if (glyphId < 0 || glyphId >= this.numGlyphs) {
+    if (glyphId < 0 || glyphId >= numGlyphs) {
       throw new IndexOutOfBoundsException("Glyph ID is out of bounds.");
     }
-    return this.loca(glyphId);
+    return loca(glyphId);
   }
 
   /**
    * Get the length of the data in the glyph table for the specified glyph id.
-   * @param glyphId the glyph id to get the offset for; must be greater than or
-   *        equal to 0 and less than the number of glyphs in the font
+   *
+   * @param glyphId the glyph id to get the offset for; must be greater than or equal to 0 and less
+   *     than the number of glyphs in the font
    * @return the length of the data in the glyph table for the specified glyph id
    */
   public int glyphLength(int glyphId) {
-    if (glyphId < 0 || glyphId >= this.numGlyphs) {
+    if (glyphId < 0 || glyphId >= numGlyphs) {
       throw new IndexOutOfBoundsException("Glyph ID is out of bounds.");
     }
-    return this.loca(glyphId + 1) - this.loca(glyphId);
+    return loca(glyphId + 1) - loca(glyphId);
   }
 
   /**
-   * Get the number of locations or locas. This will be one more than the number
-   * of glyphs for this table since the last loca position is used to indicate
-   * the size of the final glyph.
+   * Get the number of locations or locas. This will be one more than the number of glyphs for this
+   * table since the last loca position is used to indicate the size of the final glyph.
    *
    * @return the number of locas
    */
   public int numLocas() {
-    return this.numGlyphs + 1;
+    return numGlyphs + 1;
   }
 
   /**
-   * Get the value from the loca table for the index specified. These are the
-   * raw values from the table that are used to compute the offset and size of a
-   * glyph in the glyph table. Valid index values run from 0 to the number of
-   * glyphs in the font.
+   * Get the value from the loca table for the index specified. These are the raw values from the
+   * table that are used to compute the offset and size of a glyph in the glyph table. Valid index
+   * values run from 0 to the number of glyphs in the font.
    *
    * @param index the loca table index
    * @return the loca table value
    */
   public int loca(int index) {
-    if (index > this.numGlyphs) {
-      throw new IndexOutOfBoundsException();
+    if (index < 0 || index > numGlyphs) {
+      throw new IndexOutOfBoundsException("Glyph ID is out of bounds.");
     }
-    if (this.version == IndexToLocFormat.shortOffset) {
-      return 2 * this.data.readUShort(index * FontData.DataSize.USHORT.size());
+    if (version == FontHeaderTable.IndexToLocFormat.shortOffset) {
+      return 2 * data.readUShort(index * FontData.SizeOf.USHORT);
     }
-    return this.data.readULongAsInt(index * FontData.DataSize.ULONG.size());
+    return data.readULongAsInt(index * FontData.SizeOf.ULONG);
   }
 
   /**
-   * Get an iterator over the loca values for the table. The iterator returned
-   * does not support the delete operation.
+   * Get an iterator over the loca values for the table. The iterator returned does not support the
+   * delete operation.
    *
    * @return loca iterator
    * @see #loca
@@ -127,22 +129,15 @@ public final class LocaTable extends Table {
     return new LocaIterator();
   }
 
-  /**
-   * Iterator over the raw loca values.
-   *
-   */
+  /** Iterator over the raw loca values. */
   private final class LocaIterator implements Iterator<Integer> {
     int index;
 
-    private LocaIterator() {
-    }
+    private LocaIterator() {}
 
     @Override
     public boolean hasNext() {
-      if (this.index <= numGlyphs) {
-        return true;
-      }
-      return false;
+      return index <= numGlyphs;
     }
 
     @Override
@@ -156,30 +151,21 @@ public final class LocaTable extends Table {
     }
   }
 
-  /**
-   * Builder for a loca table.
-   *
-   */
+  /** Builder for a loca table. */
   public static class Builder extends Table.Builder<LocaTable> {
 
-    // values that need to be set to properly passe an existing loca table
-    private IndexToLocFormat formatVersion = IndexToLocFormat.longOffset;
+    // values that need to be set to properly parse an existing loca table
+    private FontHeaderTable.IndexToLocFormat formatVersion =
+        FontHeaderTable.IndexToLocFormat.longOffset;
     private int numGlyphs = -1;
-    
+
     // parsed loca table
     private List<Integer> loca;
 
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
-    
+
     private Builder(Header header, WritableFontData data) {
       super(header, data);
     }
@@ -189,26 +175,25 @@ public final class LocaTable extends Table {
     }
 
     /**
-     * Initialize the internal state from the data. Done lazily since in many
-     * cases the builder will be just creating a table object with no parsing
-     * required.
+     * Initialize the internal state from the data. Done lazily since in many cases the builder will
+     * be just creating a table object with no parsing required.
      *
      * @param data the data to initialize from
      */
     private void initialize(ReadableFontData data) {
-      this.clearLoca(false);
-      if (this.loca == null) {
-        this.loca = new ArrayList<Integer>();
+      clearLoca(false);
+      if (loca == null) {
+        this.loca = new ArrayList<>();
       }
       if (data != null) {
-        if (this.numGlyphs < 0) {
+        if (numGlyphs < 0) {
           throw new IllegalStateException("numglyphs not set on LocaTable Builder.");
         }
 
-        LocaTable table = new LocaTable(this.header(), data, this.formatVersion, this.numGlyphs);
+        LocaTable table = new LocaTable(header(), data, formatVersion, numGlyphs);
         Iterator<Integer> locaIter = table.iterator();
         while (locaIter.hasNext()) {
-          this.loca.add(locaIter.next());
+          loca.add(locaIter.next());
         }
       }
     }
@@ -216,131 +201,114 @@ public final class LocaTable extends Table {
     /**
      * Checks that the glyph id is within the correct range.
      *
-     * @param glyphId
-     * @return the glyphId
-     * @throws IndexOutOfBoundsException if the glyph id is not within the
-     *         correct range
+     * @throws IndexOutOfBoundsException if the glyph id is not within the correct range
      */
     private int checkGlyphRange(int glyphId) {
-      if (glyphId < 0 || glyphId > this.lastGlyphIndex()) {
+      if (glyphId < 0 || glyphId > lastGlyphIndex()) {
         throw new IndexOutOfBoundsException("Glyph ID is outside of the allowed range.");
       }
       return glyphId;
     }
 
     private int lastGlyphIndex() {
-      return this.loca != null ? this.loca.size() - 2 : this.numGlyphs - 1;
+      return loca != null ? loca.size() - 2 : numGlyphs - 1;
     }
 
     /**
-     * Internal method to get the loca list if already generated and if not to
-     * initialize the state of the builder.
+     * Internal method to get the loca list if already generated and if not to initialize the state
+     * of the builder.
      *
      * @return the loca list
      */
     private List<Integer> getLocaList() {
-      if (this.loca == null) {
-        this.initialize(this.internalReadData());
-        this.setModelChanged();
+      if (loca == null) {
+        initialize(internalReadData());
+        setModelChanged();
       }
-      return this.loca;
+      return loca;
     }
 
     private void clearLoca(boolean nullify) {
-      if (this.loca != null) {
-        this.loca.clear();
+      if (loca != null) {
+        loca.clear();
       }
       if (nullify) {
         this.loca = null;
       }
-      this.setModelChanged(false);
-    }
-    
-    /**
-     * Get the format version that will be used when the loca table is
-     * generated.
-     *
-     * @return the loca table format version
-     */
-    public IndexToLocFormat formatVersion() {
-      return this.formatVersion;
+      setModelChanged(false);
     }
 
-    /**
-     * Set the format version to be used when generating the loca table.
-     *
-     * @param formatVersion
-     */
-    public void setFormatVersion(IndexToLocFormat formatVersion) {
+    /** Get the format version that will be used when the loca table is generated. */
+    public FontHeaderTable.IndexToLocFormat formatVersion() {
+      return formatVersion;
+    }
+
+    /** Set the format version to be used when generating the loca table. */
+    public void setFormatVersion(FontHeaderTable.IndexToLocFormat formatVersion) {
       this.formatVersion = formatVersion;
     }
 
     /**
-     * Gets the List of locas for loca table builder. These may be manipulated
-     * in any way by the caller and the changes will be reflected in the final
-     * loca table produced as long as no subsequent call is made to the
-     * {@link #setLocaList(List)} method.
+     * Gets the List of locas for loca table builder. These may be manipulated in any way by the
+     * caller and the changes will be reflected in the final loca table produced as long as no
+     * subsequent call is made to the {@link #setLocaList(List)} method.
      *
-     *  If there is no current data for the loca table builder or the loca list
-     * have not been previously set then this will return an empty List.
+     * <p>If there is no current data for the loca table builder or the loca list have not been
+     * previously set then this will return an empty List.
      *
      * @return the list of glyph builders
      * @see #setLocaList(List)
      */
     public List<Integer> locaList() {
-      return this.getLocaList();
+      return getLocaList();
     }
 
     /**
-     * Set the list of locas to be used for building this table. If any existing
-     * list was already retrieved with the {@link #locaList()} method then the
-     * connection of that previous list to this builder will be broken.
+     * Set the list of locas to be used for building this table. If any existing list was already
+     * retrieved with the {@link #locaList()} method then the connection of that previous list to
+     * this builder will be broken.
      *
-     * @param list
      * @see #locaList()
      */
     public void setLocaList(List<Integer> list) {
       this.loca = list;
-      this.setModelChanged();
-    }
-    
-    /**
-     * Return the offset for the given glyph id. Valid glyph ids are from 0 to
-     * one more than the number of glyphs. The zero entry is the special entry
-     * for the notdef glyph. The final entry beyond the last glyph id is used to
-     * calculate the size of the last glyph.
-     *
-     * @param glyphId the glyph id to get the offset for; must be less than or
-     *        equal to one more than the number of glyph ids
-     * @return the offset in the glyph table to the specified glyph id
-     */
-    public int glyphOffset(int glyphId) {
-      this.checkGlyphRange(glyphId);
-      return this.getLocaList().get(glyphId);
+      setModelChanged();
     }
 
     /**
-     * Get the length of the data in the glyph table for the specified glyph id.
-     * This is a convenience method that uses the specified glyph id
+     * Return the offset for the given glyph id. Valid glyph ids are from 0 to one more than the
+     * number of glyphs. The zero entry is the special entry for the notdef glyph. The final entry
+     * beyond the last glyph id is used to calculate the size of the last glyph.
      *
-     * @param glyphId the glyph id to get the offset for; must be less than or
-     *        equal to the number of glyphs
-     * @return the length of the data in the glyph table for the specified glyph
-     *         id
+     * @param glyphId the glyph id to get the offset for; must be less than or equal to one more
+     *     than the number of glyph ids
+     * @return the offset in the glyph table to the specified glyph id
+     */
+    public int glyphOffset(int glyphId) {
+      checkGlyphRange(glyphId);
+      return getLocaList().get(glyphId);
+    }
+
+    /**
+     * Get the length of the data in the glyph table for the specified glyph id. This is a
+     * convenience method that uses the specified glyph id
+     *
+     * @param glyphId the glyph id to get the offset for; must be less than or equal to the number
+     *     of glyphs
+     * @return the length of the data in the glyph table for the specified glyph id
      */
     public int glyphLength(int glyphId) {
-      this.checkGlyphRange(glyphId);
-      return this.getLocaList().get(glyphId + 1) - this.getLocaList().get(glyphId);
+      checkGlyphRange(glyphId);
+      return getLocaList().get(glyphId + 1) - getLocaList().get(glyphId);
     }
 
     /**
      * Set the number of glyphs.
      *
-     *  This method sets the number of glyphs that the builder will attempt to
-     * parse location data for from the raw binary data. This method only needs
-     * to be called (and <b>must</b> be) when the raw data for this builder has
-     * been changed. It does not by itself reset the data or clear any set loca
-     * list.
+     * <p>This method sets the number of glyphs that the builder will attempt to parse location data
+     * for from the raw binary data. This method only needs to be called (and <b>must</b> be) when
+     * the raw data for this builder has been changed. It does not by itself reset the data or clear
+     * any set loca list.
      *
      * @param numGlyphs the number of glyphs represented by the data
      */
@@ -354,81 +322,79 @@ public final class LocaTable extends Table {
      * @return the number of glyphs.
      */
     public int numGlyphs() {
-      return this.lastGlyphIndex() + 1;
-    }
-    
-    /**
-     * Revert the loca table builder to the state contained in the last raw data
-     * set on the builder. That raw data may be that read from a font file when
-     * the font builder was created, that set by a user of the loca table
-     * builder, or null data if this builder was created as a new empty builder.
-     */
-    public void revert() {
-      this.loca = null;
-      this.setModelChanged(false);
+      return lastGlyphIndex() + 1;
     }
 
     /**
-     * Get the number of locations or locas. This will be one more than the
-     * number of glyphs for this table since the last loca position is used to
-     * indicate the size of the final glyph.
+     * Revert the loca table builder to the state contained in the last raw data set on the builder.
+     * That raw data may be that read from a font file when the font builder was created, that set
+     * by a user of the loca table builder, or null data if this builder was created as a new empty
+     * builder.
+     */
+    public void revert() {
+      this.loca = null;
+      setModelChanged(false);
+    }
+
+    /**
+     * Get the number of locations or locas. This will be one more than the number of glyphs for
+     * this table since the last loca position is used to indicate the size of the final glyph.
      *
      * @return the number of locas
      */
     public int numLocas() {
-      return this.getLocaList().size();
+      return getLocaList().size();
     }
-    
+
     /**
-     * Get the value from the loca table for the index specified. These are the
-     * raw values from the table that are used to compute the offset and size of
-     * a glyph in the glyph table. Valid index values run from 0 to the number
-     * of glyphs in the font.
+     * Get the value from the loca table for the index specified. These are the raw values from the
+     * table that are used to compute the offset and size of a glyph in the glyph table. Valid index
+     * values run from 0 to the number of glyphs in the font.
      *
      * @param index the loca table index
      * @return the loca table value
      */
     public int loca(int index) {
-      return this.getLocaList().get(index);
+      return getLocaList().get(index);
     }
 
     @Override
     protected LocaTable subBuildTable(ReadableFontData data) {
-      return new LocaTable(this.header(), data, this.formatVersion, this.numGlyphs);
+      return new LocaTable(header(), data, formatVersion, numGlyphs);
     }
 
     @Override
     protected void subDataSet() {
-      this.initialize(this.internalReadData());
+      initialize(internalReadData());
     }
 
     @Override
     protected int subDataSizeToSerialize() {
-      if (this.loca == null) {
+      if (loca == null) {
         return 0;
       }
-      if (this.formatVersion == IndexToLocFormat.longOffset) {
-        return this.loca.size() * FontData.DataSize.ULONG.size();
+      if (formatVersion == FontHeaderTable.IndexToLocFormat.longOffset) {
+        return loca.size() * FontData.SizeOf.ULONG;
       }
-      return this.loca.size() * FontData.DataSize.USHORT.size();
+      return loca.size() * FontData.SizeOf.USHORT;
     }
 
     @Override
     protected boolean subReadyToSerialize() {
-      return this.loca != null;
+      return loca != null;
     }
 
     @Override
     protected int subSerialize(WritableFontData newData) {
       int size = 0;
-      for (int l : this.loca) {
-        if (this.formatVersion == IndexToLocFormat.longOffset) {
+      for (int l : loca) {
+        if (formatVersion == FontHeaderTable.IndexToLocFormat.longOffset) {
           size += newData.writeULong(size, l);
         } else {
           size += newData.writeUShort(size, l / 2);
         }
       }
-      this.numGlyphs = this.loca.size() - 1;
+      this.numGlyphs = loca.size() - 1;
       return size;
     }
   }

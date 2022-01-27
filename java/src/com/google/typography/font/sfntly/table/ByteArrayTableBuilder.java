@@ -18,48 +18,30 @@ package com.google.typography.font.sfntly.table;
 
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-
 import java.io.IOException;
 
 /**
  * An abstract builder base for byte array based tables.
  *
  * @author Stuart Gill
- *
  */
-public abstract class ByteArrayTableBuilder<T extends Table> extends TableBasedTableBuilder<
-    T> {
+public abstract class ByteArrayTableBuilder<T extends Table> extends TableBasedTableBuilder<T> {
 
-  /**
-   * Constructor.
-   *
-   * @param header
-   * @param data
-   */
   protected ByteArrayTableBuilder(Header header, WritableFontData data) {
     super(header, data);
   }
 
-  /**
-   * Constructor.
-   *
-   * @param header
-   * @param data
-   */
   protected ByteArrayTableBuilder(Header header, ReadableFontData data) {
     super(header, data);
   }
 
   /**
-   * Get the byte value at the specified index. The index is relative to the
-   * start of the table.
+   * Get the byte value at the specified index.
    *
    * @param index index relative to the start of the table
-   * @return byte value at the given index
-   * @throws IOException
    */
   public int byteValue(int index) throws IOException {
-    ReadableFontData data = this.internalReadData();
+    ReadableFontData data = internalReadData();
     if (data == null) {
       throw new IOException("No font data for the table.");
     }
@@ -67,30 +49,21 @@ public abstract class ByteArrayTableBuilder<T extends Table> extends TableBasedT
   }
 
   /**
-   * Get the byte value at the specified index. The index is relative to the
-   * start of the table.
+   * Set the byte value at the specified index.
    *
    * @param index index relative to the start of the table
-   * @param b byte value to tset
-   * @throws IOException
    */
   public void setByteValue(int index, byte b) throws IOException {
-    WritableFontData data = this.internalWriteData();
+    WritableFontData data = internalWriteData();
     if (data == null) {
       throw new IOException("No font data for the table.");
     }
     data.writeByte(index, b);
   }
 
-  /**
-   * Get the number of bytes set for this table. It may include padding bytes at
-   * the end.
-   *
-   * @return number of bytes for the table
-   * @throws IOException
-   */
+  /** Get the number of bytes set for this table. It may include padding bytes at the end. */
   public int byteCount() throws IOException {
-    ReadableFontData data = this.internalReadData();
+    ReadableFontData data = internalReadData();
     if (data == null) {
       throw new IOException("No font data for the table.");
     }

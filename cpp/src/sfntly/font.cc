@@ -423,7 +423,7 @@ void Font::Builder::InterRelateBuilders(TableBuilderMap* builder_map) {
 
   Table::Builder* raw_hhea_builder = GetReadBuilder(builder_map, Tag::hhea);
   HorizontalHeaderTableBuilderPtr horizontal_header_builder;
-  if (raw_head_builder != NULL) {
+  if (raw_hhea_builder != NULL) {
     horizontal_header_builder =
         down_cast<HorizontalHeaderTable::Builder*>(raw_hhea_builder);
   }

@@ -19,20 +19,19 @@ package com.google.typography.font.tools.subsetter;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
-
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Note: at the moment, this class just replicates the existing functionality in sfntly. It does
  * _not_ create a working font.
- * 
+ *
  * @author Raph Levien
  */
 public class DumbSubsetter extends Subsetter {
 
   {
-    Set<TableSubsetter> temp = new HashSet<TableSubsetter>();
+    Set<TableSubsetter> temp = new HashSet<>();
     temp.add(new GlyphTableSubsetter());
     temp.add(new CMapTableSubsetter());
     tableSubsetters = temp;

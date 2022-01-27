@@ -19,20 +19,16 @@ package com.google.typography.font.tools.subsetter;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
-
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class PostScriptTableSubsetter extends TableSubsetterImpl {
 
   protected PostScriptTableSubsetter() {
     super(Tag.post);
   }
-  
+
   @Override
   public boolean subset(Subsetter subsetter, Font font, Font.Builder fontBuilder) {
     List<Integer> permutationTable = subsetter.glyphMappingTable();
@@ -43,9 +39,9 @@ public class PostScriptTableSubsetter extends TableSubsetterImpl {
     PostScriptTable post = font.getTable(Tag.post);
     postBuilder.initV1From(post);
     if (post.version() == 0x10000 || post.version() == 0x20000) {
-      List<String> names = new ArrayList<String>();
-      for (int i = 0; i < permutationTable.size(); i++) {
-        names.add(post.glyphName(permutationTable.get(i)));
+      List<String> names = new ArrayList<>();
+      for (Integer glyphId : permutationTable) {
+        names.add(post.glyphName(glyphId));
       }
       postBuilder.setNames(names);
     }

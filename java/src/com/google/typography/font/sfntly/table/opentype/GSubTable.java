@@ -20,39 +20,25 @@ import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
-
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * A GSub table.
+ * The 'GSUB' table handles glyph substitutions such as ligatures and context-dependent display
+ * variants, such as Arabic.
+ *
+ * @see "ISO/IEC 14496-22:2015, section 6.3.4"
  */
 public class GSubTable extends Table {
   private final GsubCommonTable gsub;
-  private final AtomicReference<ScriptListTable>
-      scriptListTable = new AtomicReference<ScriptListTable>();
-  private final AtomicReference<FeatureListTable>
-      featureListTable = new AtomicReference<FeatureListTable>();
-  private final AtomicReference<LookupListTable>
-      lookupListTable = new AtomicReference<LookupListTable>();
+  private final AtomicReference<ScriptListTable> scriptListTable = new AtomicReference<>();
+  private final AtomicReference<FeatureListTable> featureListTable = new AtomicReference<>();
+  private final AtomicReference<LookupListTable> lookupListTable = new AtomicReference<>();
 
-  /**
-   * Constructor.
-   *
-   * @param header
-   *          header for the table
-   * @param data
-   *          data for the table
-   */
   private GSubTable(Header header, ReadableFontData data, boolean dataIsCanonical) {
     super(header, data);
     gsub = new GsubCommonTable(data, dataIsCanonical);
   }
 
-  /**
-   * Return information about the script tables in this GSUB table.
-   *
-   * @return the ScriptList
-   */
   public ScriptListTable scriptList() {
     if (scriptListTable.get() == null) {
       scriptListTable.compareAndSet(null, gsub.createScriptList());
@@ -60,11 +46,6 @@ public class GSubTable extends Table {
     return scriptListTable.get();
   }
 
-  /**
-   * Return information about the feature tables in this GSUB table.
-   *
-   * @return the FeatureList
-   */
   public FeatureListTable featureList() {
     if (featureListTable.get() == null) {
       featureListTable.compareAndSet(null, gsub.createFeatureList());
@@ -72,11 +53,6 @@ public class GSubTable extends Table {
     return featureListTable.get();
   }
 
-  /**
-   * Return information about the lookup tables in this GSUB table.
-   *
-   * @return the LookupList
-   */
   public LookupListTable lookupList() {
     if (lookupListTable.get() == null) {
       lookupListTable.compareAndSet(null, gsub.createLookupList());
@@ -84,35 +60,14 @@ public class GSubTable extends Table {
     return lookupListTable.get();
   }
 
-  /**
-   * GSUB Table Builder.
-   */
   public static class Builder extends Table.Builder<GSubTable> {
     private final GsubCommonTable.Builder gsub;
 
-    /**
-     * Creates a new builder using the header information and data provided.
-     *
-     * @param header
-     *          the header information
-     * @param data
-     *          the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
 
-    /**
-     * Constructor. This constructor will try to maintain the data as readable
-     * but if editing operations are attempted then a writable copy will be made
-     * the readable data will be discarded.
-     *
-     * @param header
-     *          the table header
-     * @param data
-     *          the readable data for the table
-     */
+    /** Builds a table from the data, using copy-on-write if necessary. */
     private Builder(Header header, ReadableFontData data) {
       super(header, data);
       gsub = new GsubCommonTable.Builder(data, false);
@@ -140,7 +95,7 @@ public class GSubTable extends Table {
 
     @Override
     protected GSubTable subBuildTable(ReadableFontData data) {
-      return new GSubTable(this.header(), data, false);
+      return new GSubTable(header(), data, false);
     }
   }
 }

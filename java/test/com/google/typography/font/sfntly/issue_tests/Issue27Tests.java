@@ -5,16 +5,14 @@ import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.NameTable;
 import com.google.typography.font.sfntly.testutils.TestFont;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.io.FileInputStream;
+import junit.framework.TestCase;
 
 /*
- * Test for Issue 27.
+ * Test for <a href="https://github.com/googlei18n/sfntly/issues/27">Issue 27</a>.
+ * <p>
  * Adding a zero length name that sorts at the end of the name table.
- * http://code.google.com/p/sfntly/issues/detail?id=27
  */
 public class Issue27Tests extends TestCase {
 
@@ -25,10 +23,13 @@ public class Issue27Tests extends TestCase {
     Font.Builder fontBuilder = fontFactory.loadFontsForBuilding(new FileInputStream(fontFile))[0];
     NameTable.Builder nameTableBuilder = (NameTable.Builder) fontBuilder.getTableBuilder(Tag.name);
     // add a name that will sort after all the other names in the table
-    nameTableBuilder.nameBuilder(Font.PlatformId.Windows.value(), 
-        Font.WindowsEncodingId.UnicodeUCS4.value(), 
-        NameTable.WindowsLanguageId.Spanish_UnitedStates.value(), 
-        NameTable.NameId.WWSSubfamilyName.value()).setName("");
+    nameTableBuilder
+        .nameBuilder(
+            Font.PlatformId.Windows.value(),
+            Font.WindowsEncodingId.UnicodeUCS4.value(),
+            NameTable.WindowsLanguageId.Spanish_UnitedStates.value(),
+            NameTable.NameId.WWSSubfamilyName.value())
+        .setName("");
     Font font = fontBuilder.build();
     assertNotNull(font);
   }

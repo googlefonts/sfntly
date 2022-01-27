@@ -16,10 +16,10 @@
 
 package com.google.typography.font.sfntly.testutils;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.typography.font.sfntly.data.ReadableFontData;
-
-import com.ibm.icu.charset.CharsetICU;
-
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,15 +33,17 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class TestUtils {
   private TestUtils() {}
 
   /**
    * Compare sections of two byte arrays for equality.
+   *
    * @param b1 byte array 1
    * @param offset1 offset for comparison in byte array 1
    * @param b2 byte array 2
@@ -66,11 +68,8 @@ public class TestUtils {
   }
 
   /**
-   * Creates a new file including deleting an already existing file with the same path 
-   * and name and creating any needed directories.
-   * 
-   * @param file the file to create
-   * @throws IOException
+   * Creates a new file including deleting an already existing file with the same path and name and
+   * creating any needed directories.
    */
   public static void createNewFile(File file) throws IOException {
     if (file.exists()) {
@@ -87,27 +86,25 @@ public class TestUtils {
 
   /**
    * Converts an integer into a 4 character string using the ASCII encoding.
+   *
    * @param i the value to convert
    * @return the String based on the number
    */
   public static String dumpLongAsString(int i) {
-    byte[] b = new byte[] {
-        (byte) (i >> 24 & 0xff), 
-        (byte) (i >> 16 & 0xff), 
-        (byte) (i >> 8 & 0xff), 
-        (byte) (i & 0xff)};
+    byte[] b = {
+      (byte) (i >> 24 & 0xff), (byte) (i >> 16 & 0xff), (byte) (i >> 8 & 0xff), (byte) (i & 0xff)
+    };
 
-    String s;
     try {
-      s = new String(b, "US-ASCII");
+      return new String(b, "US-ASCII");
     } catch (UnsupportedEncodingException e) {
       throw new RuntimeException("Guaranteed encoding US-ASCII missing.");
     }
-    return s;
   }
 
   /**
    * Calculate an OpenType checksum from the array.
+   *
    * @param b the array to calculate checksum on
    * @param offset the starting index in the array
    * @param length the number of bytes to check; <b>must</b> be a multiple of 4
@@ -116,10 +113,10 @@ public class TestUtils {
   public static long checkSum(byte[] b, int offset, int length) {
     long checkSum = 0;
 
-    for (int i = offset; i < length; i+=4) {
+    for (int i = offset; i < length; i += 4) {
       for (int j = 0; j < 4; j++) {
         if (j + i < length) {
-          checkSum += (b[j+i] & 0xff) << (24 - 8*j);
+          checkSum += (b[j + i] & 0xff) << (24 - 8 * j);
         }
       }
     }
@@ -128,6 +125,7 @@ public class TestUtils {
 
   /**
    * Encode a single character in UTF-16.
+   *
    * @param encoder the encoder to use for the encoding
    * @param uchar the Unicode character to encode
    * @return the encoded character
@@ -151,16 +149,16 @@ public class TestUtils {
   }
 
   /**
-   * Get an encoder for the charset name.
-   * If the name is null or the empty string then just return null.
-   * @param charsetName the charset to get an encoder for
+   * Get an encoder for the charset name. If the name is null or the empty string then just return
+   * null.
+   *
    * @return an encoder or null if no encoder available for charset name
    */
   public static CharsetEncoder getEncoder(String charsetName) {
-    if (charsetName == null || charsetName.equals("")) {
+    if (charsetName == null || charsetName.isEmpty()) {
       return null;
     }
-    Charset cs = CharsetICU.forNameICU(charsetName);
+    Charset cs = Charset.forName(charsetName);
     return cs.newEncoder();
   }
 
@@ -175,25 +173,16 @@ public class TestUtils {
     return ext.substring(extPosition);
   }
 
-  /**
-   * Read a file fully into a new byte array.
-   * @param file the file to read
-   * @return the byte array
-   * @throws IOException
-   */
+  /** Read a file fully into a new byte array. */
   public static byte[] readFile(File file) throws IOException {
     int length = (int) file.length();
     byte[] b = new byte[length];
 
-    FileInputStream fis = null;
-    try {
-      fis = new FileInputStream(file);
+    try (FileInputStream fis = new FileInputStream(file)) {
       while (length > 0) {
         length -= fis.read(b, b.length - length, length);
       }
       return b;
-    } finally {
-      fis.close();
     }
   }
 
@@ -218,13 +207,8 @@ public class TestUtils {
   }
 
   /**
-   * Checks that both objects are equal as defined by the object itself. If one
-   * is null then they are not equal. If both are null they are considered
-   * equal.
-   * 
-   * @param o1 first object
-   * @param o2 second object
-   * @return true if equal
+   * Checks that both objects are equal as defined by the object itself. If one is null then they
+   * are not equal. If both are null they are considered equal.
    */
   public static boolean equalsNullOk(Object o1, Object o2) {
     if (o1 == o2) {
@@ -235,5 +219,64 @@ public class TestUtils {
       return false;
     }
     return o1.equals(o2);
+  }
+
+  public static void assertSha256(String expectedSha256Hex, ReadableFontData data) {
+    try {
+      MessageDigest digest = MessageDigest.getInstance("SHA-256");
+      data.copyTo(new DigestOutputStream(new ByteArrayOutputStream(), digest));
+      byte[] hash = digest.digest();
+      assertEquals(expectedSha256Hex, hex(hash));
+    } catch (NoSuchAlgorithmException | IOException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  public static void assertSha256(String expectedSha256Hex, byte[] data) {
+    try {
+      MessageDigest digest = MessageDigest.getInstance("SHA2-256");
+      byte[] hash = digest.digest(data);
+      assertEquals(expectedSha256Hex, hex(hash));
+    } catch (NoSuchAlgorithmException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
+  private static String hex(byte[] data) {
+    char[] chars = new char[2 * data.length];
+    for (int i = 0; i < data.length; i++) {
+      chars[2 * i] = "0123456789abcdef".charAt((data[i] & 0xF0) >> 4);
+      chars[2 * i + 1] = "0123456789abcdef".charAt(data[i] & 0x0F);
+    }
+    return new String(chars);
+  }
+
+  /** Converts a sequence of hex strings like {@code "00 12 34 56} to a block of font data. */
+  public static ReadableFontData fromHex(String... lines) {
+    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+      for (String line : lines) {
+        char[] chs = line.toCharArray();
+        int i = 0;
+        int len = chs.length;
+        while (i < len && chs[i] == ' ') {
+          i++;
+        }
+        while (i < len) {
+          int hi = Character.getNumericValue(chs[i]);
+          int lo = Character.getNumericValue(chs[i + 1]);
+          i += 2;
+          if (hi < 0 || hi > 15 || lo < 0 || lo > 15) {
+            throw new IllegalArgumentException("Invalid hex byte at index " + i);
+          }
+          baos.write(hi * 16 + lo);
+          while (i < len && chs[i] == ' ') {
+            i++;
+          }
+        }
+      }
+      return ReadableFontData.createReadableFontData(baos.toByteArray());
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
   }
 }

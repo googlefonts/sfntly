@@ -4,9 +4,7 @@ package com.google.typography.font.sfntly.table.opentype;
 
 import com.google.typography.font.sfntly.Tag;
 
-/**
- * @author dougfelt@google.com (Doug Felt)
- */
+/** @author dougfelt@google.com (Doug Felt) */
 public enum ScriptTag {
   arab("Arabic"),
   armn("Armenian"),
@@ -124,10 +122,10 @@ public enum ScriptTag {
   vai("Vai"),
   yi("Yi");
 
-  private ScriptTag(String description) {
+  ScriptTag(String description) {
     String tag = name();
     while (tag.length() < 4) {
-      tag = tag + ' ';
+      tag += ' ';
     }
     this.tag = Tag.intValue(tag);
     this.description = description;

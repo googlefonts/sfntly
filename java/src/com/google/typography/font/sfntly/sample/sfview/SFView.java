@@ -2,12 +2,10 @@ package com.google.typography.font.sfntly.sample.sfview;
 
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
@@ -34,17 +32,13 @@ public class SFView {
   private static Font[] loadFont(File file) throws IOException {
     FontFactory fontFactory = FontFactory.getInstance();
     fontFactory.fingerprintFont(true);
-    FileInputStream is = null;
     try {
-      is = new FileInputStream(file);
-      return fontFactory.loadFonts(is);
+      try (FileInputStream is = new FileInputStream(file)) {
+        return fontFactory.loadFonts(is);
+      }
     } catch (FileNotFoundException e) {
       System.err.println("Could not load the font: " + file.getName());
       return null;
-    } finally {
-      if (is != null) {
-        is.close();
-      }
     }
   }
 }

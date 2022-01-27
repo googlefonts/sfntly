@@ -22,51 +22,51 @@ import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.core.FontHeaderTable;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.zip.Deflater;
 
-/**
- * @author Jeremie Lenfant-Engelmann
- */
+/** @author Jeremie Lenfant-Engelmann */
 public class WoffWriter {
 
   protected boolean woff_compression_faster = false;
 
   private static final long SIGNATURE = 0x774F4646;
   private static final int WOFF_HEADER_SIZE =
-      (9 * FontData.DataSize.ULONG.size()) + (4 * FontData.DataSize.USHORT.size());
+      (9 * FontData.SizeOf.ULONG) + (4 * FontData.SizeOf.USHORT);
 
   public WritableFontData convert(Font font) {
     List<TableDirectoryEntry> tableDirectoryEntries = createTableDirectoryEntries(font);
     int length =
-        WOFF_HEADER_SIZE + computeTableDirectoryEntriesLength(tableDirectoryEntries)
+        WOFF_HEADER_SIZE
+            + computeTableDirectoryEntriesLength(tableDirectoryEntries)
             + computeTablesLength(tableDirectoryEntries);
     WritableFontData writableFontData = WritableFontData.createWritableFontData(length);
     int index = 0;
 
-    index += writeWoffHeader(writableFontData,
-        index,
-        tableDirectoryEntries,
-        font.sfntVersion(),
-        length,
-        extractMajorVersion(font),
-        extractMinorVersion(font));
+    index +=
+        writeWoffHeader(
+            writableFontData,
+            index,
+            tableDirectoryEntries,
+            font.sfntVersion(),
+            length,
+            extractMajorVersion(font),
+            extractMinorVersion(font));
     index += writeTableDirectoryEntries(writableFontData, index, tableDirectoryEntries);
     index += writeTables(writableFontData, index, tableDirectoryEntries);
     return writableFontData;
   }
 
   private int extractMajorVersion(Font font) {
-    FontHeaderTable head = (FontHeaderTable) font.getTable(Tag.head);
+    FontHeaderTable head = font.getTable(Tag.head);
     return (head.fontRevision() >> 16) & 0xffff;
   }
 
   private int extractMinorVersion(Font sfntlyFont) {
-    FontHeaderTable head = (FontHeaderTable) sfntlyFont.getTable(Tag.head);
+    FontHeaderTable head = sfntlyFont.getTable(Tag.head);
     return head.fontRevision() & 0xffff;
   }
 
@@ -74,8 +74,7 @@ public class WoffWriter {
     return (value + 3) & -4;
   }
 
-  private int computeTableDirectoryEntriesLength(
-      List<TableDirectoryEntry> tableDirectoryEntries) {
+  private int computeTableDirectoryEntriesLength(List<TableDirectoryEntry> tableDirectoryEntries) {
     return TableDirectoryEntry.ENTRY_SIZE * tableDirectoryEntries.size();
   }
 
@@ -88,7 +87,8 @@ public class WoffWriter {
     return length;
   }
 
-  private int writeWoffHeader(WritableFontData writableFontData,
+  private int writeWoffHeader(
+      WritableFontData writableFontData,
       int start,
       List<TableDirectoryEntry> tableDirectoryEntries,
       int flavor,
@@ -104,8 +104,10 @@ public class WoffWriter {
 
     // totalSfntSize
     index +=
-        writableFontData.writeULong(index, computeUncompressedTablesLength(tableDirectoryEntries)
-            + computeTableSfntHeaderLength(tableDirectoryEntries));
+        writableFontData.writeULong(
+            index,
+            computeUncompressedTablesLength(tableDirectoryEntries)
+                + computeTableSfntHeaderLength(tableDirectoryEntries));
 
     index += writableFontData.writeUShort(index, 1); // majorVersion
     index += writableFontData.writeUShort(index, 1); // minorVersion
@@ -118,8 +120,9 @@ public class WoffWriter {
   }
 
   private int computeTableSfntHeaderLength(List<TableDirectoryEntry> tableDirectoryEntries) {
-    return FontData.DataSize.ULONG.size() + (4 * FontData.DataSize.USHORT.size())
-        + ((4 * FontData.DataSize.ULONG.size()) * tableDirectoryEntries.size());
+    return FontData.SizeOf.ULONG
+        + (4 * FontData.SizeOf.USHORT)
+        + ((4 * FontData.SizeOf.ULONG) * tableDirectoryEntries.size());
   }
 
   private int computeUncompressedTablesLength(List<TableDirectoryEntry> tableDirectoryEntries) {
@@ -131,7 +134,9 @@ public class WoffWriter {
     return length;
   }
 
-  private int writeTableDirectoryEntries(WritableFontData writableFontData, int start,
+  private int writeTableDirectoryEntries(
+      WritableFontData writableFontData,
+      int start,
       List<TableDirectoryEntry> tableDirectoryEntries) {
     int index = start;
     int tableOffset = align4(start + computeTableDirectoryEntriesLength(tableDirectoryEntries));
@@ -143,7 +148,9 @@ public class WoffWriter {
     return computeTableDirectoryEntriesLength(tableDirectoryEntries);
   }
 
-  private int writeTables(WritableFontData writableFontData, int start,
+  private int writeTables(
+      WritableFontData writableFontData,
+      int start,
       List<TableDirectoryEntry> tableDirectoryEntries) {
     int index = align4(start);
     for (TableDirectoryEntry entry : tableDirectoryEntries) {
@@ -154,8 +161,8 @@ public class WoffWriter {
   }
 
   private List<TableDirectoryEntry> createTableDirectoryEntries(Font font) {
-    List<TableDirectoryEntry> tableDirectoryEntries = new ArrayList<TableDirectoryEntry>();
-    TreeSet<Integer> tags = new TreeSet<Integer>(font.tableMap().keySet());
+    List<TableDirectoryEntry> tableDirectoryEntries = new ArrayList<>();
+    TreeSet<Integer> tags = new TreeSet<>(font.tableMap().keySet());
     tags.remove(Tag.DSIG);
 
     for (int tag : tags) {
@@ -183,14 +190,15 @@ public class WoffWriter {
       compresser.finish();
       int compLength = compresser.deflate(output);
       tableDirectoryEntry.setCompTable(
-          compLength == length || !compresser.finished() ? input : Arrays.copyOfRange(
-              output, 0, compLength));
+          compLength == length || !compresser.finished()
+              ? input
+              : Arrays.copyOfRange(output, 0, compLength));
     }
   }
 
   private static class TableDirectoryEntry {
 
-    public static final int ENTRY_SIZE = 5 * FontData.DataSize.ULONG.size();
+    public static final int ENTRY_SIZE = 5 * FontData.SizeOf.ULONG;
 
     private long tag;
     private long origLength;

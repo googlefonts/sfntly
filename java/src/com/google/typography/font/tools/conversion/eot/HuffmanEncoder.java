@@ -24,12 +24,12 @@ package com.google.typography.font.tools.conversion.eot;
 public class HuffmanEncoder {
 
   private static final int ROOT = 1;
-  
-  private TreeNode[] tree;
-  private short[] symbolIndex;
-  private int bitCount2;
-  private int range;
-  private BitIOWriter bits;
+
+  private final TreeNode[] tree;
+  private final short[] symbolIndex;
+  private final int bitCount2;
+  private final int range;
+  private final BitIOWriter bits;
 
   private static class TreeNode {
     short up;
@@ -38,11 +38,10 @@ public class HuffmanEncoder {
     short code;
     int weight;
   }
-  
+
   public HuffmanEncoder(BitIOWriter bits, int range) {
     this.bits = bits;
     this.range = range;
-    bitsUsed(range - 1);
     if (range > 256 && range < 512) {
       bitCount2 = bitsUsed(range - 257);
     } else {
@@ -55,19 +54,19 @@ public class HuffmanEncoder {
       tree[i] = new TreeNode();
     }
     for (int i = 2; i < limit; i++) {
-      tree[i].up = (short)(i / 2);
+      tree[i].up = (short) (i / 2);
       tree[i].weight = 1;
     }
     for (int i = 1; i < range; i++) {
-      tree[i].left = (short)(2 * i);
-      tree[i].right = (short)(2 * i + 1);
+      tree[i].left = (short) (2 * i);
+      tree[i].right = (short) (2 * i + 1);
     }
     for (int i = 0; i < range; i++) {
       tree[i].code = -1;
-      tree[range + i].code = (short)i;
+      tree[range + i].code = (short) i;
       tree[range + i].left = -1;
       tree[range + i].right = -1;
-      symbolIndex[i] = (short)(range + i);
+      symbolIndex[i] = (short) (range + i);
     }
     initWeight(ROOT);
     if (bitCount2 != 0) {
@@ -88,7 +87,7 @@ public class HuffmanEncoder {
       }
     }
   }
-  
+
   /* Check tree for internal consistency, return problem string or null if ok */
   String checkTree() {
     for (int i = ROOT; i < range; i++) {
@@ -104,16 +103,29 @@ public class HuffmanEncoder {
     for (int i = ROOT; i < range; i++) {
       if (tree[i].code < 0) {
         if (tree[i].weight != tree[tree[i].left].weight + tree[tree[i].right].weight) {
-          return "tree[" + i + "].weight == " + tree[i].weight + ", expected " +
-              tree[tree[i].left].weight + " + " + tree[tree[i].right].weight;
+          return "tree["
+              + i
+              + "].weight == "
+              + tree[i].weight
+              + ", expected "
+              + tree[tree[i].left].weight
+              + " + "
+              + tree[tree[i].right].weight;
         }
       }
     }
     int j = range * 2 - 1;
     for (int i = ROOT; i < j; i++) {
       if (tree[i].weight < tree[i + 1].weight) {
-        return "tree[" + i + "].weight == " + tree[i].weight +
-            ", tree[" + (i + 1) + ".weight == " + tree[i+1].weight + ", not >=";
+        return "tree["
+            + i
+            + "].weight == "
+            + tree[i].weight
+            + ", tree["
+            + (i + 1)
+            + ".weight == "
+            + tree[i + 1].weight
+            + ", not >=";
       }
     }
     for (int i = ROOT + 1; i < j; i++) {
@@ -121,8 +133,15 @@ public class HuffmanEncoder {
         int a = tree[i].left;
         int b = tree[i].right;
         if (a - b != 1 && a - b != -1) {
-          return "tree[" + i + "].left == " + tree[i].left +
-             ", tree[" + i + "].right] == " +tree[i].right + ", siblings not adjacent";
+          return "tree["
+              + i
+              + "].left == "
+              + tree[i].left
+              + ", tree["
+              + i
+              + "].right] == "
+              + tree[i].right
+              + ", siblings not adjacent";
         }
       }
     }
@@ -132,7 +151,7 @@ public class HuffmanEncoder {
         return "tree[" + a + "].left != " + i + " && tree[" + a + "].right != " + i;
       }
     }
-      
+
     return null;
   }
 
@@ -173,17 +192,17 @@ public class HuffmanEncoder {
     tree[b].up = upb;
     int code = tree[a].code;
     if (code < 0) {
-      tree[tree[a].left].up = (short)a;
-      tree[tree[a].right].up = (short)a;
+      tree[tree[a].left].up = (short) a;
+      tree[tree[a].right].up = (short) a;
     } else {
-      symbolIndex[code] = (short)a;
+      symbolIndex[code] = (short) a;
     }
     code = tree[b].code;
     if (code < 0) {
-      tree[tree[b].left].up = (short)b;
-      tree[tree[b].right].up = (short)b;
+      tree[tree[b].left].up = (short) b;
+      tree[tree[b].right].up = (short) b;
     } else {
-      symbolIndex[code] = (short)b;
+      symbolIndex[code] = (short) b;
     }
   }
 
@@ -196,7 +215,7 @@ public class HuffmanEncoder {
     } while (a != ROOT);
     return sp << 16;
   }
-  
+
   public void writeSymbol(int symbol) {
     int a = symbolIndex[symbol];
     int aa = a;
@@ -216,8 +235,7 @@ public class HuffmanEncoder {
   public static int bitsUsed(int x) {
     int i;
     for (i = 32; i > 1; i--) {
-      if ((x & (1 << (i - 1))) != 0)
-        break;
+      if ((x & (1 << (i - 1))) != 0) break;
     }
     return i;
   }

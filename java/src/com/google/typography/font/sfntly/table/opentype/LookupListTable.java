@@ -41,8 +41,7 @@ public class LookupListTable extends OffsetRecordTable<LookupTable> {
     }
 
     @Override
-    protected void initFields() {
-    }
+    protected void initFields() {}
 
     @Override
     public int fieldCount() {

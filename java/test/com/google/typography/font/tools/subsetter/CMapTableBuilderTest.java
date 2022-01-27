@@ -21,26 +21,22 @@ import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
-
-import junit.framework.TestCase;
-
 import java.util.HashMap;
 import java.util.Map;
+import junit.framework.TestCase;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class CMapTableBuilderTest extends TestCase {
 
   private static void verifyCmap(Map<Integer, Integer> mapping) {
     FontFactory fontFactory = FontFactory.getInstance();
     Font.Builder fontBuilder = fontFactory.newFontBuilder();
     new CMapTableBuilder(fontBuilder, mapping).build();
-    
+
     Font font = fontBuilder.build();
     CMapTable cmapTable = font.getTable(Tag.cmap);
     CMap cmap = cmapTable.cmap(3, 1);
-    for (Map.Entry<Integer,Integer> entry : mapping.entrySet()) {
+    for (Map.Entry<Integer, Integer> entry : mapping.entrySet()) {
       int unicode = entry.getKey();
       int glyphId = entry.getValue();
       assertEquals(glyphId, cmap.glyphId(unicode));
@@ -48,9 +44,9 @@ public class CMapTableBuilderTest extends TestCase {
     assertEquals(CMapTable.NOTDEF, cmap.glyphId(0xffff));
     assertEquals(CMapTable.NOTDEF, cmap.glyphId(0xfffe));
   }
-  
+
   public void testCmapBuilding() {
-    Map<Integer, Integer> mapping = new HashMap<Integer, Integer>();
+    Map<Integer, Integer> mapping = new HashMap<>();
     mapping.put(32, 0);
     mapping.put(33, 1);
     mapping.put(34, 2);

@@ -19,10 +19,7 @@ package com.google.typography.font.sfntly.table.bitmap;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 
-/**
- * @author Stuart Gill
- *
- */
+/** @author Stuart Gill */
 public final class SimpleBitmapGlyph extends BitmapGlyph {
 
   protected SimpleBitmapGlyph(ReadableFontData data, int format) {
@@ -41,7 +38,7 @@ public final class SimpleBitmapGlyph extends BitmapGlyph {
 
     @Override
     protected SimpleBitmapGlyph subBuildTable(ReadableFontData data) {
-      return new SimpleBitmapGlyph(data, this.format());
+      return new SimpleBitmapGlyph(data, format());
     }
   }
 }

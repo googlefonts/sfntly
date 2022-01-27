@@ -25,30 +25,25 @@ import com.google.typography.font.sfntly.table.core.HorizontalMetricsTable;
 import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
 import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
-import com.google.typography.font.sfntly.table.truetype.Glyph.GlyphType;
 import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.sfntly.table.truetype.SimpleGlyph;
-import com.google.typography.font.sfntly.testutils.TestFont.TestFontNames;
+import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import junit.framework.TestCase;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class HintStripTest extends TestCase {
 
-  private static final File fontFile = TestFontNames.OPENSANS.getFile();
+  private static final File fontFile = TestFont.TestFontNames.OPENSANS.getFile();
 
   // The subsetted font - individual tests will query and validate aspects of it
   Font dstFont;
-  
+
   @Override
   public void setUp() throws IOException {
     Font srcFont = TestFontUtils.loadFont(fontFile)[0];
@@ -56,7 +51,7 @@ public class HintStripTest extends TestCase {
     FontFactory factory = FontFactory.getInstance();
     Subsetter subsetter = new HintStripper(srcFont, factory);
 
-    Set<Integer> removeTables = new HashSet<Integer>();
+    Set<Integer> removeTables = new HashSet<>();
     removeTables.add(Tag.fpgm);
     removeTables.add(Tag.prep);
     removeTables.add(Tag.cvt);
@@ -65,7 +60,7 @@ public class HintStripTest extends TestCase {
 
     dstFont = dstFontBuilder.build();
   }
-  
+
   public void testNumGlyphs() {
     MaximumProfileTable maxpTable = dstFont.getTable(Tag.maxp);
     assertEquals(938, maxpTable.numGlyphs());
@@ -73,7 +68,7 @@ public class HintStripTest extends TestCase {
     LocaTable locaTable = dstFont.getTable(Tag.loca);
     assertEquals(938, locaTable.numGlyphs());
   }
-  
+
   public void testCmap() throws IOException {
     CMapTable cmapTable = dstFont.getTable(Tag.cmap);
     assertEquals(1, cmapTable.numCMaps(), 1);
@@ -83,7 +78,7 @@ public class HintStripTest extends TestCase {
     assertEquals(68, cmap.glyphId(0x61));
     assertEquals(162, cmap.glyphId(0xe0));
   }
-  
+
   public void testHorizontalMetrics() {
     HorizontalMetricsTable hmtxTable = dstFont.getTable(Tag.hmtx);
     assertEquals(1229, hmtxTable.advanceWidth(0));
@@ -95,15 +90,15 @@ public class HintStripTest extends TestCase {
     assertEquals(1139, hmtxTable.advanceWidth(162));
     assertEquals(94, hmtxTable.leftSideBearing(162));
   }
-  
+
   public void testSimpleGlyph1() {
     // grave
     Glyph glyph = getGlyph(dstFont, 67);
-    assertEquals(GlyphType.Simple, glyph.glyphType());
+    assertEquals(Glyph.GlyphType.Simple, glyph.glyphType());
     SimpleGlyph simple = (SimpleGlyph) glyph;
     assertEquals(1, simple.numberOfContours());
     assertEquals(10, simple.numberOfPoints(0));
-    assertEquals(0, simple.instructionSize());  // hints are stripped
+    assertEquals(0, simple.instructionSize()); // hints are stripped
     assertTrue(simple.onCurve(0, 0));
     assertEquals(786, simple.xCoordinate(0, 0));
     assertEquals(1241, simple.yCoordinate(0, 0));
@@ -120,7 +115,7 @@ public class HintStripTest extends TestCase {
   public void testSimpleGlyph2() {
     // lowercase a
     Glyph glyph = getGlyph(dstFont, 68);
-    assertEquals(GlyphType.Simple, glyph.glyphType());
+    assertEquals(Glyph.GlyphType.Simple, glyph.glyphType());
     SimpleGlyph simple = (SimpleGlyph) glyph;
     assertEquals(2, simple.numberOfContours());
     assertEquals(26, simple.numberOfPoints(0));
@@ -133,25 +128,25 @@ public class HintStripTest extends TestCase {
   public void testCompositeGlyph() {
     // agrave
     Glyph glyph = getGlyph(dstFont, 162);
-    assertEquals(GlyphType.Composite, glyph.glyphType());
+    assertEquals(Glyph.GlyphType.Composite, glyph.glyphType());
     CompositeGlyph composite = (CompositeGlyph) glyph;
     assertEquals(2, composite.numGlyphs());
-    assertEquals(68, composite.glyphIndex(0));  // a
+    assertEquals(68, composite.glyphIndex(0)); // a
     assertEquals(0, composite.argument1(0));
     assertEquals(0, composite.argument2(0));
-    assertEquals(67, composite.glyphIndex(1));  // grave
+    assertEquals(67, composite.glyphIndex(1)); // grave
     assertEquals(-114, composite.argument1(1));
     assertEquals(0, composite.argument2(1));
-    assertEquals(0, composite.instructionSize());  // hints are stripped
+    assertEquals(0, composite.instructionSize()); // hints are stripped
     assertEquals(0, composite.padding());
   }
-  
+
   public void testTablesRemoved() {
     assertNull(dstFont.getTable(Tag.fpgm));
     assertNull(dstFont.getTable(Tag.prep));
     assertNull(dstFont.getTable(Tag.cvt));
   }
-  
+
   // TODO: this really needs to be a utility method somewhere
   private static Glyph getGlyph(Font font, int glyphId) {
     LocaTable locaTable = font.getTable(Tag.loca);

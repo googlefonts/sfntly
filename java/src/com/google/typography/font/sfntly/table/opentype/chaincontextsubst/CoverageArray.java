@@ -50,8 +50,7 @@ public class CoverageArray extends OffsetRecordTable<CoverageTable> {
     }
 
     @Override
-    protected void initFields() {
-    }
+    protected void initFields() {}
 
     @Override
     public int fieldCount() {

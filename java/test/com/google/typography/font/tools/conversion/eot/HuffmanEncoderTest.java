@@ -18,31 +18,29 @@ package com.google.typography.font.tools.conversion.eot;
 
 import junit.framework.TestCase;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class HuffmanEncoderTest extends TestCase {
-  
-   public void testBitsUsed() {
-     assertEquals(1, HuffmanEncoder.bitsUsed(0));
-     assertEquals(1, HuffmanEncoder.bitsUsed(1));
-     assertEquals(8, HuffmanEncoder.bitsUsed(255));
-     assertEquals(9, HuffmanEncoder.bitsUsed(256));
-     assertEquals(32, HuffmanEncoder.bitsUsed(-1));
-   }
-   
-   public void testInitConsistency() {
-     BitIOWriter bits = new BitIOWriter();
-     HuffmanEncoder h = new HuffmanEncoder(bits, 512);
-     assertNull(h.checkTree());
-   }
 
-   public void testRetainConsistency() {
-     BitIOWriter bits = new BitIOWriter();
-     HuffmanEncoder h = new HuffmanEncoder(bits, 8);
-     for (int i = 0; i < 1024; i++) {
-       assertNull("Iteration " + i, h.checkTree());
-       h.writeSymbol((i & 1) != 0 ? 0 : i & 7);
-     }
-   }
+  public void testBitsUsed() {
+    assertEquals(1, HuffmanEncoder.bitsUsed(0));
+    assertEquals(1, HuffmanEncoder.bitsUsed(1));
+    assertEquals(8, HuffmanEncoder.bitsUsed(255));
+    assertEquals(9, HuffmanEncoder.bitsUsed(256));
+    assertEquals(32, HuffmanEncoder.bitsUsed(-1));
+  }
+
+  public void testInitConsistency() {
+    BitIOWriter bits = new BitIOWriter();
+    HuffmanEncoder h = new HuffmanEncoder(bits, 512);
+    assertNull(h.checkTree());
+  }
+
+  public void testRetainConsistency() {
+    BitIOWriter bits = new BitIOWriter();
+    HuffmanEncoder h = new HuffmanEncoder(bits, 8);
+    for (int i = 0; i < 1024; i++) {
+      assertNull("Iteration " + i, h.checkTree());
+      h.writeSymbol((i & 1) != 0 ? 0 : i & 7);
+    }
+  }
 }

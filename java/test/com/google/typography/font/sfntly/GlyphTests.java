@@ -16,8 +16,6 @@
 
 package com.google.typography.font.sfntly;
 
-import com.google.typography.font.sfntly.Font.PlatformId;
-import com.google.typography.font.sfntly.Font.WindowsEncodingId;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.truetype.Glyph;
@@ -26,15 +24,11 @@ import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
 import com.google.typography.font.sfntly.testutils.TestUtils;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.nio.charset.CharsetEncoder;
+import junit.framework.TestCase;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class GlyphTests extends TestCase {
 
   public GlyphTests(String name) {
@@ -49,20 +43,13 @@ public class GlyphTests extends TestCase {
     private final int lowChar;
     private final int highChar;
 
-    /**
-     * @param fontFile
-     * @param platformId
-     * @param encodingId
-     * @param charSetName
-     * @param lowChar
-     * @param highChar
-     */
-    public TestSet(final File fontFile,
-        final int platformId,
-        final int encodingId,
-        final String charSetName,
-        final int lowChar,
-        final int highChar) {
+    public TestSet(
+        File fontFile,
+        int platformId,
+        int encodingId,
+        String charSetName,
+        int lowChar,
+        int highChar) {
       this.fontFile = fontFile;
       this.platformId = platformId;
       this.encodingId = encodingId;
@@ -71,28 +58,18 @@ public class GlyphTests extends TestCase {
       this.highChar = highChar;
     }
 
-    /**
-     * @param fontFile
-     * @param platformId
-     * @param encodingId
-     * @param lowChar
-     * @param highChar
-     */
-    public TestSet(final File fontFile,
-        final int platformId,
-        final int encodingId,
-        final int lowChar,
-        final int highChar) {
-      this(fontFile, 
-          platformId, encodingId, "",
-          lowChar, highChar);
+    public TestSet(File fontFile, int platformId, int encodingId, int lowChar, int highChar) {
+      this(fontFile, platformId, encodingId, "", lowChar, highChar);
     }
   }
 
   private static final TestSet[] GLYPH_TESTS = {
-    new TestSet(TestFont.TestFontNames.OPENSANS.getFile(),
-        PlatformId.Windows.value(), WindowsEncodingId.UnicodeUCS2.value(), 
-        0x20, 0x7f),
+    new TestSet(
+        TestFont.TestFontNames.OPENSANS.getFile(),
+        Font.PlatformId.Windows.value(),
+        Font.WindowsEncodingId.UnicodeUCS2.value(),
+        0x20,
+        0x7f),
 
     // TODO: reinstate Cambria, Batang, and Arial for internal tests, or replace with open-source
   };
@@ -130,11 +107,10 @@ public class GlyphTests extends TestCase {
 
   /**
    * Basic glyph checking.
-   * 
-   * Currently only instantiates the glyph from the table and verifies that it
-   * is non-null. This does ensure that the glyph data was able to be parsed correctly.
-   * 
-   * @param table glyph table
+   *
+   * <p>Currently only instantiates the glyph from the table and verifies that it is non-null. This
+   * does ensure that the glyph data was able to be parsed correctly.
+   *
    * @param offset glyph offset in table
    * @param length length of glyph data
    */

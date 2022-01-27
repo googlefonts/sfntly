@@ -4,22 +4,18 @@ package com.google.typography.font.sfntly;
 
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
-import com.google.typography.font.sfntly.testutils.TestFont.TestFontNames;
+import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
-
-import junit.framework.TestCase;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import junit.framework.TestCase;
 
-/**
- * @author dougfelt@google.com (Doug Felt)
- */
+/** @author dougfelt@google.com (Doug Felt) */
 public class GPosTests extends TestCase {
   public void testGposFiles() {
-    List<Font> gposFontList = new ArrayList<Font>();
-    for (TestFontNames name : TestFontNames.values()) {
+    List<Font> gposFontList = new ArrayList<>();
+    for (TestFont.TestFontNames name : TestFont.TestFontNames.values()) {
       Font[] fonts;
       try {
         fonts = TestFontUtils.loadFont(name.getFile());
@@ -41,8 +37,7 @@ public class GPosTests extends TestCase {
       }
     }
     assertTrue("have test gpos file", gposFontList.size() > 0);
-    
-    for (Font font : gposFontList) {
-    }
+
+    for (Font font : gposFontList) {}
   }
 }

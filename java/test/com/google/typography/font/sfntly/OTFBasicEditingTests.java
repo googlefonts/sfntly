@@ -16,25 +16,19 @@
 
 package com.google.typography.font.sfntly;
 
-import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import junit.framework.TestCase;
 
-/**
- * @author Stuart Gill
- * 
- */
+/** @author Stuart Gill */
 public class OTFBasicEditingTests extends TestCase {
 
   private static final File TEST_FONT_FILE = TestFont.TestFontNames.OPENSANS.getFile();
@@ -44,21 +38,18 @@ public class OTFBasicEditingTests extends TestCase {
   }
 
   /**
-   * Simple building test. Ensures that all of the builders turn into tables and
-   * that there are no extra tables. Also does a simple modification and ensures
-   * that the edit makes it through the save process and that the checksum is
-   * updated.
-   * 
-   * @throws Exception
+   * Simple building test. Ensures that all of the builders turn into tables and that there are no
+   * extra tables. Also does a simple modification and ensures that the edit makes it through the
+   * save process and that the checksum is updated.
    */
   public void testBuildersToTables() throws Exception {
     Font[] originalFont = TestFontUtils.loadFont(TEST_FONT_FILE);
     long originalChecksum = originalFont[0].checksum();
 
-    Builder fontBuilder = TestFontUtils.builderForFontFile(TEST_FONT_FILE);
-    Set<Integer> builderTags = new HashSet<Integer>(fontBuilder.tableBuilderMap().keySet());
-    FontHeaderTable.Builder headerBuilder = (FontHeaderTable.Builder) fontBuilder
-        .getTableBuilder(Tag.head);
+    Font.Builder fontBuilder = TestFontUtils.builderForFontFile(TEST_FONT_FILE);
+    Set<Integer> builderTags = new HashSet<>(fontBuilder.tableBuilderMap().keySet());
+    FontHeaderTable.Builder headerBuilder =
+        (FontHeaderTable.Builder) fontBuilder.getTableBuilder(Tag.head);
     long modDate = headerBuilder.modified();
     headerBuilder.setModified(modDate + 1);
     Font font = fontBuilder.build();
@@ -83,26 +74,21 @@ public class OTFBasicEditingTests extends TestCase {
     assertEquals(originalChecksum + 1, fontChecksum);
   }
 
-  /**
-   * Simple test of the font level checksum generation and the header table
-   * checksum offset.
-   * 
-   * @throws Exception
-   */
+  /** Simple test of the font level checksum generation and the header table checksum offset. */
   public void testChecksum() throws Exception {
     Font originalFont = TestFontUtils.loadFont(TEST_FONT_FILE)[0];
     long originalChecksum = originalFont.checksum();
     long expectedChecksum = originalChecksum;
-    long originalChecksumAdjustment = ((FontHeaderTable) originalFont.getTable(Tag.head))
-        .checkSumAdjustment();
+    long originalChecksumAdjustment =
+        ((FontHeaderTable) originalFont.getTable(Tag.head)).checkSumAdjustment();
 
-    Builder fontBuilder = TestFontUtils.builderForFontFile(TEST_FONT_FILE);
+    Font.Builder fontBuilder = TestFontUtils.builderForFontFile(TEST_FONT_FILE);
     for (int tag : fontBuilder.tableBuilderMap().keySet()) {
       Table.Builder<? extends Table> tableBuilder = fontBuilder.getTableBuilder(tag);
       WritableFontData data = tableBuilder.data();
       int l = data.readULongAsInt(0);
-      
-      // add 1 to the first long in every table 
+
+      // add 1 to the first long in every table
       // => expected checksum should go up by one for each too
       data.writeULong(0, l + 1);
       tableBuilder.setData(data);
@@ -116,8 +102,7 @@ public class OTFBasicEditingTests extends TestCase {
 
     FontHeaderTable header = builtFont.getTable(Tag.head);
 
-    long headerAdjustment = (FontHeaderTable.CHECKSUM_ADJUSTMENT_BASE - builtChecksum) & 0xffffffff;
-    long checksumAdjustment = header.checkSumAdjustment();
+    long headerAdjustment = FontHeaderTable.CHECKSUM_ADJUSTMENT_BASE - builtChecksum;
     assertEquals(headerAdjustment, header.checkSumAdjustment());
   }
 }

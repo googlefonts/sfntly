@@ -15,23 +15,22 @@
  */
 
 package com.google.typography.font.tools.conversion.eot;
+
 import java.io.ByteArrayOutputStream;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class BitIOWriter {
-  
-  private ByteArrayOutputStream buf;
+
+  private final ByteArrayOutputStream buf;
   private byte byteBuf;
   private int bitCount;
-  
+
   public BitIOWriter() {
     buf = new ByteArrayOutputStream();
     bitCount = 0;
     byteBuf = 0;
   }
-  
+
   public void writeBit(int bit) {
     byteBuf |= (bit << (7 - bitCount));
     bitCount++;
@@ -45,7 +44,7 @@ public class BitIOWriter {
   public void writeBit(boolean bit) {
     writeBit(bit ? 1 : 0);
   }
-  
+
   public void writeValue(int value, int numBits) {
     // TODO: optimize, but we're shooting for correctness first
     for (int i = numBits - 1; i >= 0; i--) {
@@ -60,7 +59,7 @@ public class BitIOWriter {
       bitCount = 0;
     }
   }
-  
+
   public byte[] toByteArray() {
     return buf.toByteArray();
   }

@@ -7,9 +7,6 @@ import com.google.typography.font.sfntly.table.core.PostScriptTable;
 import com.google.typography.font.sfntly.table.opentype.component.GlyphGroup;
 import com.google.typography.font.sfntly.table.opentype.component.Rule;
 import com.google.typography.font.sfntly.table.opentype.testing.FontLoader;
-
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,10 +16,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import org.junit.Assume;
+import org.junit.Test;
 
 /**
  * Comparison data is generated from Harfbuzz by running:
- * util/hb-ot-shape-closure --no-glyph-names NotoSansMalayalam.ttf <text>
+ *
+ * <pre>
+ * util/hb-ot-shape-closure --no-glyph-names NotoSansMalayalam.ttf &lt;text>
+ * </pre>
  */
 public class RuleTests {
   private static final String FONTS_DIR = "/usr/local/google/home/cibu/sfntly/fonts";
@@ -32,10 +34,11 @@ public class RuleTests {
       "/usr/local/google/home/cibu/sfntly/adv_layout/data/testdata/wiki_words_hb_closure";
   private static final int TEST_COUNT = 4000;
   private static final String DEBUG_SPECIFIC_FONT = "";
-  private static final Map<String, List<String>> LANG_WORDS_MAP = langWordsMap();
 
   @Test
   public void allFonts() throws IOException {
+    Map<String, List<String>> langWordsMap = langWordsMap();
+
     List<File> fontFiles = FontLoader.getFontFiles(FONTS_DIR);
     for (File fontFile : fontFiles) {
       Font font = FontLoader.getFont(fontFile);
@@ -69,14 +72,18 @@ public class RuleTests {
           continue; // for .svn
         }
         List<GlyphGroup> hbClosure = hbClosure(hbOutFile);
-        assertClosure(cmapTable, glyphRulesMap, LANG_WORDS_MAP.get(lang), hbClosure);
+        assertClosure(cmapTable, glyphRulesMap, langWordsMap.get(lang), hbClosure);
       }
     }
   }
 
   @Test
   public void aFont() throws IOException {
-    Font font = FontLoader.getFont(new File("/usr/local/google/home/cibu/sfntly/fonts/noto/NotoSansBengali-Regular.ttf"));
+    File fontFile =
+        new File("/usr/local/google/home/cibu/sfntly/fonts/noto/" + "NotoSansBengali-Regular.ttf");
+    Assume.assumeTrue(fontFile.exists());
+
+    Font font = FontLoader.getFont(fontFile);
     CMapTable cmap = font.getTable(Tag.cmap);
     PostScriptTable post = font.getTable(Tag.post);
     Map<Integer, Set<Rule>> glyphRulesMap = Rule.glyphRulesMap(font);
@@ -87,8 +94,10 @@ public class RuleTests {
   }
 
   private static void assertClosure(
-      CMapTable cmap, Map<Integer, Set<Rule>> glyphRulesMap,
-      List<String> words, List<GlyphGroup> expecteds) {
+      CMapTable cmap,
+      Map<Integer, Set<Rule>> glyphRulesMap,
+      List<String> words,
+      List<GlyphGroup> expecteds) {
     for (int i = 0; i < expecteds.size() && i < TEST_COUNT; i++) {
       String word = words.get(i);
       GlyphGroup expected = expecteds.get(i);
@@ -96,17 +105,19 @@ public class RuleTests {
       GlyphGroup glyphGroup = Rule.glyphGroupForText(word, cmap);
       GlyphGroup closure = Rule.closure(glyphRulesMap, glyphGroup);
 
-      if (expected.size() == 0 && closure.size() > 0) {
+      if (expected.isEmpty() && !closure.isEmpty()) {
         System.err.println("Skipped: " + word);
       } else if (!expected.equals(closure)) {
         System.err.printf("'%s' failed:\n  %s HB\n  %s Snftly\n\n", word, expected, closure);
-        //Assert.assertEquals(word, expected, closure);
+        // Assert.assertEquals(word, expected, closure);
       }
     }
   }
 
   private static Map<String, List<String>> langWordsMap() {
-    Map<String, List<String>> langWordsMap = new HashMap<String, List<String>>();
+    Assume.assumeTrue(new File(WORDS_DIR).exists());
+
+    Map<String, List<String>> langWordsMap = new HashMap<>();
     for (File wordsFile : new File(WORDS_DIR).listFiles()) {
       String lang = wordsFile.getName();
       if (lang.startsWith(".")) {
@@ -118,10 +129,10 @@ public class RuleTests {
   }
 
   private static List<GlyphGroup> hbClosure(File file) {
-    List<GlyphGroup> glyphGroups = new ArrayList<GlyphGroup>();
+    List<GlyphGroup> glyphGroups = new ArrayList<>();
     for (String line : linesFromFile(file)) {
       GlyphGroup glyphGroup = new GlyphGroup();
-      if (line.length() > 0) {
+      if (!line.isEmpty()) {
         for (String intStr : line.split(" ")) {
           glyphGroup.add(Integer.parseInt(intStr));
         }
@@ -132,7 +143,7 @@ public class RuleTests {
   }
 
   private static List<String> linesFromFile(File file) {
-    List<String> lines = new ArrayList<String>();
+    List<String> lines = new ArrayList<>();
     Scanner scanner;
     try {
       scanner = new Scanner(file);

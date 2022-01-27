@@ -5,9 +5,8 @@ package com.google.typography.font.sfntly.table.opentype.component;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.SubTable;
-
 import java.util.Iterator;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
@@ -46,7 +45,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
   @Override
   public Iterator<S> iterator() {
     return new Iterator<S>() {
-      private Iterator<TagOffsetRecord> recordIterator = recordList.iterator();
+      private final Iterator<TagOffsetRecord> recordIterator = recordList.iterator();
 
       @Override
       public boolean hasNext() {
@@ -96,16 +95,14 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
     }
 
     protected Builder(TagOffsetsTable.Builder<T, S> other) {
-      super();
+      super(null, other.dataIsCanonical);
       builders = other.builders;
-      dataIsCanonical = other.dataIsCanonical;
       base = other.base;
     }
 
     protected Builder(ReadableFontData data, int base, boolean dataIsCanonical) {
-      super(data);
+      super(data, dataIsCanonical);
       this.base = base;
-      this.dataIsCanonical = dataIsCanonical;
       if (!dataIsCanonical) {
         prepareToEdit();
       }
@@ -171,7 +168,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
     }
 
     private void initFromData(ReadableFontData data, int base) {
-      builders = new TreeMap<Integer, VisibleSubTable.Builder<S>>();
+      builders = new TreeMap<>();
       if (data == null) {
         return;
       }
@@ -258,7 +255,7 @@ public abstract class TagOffsetsTable<S extends SubTable> extends HeaderTable
       int subTableFillPos = tableSize;
 
       TagOffsetRecordList recordList = new TagOffsetRecordList(newData);
-      for (Entry<Integer, VisibleSubTable.Builder<S>> entry : builders.entrySet()) {
+      for (Map.Entry<Integer, VisibleSubTable.Builder<S>> entry : builders.entrySet()) {
         int tag = entry.getKey();
         VisibleSubTable.Builder<? extends SubTable> builder = entry.getValue();
         if (builder.serializedLength > 0) {

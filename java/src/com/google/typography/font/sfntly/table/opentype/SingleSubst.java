@@ -15,16 +15,16 @@ public class SingleSubst extends SubstSubtable {
   SingleSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     switch (format) {
-    case 1:
-      fmt1 = new HeaderFmt1(data, headerSize(), dataIsCanonical);
-      fmt2 = null;
-      break;
-    case 2:
-      fmt1 = null;
-      fmt2 = new InnerArrayFmt2(data, headerSize(), dataIsCanonical);
-      break;
-    default:
-      throw new IllegalStateException("Subt format value is " + format + " (should be 1 or 2).");
+      case 1:
+        fmt1 = new HeaderFmt1(data, headerSize(), dataIsCanonical);
+        fmt2 = null;
+        break;
+      case 2:
+        fmt1 = null;
+        fmt2 = new InnerArrayFmt2(data, headerSize(), dataIsCanonical);
+        break;
+      default:
+        throw new IllegalStateException("Subst format value is " + format + " (should be 1 or 2).");
     }
   }
 
@@ -33,12 +33,12 @@ public class SingleSubst extends SubstSubtable {
 
   public CoverageTable coverage() {
     switch (format) {
-    case 1:
-      return fmt1.coverage;
-    case 2:
-      return fmt2.coverage;
-    default:
-      throw new IllegalArgumentException("unexpected format table requested: " + format);
+      case 1:
+        return fmt1.coverage;
+      case 2:
+        return fmt2.coverage;
+      default:
+        throw new IllegalArgumentException("unexpected format table requested: " + format);
     }
   }
 

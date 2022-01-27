@@ -19,7 +19,6 @@ package com.google.typography.font.tools.subsetter;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -29,9 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Builder for PostScript table. This is currently outside the main sfntly
- * builder hierarchy, but should be migrated into it.
- * 
+ * Builder for PostScript table. This is currently outside the main sfntly builder hierarchy, but
+ * should be migrated into it.
+ *
  * @author Raph Levien
  */
 public class PostScriptTableBuilder {
@@ -43,36 +42,30 @@ public class PostScriptTableBuilder {
   // Note, this is cut'n'pasted from the PostScriptTable implementation.
   // This is a temporary situation, as the actual logic will be refactored
   // to be part of a builder associated with that type.
-  private enum Offset {
-    version(0),
-    italicAngle(4),
-    underlinePosition(8),
-    underlineThickness(10),
-    isFixedPitch(12),
-    minMemType42(16),
-    maxMemType42(20),
-    minMemType1(24),
-    maxMemType1(28),
+  private interface Offset {
+    int version = 0;
+    int italicAngle = 4;
+    int underlinePosition = 8;
+    int underlineThickness = 10;
+    int isFixedPitch = 12;
+    int minMemType42 = 16;
+    int maxMemType42 = 20;
+    int minMemType1 = 24;
+    int maxMemType1 = 28;
 
     // TODO: add support for these versions of the table?
     // Version 2.0 table
-    numberOfGlyphs(32),
-    glyphNameIndex(34);  // start of table
+    int numberOfGlyphs = 32;
+    int glyphNameIndex = 34; // start of table
 
     // Version 2.5 table
 
     // Version 4.0 table
-
-    private final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
   }
 
   /**
-   * These are the standard PostScript names from the OpenType spec. They are a prefix of the
-   * Adobe Glyph List.
+   * These are the standard PostScript names from the OpenType spec. They are a prefix of the Adobe
+   * Glyph List.
    */
   private static final String[] STANDARD_NAMES = {
     ".notdef",
@@ -334,11 +327,11 @@ public class PostScriptTableBuilder {
     "ccaron",
     "dcroat"
   };
-  
+
   private static final Map<String, Integer> INVERTED_STANDARD_NAMES = invertNameMap(STANDARD_NAMES);
 
   private static Map<String, Integer> invertNameMap(String[] names) {
-    Map<String, Integer> nameMap = new HashMap<String, Integer>();
+    Map<String, Integer> nameMap = new HashMap<>();
     for (int i = 0; i < names.length; i++) {
       nameMap.put(names[i], i);
     }
@@ -353,9 +346,8 @@ public class PostScriptTableBuilder {
   }
 
   /**
-   * Initialize the scalar values (underline position, etc) to those from the source post
-   * table.
-   * 
+   * Initialize the scalar values (underline position, etc) to those from the source post table.
+   *
    * @param src The source table to initialize from.
    */
   public void initV1From(PostScriptTable src) {
@@ -367,14 +359,14 @@ public class PostScriptTableBuilder {
   public void setNames(List<String> names) {
     this.names = names;
   }
-  
+
   public ReadableFontData build() {
     // Note: we always build a version 2 table. This will be the right thing to do almost all the
     // time, as long as we're dealing with TrueType (as opposed to CFF) fonts.
     if (names == null) {
       return v1Data;
     }
-    List<Integer> glyphNameIndices = new ArrayList<Integer>();
+    List<Integer> glyphNameIndices = new ArrayList<>();
     ByteArrayOutputStream nameBos = new ByteArrayOutputStream();
     int nGlyphs = names.size();
     int tableIndex = NUM_STANDARD_NAMES;
@@ -400,9 +392,9 @@ public class PostScriptTableBuilder {
     int newLength = 34 + 2 * nGlyphs + nameBytes.length;
     WritableFontData data = WritableFontData.createWritableFontData(newLength);
     v1Data.copyTo(data);
-    data.writeFixed(Offset.version.offset, VERSION_2);
-    data.writeUShort(Offset.numberOfGlyphs.offset, nGlyphs);
-    int index = Offset.glyphNameIndex.offset;
+    data.writeFixed(Offset.version, VERSION_2);
+    data.writeUShort(Offset.numberOfGlyphs, nGlyphs);
+    int index = Offset.glyphNameIndex;
     for (Integer glyphNameIndex : glyphNameIndices) {
       index += data.writeUShort(index, glyphNameIndex);
     }

@@ -16,6 +16,7 @@
 
 package com.google.typography.font.sfntly.table.bitmap;
 
+import com.google.typography.font.sfntly.data.SfObjects;
 import java.util.Comparator;
 
 /**
@@ -32,10 +33,9 @@ public final class BitmapGlyphInfo {
   private final int format;
 
   /**
-   * Constructor for a relative located glyph. The glyph's position in the EBDT
-   * table is a combination of it's block offset and it's own start offset.
+   * Constructor for a relative located glyph. The glyph's position in the EBDT table is a
+   * combination of it's block offset and it's own start offset.
    *
-   * @param glyphId the glyph id
    * @param blockOffset the offset of the block to which the glyph belongs
    * @param startOffset the offset of the glyph within the block
    * @param length the byte length
@@ -51,10 +51,9 @@ public final class BitmapGlyphInfo {
   }
 
   /**
-   * Constructor for an absolute located glyph. The glyph's position in the EBDT
-   * table is only given by it's own start offset.
+   * Constructor for an absolute located glyph. The glyph's position in the EBDT table is only given
+   * by its own start offset.
    *
-   * @param glyphId the glyph id
    * @param startOffset the offset of the glyph within the block
    * @param length the byte length
    * @param format the glyph image format
@@ -69,43 +68,36 @@ public final class BitmapGlyphInfo {
   }
 
   public int glyphId() {
-    return this.glyphId;
+    return glyphId;
   }
-  
+
   public boolean relative() {
-    return this.relative;
+    return relative;
   }
-  
+
   public int blockOffset() {
-    return this.blockOffset;
+    return blockOffset;
   }
 
   public int offset() {
-    return this.blockOffset() + this.startOffset();
+    return blockOffset() + startOffset();
   }
-  
+
   public int startOffset() {
-    return this.startOffset;
+    return startOffset;
   }
-  
+
   public int length() {
-    return this.length;
+    return length;
   }
-  
+
   public int format() {
-    return this.format;
+    return format;
   }
-  
+
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + blockOffset;
-    result = prime * result + format;
-    result = prime * result + glyphId;
-    result = prime * result + length;
-    result = prime * result + startOffset;
-    return result;
+    return SfObjects.hash(blockOffset, format, glyphId, length, startOffset);
   }
 
   @Override
@@ -113,35 +105,16 @@ public final class BitmapGlyphInfo {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
     if (!(obj instanceof BitmapGlyphInfo)) {
       return false;
     }
     BitmapGlyphInfo other = (BitmapGlyphInfo) obj;
-    if (this.format != other.format) {
-      return false;
-    }
-    if (this.glyphId != other.glyphId) {
-      return false;
-    }
-    if (this.length != other.length) {
-      return false;
-    }
-    if (this.offset() != other.offset()) {
-      return false;
-    }
-    return true;
+    return format == other.format
+        && glyphId == other.glyphId
+        && length == other.length
+        && offset() == other.offset();
   }
 
   public static final Comparator<BitmapGlyphInfo> StartOffsetComparator =
-      new StartOffsetComparatorClass();
-
-  private static final class StartOffsetComparatorClass implements Comparator<BitmapGlyphInfo> {
-    @Override
-    public int compare(BitmapGlyphInfo o1, BitmapGlyphInfo o2) {
-      return (o1.startOffset - o2.startOffset);
-    }
-  }
+      Comparator.comparingInt((BitmapGlyphInfo info) -> info.startOffset).reversed();
 }

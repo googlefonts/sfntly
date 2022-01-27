@@ -27,25 +27,18 @@ import com.google.typography.font.sfntly.table.truetype.LocaTable;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
 import com.google.typography.font.sfntly.testutils.TestUtils;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import junit.framework.TestCase;
 
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class GlyphEditingTests extends TestCase {
 
   private static final boolean DEBUG = false;
 
   private static final File TEST_FONT_FILE = TestFont.TestFontNames.OPENSANS.getFile();
 
-  /**
-   * Constructor.
-   */
   public GlyphEditingTests() {
     super();
   }
@@ -62,7 +55,7 @@ public class GlyphEditingTests extends TestCase {
     List<Integer> locaList = locaBuilder.locaList();
     locaList.clear();
 
-    List<Integer> newLoca = new ArrayList<Integer>();
+    List<Integer> newLoca = new ArrayList<>();
     for (int glyphId = 0; glyphId < locaSlots; glyphId++) {
       newLoca.add(glyphId * 6);
     }
@@ -147,7 +140,9 @@ public class GlyphEditingTests extends TestCase {
     assertEquals(locaTable.loca(locaTable.numLocas() - 1), lastLoca - firstGlyphLength);
     if (DEBUG) {
       System.out.println(
-          "glyphTable.dataLength() = " + glyphTable.dataLength() + ", glyphTableSize = "
+          "glyphTable.dataLength() = "
+              + glyphTable.dataLength()
+              + ", glyphTableSize = "
               + glyphTableSize);
     }
     assertEquals(glyphTable.dataLength(), glyphTableSize - firstGlyphLength);
@@ -175,7 +170,7 @@ public class GlyphEditingTests extends TestCase {
     locaTableBuilder.setLocaList(locaList);
 
     Font font = fontBuilder.build();
-    
+
     LocaTable locaTable = font.getTable(Tag.loca);
     GlyphTable glyphTable = font.getTable(Tag.glyf);
 

@@ -1,12 +1,12 @@
 /*
  * Copyright 2011 Google Inc. All Rights Reserved.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -25,20 +25,20 @@ import com.google.typography.font.sfntly.table.core.HorizontalMetricsTable;
 import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
 
 /**
- * Implementation of compression of CTF horizontal device metrics data, as per
- * section 5.4 of the MicroType Express spec.
- * 
+ * Implementation of compression of CTF horizontal device metrics data, as per section 5.4 of the
+ * MicroType Express spec.
+ *
  * @author Raph Levien
  */
 public class HdmxEncoder {
-  private static int HEADER_SIZE = 8;
-  private static int RECORD_SIZE = 2;
+  private static final int HEADER_SIZE = 8;
+  private static final int RECORD_SIZE = 2;
 
   public WritableFontData encode(Font sourceFont) {
     HorizontalDeviceMetricsTable hdmx = sourceFont.getTable(Tag.hdmx);
     HorizontalMetricsTable hmtx = sourceFont.getTable(Tag.hmtx);
     MaximumProfileTable maxp = sourceFont.getTable(Tag.maxp);
-    FontHeaderTable head = sourceFont.<FontHeaderTable>getTable(Tag.head);
+    FontHeaderTable head = sourceFont.getTable(Tag.head);
     int unitsPerEm = head.unitsPerEm();
     int numRecords = hdmx.numRecords();
     int numGlyphs = maxp.numGlyphs();

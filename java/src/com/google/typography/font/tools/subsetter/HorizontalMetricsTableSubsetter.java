@@ -17,16 +17,12 @@
 package com.google.typography.font.tools.subsetter;
 
 import com.google.typography.font.sfntly.Font;
-import com.google.typography.font.sfntly.Font.Builder;
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.HorizontalMetricsTable;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class HorizontalMetricsTableSubsetter extends TableSubsetterImpl {
 
   protected HorizontalMetricsTableSubsetter() {
@@ -34,18 +30,16 @@ public class HorizontalMetricsTableSubsetter extends TableSubsetterImpl {
     // setUpTables method of the invoking subsetter.
     super(Tag.hmtx, Tag.hhea);
   }
-  
+
   @Override
-  public boolean subset(Subsetter subsetter, Font font, Builder fontBuilder) {
+  public boolean subset(Subsetter subsetter, Font font, Font.Builder fontBuilder) {
     List<Integer> permutationTable = subsetter.glyphMappingTable();
     if (permutationTable == null) {
       return false;
     }
     HorizontalMetricsTable origMetrics = font.getTable(Tag.hmtx);
-    List<HorizontalMetricsTableBuilder.LongHorMetric> metrics =
-        new ArrayList<HorizontalMetricsTableBuilder.LongHorMetric>();
-    for (int i = 0; i < permutationTable.size(); i++) {
-      int origGlyphId = permutationTable.get(i);
+    List<HorizontalMetricsTableBuilder.LongHorMetric> metrics = new ArrayList<>();
+    for (int origGlyphId : permutationTable) {
       int advanceWidth = origMetrics.advanceWidth(origGlyphId);
       int lsb = origMetrics.leftSideBearing(origGlyphId);
       metrics.add(new HorizontalMetricsTableBuilder.LongHorMetric(advanceWidth, lsb));

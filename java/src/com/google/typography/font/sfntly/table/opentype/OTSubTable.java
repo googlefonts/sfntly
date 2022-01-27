@@ -43,34 +43,25 @@ abstract class OTSubTable extends SubTable {
       this(table.readFontData(), table.dataIsCanonical);
     }
 
-    /**
-     * Returns true if the data has not been edited, and thus there is no model
-     * to serialize.
-     */
+    /** Returns true if the data has not been edited, and thus there is no model to serialize. */
     protected abstract boolean unedited();
 
-    /**
-     * Create a model for editing from the data.
-     * This causes <code>unedited()</code> to return false;
-     * @param data
-     */
+    /** Create a model for editing from the data. This causes {@code unedited()} to return false; */
     protected abstract void readModel(ReadableFontData data, boolean dataIsCanonical);
 
     /**
-     * Computes the serialized length of the data.  This computes its own serialized
-     * length and calls subDataSizeToSerialize on any subTables to get their length.
+     * Computes the serialized length of the data. This computes its own serialized length and calls
+     * subDataSizeToSerialize on any subTables to get their length.
      */
     protected abstract int computeSerializedLength();
 
-    /**
-     * Writes the model, which is exactly as long as computeSerializedLength.
-     */
+    /** Writes the model, which is exactly as long as computeSerializedLength. */
     protected abstract void writeModel(WritableFontData data);
 
     /**
-     * The first time this is called, it calls initFromData to build the model and
-     * calls setModelChanged to indicate that the model will need to be written out.
-     * It also resets the serializedLength so it will be recomputed.
+     * The first time this is called, it calls initFromData to build the model and calls
+     * setModelChanged to indicate that the model will need to be written out. It also resets the
+     * serializedLength so it will be recomputed.
      */
     protected void prepareToEdit() {
       if (unedited()) {
@@ -81,9 +72,9 @@ abstract class OTSubTable extends SubTable {
     }
 
     /**
-     * This is called first by FontDataTable when the tables is to be built.  It calls
-     * subDataSizeToSerialize and returns true if the result > 0.  This ensures that
-     * no object is built if there is no data.
+     * This is called first by FontDataTable when the tables is to be built. It calls
+     * subDataSizeToSerialize and returns true if the result > 0. This ensures that no object is
+     * built if there is no data.
      */
     @Override
     protected final boolean subReadyToSerialize() {
@@ -91,16 +82,16 @@ abstract class OTSubTable extends SubTable {
     }
 
     /**
-     * This is called twice, once by subReadyToSerialize, and then again by FontDataTable.
-     * The first call will compute the serializedLength, and the second just returns the
-     * cached value.  The actual work is done in computeSerializedLength, which might
-     * call this recursively on its sub-tables.
+     * This is called twice, once by subReadyToSerialize, and then again by FontDataTable. The first
+     * call will compute the serializedLength, and the second just returns the cached value. The
+     * actual work is done in computeSerializedLength, which might call this recursively on its
+     * sub-tables.
      */
     @Override
     public final int subDataSizeToSerialize() {
       if (serializedLength == -1) {
         if (unedited()) {
-            prepareToEdit();
+          prepareToEdit();
         }
         serializedLength = computeSerializedLength();
       }
@@ -108,11 +99,10 @@ abstract class OTSubTable extends SubTable {
     }
 
     /**
-     * This is called after subDataSizeToSerialize, newData has a length equal to
-     * that returned by that call. If the data has not been edited, it is because
-     * the data is canonical and can be copied straight to newData.  Otherwise,
-     * serializeEditState is called to do the actual serialization.  When this
-     * finishes, resets serializedLength.
+     * This is called after subDataSizeToSerialize, newData has a length equal to that returned by
+     * that call. If the data has not been edited, it is because the data is canonical and can be
+     * copied straight to newData. Otherwise, serializeEditState is called to do the actual
+     * serialization. When this finishes, resets serializedLength.
      */
     @Override
     public final int subSerialize(WritableFontData newData) {

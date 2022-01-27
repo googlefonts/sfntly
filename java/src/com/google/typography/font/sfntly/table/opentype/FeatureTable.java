@@ -25,8 +25,7 @@ public class FeatureTable extends RecordsTable<NumRecord> {
     return FIELD_COUNT;
   }
 
-  static class Builder extends
-  RecordsTable.Builder<FeatureTable, NumRecord> {
+  static class Builder extends RecordsTable.Builder<FeatureTable, NumRecord> {
 
     Builder() {
       super();
@@ -48,7 +47,7 @@ public class FeatureTable extends RecordsTable<NumRecord> {
     protected RecordList<NumRecord> readRecordList(ReadableFontData data, int base) {
       if (base != 0) {
         throw new UnsupportedOperationException();
-      }      
+      }
       return new NumRecordList(data);
     }
 
@@ -63,4 +62,3 @@ public class FeatureTable extends RecordsTable<NumRecord> {
     }
   }
 }
-

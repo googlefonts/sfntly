@@ -21,9 +21,7 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.TableBasedTableBuilder;
-
 import java.util.EnumSet;
-import java.util.Iterator;
 
 /**
  * An OS/2 table - 'OS/2'.
@@ -32,57 +30,46 @@ import java.util.Iterator;
  */
 public final class OS2Table extends Table {
 
-  /**
-   * Offsets to specific elements in the underlying data. These offsets are
-   * relative to the start of the table or the start of sub-blocks within the
-   * table.
-   */
-  private enum Offset {
-    version(0),
-    xAvgCharWidth(2),
-    usWeightClass(4),
-    usWidthClass(6),
-    fsType(8),
-    ySubscriptXSize(10),
-    ySubscriptYSize(12),
-    ySubscriptXOffset(14),
-    ySubscriptYOffset(16),
-    ySuperscriptXSize(18),
-    ySuperscriptYSize(20),
-    ySuperscriptXOffset(22),
-    ySuperscriptYOffset(24),
-    yStrikeoutSize(26),
-    yStrikeoutPosition(28),
-    sFamilyClass(30),
-    panose(32),
-    panoseLength(10), // length of panose bytes
-    ulUnicodeRange1(42),
-    ulUnicodeRange2(46),
-    ulUnicodeRange3(50),
-    ulUnicodeRange4(54),
-    achVendId(58),
-    achVendIdLength(4), // length of ach vend id bytes
-    fsSelection(62),
-    usFirstCharIndex(64),
-    usLastCharIndex(66),
-    sTypoAscender(68),
-    sTypoDescender(70),
-    sTypoLineGap(72),
-    usWinAscent(74),
-    usWinDescent(76),
-    ulCodePageRange1(78),
-    ulCodePageRange2(82),
-    sxHeight(86),
-    sCapHeight(88),
-    usDefaultChar(90),
-    usBreakChar(92),
-    usMaxContext(94);
-
-    private final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
+  private interface Offset {
+    int version = 0;
+    int xAvgCharWidth = 2;
+    int usWeightClass = 4;
+    int usWidthClass = 6;
+    int fsType = 8;
+    int ySubscriptXSize = 10;
+    int ySubscriptYSize = 12;
+    int ySubscriptXOffset = 14;
+    int ySubscriptYOffset = 16;
+    int ySuperscriptXSize = 18;
+    int ySuperscriptYSize = 20;
+    int ySuperscriptXOffset = 22;
+    int ySuperscriptYOffset = 24;
+    int yStrikeoutSize = 26;
+    int yStrikeoutPosition = 28;
+    int sFamilyClass = 30;
+    int panose = 32;
+    int panoseLength = 10; // length of panose bytes
+    int ulUnicodeRange1 = 42;
+    int ulUnicodeRange2 = 46;
+    int ulUnicodeRange3 = 50;
+    int ulUnicodeRange4 = 54;
+    int achVendId = 58;
+    int achVendIdLength = 4; // length of ach vend id bytes
+    int fsSelection = 62;
+    int usFirstCharIndex = 64;
+    int usLastCharIndex = 66;
+    int sTypoAscender = 68;
+    int sTypoDescender = 70;
+    int sTypoLineGap = 72;
+    int usWinAscent = 74;
+    int usWinDescent = 76;
+    int ulCodePageRange1 = 78;
+    int ulCodePageRange2 = 82;
+    int sxHeight = 86;
+    int sCapHeight = 88;
+    int usDefaultChar = 90;
+    int usBreakChar = 92;
+    int usMaxContext = 94;
   }
 
   private OS2Table(Header header, ReadableFontData data) {
@@ -90,11 +77,11 @@ public final class OS2Table extends Table {
   }
 
   public int tableVersion() {
-    return this.data.readUShort(Offset.version.offset);
+    return data.readUShort(Offset.version);
   }
 
   public int xAvgCharWidth() {
-    return this.data.readShort(Offset.xAvgCharWidth.offset);
+    return data.readShort(Offset.xAvgCharWidth);
   }
 
   public enum WeightClass {
@@ -120,7 +107,7 @@ public final class OS2Table extends Table {
     }
 
     public int value() {
-      return this.value;
+      return value;
     }
 
     public boolean equals(int value) {
@@ -138,7 +125,7 @@ public final class OS2Table extends Table {
   }
 
   public int usWeightClass() {
-    return this.data.readUShort(Offset.usWeightClass.offset);
+    return data.readUShort(Offset.usWeightClass);
   }
 
   public enum WidthClass {
@@ -160,7 +147,7 @@ public final class OS2Table extends Table {
     }
 
     public int value() {
-      return this.value;
+      return value;
     }
 
     public boolean equals(int value) {
@@ -178,12 +165,10 @@ public final class OS2Table extends Table {
   }
 
   public int usWidthClass() {
-    return this.data.readUShort(Offset.usWidthClass.offset);
+    return data.readUShort(Offset.usWidthClass);
   }
 
-  /**
-   * Flags to indicate the embedding licensing rights for a font.
-   */
+  /** Flags to indicate the embedding licensing rights for a font. */
   public enum EmbeddingFlags {
     Reserved0,
     RestrictedLicenseEmbedding,
@@ -202,22 +187,12 @@ public final class OS2Table extends Table {
     Reserved14,
     Reserved15;
 
-    /**
-     * Returns the bit mask corresponding to this embedding flag.
-     *
-     * @return the bit mask corresponding to this embedding flag
-     */
+    /** @return the bit mask corresponding to this embedding flag */
     public int mask() {
-      return 1 << this.ordinal();
+      return 1 << ordinal();
     }
 
-    /**
-     * Generates an EnumSet\<EmbeddingFlags\> representation of the supplied
-     * unsigned short.
-     *
-     * @param value the unsigned short
-     * @return a new EnumSet\<EmbeddingFlags\>
-     */
+    /** Generates an EnumSet&lt;EmbeddingFlags&gt; representation of the supplied unsigned short. */
     public static EnumSet<EmbeddingFlags> asSet(int value) {
       EnumSet<EmbeddingFlags> set = EnumSet.noneOf(EmbeddingFlags.class);
       for (EmbeddingFlags flag : EmbeddingFlags.values()) {
@@ -228,13 +203,7 @@ public final class OS2Table extends Table {
       return set;
     }
 
-    /**
-     * Generates an unsigned short representation of the provided
-     * EnumSet\<EmbeddingFlags\>.
-     *
-     * @param flagSet the set of flags
-     * @return the unsigned short representation of the provided flagSet
-     */
+    /** Generates an unsigned short representation of the provided flags. */
     public static int asUShort(EnumSet<EmbeddingFlags> flagSet) {
       int flags = 0;
       for (EmbeddingFlags flag : flagSet) {
@@ -243,105 +212,91 @@ public final class OS2Table extends Table {
       return flags;
     }
 
-    /**
-     * Takes an EnumSet\<EmbeddingFlags\> representation of the fsType and
-     * returns whether or not the fsType is Installable Embedding. The fsType is
-     * Installable Editing iff none of the fsType bits are set.
-     *
-     * @param flagSet the set of flags
-     * @return true if the font has InstallableEmbedding
-     */
+    /** Tests the {@code fsType} flags. */
     public static boolean isInstallableEditing(EnumSet<EmbeddingFlags> flagSet) {
       return flagSet.isEmpty();
     }
 
-    /**
-     * Takes the unsigned short representation of the fsType and returns whether
-     * or not the fsType is Installable Embedding. The fsType is Installable
-     * Editing iff none of the fsType bits are set.
-     *
-     * @param value the value to check
-     * @return true if the font has InstallableEmbedding
-     */
+    /** Tests the {@code fsType} flags. */
     public static boolean isInstallableEditing(int value) {
       return value == 0;
     }
   }
 
   public EnumSet<EmbeddingFlags> fsType() {
-    return EmbeddingFlags.asSet(this.fsTypeAsInt());
+    return EmbeddingFlags.asSet(fsTypeAsInt());
   }
 
   public int fsTypeAsInt() {
-    return this.data.readUShort(Offset.fsType.offset);
+    return data.readUShort(Offset.fsType);
   }
 
   public int ySubscriptXSize() {
-    return this.data.readShort(Offset.ySubscriptXSize.offset);
+    return data.readShort(Offset.ySubscriptXSize);
   }
 
   public int ySubscriptYSize() {
-    return this.data.readShort(Offset.ySubscriptYSize.offset);
+    return data.readShort(Offset.ySubscriptYSize);
   }
 
   public int ySubscriptXOffset() {
-    return this.data.readShort(Offset.ySubscriptXOffset.offset);
+    return data.readShort(Offset.ySubscriptXOffset);
   }
 
   public int ySubscriptYOffset() {
-    return this.data.readShort(Offset.ySubscriptYOffset.offset);
+    return data.readShort(Offset.ySubscriptYOffset);
   }
 
   public int ySuperscriptXSize() {
-    return this.data.readShort(Offset.ySuperscriptXSize.offset);
+    return data.readShort(Offset.ySuperscriptXSize);
   }
 
   public int ySuperscriptYSize() {
-    return this.data.readShort(Offset.ySuperscriptYSize.offset);
+    return data.readShort(Offset.ySuperscriptYSize);
   }
 
   public int ySuperscriptXOffset() {
-    return this.data.readShort(Offset.ySuperscriptXOffset.offset);
+    return data.readShort(Offset.ySuperscriptXOffset);
   }
 
   public int ySuperscriptYOffset() {
-    return this.data.readShort(Offset.ySuperscriptYOffset.offset);
+    return data.readShort(Offset.ySuperscriptYOffset);
   }
 
   public int yStrikeoutSize() {
-    return this.data.readShort(Offset.yStrikeoutSize.offset);
+    return data.readShort(Offset.yStrikeoutSize);
   }
 
   public int yStrikeoutPosition() {
-    return this.data.readShort(Offset.yStrikeoutPosition.offset);
+    return data.readShort(Offset.yStrikeoutPosition);
   }
 
   // TODO(stuartg): IBM family enum?
   public int sFamilyClass() {
-    return this.data.readShort(Offset.sFamilyClass.offset);
+    return data.readShort(Offset.sFamilyClass);
   }
 
   // TODO(stuartg): panose class? individual getters for the panose values?
   public byte[] panose() {
     byte[] panose = new byte[10];
-    this.data.readBytes(Offset.panose.offset, panose, 0, panose.length);
+    data.readBytes(Offset.panose, panose, 0, panose.length);
     return panose;
   }
 
   public long ulUnicodeRange1() {
-    return this.data.readULong(Offset.ulUnicodeRange1.offset);
+    return data.readULong(Offset.ulUnicodeRange1);
   }
 
   public long ulUnicodeRange2() {
-    return this.data.readULong(Offset.ulUnicodeRange2.offset);
+    return data.readULong(Offset.ulUnicodeRange2);
   }
 
   public long ulUnicodeRange3() {
-    return this.data.readULong(Offset.ulUnicodeRange3.offset);
+    return data.readULong(Offset.ulUnicodeRange3);
   }
 
   public long ulUnicodeRange4() {
-    return this.data.readULong(Offset.ulUnicodeRange4.offset);
+    return data.readULong(Offset.ulUnicodeRange4);
   }
 
   public enum UnicodeRange {
@@ -502,9 +457,7 @@ public final class OS2Table extends Table {
 
     public static long[] asArray(EnumSet<UnicodeRange> rangeSet) {
       long[] range = new long[4];
-      Iterator<UnicodeRange> iter = rangeSet.iterator();
-      while (iter.hasNext()) {
-        UnicodeRange ur = iter.next();
+      for (UnicodeRange ur : rangeSet) {
         int urSegment = ur.ordinal() / 32;
         long urFlag = 1 << (ur.ordinal() % 32);
         range[urSegment] |= urFlag;
@@ -515,18 +468,18 @@ public final class OS2Table extends Table {
 
   public EnumSet<UnicodeRange> ulUnicodeRange() {
     return UnicodeRange.asSet(
-        this.ulUnicodeRange1(), this.ulUnicodeRange2(),
-        this.ulUnicodeRange3(), this.ulUnicodeRange4());
+        ulUnicodeRange1(), ulUnicodeRange2(),
+        ulUnicodeRange3(), ulUnicodeRange4());
   }
 
   public byte[] achVendId() {
     byte[] b = new byte[4];
-    this.data.readBytes(Offset.achVendId.offset, b, 0, b.length);
+    data.readBytes(Offset.achVendId, b, 0, b.length);
     return b;
   }
 
   public int fsSelectionAsInt() {
-    return this.data.readUShort(Offset.fsSelection.offset);
+    return data.readUShort(Offset.fsSelection);
   }
 
   public enum FsSelection {
@@ -542,7 +495,7 @@ public final class OS2Table extends Table {
     OBLIQUE;
 
     public int mask() {
-      return 1 << this.ordinal();
+      return 1 << ordinal();
     }
 
     public static EnumSet<FsSelection> asSet(int value) {
@@ -557,9 +510,7 @@ public final class OS2Table extends Table {
 
     public static int asInt(EnumSet<FsSelection> fsSelectionSet) {
       int value = 0;
-      Iterator<FsSelection> iter = fsSelectionSet.iterator();
-      while (iter.hasNext()) {
-        FsSelection fsSelection = iter.next();
+      for (FsSelection fsSelection : fsSelectionSet) {
         value |= fsSelection.mask();
       }
       return value;
@@ -567,43 +518,43 @@ public final class OS2Table extends Table {
   }
 
   public EnumSet<FsSelection> fsSelection() {
-    return FsSelection.asSet(this.fsSelectionAsInt());
+    return FsSelection.asSet(fsSelectionAsInt());
   }
 
   public int usFirstCharIndex() {
-    return this.data.readUShort(Offset.usFirstCharIndex.offset);
+    return data.readUShort(Offset.usFirstCharIndex);
   }
 
   public int usLastCharIndex() {
-    return this.data.readUShort(Offset.usLastCharIndex.offset);
+    return data.readUShort(Offset.usLastCharIndex);
   }
 
   public int sTypoAscender() {
-    return this.data.readShort(Offset.sTypoAscender.offset);
+    return data.readShort(Offset.sTypoAscender);
   }
 
   public int sTypoDescender() {
-    return this.data.readShort(Offset.sTypoDescender.offset);
+    return data.readShort(Offset.sTypoDescender);
   }
 
   public int sTypoLineGap() {
-    return this.data.readShort(Offset.sTypoLineGap.offset);
+    return data.readShort(Offset.sTypoLineGap);
   }
 
   public int usWinAscent() {
-    return this.data.readUShort(Offset.usWinAscent.offset);
+    return data.readUShort(Offset.usWinAscent);
   }
 
   public int usWinDescent() {
-    return this.data.readUShort(Offset.usWinDescent.offset);
+    return data.readUShort(Offset.usWinDescent);
   }
 
   public long ulCodePageRange1() {
-    return this.data.readULong(Offset.ulCodePageRange1.offset);
+    return data.readULong(Offset.ulCodePageRange1);
   }
 
   public long ulCodePageRange2() {
-    return this.data.readULong(Offset.ulCodePageRange2.offset);
+    return data.readULong(Offset.ulCodePageRange2);
   }
 
   public enum CodePageRange {
@@ -700,9 +651,7 @@ public final class OS2Table extends Table {
 
     public static long[] asArray(EnumSet<CodePageRange> rangeSet) {
       long[] range = new long[4];
-      Iterator<CodePageRange> iter = rangeSet.iterator();
-      while (iter.hasNext()) {
-        CodePageRange ur = iter.next();
+      for (CodePageRange ur : rangeSet) {
         int urSegment = ur.ordinal() / 32;
         long urFlag = 1 << (ur.ordinal() % 32);
         range[urSegment] |= urFlag;
@@ -712,42 +661,31 @@ public final class OS2Table extends Table {
   }
 
   public EnumSet<CodePageRange> ulCodePageRange() {
-    return CodePageRange.asSet(this.ulCodePageRange1(), this.ulCodePageRange1());
+    return CodePageRange.asSet(ulCodePageRange1(), ulCodePageRange1());
   }
 
   public int sxHeight() {
-    return this.data.readShort(Offset.sxHeight.offset);
+    return data.readShort(Offset.sxHeight);
   }
 
   public int sCapHeight() {
-    return this.data.readShort(Offset.sCapHeight.offset);
+    return data.readShort(Offset.sCapHeight);
   }
 
   public int usDefaultChar() {
-    return this.data.readUShort(Offset.usDefaultChar.offset);
+    return data.readUShort(Offset.usDefaultChar);
   }
 
   public int usBreakChar() {
-    return this.data.readUShort(Offset.usBreakChar.offset);
+    return data.readUShort(Offset.usBreakChar);
   }
 
   public int usMaxContext() {
-    return this.data.readUShort(Offset.usMaxContext.offset);
+    return data.readUShort(Offset.usMaxContext);
   }
 
-  /**
-   * A builder for the OS/2 table = 'OS/2'.
-   *
-   */
   public static class Builder extends TableBasedTableBuilder<OS2Table> {
 
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
@@ -762,355 +700,354 @@ public final class OS2Table extends Table {
 
     @Override
     protected OS2Table subBuildTable(ReadableFontData data) {
-      return new OS2Table(this.header(), data);
+      return new OS2Table(header(), data);
     }
 
     public int tableVersion() {
-      return this.internalReadData().readUShort(Offset.version.offset);
+      return internalReadData().readUShort(Offset.version);
     }
 
     public void setTableVersion(int version) {
-      this.internalWriteData().writeUShort(Offset.version.offset, version);
+      internalWriteData().writeUShort(Offset.version, version);
     }
 
     public int xAvgCharWidth() {
-      return this.internalReadData().readShort(Offset.xAvgCharWidth.offset);
+      return internalReadData().readShort(Offset.xAvgCharWidth);
     }
 
     public void setXAvgCharWidth(int width) {
-      this.internalWriteData().writeShort(Offset.xAvgCharWidth.offset, width);
+      internalWriteData().writeShort(Offset.xAvgCharWidth, width);
     }
 
     public int usWeightClass() {
-      return this.internalReadData().readUShort(Offset.usWeightClass.offset);
+      return internalReadData().readUShort(Offset.usWeightClass);
     }
 
     public void setUsWeightClass(int weight) {
-      this.internalWriteData().writeUShort(Offset.usWeightClass.offset, weight);
+      internalWriteData().writeUShort(Offset.usWeightClass, weight);
     }
 
     public int usWidthClass() {
-      return this.internalReadData().readUShort(Offset.usWidthClass.offset);
+      return internalReadData().readUShort(Offset.usWidthClass);
     }
 
     public void setUsWidthClass(int width) {
-      this.internalWriteData().writeUShort(Offset.usWidthClass.offset, width);
+      internalWriteData().writeUShort(Offset.usWidthClass, width);
     }
 
     public EnumSet<EmbeddingFlags> fsType() {
-      return EmbeddingFlags.asSet(this.fsTypeAsInt());
+      return EmbeddingFlags.asSet(fsTypeAsInt());
     }
 
     public int fsTypeAsInt() {
-      return this.internalReadData().readUShort(Offset.fsType.offset);
+      return internalReadData().readUShort(Offset.fsType);
     }
 
     public void setFsType(EnumSet<EmbeddingFlags> flagSet) {
-      this.setFsType(EmbeddingFlags.asUShort(flagSet));
+      setFsType(EmbeddingFlags.asUShort(flagSet));
     }
 
     public void setFsType(int fsType) {
-      this.internalWriteData().writeUShort(Offset.fsType.offset, fsType);
+      internalWriteData().writeUShort(Offset.fsType, fsType);
     }
 
     public int ySubscriptXSize() {
-      return this.internalReadData().readShort(Offset.ySubscriptXSize.offset);
+      return internalReadData().readShort(Offset.ySubscriptXSize);
     }
 
     public void setYSubscriptXSize(int size) {
-      this.internalWriteData().writeShort(Offset.ySubscriptXSize.offset, size);
+      internalWriteData().writeShort(Offset.ySubscriptXSize, size);
     }
 
     public int ySubscriptYSize() {
-      return this.internalReadData().readShort(Offset.ySubscriptYSize.offset);
+      return internalReadData().readShort(Offset.ySubscriptYSize);
     }
 
     public void setYSubscriptYSize(int size) {
-      this.internalWriteData().writeShort(Offset.ySubscriptYSize.offset, size);
+      internalWriteData().writeShort(Offset.ySubscriptYSize, size);
     }
 
     public int ySubscriptXOffset() {
-      return this.internalReadData().readShort(Offset.ySubscriptXOffset.offset);
+      return internalReadData().readShort(Offset.ySubscriptXOffset);
     }
 
     public void setYSubscriptXOffset(int offset) {
-      this.internalWriteData().writeShort(Offset.ySubscriptXOffset.offset, offset);
+      internalWriteData().writeShort(Offset.ySubscriptXOffset, offset);
     }
 
     public int ySubscriptYOffset() {
-      return this.internalReadData().readShort(Offset.ySubscriptYOffset.offset);
+      return internalReadData().readShort(Offset.ySubscriptYOffset);
     }
 
     public void setYSubscriptYOffset(int offset) {
-      this.internalWriteData().writeShort(Offset.ySubscriptYOffset.offset, offset);
+      internalWriteData().writeShort(Offset.ySubscriptYOffset, offset);
     }
 
     public int ySuperscriptXSize() {
-      return this.internalReadData().readShort(Offset.ySuperscriptXSize.offset);
+      return internalReadData().readShort(Offset.ySuperscriptXSize);
     }
 
     public void setYSuperscriptXSize(int size) {
-      this.internalWriteData().writeShort(Offset.ySuperscriptXSize.offset, size);
+      internalWriteData().writeShort(Offset.ySuperscriptXSize, size);
     }
 
     public int ySuperscriptYSize() {
-      return this.internalReadData().readShort(Offset.ySuperscriptYSize.offset);
+      return internalReadData().readShort(Offset.ySuperscriptYSize);
     }
 
     public void setYSuperscriptYSize(int size) {
-      this.internalWriteData().writeShort(Offset.ySuperscriptYSize.offset, size);
+      internalWriteData().writeShort(Offset.ySuperscriptYSize, size);
     }
 
     public int ySuperscriptXOffset() {
-      return this.internalReadData().readShort(Offset.ySuperscriptXOffset.offset);
+      return internalReadData().readShort(Offset.ySuperscriptXOffset);
     }
 
     public void setYSuperscriptXOffset(int offset) {
-      this.internalWriteData().writeShort(Offset.ySuperscriptXOffset.offset, offset);
+      internalWriteData().writeShort(Offset.ySuperscriptXOffset, offset);
     }
 
     public int ySuperscriptYOffset() {
-      return this.internalReadData().readShort(Offset.ySuperscriptYOffset.offset);
+      return internalReadData().readShort(Offset.ySuperscriptYOffset);
     }
 
     public void setYSuperscriptYOffset(int offset) {
-      this.internalWriteData().writeShort(Offset.ySuperscriptYOffset.offset, offset);
+      internalWriteData().writeShort(Offset.ySuperscriptYOffset, offset);
     }
 
     public int yStrikeoutSize() {
-      return this.internalReadData().readShort(Offset.yStrikeoutSize.offset);
+      return internalReadData().readShort(Offset.yStrikeoutSize);
     }
 
     public void setYStrikeoutSize(int size) {
-      this.internalWriteData().writeShort(Offset.yStrikeoutSize.offset, size);
+      internalWriteData().writeShort(Offset.yStrikeoutSize, size);
     }
 
     public int yStrikeoutPosition() {
-      return this.internalReadData().readShort(Offset.yStrikeoutPosition.offset);
+      return internalReadData().readShort(Offset.yStrikeoutPosition);
     }
 
     public void setYStrikeoutPosition(int position) {
-      this.internalWriteData().writeShort(Offset.yStrikeoutPosition.offset, position);
+      internalWriteData().writeShort(Offset.yStrikeoutPosition, position);
     }
 
     public int sFamilyClass() {
-      return this.internalReadData().readShort(Offset.sFamilyClass.offset);
+      return internalReadData().readShort(Offset.sFamilyClass);
     }
 
     public void setSFamilyClass(int family) {
-      this.internalWriteData().writeShort(Offset.sFamilyClass.offset, family);
+      internalWriteData().writeShort(Offset.sFamilyClass, family);
     }
 
     public byte[] panose() {
-      byte[] panose = new byte[Offset.panoseLength.offset];
-      this.internalReadData().readBytes(Offset.panose.offset, panose, 0, panose.length);
+      byte[] panose = new byte[Offset.panoseLength];
+      internalReadData().readBytes(Offset.panose, panose, 0, panose.length);
       return panose;
     }
 
     public void setPanose(byte[] panose) {
-      if (panose.length != Offset.panoseLength.offset) {
+      if (panose.length != Offset.panoseLength) {
         throw new IllegalArgumentException("Panose bytes must be exactly 10 in length.");
       }
-      this.internalWriteData().writeBytes(Offset.panose.offset, panose, 0, panose.length);
+      internalWriteData().writeBytes(Offset.panose, panose, 0, panose.length);
     }
 
     public long ulUnicodeRange1() {
-      return this.internalReadData().readULong(Offset.ulUnicodeRange1.offset);
+      return internalReadData().readULong(Offset.ulUnicodeRange1);
     }
 
     public void setUlUnicodeRange1(long range) {
-      this.internalWriteData().writeULong(Offset.ulUnicodeRange1.offset, range);
+      internalWriteData().writeULong(Offset.ulUnicodeRange1, range);
     }
 
     public long ulUnicodeRange2() {
-      return this.internalReadData().readULong(Offset.ulUnicodeRange2.offset);
+      return internalReadData().readULong(Offset.ulUnicodeRange2);
     }
 
     public void setUlUnicodeRange2(long range) {
-      this.internalWriteData().writeULong(Offset.ulUnicodeRange2.offset, range);
+      internalWriteData().writeULong(Offset.ulUnicodeRange2, range);
     }
 
     public long ulUnicodeRange3() {
-      return this.internalReadData().readULong(Offset.ulUnicodeRange3.offset);
+      return internalReadData().readULong(Offset.ulUnicodeRange3);
     }
 
     public void setUlUnicodeRange3(long range) {
-      this.internalWriteData().writeULong(Offset.ulUnicodeRange3.offset, range);
+      internalWriteData().writeULong(Offset.ulUnicodeRange3, range);
     }
 
     public long ulUnicodeRange4() {
-      return this.internalReadData().readULong(Offset.ulUnicodeRange4.offset);
+      return internalReadData().readULong(Offset.ulUnicodeRange4);
     }
 
     public void setUlUnicodeRange4(long range) {
-      this.internalWriteData().writeULong(Offset.ulUnicodeRange4.offset, range);
+      internalWriteData().writeULong(Offset.ulUnicodeRange4, range);
     }
 
     public EnumSet<UnicodeRange> ulUnicodeRange() {
-      return UnicodeRange.asSet(this.ulUnicodeRange1(), this.ulUnicodeRange2(),
-          this.ulUnicodeRange3(), this.ulUnicodeRange4());
+      return UnicodeRange.asSet(
+          ulUnicodeRange1(), ulUnicodeRange2(), ulUnicodeRange3(), ulUnicodeRange4());
     }
 
     public void setUlUnicodeRange(EnumSet<UnicodeRange> rangeSet) {
       long[] range = UnicodeRange.asArray(rangeSet);
-      this.setUlUnicodeRange1(range[0]);
-      this.setUlUnicodeRange2(range[1]);
-      this.setUlUnicodeRange3(range[2]);
-      this.setUlUnicodeRange4(range[3]);
+      setUlUnicodeRange1(range[0]);
+      setUlUnicodeRange2(range[1]);
+      setUlUnicodeRange3(range[2]);
+      setUlUnicodeRange4(range[3]);
     }
 
     public byte[] achVendId() {
-      byte[] b = new byte[Offset.achVendIdLength.offset];
-      this.internalReadData().readBytes(Offset.achVendId.offset, b, 0, b.length);
+      byte[] b = new byte[Offset.achVendIdLength];
+      internalReadData().readBytes(Offset.achVendId, b, 0, b.length);
       return b;
     }
 
     /**
      * Sets the achVendId field.
      *
-     *  This field is 4 bytes in length and only the first 4 bytes of the byte
-     * array will be written. If the byte array is less than 4 bytes it will be
-     * padded out with space characters (0x20).
+     * <p>This field is 4 bytes in length and only the first 4 bytes of the byte array will be
+     * written. If the byte array is less than 4 bytes it will be padded out with space characters
+     * (0x20).
      *
      * @param b ach Vendor Id
      */
     public void setAchVendId(byte[] b) {
-      this.internalWriteData().writeBytesPad(
-          Offset.achVendId.offset, b, 0, Offset.achVendIdLength.offset, (byte) ' ');
+      internalWriteData().writeBytesPad(Offset.achVendId, b, 0, Offset.achVendIdLength, (byte) ' ');
     }
 
     public int fsSelectionAsInt() {
-      return this.internalReadData().readUShort(Offset.fsSelection.offset);
+      return internalReadData().readUShort(Offset.fsSelection);
     }
 
     public void setFsSelection(int fsSelection) {
-      this.internalWriteData().writeUShort(Offset.fsSelection.offset, fsSelection);
+      internalWriteData().writeUShort(Offset.fsSelection, fsSelection);
     }
 
     public void fsSelection(EnumSet<FsSelection> fsSelection) {
-      this.setFsSelection(FsSelection.asInt(fsSelection));
+      setFsSelection(FsSelection.asInt(fsSelection));
     }
 
     public int usFirstCharIndex() {
-      return this.internalReadData().readUShort(Offset.usFirstCharIndex.offset);
+      return internalReadData().readUShort(Offset.usFirstCharIndex);
     }
 
     public void setUsFirstCharIndex(int firstIndex) {
-      this.internalWriteData().writeUShort(Offset.usFirstCharIndex.offset, firstIndex);
+      internalWriteData().writeUShort(Offset.usFirstCharIndex, firstIndex);
     }
 
     public int usLastCharIndex() {
-      return this.internalReadData().readUShort(Offset.usLastCharIndex.offset);
+      return internalReadData().readUShort(Offset.usLastCharIndex);
     }
 
     public void setUsLastCharIndex(int lastIndex) {
-      this.internalWriteData().writeUShort(Offset.usLastCharIndex.offset, lastIndex);
+      internalWriteData().writeUShort(Offset.usLastCharIndex, lastIndex);
     }
 
     public int sTypoAscender() {
-      return this.internalReadData().readShort(Offset.sTypoAscender.offset);
+      return internalReadData().readShort(Offset.sTypoAscender);
     }
 
     public void setSTypoAscender(int ascender) {
-      this.internalWriteData().writeShort(Offset.sTypoAscender.offset, ascender);
+      internalWriteData().writeShort(Offset.sTypoAscender, ascender);
     }
 
     public int sTypoDescender() {
-      return this.internalReadData().readShort(Offset.sTypoDescender.offset);
+      return internalReadData().readShort(Offset.sTypoDescender);
     }
 
     public void setSTypoDescender(int descender) {
-      this.internalWriteData().writeShort(Offset.sTypoDescender.offset, descender);
+      internalWriteData().writeShort(Offset.sTypoDescender, descender);
     }
 
     public int sTypoLineGap() {
-      return this.internalReadData().readShort(Offset.sTypoLineGap.offset);
+      return internalReadData().readShort(Offset.sTypoLineGap);
     }
 
     public void setSTypoLineGap(int lineGap) {
-      this.internalWriteData().writeShort(Offset.sTypoLineGap.offset, lineGap);
+      internalWriteData().writeShort(Offset.sTypoLineGap, lineGap);
     }
 
     public int usWinAscent() {
-      return this.internalReadData().readUShort(Offset.usWinAscent.offset);
+      return internalReadData().readUShort(Offset.usWinAscent);
     }
 
     public void setUsWinAscent(int ascent) {
-      this.internalWriteData().writeUShort(Offset.usWinAscent.offset, ascent);
+      internalWriteData().writeUShort(Offset.usWinAscent, ascent);
     }
 
     public int usWinDescent() {
-      return this.internalReadData().readUShort(Offset.usWinDescent.offset);
+      return internalReadData().readUShort(Offset.usWinDescent);
     }
 
     public void setUsWinDescent(int descent) {
-      this.internalWriteData().writeUShort(Offset.usWinAscent.offset, descent);
+      internalWriteData().writeUShort(Offset.usWinAscent, descent);
     }
 
     public long ulCodePageRange1() {
-      return this.internalReadData().readULong(Offset.ulCodePageRange1.offset);
+      return internalReadData().readULong(Offset.ulCodePageRange1);
     }
 
     public void setUlCodePageRange1(long range) {
-      this.internalWriteData().writeULong(Offset.ulCodePageRange1.offset, range);
+      internalWriteData().writeULong(Offset.ulCodePageRange1, range);
     }
 
     public long ulCodePageRange2() {
-      return this.internalReadData().readULong(Offset.ulCodePageRange2.offset);
+      return internalReadData().readULong(Offset.ulCodePageRange2);
     }
 
     public void setUlCodePageRange2(long range) {
-      this.internalWriteData().writeULong(Offset.ulCodePageRange2.offset, range);
+      internalWriteData().writeULong(Offset.ulCodePageRange2, range);
     }
 
     public EnumSet<CodePageRange> ulCodePageRange() {
-      return CodePageRange.asSet(this.ulCodePageRange1(), this.ulCodePageRange2());
+      return CodePageRange.asSet(ulCodePageRange1(), ulCodePageRange2());
     }
 
     public void setUlCodePageRange(EnumSet<CodePageRange> rangeSet) {
       long[] range = CodePageRange.asArray(rangeSet);
-      this.setUlCodePageRange1(range[0]);
-      this.setUlCodePageRange2(range[1]);
+      setUlCodePageRange1(range[0]);
+      setUlCodePageRange2(range[1]);
     }
 
     public int sxHeight() {
-      return this.internalReadData().readShort(Offset.sxHeight.offset);
+      return internalReadData().readShort(Offset.sxHeight);
     }
 
     public void setSxHeight(int height) {
-      this.internalWriteData().writeShort(Offset.sxHeight.offset, height);
+      internalWriteData().writeShort(Offset.sxHeight, height);
     }
 
     public int sCapHeight() {
-      return this.internalReadData().readShort(Offset.sCapHeight.offset);
+      return internalReadData().readShort(Offset.sCapHeight);
     }
 
     public void setSCapHeight(int height) {
-      this.internalWriteData().writeShort(Offset.sCapHeight.offset, height);
+      internalWriteData().writeShort(Offset.sCapHeight, height);
     }
 
     public int usDefaultChar() {
-      return this.internalReadData().readUShort(Offset.usDefaultChar.offset);
+      return internalReadData().readUShort(Offset.usDefaultChar);
     }
 
     public void setUsDefaultChar(int defaultChar) {
-      this.internalWriteData().writeUShort(Offset.usDefaultChar.offset, defaultChar);
+      internalWriteData().writeUShort(Offset.usDefaultChar, defaultChar);
     }
 
     public int usBreakChar() {
-      return this.internalReadData().readUShort(Offset.usBreakChar.offset);
+      return internalReadData().readUShort(Offset.usBreakChar);
     }
 
     public void setUsBreakChar(int breakChar) {
-      this.internalWriteData().writeUShort(Offset.usBreakChar.offset, breakChar);
+      internalWriteData().writeUShort(Offset.usBreakChar, breakChar);
     }
 
     public int usMaxContext() {
-      return this.internalReadData().readUShort(Offset.usMaxContext.offset);
+      return internalReadData().readUShort(Offset.usMaxContext);
     }
 
     public void setUsMaxContext(int maxContext) {
-      this.internalWriteData().writeUShort(Offset.usMaxContext.offset, maxContext);
+      internalWriteData().writeUShort(Offset.usMaxContext, maxContext);
     }
   }
 }

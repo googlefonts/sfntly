@@ -23,8 +23,8 @@ import java.io.InputStream;
 /**
  * An input stream for reading font data.
  *
- * The data types used are as listed:
- * <table>
+ * <p>The data types used are as listed:
+ *
  * <table>
  * <tr>
  * <td>BYTE</td>
@@ -87,20 +87,16 @@ import java.io.InputStream;
  */
 public class FontInputStream extends FilterInputStream {
   private long position;
-  private long length;  // bound on length of data to read
+  private long length; // bound on length of data to read
   private boolean bounded;
 
-  /**
-   * Constructor.
-   *
-   * @param is input stream to wrap
-   */
+  /** @param is input stream to wrap */
   public FontInputStream(InputStream is) {
     super(is);
   }
 
   /**
-   * Constructor for a bounded font input stream.
+   * Creates a bounded font input stream.
    *
    * @param is input stream to wrap
    * @param length the maximum length of bytes to read
@@ -113,7 +109,7 @@ public class FontInputStream extends FilterInputStream {
 
   @Override
   public int read() throws IOException {
-    if (this.bounded && this.position >= this.length) {
+    if (bounded && position >= length) {
       return -1;
     }
     int b = super.read();
@@ -125,10 +121,10 @@ public class FontInputStream extends FilterInputStream {
 
   @Override
   public int read(byte[] b, int off, int len) throws IOException {
-    if (this.bounded && this.position >= this.length) {
+    if (bounded && position >= length) {
       return -1;
     }
-    int bytesToRead = bounded ? (int) Math.min(len, this.length - this.position) : len;
+    int bytesToRead = bounded ? (int) Math.min(len, length - position) : len;
     int bytesRead = super.read(b, off, bytesToRead);
     this.position += bytesRead;
     return bytesRead;
@@ -136,7 +132,7 @@ public class FontInputStream extends FilterInputStream {
 
   @Override
   public int read(byte[] b) throws IOException {
-    return this.read(b, 0, b.length);
+    return read(b, 0, b.length);
   }
 
   /**
@@ -145,109 +141,80 @@ public class FontInputStream extends FilterInputStream {
    * @return the current position in bytes
    */
   public long position() {
-    return this.position;
+    return position;
   }
 
-  /**
-   * Read a Char value.
-   *
-   * @return Char value
-   * @throws IOException
-   */
+  /** Read a Char value. */
   public int readChar() throws IOException {
-    return this.read();
+    return read();
   }
 
   /**
    * Read a UShort value.
    *
    * @return UShort value
-   * @throws IOException
    */
   public int readUShort() throws IOException {
-    return 0xffff & (this.read() << 8 | this.read());
+    return 0xffff & (read() << 8 | read());
   }
 
   /**
    * Read a Short value.
    *
    * @return Short value
-   * @throws IOException
    */
   public int readShort() throws IOException {
-    return ((this.read() << 8 | this.read()) << 16) >> 16;
+    return ((read() << 8 | read()) << 16) >> 16;
   }
 
-  /**
-   * Read a UInt24 value.
-   *
-   * @return UInt24 value
-   * @throws IOException
-   */
+  /** Read a UInt24 value. */
   public int readUInt24() throws IOException {
-    return 0xffffff & (this.read() << 16 | this.read() << 8 | this.read());
+    return 0xffffff & (read() << 16 | read() << 8 | read());
   }
 
-  /**
-   * Read a ULong value.
-   *
-   * @return ULong value
-   * @throws IOException
-   */
+  /** Read a ULong value. */
   public long readULong() throws IOException {
-    return 0xffffffffL & this.readLong();
+    return 0xffffffffL & readLong();
   }
 
   /**
-   * Read a ULong value as an int. If the value is not representable as an
-   * integer an <code>ArithmeticException</code> is thrown.
+   * Read a ULong value as an int.
    *
-   * @return Ulong value
-   * @throws IOException
-   * @throws ArithmeticException
+   * @throws ArithmeticException if the value is not representable as an int
    */
   public int readULongAsInt() throws IOException {
-    long ulong = this.readULong();
+    long ulong = readULong();
     if ((ulong & 0x80000000) == 0x80000000) {
       throw new ArithmeticException("Long value too large to fit into an integer.");
     }
     return ((int) ulong) & ~0x80000000;
   }
 
-  /**
-   * Read a Long value.
-   *
-   * @return Long value
-   * @throws IOException
-   */
+  /** Read a Long value. */
   public int readLong() throws IOException {
-    return this.read() << 24 | this.read() << 16 | this.read() << 8 | this.read();
+    return read() << 24 | read() << 16 | read() << 8 | read();
   }
 
-  /**
-   * Read a Fixed value.
-   *
-   * @return Fixed value
-   * @throws IOException
-   */
+  /** Read a Fixed value. */
   public int readFixed() throws IOException {
-    return this.readLong();
+    return readLong();
   }
 
-  /**
-   * Read a DateTime value as a long.
-   *
-   * @return DateTime value.
-   * @throws IOException
-   */
+  /** Read a DateTime value as a long. */
   public long readDateTimeAsLong() throws IOException {
-    return this.readULong() << 32 | this.readULong() ;
+    return readULong() << 32 | readULong();
   }
 
   @Override
   public long skip(long n) throws IOException {
-    long skipped = super.skip(n);
-    this.position += skipped;
+    // The bytes must be read nevertheless for computing the digest.
+    long skipped = 0;
+    while (skipped < n && read() != -1) {
+      skipped++;
+    }
+    if (skipped < n) {
+      throw new IOException(String.format("Cannot skip %d bytes, skipped only %d", n, skipped));
+    }
     return skipped;
   }
 }

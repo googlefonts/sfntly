@@ -10,7 +10,8 @@ import com.google.typography.font.sfntly.table.opentype.component.VisibleSubTabl
 
 public class ReverseChainSingleSubst extends SubstSubtable {
   private static final int FIELD_COUNT = 1;
-  private static final int COVERAGE_INDEX = SubstSubtable.FIELD_SIZE;
+  private static final int COVERAGE_INDEX = 2;
+
   public final CoverageTable coverage;
   public final CoverageArray backtrackGlyphs;
   public final CoverageArray lookAheadGlyphs;
@@ -22,7 +23,7 @@ public class ReverseChainSingleSubst extends SubstSubtable {
   ReverseChainSingleSubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     if (format != 1) {
-      throw new IllegalStateException("Subt format value is " + format + " (should be 1).");
+      throw new IllegalStateException("Subst format value is " + format + " (should be 1).");
     }
     int coverageOffset = getField(COVERAGE_INDEX);
     coverage = new CoverageTable(data.slice(coverageOffset), 0, dataIsCanonical);
@@ -86,7 +87,8 @@ public class ReverseChainSingleSubst extends SubstSubtable {
       }
 
       if (coverageBuilder == null
-          || backtrackGlyphsBuilder == null || lookAheadGlyphsBuilder == null) {
+          || backtrackGlyphsBuilder == null
+          || lookAheadGlyphsBuilder == null) {
         return serializeFromData(newData);
       }
 
@@ -133,8 +135,7 @@ public class ReverseChainSingleSubst extends SubstSubtable {
     }
 
     private void initFromData(ReadableFontData data) {
-      if (backtrackGlyphsBuilder == null
-          || lookAheadGlyphsBuilder == null) {
+      if (backtrackGlyphsBuilder == null || lookAheadGlyphsBuilder == null) {
         NumRecordList records = new NumRecordList(data);
         backtrackGlyphsBuilder = new CoverageArray.Builder(records);
 

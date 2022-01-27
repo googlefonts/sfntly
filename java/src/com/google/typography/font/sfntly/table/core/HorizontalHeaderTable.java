@@ -22,38 +22,32 @@ import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.TableBasedTableBuilder;
 
-
 /**
  * A Horizontal Header table - 'hhea'.
  *
  * @author Stuart Gill
+ * @see "ISO/IEC 14496-22:2015, section 5.2.3"
  */
 public final class HorizontalHeaderTable extends Table {
 
-  /**
-   * Offsets to specific elements in the underlying data. These offsets are relative to the
-   * start of the table or the start of sub-blocks within the table.
-   */
-  private enum Offset {
-    version(0),
-    Ascender(4),
-    Descender(6),
-    LineGap(8),
-    advanceWidthMax(10),
-    minLeftSideBearing(12),
-    minRightSideBearing(14),
-    xMaxExtent(16),
-    caretSlopeRise(18),
-    caretSlopeRun(20),
-    caretOffset(22),
-    metricDataFormat(32),
-    numberOfHMetrics(34);
-
-    private final int offset;
-
-    private Offset(int offset) {
-      this.offset = offset;
-    }
+  private interface Offset {
+    int version = 0;
+    int Ascender = 4;
+    int Descender = 6;
+    int LineGap = 8;
+    int advanceWidthMax = 10;
+    int minLeftSideBearing = 12;
+    int minRightSideBearing = 14;
+    int xMaxExtent = 16;
+    int caretSlopeRise = 18;
+    int caretSlopeRun = 20;
+    int caretOffset = 22;
+    int reserved24 = 24;
+    int reserved26 = 26;
+    int reserved28 = 28;
+    int reserved30 = 30;
+    int metricDataFormat = 32;
+    int numberOfHMetrics = 34;
   }
 
   private HorizontalHeaderTable(Header header, ReadableFontData data) {
@@ -61,72 +55,60 @@ public final class HorizontalHeaderTable extends Table {
   }
 
   public int tableVersion() {
-    return this.data.readFixed(Offset.version.offset);
+    return data.readFixed(Offset.version);
   }
 
   public int ascender() {
-    return this.data.readShort(Offset.Ascender.offset);
+    return data.readShort(Offset.Ascender);
   }
 
   public int descender() {
-    return this.data.readShort(Offset.Descender.offset);
+    return data.readShort(Offset.Descender);
   }
 
   public int lineGap() {
-    return this.data.readShort(Offset.LineGap.offset);
+    return data.readShort(Offset.LineGap);
   }
 
   public int advanceWidthMax() {
-    return this.data.readUShort(Offset.advanceWidthMax.offset);
+    return data.readUShort(Offset.advanceWidthMax);
   }
 
   public int minLeftSideBearing() {
-    return this.data.readShort(Offset.minLeftSideBearing.offset);
+    return data.readShort(Offset.minLeftSideBearing);
   }
 
   public int minRightSideBearing() {
-    return this.data.readShort(Offset.minRightSideBearing.offset);
+    return data.readShort(Offset.minRightSideBearing);
   }
 
   public int xMaxExtent() {
-    return this.data.readShort(Offset.xMaxExtent.offset);
+    return data.readShort(Offset.xMaxExtent);
   }
 
   public int caretSlopeRise() {
-    return this.data.readShort(Offset.caretSlopeRise.offset);
+    return data.readShort(Offset.caretSlopeRise);
   }
 
   public int caretSlopeRun() {
-    return this.data.readShort(Offset.caretSlopeRun.offset);
+    return data.readShort(Offset.caretSlopeRun);
   }
 
   public int caretOffset() {
-    return this.data.readShort(Offset.caretOffset.offset);
+    return data.readShort(Offset.caretOffset);
   }
 
   // TODO(stuartg): an enum?
   public int metricDataFormat() {
-    return this.data.readShort(Offset.metricDataFormat.offset);
+    return data.readShort(Offset.metricDataFormat);
   }
 
   public int numberOfHMetrics() {
-    return this.data.readUShort(Offset.numberOfHMetrics.offset);
+    return data.readUShort(Offset.numberOfHMetrics);
   }
 
-  /**
-   * Builder for a Horizontal Header table - 'hhea'.
-   *
-   */
-  public static class Builder
-  extends TableBasedTableBuilder<HorizontalHeaderTable> {
+  public static class Builder extends TableBasedTableBuilder<HorizontalHeaderTable> {
 
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
@@ -141,112 +123,112 @@ public final class HorizontalHeaderTable extends Table {
 
     @Override
     protected HorizontalHeaderTable subBuildTable(ReadableFontData data) {
-      return new HorizontalHeaderTable(this.header(), data);
+      return new HorizontalHeaderTable(header(), data);
     }
 
     public int tableVersion() {
-      return this.internalReadData().readFixed(Offset.version.offset);
+      return internalReadData().readFixed(Offset.version);
     }
 
     public void setTableVersion(int version) {
-      this.internalWriteData().writeFixed(Offset.version.offset, version);
+      internalWriteData().writeFixed(Offset.version, version);
     }
 
     public int ascender() {
-      return this.internalReadData().readShort(Offset.Ascender.offset);
+      return internalReadData().readShort(Offset.Ascender);
     }
 
     public void setAscender(int version) {
-      this.internalWriteData().writeShort(Offset.Ascender.offset, version);
+      internalWriteData().writeShort(Offset.Ascender, version);
     }
 
     public int descender() {
-      return this.internalReadData().readShort(Offset.Descender.offset);
+      return internalReadData().readShort(Offset.Descender);
     }
 
     public void setDescender(int version) {
-      this.internalWriteData().writeShort(Offset.Descender.offset, version);
+      internalWriteData().writeShort(Offset.Descender, version);
     }
 
     public int lineGap() {
-      return this.internalReadData().readShort(Offset.LineGap.offset);
+      return internalReadData().readShort(Offset.LineGap);
     }
 
     public void setLineGap(int version) {
-      this.internalWriteData().writeShort(Offset.LineGap.offset, version);
+      internalWriteData().writeShort(Offset.LineGap, version);
     }
 
     public int advanceWidthMax() {
-      return this.internalReadData().readUShort(Offset.advanceWidthMax.offset);
+      return internalReadData().readUShort(Offset.advanceWidthMax);
     }
 
     public void setAdvanceWidthMax(int version) {
-      this.internalWriteData().writeUShort(Offset.advanceWidthMax.offset, version);
+      internalWriteData().writeUShort(Offset.advanceWidthMax, version);
     }
 
     public int minLeftSideBearing() {
-      return this.internalReadData().readShort(Offset.minLeftSideBearing.offset);
+      return internalReadData().readShort(Offset.minLeftSideBearing);
     }
 
     public void setMinLeftSideBearing(int version) {
-      this.internalWriteData().writeShort(Offset.minLeftSideBearing.offset, version);
+      internalWriteData().writeShort(Offset.minLeftSideBearing, version);
     }
 
     public int minRightSideBearing() {
-      return this.internalReadData().readShort(Offset.minRightSideBearing.offset);
+      return internalReadData().readShort(Offset.minRightSideBearing);
     }
 
     public void setMinRightSideBearing(int version) {
-      this.internalWriteData().writeShort(Offset.minRightSideBearing.offset, version);
+      internalWriteData().writeShort(Offset.minRightSideBearing, version);
     }
 
     public int xMaxExtent() {
-      return this.internalReadData().readShort(Offset.xMaxExtent.offset);
+      return internalReadData().readShort(Offset.xMaxExtent);
     }
 
     public void setXMaxExtent(int version) {
-      this.internalWriteData().writeShort(Offset.xMaxExtent.offset, version);
+      internalWriteData().writeShort(Offset.xMaxExtent, version);
     }
 
     public int caretSlopeRise() {
-      return this.internalReadData().readUShort(Offset.caretSlopeRise.offset);
+      return internalReadData().readUShort(Offset.caretSlopeRise);
     }
 
     public void setCaretSlopeRise(int version) {
-      this.internalWriteData().writeUShort(Offset.caretSlopeRise.offset, version);
+      internalWriteData().writeUShort(Offset.caretSlopeRise, version);
     }
 
     public int caretSlopeRun() {
-      return this.internalReadData().readUShort(Offset.caretSlopeRun.offset);
+      return internalReadData().readUShort(Offset.caretSlopeRun);
     }
 
     public void setCaretSlopeRun(int version) {
-      this.internalWriteData().writeUShort(Offset.caretSlopeRun.offset, version);
+      internalWriteData().writeUShort(Offset.caretSlopeRun, version);
     }
 
     public int caretOffset() {
-      return this.internalReadData().readUShort(Offset.caretOffset.offset);
+      return internalReadData().readUShort(Offset.caretOffset);
     }
 
     public void setCaretOffset(int version) {
-      this.internalWriteData().writeUShort(Offset.caretOffset.offset, version);
+      internalWriteData().writeUShort(Offset.caretOffset, version);
     }
 
     // TODO(stuartg): an enum?
     public int metricDataFormat() {
-      return this.internalReadData().readUShort(Offset.metricDataFormat.offset);
+      return internalReadData().readUShort(Offset.metricDataFormat);
     }
 
     public void setMetricDataFormat(int version) {
-      this.internalWriteData().writeUShort(Offset.metricDataFormat.offset, version);
+      internalWriteData().writeUShort(Offset.metricDataFormat, version);
     }
 
     public int numberOfHMetrics() {
-      return this.internalReadData().readUShort(Offset.numberOfHMetrics.offset);
+      return internalReadData().readUShort(Offset.numberOfHMetrics);
     }
 
     public void setNumberOfHMetrics(int version) {
-      this.internalWriteData().writeUShort(Offset.numberOfHMetrics.offset, version);
+      internalWriteData().writeUShort(Offset.numberOfHMetrics, version);
     }
   }
 }

@@ -5,7 +5,6 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.opentype.CoverageTable;
 import com.google.typography.font.sfntly.table.opentype.SubstSubtable;
 import com.google.typography.font.sfntly.table.opentype.multiplesubst.GlyphIds;
-
 import java.util.Iterator;
 
 public class OneToManySubst extends SubstSubtable implements Iterable<NumRecordTable> {
@@ -17,7 +16,7 @@ public class OneToManySubst extends SubstSubtable implements Iterable<NumRecordT
   protected OneToManySubst(ReadableFontData data, int base, boolean dataIsCanonical) {
     super(data, base, dataIsCanonical);
     if (format != 1) {
-      throw new IllegalStateException("Subt format value is " + format + " (should be 1).");
+      throw new IllegalStateException("Subst format value is " + format + " (should be 1).");
     }
     array = new GlyphIds(data, headerSize(), dataIsCanonical);
   }

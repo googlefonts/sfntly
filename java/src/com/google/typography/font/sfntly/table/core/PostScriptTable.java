@@ -21,15 +21,14 @@ import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.Header;
 import com.google.typography.font.sfntly.table.Table;
 import com.google.typography.font.sfntly.table.TableBasedTableBuilder;
-
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * A PostScript table. 
- * 
+ * A PostScript table.
+ *
  * @author Stuart Gill
  */
 public final class PostScriptTable extends Table {
@@ -38,38 +37,29 @@ public final class PostScriptTable extends Table {
   private static final int VERSION_2 = 0x20000;
   private static final int NUM_STANDARD_NAMES = 258;
 
-  /**
-   * Offsets to specific elements in the underlying data. These offsets are relative to the
-   * start of the table or the start of sub-blocks within the table.
-   */
-  private enum Offset {
-    version(0),
-    italicAngle(4),
-    underlinePosition(8),
-    underlineThickness(10),
-    isFixedPitch(12),
-    minMemType42(16),
-    maxMemType42(20),
-    minMemType1(24),
-    maxMemType1(28),
+  private interface Offset {
+    int version = 0;
+    int italicAngle = 4;
+    int underlinePosition = 8;
+    int underlineThickness = 10;
+    int isFixedPitch = 12;
+    int minMemType42 = 16;
+    int maxMemType42 = 20;
+    int minMemType1 = 24;
+    int maxMemType1 = 28;
 
     // TODO: add support for these versions of the table?
     // Version 2.0 table
-    numberOfGlyphs(32),
-    glyphNameIndex(34);  // start of table
+    int numberOfGlyphs = 32;
+    int glyphNameIndex = 34; // start of table
 
     // Version 2.5 table
 
     // Version 4.0 table
-
-    private final int offset;
-    private Offset(int offset) {
-      this.offset = offset;
-    }
   }
 
-  private AtomicReference<List<String>> names = new AtomicReference<List<String>>();
-  
+  private final AtomicReference<List<String>> names = new AtomicReference<>();
+
   private static final String[] STANDARD_NAMES = {
     ".notdef",
     ".null",
@@ -337,52 +327,52 @@ public final class PostScriptTable extends Table {
 
   // TODO: version enum
   public int version() {
-    return this.data.readFixed(Offset.version.offset);
+    return data.readFixed(Offset.version);
   }
 
   public int italicAngle() {
-    return this.data.readFixed(Offset.italicAngle.offset);
+    return data.readFixed(Offset.italicAngle);
   }
 
   public int underlinePosition() {
-    return this.data.readFWord(Offset.underlinePosition.offset);
+    return data.readFWord(Offset.underlinePosition);
   }
 
   public long isFixedPitchRaw() {
-    return this.data.readULong(Offset.isFixedPitch.offset);
+    return data.readULong(Offset.isFixedPitch);
   }
 
   public boolean isFixedPitch() {
-    return this.isFixedPitchRaw() != 0;
+    return isFixedPitchRaw() != 0;
   }
 
   public long minMemType42() {
-    return this.data.readULong(Offset.minMemType42.offset);
+    return data.readULong(Offset.minMemType42);
   }
 
   public long maxMemType42() {
-    return this.data.readULong(Offset.maxMemType42.offset);
+    return data.readULong(Offset.maxMemType42);
   }
 
   public long minMemType1() {
-    return this.data.readULong(Offset.minMemType1.offset);
+    return data.readULong(Offset.minMemType1);
   }
 
   public long maxMemType1() {
-    return this.data.readULong(Offset.maxMemType1.offset);
+    return data.readULong(Offset.maxMemType1);
   }
 
   public int numberOfGlyphs() {
     if (version() == VERSION_1) {
       return NUM_STANDARD_NAMES;
     } else if (version() == VERSION_2) {
-      return this.data.readUShort(Offset.numberOfGlyphs.offset);
+      return data.readUShort(Offset.numberOfGlyphs);
     } else {
       // TODO: should probably be better at signaling unsupported format
       return -1;
     }
   }
-  
+
   public String glyphName(int glyphNum) {
     int numberOfGlyphs = numberOfGlyphs();
     if (numberOfGlyphs > 0 && (glyphNum < 0 || glyphNum >= numberOfGlyphs)) {
@@ -392,7 +382,7 @@ public final class PostScriptTable extends Table {
     if (version() == VERSION_1) {
       glyphNameIndex = glyphNum;
     } else if (version() == VERSION_2) {
-      glyphNameIndex = this.data.readUShort(Offset.glyphNameIndex.offset + 2 * glyphNum);
+      glyphNameIndex = data.readUShort(Offset.glyphNameIndex + 2 * glyphNum);
     } else {
       return null;
     }
@@ -406,11 +396,10 @@ public final class PostScriptTable extends Table {
   // Defer the actual parsing of the name strings until first use. Note that this
   // method can therefore throw various runtime exceptions if the table is corrupted.
   /**
-   * Get a list containing the names in the table. Since parsing this list is potentially
-   * expensive and may throw an exception when data is corrupted, parsing is deferred until
-   * first use.
-   * 
-   * Also note that the return value is only valid for version 2 tables (potentially to be
+   * Get a list containing the names in the table. Since parsing this list is potentially expensive
+   * and may throw an exception when data is corrupted, parsing is deferred until first use.
+   *
+   * <p>Also note that the return value is only valid for version 2 tables (potentially to be
    * expanded to other versions later). A non-null value is guaranteed for version 2 (only).
    */
   private List<String> getNames() {
@@ -430,12 +419,12 @@ public final class PostScriptTable extends Table {
   private List<String> parse() {
     List<String> names = null;
     if (version() == VERSION_2) {
-      names = new ArrayList<String>();
-      int index = Offset.glyphNameIndex.offset + 2 * numberOfGlyphs();
+      names = new ArrayList<>();
+      int index = Offset.glyphNameIndex + 2 * numberOfGlyphs();
       while (index < dataLength()) {
-        int strLen = this.data.readUByte(index);
+        int strLen = data.readUByte(index);
         byte[] nameBytes = new byte[strLen];
-        this.data.readBytes(index + 1, nameBytes, 0, strLen);
+        data.readBytes(index + 1, nameBytes, 0, strLen);
         try {
           names.add(new String(nameBytes, "ISO-8859-1"));
         } catch (UnsupportedEncodingException e) {
@@ -448,20 +437,13 @@ public final class PostScriptTable extends Table {
     }
     return names;
   }
-  
+
   public static class Builder extends TableBasedTableBuilder<PostScriptTable> {
 
-    /**
-     * Create a new builder using the header information and data provided.
-     *
-     * @param header the header information
-     * @param data the data holding the table
-     * @return a new builder
-     */
     public static Builder createBuilder(Header header, WritableFontData data) {
       return new Builder(header, data);
     }
-    
+
     protected Builder(Header header, WritableFontData data) {
       super(header, data);
     }
@@ -472,7 +454,7 @@ public final class PostScriptTable extends Table {
 
     @Override
     protected PostScriptTable subBuildTable(ReadableFontData data) {
-      return new PostScriptTable(this.header(), data);
+      return new PostScriptTable(header(), data);
     }
   }
 }

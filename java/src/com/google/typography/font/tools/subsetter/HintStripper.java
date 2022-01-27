@@ -18,17 +18,14 @@ package com.google.typography.font.tools.subsetter;
 
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
-
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class HintStripper extends Subsetter {
 
   {
-    Set<TableSubsetter> temp = new HashSet<TableSubsetter>();
+    Set<TableSubsetter> temp = new HashSet<>();
     temp.add(new GlyphTableStripper());
     tableSubsetters = temp;
   }

@@ -1,0 +1,46 @@
+# Directories #
+java/build/
+java/bin/
+java/target/
+workfiles/
+
+# Temps and Backups #
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.db
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# OSX
+.DS_Store
+
+######################
+# NetBeans
+######################
+ant_nbproject/
+ant_build.xml
+nb-configuration.xml
+
+######################
+# Eclipse
+######################
+java/.metadata/
+java/.recommenders/
+java/.settings/
+java/.classpath
+java/.project
+
+######################
+# Java
+######################
+*.class

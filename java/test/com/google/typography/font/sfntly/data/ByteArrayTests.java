@@ -17,19 +17,15 @@
 package com.google.typography.font.sfntly.data;
 
 import com.google.typography.font.sfntly.testutils.TestUtils;
-
 import junit.framework.TestCase;
+import org.junit.ComparisonFailure;
 
-
-/**
- * @author Stuart Gill
- *
- */
+/** @author Stuart Gill */
 public class ByteArrayTests extends TestCase {
 
-  private static final int[] BYTE_ARRAY_SIZES =
-      new int[] {1, 7, 127, 128, 129, 255, 256, 257, 666, 1023, 10000, 0xffff, 0x10000};
-
+  private static final int[] BYTE_ARRAY_SIZES = {
+    1, 7, 127, 128, 129, 255, 256, 257, 666, 1023, 10000, 0xffff, 0x10000
+  };
 
   public ByteArrayTests(String name) {
     super(name);
@@ -47,12 +43,12 @@ public class ByteArrayTests extends TestCase {
     }
   }
 
-  private void byteArrayTester(ByteArray<? extends ByteArray<?>> ba) throws Exception {
+  private void byteArrayTester(ByteArray ba) throws Exception {
     copyTest(ba);
     // slicingCopyTest(ba);
   }
 
-  private void copyTest(ByteArray<? extends ByteArray<?>> ba) throws Exception {
+  private void copyTest(ByteArray ba) throws Exception {
     MemoryByteArray fixedCopy = new MemoryByteArray(ba.length());
     ba.copyTo(fixedCopy);
     assertEquals(ba.length(), fixedCopy.length());
@@ -64,16 +60,14 @@ public class ByteArrayTests extends TestCase {
     readComparison(ba, growableCopy);
   }
 
-  private void readComparison(
-      ByteArray<? extends ByteArray<?>> ba1, ByteArray<? extends ByteArray<?>> ba2)
-      throws Exception {
+  private void readComparison(ByteArray ba1, ByteArray ba2) throws Exception {
     // single byte reads
     for (int i = 0; i < ba1.length(); i++) {
-      int b = ba1.get(i);
-      if (b != ba2.get(i)) {
-        int fred = 12;
+      int b1 = ba1.get(i);
+      int b2 = ba2.get(i);
+      if (b1 != b2) {
+        throw new ComparisonFailure("At offset " + i, String.valueOf(b1), String.valueOf(b2));
       }
-      assertEquals(b, ba2.get(i));
     }
 
     byte[] b1;
@@ -98,8 +92,7 @@ public class ByteArrayTests extends TestCase {
     }
   }
 
-  private static byte[] readByteArrayWithBuffer(
-      ByteArray<? extends ByteArray<?>> ba, byte[] buffer) {
+  private static byte[] readByteArrayWithBuffer(ByteArray ba, byte[] buffer) {
     byte[] b = new byte[ba.length()];
 
     int index = 0;
@@ -111,8 +104,7 @@ public class ByteArrayTests extends TestCase {
     return b;
   }
 
-  private static byte[] readByteArrayWithSlidingWindow(
-      ByteArray<? extends ByteArray<?>> ba, int windowSize) {
+  private static byte[] readByteArrayWithSlidingWindow(ByteArray ba, int windowSize) {
     byte[] b = new byte[ba.length()];
 
     int index = 0;
@@ -124,8 +116,7 @@ public class ByteArrayTests extends TestCase {
     return b;
   }
 
-  private static ByteArray<? extends ByteArray<?>> fillTestByteArray(
-      ByteArray<? extends ByteArray<?>> ba, int size) {
+  private static ByteArray fillTestByteArray(ByteArray ba, int size) {
     for (int i = 0; i < size; i++) {
       ba.put(i, (byte) (i % 256));
     }

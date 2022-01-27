@@ -19,37 +19,34 @@ package com.google.typography.font.tools.conversion.eot;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
-import com.google.typography.font.sfntly.data.ReadableFontData;
+import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.FontHeaderTable;
 import com.google.typography.font.sfntly.table.core.NameTable;
 import com.google.typography.font.sfntly.table.core.OS2Table;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-/**
- * @author Jeremie Lenfant-Engelmann
- */
+/** @author Jeremie Lenfant-Engelmann */
 public class EOTWriter {
 
   private final boolean compressed;
-  
+
   private final FontFactory factory = FontFactory.getInstance();
 
-  private final static long RESERVED = 0;
-  private final static short PADDING = 0;
-  private final static long VERSION = 0x00020002;
-  private final static short MAGIC_NUMBER = 0x504c;
-  private final static long DEFAULT_FLAGS = 0;
-  private final static long FLAGS_TT_COMPRESSED = 0x4;
-  private final static byte DEFAULT_CHARSET = 1;
-  private final static long CS_XORKEY = 0x50475342;
+  private static final long RESERVED = 0;
+  private static final short PADDING = 0;
+  private static final long VERSION = 0x00020002;
+  private static final short MAGIC_NUMBER = 0x504c;
+  private static final long DEFAULT_FLAGS = 0;
+  private static final long FLAGS_TT_COMPRESSED = 0x4;
+  private static final byte DEFAULT_CHARSET = 1;
+  private static final long CS_XORKEY = 0x50475342;
 
   public EOTWriter() {
     compressed = false;
   }
-  
+
   public EOTWriter(boolean compressed) {
     this.compressed = compressed;
   }
@@ -64,15 +61,20 @@ public class EOTWriter {
     byte[] versionName = convertUTF16StringToLittleEndian(name.nameAsBytes(3, 1, 0x409, 5));
     byte[] fullName = convertUTF16StringToLittleEndian(name.nameAsBytes(3, 1, 0x409, 4));
     long flags = DEFAULT_FLAGS;
-    
+
     if (compressed) {
       flags |= FLAGS_TT_COMPRESSED;
       MtxWriter mtxWriter = new MtxWriter();
       fontData = mtxWriter.compress(font);
     }
-    
-    long eotSize = computeEotSize(
-      familyName.length, styleName.length, versionName.length, fullName.length, fontData.length);
+
+    long eotSize =
+        computeEotSize(
+            familyName.length,
+            styleName.length,
+            versionName.length,
+            fullName.length,
+            fontData.length);
 
     WritableFontData writableFontData = createWritableFontData((int) eotSize);
 
@@ -99,7 +101,7 @@ public class EOTWriter {
     index += writePadding(index, writableFontData);
 
     // FamilyNameSize, FamilyName[FamilyNameSize]
-    index += writeUTF16String(index, familyName, writableFontData); 
+    index += writeUTF16String(index, familyName, writableFontData);
     index += writePadding(index, writableFontData);
 
     // StyleNameSize, StyleName[StyleNameSize]
@@ -116,28 +118,32 @@ public class EOTWriter {
 
     index += writePadding(index, writableFontData); // RootStringSize
     if (VERSION > 0x20001) {
-      index += writableFontData.writeULongLE(index, CS_XORKEY);  // RootStringCheckSum
-      index += writableFontData.writeULongLE(index, 0);  // EUDCCodePage
+      index += writableFontData.writeULongLE(index, CS_XORKEY); // RootStringCheckSum
+      index += writableFontData.writeULongLE(index, 0); // EUDCCodePage
       index += writePadding(index, writableFontData);
-      index += writePadding(index, writableFontData);  // SignatureSize
-      index += writableFontData.writeULongLE(index, 0);  // EUDCFlags
-      index += writableFontData.writeULongLE(index, 0);  // EUDCFontSize
+      index += writePadding(index, writableFontData); // SignatureSize
+      index += writableFontData.writeULongLE(index, 0); // EUDCFlags
+      index += writableFontData.writeULongLE(index, 0); // EUDCFontSize
     }
     writableFontData.writeBytes(index, fontData, 0, fontData.length); // FontData[FontDataSize]
     return writableFontData;
   }
 
-  private long computeEotSize(int familyNameSize, int styleNameSize, int versionNameSize,
-      int fullNameSize, int fontDataSize) {
-    return 16 * ReadableFontData.DataSize.ULONG.size() +
-        12 * ReadableFontData.DataSize.BYTE.size() +
-        12 * ReadableFontData.DataSize.USHORT.size() +
-        familyNameSize * ReadableFontData.DataSize.BYTE.size() +
-        styleNameSize * ReadableFontData.DataSize.BYTE.size() +
-        versionNameSize * ReadableFontData.DataSize.BYTE.size() +
-        fullNameSize * ReadableFontData.DataSize.BYTE.size() +
-        fontDataSize * ReadableFontData.DataSize.BYTE.size() +
-        (VERSION > 0x20001 ? 5 * ReadableFontData.DataSize.ULONG.size() : 0);
+  private long computeEotSize(
+      int familyNameSize,
+      int styleNameSize,
+      int versionNameSize,
+      int fullNameSize,
+      int fontDataSize) {
+    return 16 * FontData.SizeOf.ULONG
+        + 12 * FontData.SizeOf.BYTE
+        + 12 * FontData.SizeOf.USHORT
+        + familyNameSize * FontData.SizeOf.BYTE
+        + styleNameSize * FontData.SizeOf.BYTE
+        + versionNameSize * FontData.SizeOf.BYTE
+        + fullNameSize * FontData.SizeOf.BYTE
+        + fontDataSize * FontData.SizeOf.BYTE
+        + (VERSION > 0x20001 ? 5 * FontData.SizeOf.ULONG : 0);
   }
 
   private int writeFontPANOSE(int index, OS2Table os2Table, WritableFontData writableFontData) {
@@ -167,12 +173,11 @@ public class EOTWriter {
   private int writeCodePages(int start, OS2Table os2Table, WritableFontData writableFontData) {
     int index = start;
     if (os2Table.tableVersion() >= 1) {
-    	index += writableFontData.writeULongLE(index, os2Table.ulCodePageRange1());
-    	index += writableFontData.writeULongLE(index, os2Table.ulCodePageRange2());
-    }
-    else {
-    	index += writableFontData.writeULongLE(index, 0x00000001);
-    	index += writableFontData.writeULongLE(index, 0x00000000);
+      index += writableFontData.writeULongLE(index, os2Table.ulCodePageRange1());
+      index += writableFontData.writeULongLE(index, os2Table.ulCodePageRange2());
+    } else {
+      index += writableFontData.writeULongLE(index, 0x00000001);
+      index += writableFontData.writeULongLE(index, 0x00000000);
     }
     return index - start;
   }
@@ -192,7 +197,7 @@ public class EOTWriter {
     if (bytesString == null) {
       return new byte[0];
     }
-    for (int i = 0; i < bytesString.length; i+= 2) {
+    for (int i = 0; i < bytesString.length; i += 2) {
       byte tmp = bytesString[i];
       bytesString[i] = bytesString[i + 1];
       bytesString[i + 1] = tmp;

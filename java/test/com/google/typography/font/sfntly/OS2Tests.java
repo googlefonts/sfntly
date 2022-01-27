@@ -17,28 +17,19 @@
 package com.google.typography.font.sfntly;
 
 import com.google.typography.font.sfntly.table.core.OS2Table;
-import com.google.typography.font.sfntly.table.core.OS2Table.CodePageRange;
-import com.google.typography.font.sfntly.table.core.OS2Table.UnicodeRange;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
 import com.google.typography.font.sfntly.testutils.TestUtils;
-
-import junit.framework.TestCase;
-
 import java.io.File;
 import java.util.EnumSet;
+import junit.framework.TestCase;
 
-
-/**
- * @author Stuart Gill
- *
- */
+/** @author Stuart Gill */
 public class OS2Tests extends TestCase {
-  
-  private static final File TEST_FONT_FILE = TestFont.TestFontNames.OPENSANS.getFile();  
 
-  public OS2Tests() {
-  }
+  private static final File TEST_FONT_FILE = TestFont.TestFontNames.OPENSANS.getFile();
+
+  public OS2Tests() {}
 
   public OS2Tests(String name) {
     super(name);
@@ -53,37 +44,40 @@ public class OS2Tests extends TestCase {
     OS2Table.Builder os2TableBuilder = (OS2Table.Builder) fontBuilder.getTableBuilder(Tag.OS_2);
 
     os2TableBuilder.setAchVendId(achVendId_a);
-    assertTrue(TestUtils.equals(
-        achVendId_a_pad, 0, os2TableBuilder.achVendId(), 0, achVendId_a_pad.length));
+    assertTrue(
+        TestUtils.equals(
+            achVendId_a_pad, 0, os2TableBuilder.achVendId(), 0, achVendId_a_pad.length));
 
     os2TableBuilder.setAchVendId(achVendId_abcd);
     assertTrue(
         TestUtils.equals(achVendId_abcd, 0, os2TableBuilder.achVendId(), 0, achVendId_abcd.length));
 
     os2TableBuilder.setAchVendId(achVendId_a);
-    assertTrue(TestUtils.equals(
-        achVendId_a_pad, 0, os2TableBuilder.achVendId(), 0, achVendId_a_pad.length));
+    assertTrue(
+        TestUtils.equals(
+            achVendId_a_pad, 0, os2TableBuilder.achVendId(), 0, achVendId_a_pad.length));
   }
-  
+
   public void testUnicodeRange() throws Exception {
-    EnumSet<UnicodeRange> urSet = makeUnicodeRangeSet(false);
-    long[] urArray = UnicodeRange.asArray(urSet);
-    EnumSet<UnicodeRange> urSetCopy =
-        UnicodeRange.asSet(urArray[0], urArray[1], urArray[2], urArray[3]);
+    EnumSet<OS2Table.UnicodeRange> urSet = makeUnicodeRangeSet(false);
+    long[] urArray = OS2Table.UnicodeRange.asArray(urSet);
+    EnumSet<OS2Table.UnicodeRange> urSetCopy =
+        OS2Table.UnicodeRange.asSet(urArray[0], urArray[1], urArray[2], urArray[3]);
     assertEquals(urSet, urSetCopy);
   }
 
   public void testCodePageRange() throws Exception {
-    EnumSet<CodePageRange> urSet = makeCodePageRangeSet(false);
-    long[] cprArray = CodePageRange.asArray(urSet);
-    EnumSet<CodePageRange> urSetCopy = CodePageRange.asSet(cprArray[0], cprArray[1]);
+    EnumSet<OS2Table.CodePageRange> urSet = makeCodePageRangeSet(false);
+    long[] cprArray = OS2Table.CodePageRange.asArray(urSet);
+    EnumSet<OS2Table.CodePageRange> urSetCopy =
+        OS2Table.CodePageRange.asSet(cprArray[0], cprArray[1]);
     assertEquals(urSet, urSetCopy);
   }
-  
-  private static EnumSet<UnicodeRange> makeUnicodeRangeSet(boolean odd) {
-    EnumSet<UnicodeRange> rSet = EnumSet.noneOf(UnicodeRange.class);
 
-    for (UnicodeRange r : UnicodeRange.values()) {
+  private static EnumSet<OS2Table.UnicodeRange> makeUnicodeRangeSet(boolean odd) {
+    EnumSet<OS2Table.UnicodeRange> rSet = EnumSet.noneOf(OS2Table.UnicodeRange.class);
+
+    for (OS2Table.UnicodeRange r : OS2Table.UnicodeRange.values()) {
       if (odd) {
         rSet.add(r);
       }
@@ -92,10 +86,10 @@ public class OS2Tests extends TestCase {
     return rSet;
   }
 
-  private static EnumSet<CodePageRange> makeCodePageRangeSet(boolean odd) {
-    EnumSet<CodePageRange> rSet = EnumSet.noneOf(CodePageRange.class);
+  private static EnumSet<OS2Table.CodePageRange> makeCodePageRangeSet(boolean odd) {
+    EnumSet<OS2Table.CodePageRange> rSet = EnumSet.noneOf(OS2Table.CodePageRange.class);
 
-    for (CodePageRange r : CodePageRange.values()) {
+    for (OS2Table.CodePageRange r : OS2Table.CodePageRange.values()) {
       if (odd) {
         rSet.add(r);
       }
@@ -103,5 +97,4 @@ public class OS2Tests extends TestCase {
     }
     return rSet;
   }
-  
 }

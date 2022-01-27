@@ -19,27 +19,22 @@ package com.google.typography.font.sfntly;
 import com.google.typography.font.sfntly.table.core.HorizontalMetricsTable;
 import com.google.typography.font.sfntly.testutils.TestFont;
 import com.google.typography.font.sfntly.testutils.TestFontUtils;
-
+import java.io.File;
 import junit.framework.TestCase;
 
-import java.io.File;
-
-
-/**
- * @author Stuart Gill
- */
+/** @author Stuart Gill */
 public class MetricsTests extends TestCase {
 
   private static final File TEST_FONT_FILE = TestFont.TestFontNames.OPENSANS.getFile();
-  
+
   public void testBasicHmtxValidity() throws Exception {
-      Font[] fonts = TestFontUtils.loadFont(TEST_FONT_FILE);
-      Font font = fonts[0];
-      HorizontalMetricsTable hmtxTable = font.getTable(Tag.hmtx);
-      
-      for (int gid = 0; gid < 100; gid++) {
-        int width = hmtxTable.advanceWidth(gid);
-        assertFalse(width == -1);
-      }
+    Font[] fonts = TestFontUtils.loadFont(TEST_FONT_FILE);
+    Font font = fonts[0];
+    HorizontalMetricsTable hmtxTable = font.getTable(Tag.hmtx);
+
+    for (int gid = 0; gid < 100; gid++) {
+      int width = hmtxTable.advanceWidth(gid);
+      assertFalse(width == -1);
     }
+  }
 }

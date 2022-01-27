@@ -18,24 +18,21 @@ package com.google.typography.font.tools.conversion.eot;
 
 import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.data.ReadableFontData;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class MtxFontBuilder {
   private static final int OPENTYPE_VERSION_1_0 = 0x10000;
   private static final int FONT_HEADER_BASE_SIZE = 12;
   private static final int FONT_HEADER_PER_TABLE_SIZE = 16;
   private static final int TABLE_ALIGN = 4;
-  private Map<Integer, ReadableFontData> tables;
-  private MtxHeadBuilder headBuilder;
+  private final Map<Integer, ReadableFontData> tables;
+  private final MtxHeadBuilder headBuilder;
 
   public MtxFontBuilder() {
-    tables = new HashMap<Integer, ReadableFontData>();
+    tables = new HashMap<>();
     headBuilder = new MtxHeadBuilder();
   }
 
@@ -45,7 +42,7 @@ public class MtxFontBuilder {
 
   /**
    * Add a table to the font being built.
-   * 
+   *
    * @param tag 4-byte tag of the table, same format as sfntly.Tag
    * @param data ReadableFontData for table contents
    */
@@ -55,7 +52,7 @@ public class MtxFontBuilder {
 
   /**
    * Add a table to the font being built.
-   * 
+   *
    * @param tag 4-byte tag of the table, same format as sfntly.Tag
    * @param data byte[] data for table contents
    */
@@ -64,26 +61,26 @@ public class MtxFontBuilder {
   }
 
   private static void putUshort(byte[] buf, int offset, int val) {
-    buf[offset] = (byte)(val >> 8);
-    buf[offset + 1] = (byte)val;
+    buf[offset] = (byte) (val >> 8);
+    buf[offset + 1] = (byte) val;
   }
 
   private static void putUlong(byte[] buf, int offset, int val) {
-    buf[offset] = (byte)(val >> 24);
-    buf[offset + 1] = (byte)(val >> 16);
-    buf[offset + 2] = (byte)(val >> 8);
-    buf[offset + 3] = (byte)val;
+    buf[offset] = (byte) (val >> 24);
+    buf[offset + 1] = (byte) (val >> 16);
+    buf[offset + 2] = (byte) (val >> 8);
+    buf[offset + 3] = (byte) val;
   }
 
   /**
    * Build the font, packing all tables into an OpenType (SFNT) structure.
-   * 
+   *
    * @return the binary font data
    */
   public byte[] build() {
     addTable(Tag.head, headBuilder.build());
 
-    TreeSet<Integer> tags = new TreeSet<Integer>(tables.keySet());
+    TreeSet<Integer> tags = new TreeSet<>(tables.keySet());
     int nTables = tables.size();
     int size = FONT_HEADER_BASE_SIZE + FONT_HEADER_PER_TABLE_SIZE * nTables;
     for (Map.Entry<Integer, ReadableFontData> entry : tables.entrySet()) {
@@ -99,7 +96,6 @@ public class MtxFontBuilder {
     byte[] buf = new byte[size];
     putUlong(buf, 0, OPENTYPE_VERSION_1_0);
     putUshort(buf, 4, nTables);
-    int entrySelector = 0;
     int searchRange = searchRange(nTables);
     putUshort(buf, 6, searchRange * FONT_HEADER_PER_TABLE_SIZE);
     putUshort(buf, 8, log2(searchRange));
@@ -108,8 +104,8 @@ public class MtxFontBuilder {
     int offset = FONT_HEADER_BASE_SIZE + FONT_HEADER_PER_TABLE_SIZE * nTables;
     for (Integer tag : tags) {
       ReadableFontData data = tables.get(tag);
-      putUlong(buf, headerOffset, tag.intValue());
-      int checksum = 0;  // TODO(raph): compute checksum
+      putUlong(buf, headerOffset, tag);
+      int checksum = 0; // TODO(raph): compute checksum
       putUlong(buf, headerOffset + 4, checksum);
       if (data == null) {
         putUlong(buf, headerOffset + 8, 0);
@@ -130,7 +126,7 @@ public class MtxFontBuilder {
   static int searchRange(int x) {
     return Integer.highestOneBit(x);
   }
-  
+
   // visible for testing
   static int log2(int x) {
     return 31 - Integer.numberOfLeadingZeros(x);

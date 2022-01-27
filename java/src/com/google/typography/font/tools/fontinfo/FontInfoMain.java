@@ -2,30 +2,27 @@
 
 package com.google.typography.font.tools.fontinfo;
 
-import com.google.typography.font.sfntly.Font;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-
+import com.google.typography.font.sfntly.Font;
 import java.io.IOException;
 
 /**
  * This is the main class for the command-line version of the font info tool
  *
  * @author Han-Wen Yeh
- *
  */
 public class FontInfoMain {
   private static final String PROGRAM_NAME = "java -jar fontinfo.jar";
 
   public static void main(String[] args) {
     CommandOptions options = new CommandOptions();
-    JCommander commander = null;
+    JCommander commander = new JCommander(options);
     try {
-      commander = new JCommander(options, args);
+      commander.parse(args);
     } catch (ParameterException e) {
       System.out.println(e.getMessage());
-      commander = new JCommander(options, "--help");
+      commander.parse("--help");
     }
 
     // Display help
@@ -43,8 +40,14 @@ public class FontInfoMain {
     }
 
     // Default option
-    if (!(options.metrics || options.general || options.cmap || options.chars || options.blocks
-        || options.scripts || options.glyphs || options.all)) {
+    if (!(options.metrics
+        || options.general
+        || options.cmap
+        || options.chars
+        || options.blocks
+        || options.scripts
+        || options.glyphs
+        || options.all)) {
       options.general = true;
     }
 
@@ -110,8 +113,9 @@ public class FontInfoMain {
       if (options.metrics || options.glyphs || options.all) {
         if (options.csv) {
           System.out.println("Glyph Metrics:");
-          System.out.println(prependDataAndBuildCsv(
-              FontInfo.listGlyphDimensionBounds(font).csvStringArray(), fileName, i));
+          System.out.println(
+              prependDataAndBuildCsv(
+                  FontInfo.listGlyphDimensionBounds(font).csvStringArray(), fileName, i));
           System.out.println();
         } else {
           System.out.println("Glyph Metrics:");
@@ -138,8 +142,9 @@ public class FontInfoMain {
       if (options.blocks || options.all) {
         if (options.csv) {
           System.out.println("Unicode block coverage:");
-          System.out.println(prependDataAndBuildCsv(
-              FontInfo.listCharBlockCoverage(font).csvStringArray(), fileName, i));
+          System.out.println(
+              prependDataAndBuildCsv(
+                  FontInfo.listCharBlockCoverage(font).csvStringArray(), fileName, i));
           System.out.println();
         } else {
           System.out.println("Unicode block coverage:");
@@ -152,13 +157,15 @@ public class FontInfoMain {
       if (options.scripts || options.all) {
         if (options.csv) {
           System.out.println("Unicode script coverage:");
-          System.out.println(prependDataAndBuildCsv(
-              FontInfo.listScriptCoverage(font).csvStringArray(), fileName, i));
+          System.out.println(
+              prependDataAndBuildCsv(
+                  FontInfo.listScriptCoverage(font).csvStringArray(), fileName, i));
           System.out.println();
           if (options.detailed) {
             System.out.println("Uncovered code points in partially-covered scripts:");
-            System.out.println(prependDataAndBuildCsv(
-                FontInfo.listCharsNeededToCoverScript(font).csvStringArray(), fileName, i));
+            System.out.println(
+                prependDataAndBuildCsv(
+                    FontInfo.listCharsNeededToCoverScript(font).csvStringArray(), fileName, i));
             System.out.println();
           }
         } else {
@@ -184,8 +191,9 @@ public class FontInfoMain {
           System.out.println("Characters with valid glyphs:");
           FontInfo.listChars(font).prettyPrint();
           System.out.println();
-          System.out.println(String.format(
-              "Total number of characters with valid glyphs: %d", FontInfo.numChars(font)));
+          System.out.println(
+              String.format(
+                  "Total number of characters with valid glyphs: %d", FontInfo.numChars(font)));
           System.out.println();
         }
       }
@@ -195,9 +203,10 @@ public class FontInfoMain {
         DataDisplayTable unmappedGlyphs = FontInfo.listUnmappedGlyphs(font);
         if (options.csv) {
           System.out.println(String.format("Total hinting size: %s", FontInfo.hintingSize(font)));
-          System.out.println(String.format(
-              "Number of unmapped glyphs: %d / %d", unmappedGlyphs.getNumRows(),
-              FontInfo.numGlyphs(font)));
+          System.out.println(
+              String.format(
+                  "Number of unmapped glyphs: %d / %d",
+                  unmappedGlyphs.getNumRows(), FontInfo.numGlyphs(font)));
           System.out.println();
           if (options.detailed) {
             System.out.println("Unmapped glyphs:");
@@ -206,14 +215,16 @@ public class FontInfoMain {
             System.out.println();
           }
           System.out.println("Subglyphs used by characters in the font:");
-          System.out.println(prependDataAndBuildCsv(
-              FontInfo.listSubglyphFrequency(font).csvStringArray(), fileName, i));
+          System.out.println(
+              prependDataAndBuildCsv(
+                  FontInfo.listSubglyphFrequency(font).csvStringArray(), fileName, i));
           System.out.println();
         } else {
           System.out.println(String.format("Total hinting size: %s", FontInfo.hintingSize(font)));
-          System.out.println(String.format(
-              "Number of unmapped glyphs: %d / %d", unmappedGlyphs.getNumRows(),
-              FontInfo.numGlyphs(font)));
+          System.out.println(
+              String.format(
+                  "Number of unmapped glyphs: %d / %d",
+                  unmappedGlyphs.getNumRows(), FontInfo.numGlyphs(font)));
           System.out.println();
           if (options.detailed) {
             System.out.println("Unmapped glyphs:");
@@ -232,7 +243,8 @@ public class FontInfoMain {
     StringBuilder output = new StringBuilder("Font,font index,").append(arr[0]).append('\n');
     for (int i = 1; i < arr.length; i++) {
       String row = arr[i];
-      output.append(fontName)
+      output
+          .append(fontName)
           .append(',')
           .append("font index ")
           .append(fontIndex)

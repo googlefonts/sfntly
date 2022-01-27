@@ -16,53 +16,59 @@
 
 package com.google.typography.font.sfntly.table.bitmap;
 
+import com.google.typography.font.sfntly.data.FontData;
 import com.google.typography.font.sfntly.data.ReadableFontData;
 import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.bitmap.EblcTable.Offset;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
  * Format 2 Index Subtable Entry.
- * 
+ *
  * @author Stuart Gill
- * 
  */
 public final class IndexSubTableFormat2 extends IndexSubTable {
   private final int imageSize;
-  
+
+  private interface Offset {
+    int SIZE =
+        EblcTable.HeaderOffsets.SIZE
+            + FontData.SizeOf.ULONG
+            + BitmapGlyph.Offset.bigGlyphMetricsLength;
+    int imageSize = EblcTable.HeaderOffsets.SIZE;
+    int bigGlyphMetrics = imageSize + FontData.SizeOf.ULONG;
+  }
+
   private IndexSubTableFormat2(ReadableFontData data, int first, int last) {
     super(data, first, last);
-    this.imageSize = this.data.readULongAsInt(Offset.indexSubTable2_imageSize.offset);
+    this.imageSize = this.data.readULongAsInt(Offset.imageSize);
   }
 
   public int imageSize() {
-    return this.data.readULongAsInt(Offset.indexSubTable2_imageSize.offset);
+    return data.readULongAsInt(Offset.imageSize);
   }
 
   public BigGlyphMetrics bigMetrics() {
-    return new BigGlyphMetrics(this.data.slice(Offset.indexSubTable2_bigGlyphMetrics.offset,
-        BigGlyphMetrics.Offset.metricsLength.offset));
+    return new BigGlyphMetrics(data.slice(Offset.bigGlyphMetrics, BigGlyphMetrics.SIZE));
   }
 
   @Override
   public int numGlyphs() {
-    return this.lastGlyphIndex() - this.firstGlyphIndex() + 1;
+    return lastGlyphIndex() - firstGlyphIndex() + 1;
   }
 
   @Override
   public int glyphStartOffset(int glyphId) {
-    int loca = this.checkGlyphRange(glyphId);
-    return loca * this.imageSize;
+    int loca = checkGlyphRange(glyphId);
+    return loca * imageSize;
   }
 
   @Override
   public int glyphLength(int glyphId) {
-    this.checkGlyphRange(glyphId);
-    return this.imageSize;
+    checkGlyphRange(glyphId);
+    return imageSize;
   }
-  
+
   public static final class Builder extends IndexSubTable.Builder<IndexSubTableFormat2> {
 
     private BigGlyphMetrics.Builder metrics;
@@ -73,23 +79,23 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
 
     static Builder createBuilder(
         ReadableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
-      int length = Builder.dataLength(data, indexSubTableOffset, firstGlyphIndex, lastGlyphIndex);
+      int length = dataLength(data, indexSubTableOffset, firstGlyphIndex, lastGlyphIndex);
       return new Builder(data.slice(indexSubTableOffset, length), firstGlyphIndex, lastGlyphIndex);
     }
 
     static Builder createBuilder(
         WritableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
-      int length = Builder.dataLength(data, indexSubTableOffset, firstGlyphIndex, lastGlyphIndex);
+      int length = dataLength(data, indexSubTableOffset, firstGlyphIndex, lastGlyphIndex);
       return new Builder(data.slice(indexSubTableOffset, length), firstGlyphIndex, lastGlyphIndex);
     }
 
     private static int dataLength(
         ReadableFontData data, int indexSubTableOffset, int firstGlyphIndex, int lastGlyphIndex) {
-      return Offset.indexSubTable2Length.offset;
+      return Offset.SIZE;
     }
-    
+
     private Builder() {
-      super(Offset.indexSubTable2_builderDataSize.offset, Format.FORMAT_2);
+      super(Offset.SIZE, IndexSubTable.Format.FORMAT_2);
       this.metrics = BigGlyphMetrics.Builder.createBuilder();
     }
 
@@ -103,52 +109,48 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
 
     @Override
     public int numGlyphs() {
-      return this.lastGlyphIndex() - this.firstGlyphIndex() + 1;
+      return lastGlyphIndex() - firstGlyphIndex() + 1;
     }
 
     @Override
     public int glyphStartOffset(int glyphId) {
       int loca = super.checkGlyphRange(glyphId);
-      return loca * this.imageSize();
+      return loca * imageSize();
     }
 
     @Override
     public int glyphLength(int glyphId) {
       super.checkGlyphRange(glyphId);
-      return this.imageSize();
+      return imageSize();
     }
 
     public int imageSize() {
-      return this.internalReadData().readULongAsInt(Offset.indexSubTable2_imageSize.offset);
+      return internalReadData().readULongAsInt(Offset.imageSize);
     }
 
     public void setImageSize(int imageSize) {
-      this.internalWriteData().writeULong(Offset.indexSubTable2_imageSize.offset, imageSize);
+      internalWriteData().writeULong(Offset.imageSize, imageSize);
     }
-    
+
     public BigGlyphMetrics.Builder bigMetrics() {
-      if (this.metrics == null) {
+      if (metrics == null) {
         WritableFontData data =
-            this.internalWriteData().slice(Offset.indexSubTable2_bigGlyphMetrics.offset,
-                BigGlyphMetrics.Offset.metricsLength.offset);
+            internalWriteData().slice(Offset.bigGlyphMetrics, BigGlyphMetrics.SIZE);
         this.metrics = new BigGlyphMetrics.Builder(data);
       }
-      return this.metrics;
+      return metrics;
     }
 
     private class BitmapGlyphInfoIterator implements Iterator<BitmapGlyphInfo> {
       private int glyphId;
 
       public BitmapGlyphInfoIterator() {
-        this.glyphId = IndexSubTableFormat2.Builder.this.firstGlyphIndex();
+        this.glyphId = firstGlyphIndex();
       }
 
       @Override
       public boolean hasNext() {
-        if (this.glyphId <= IndexSubTableFormat2.Builder.this.lastGlyphIndex()) {
-          return true;
-        }
-        return false;
+        return glyphId <= lastGlyphIndex();
       }
 
       @Override
@@ -157,10 +159,12 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
           throw new NoSuchElementException("No more characters to iterate.");
         }
         BitmapGlyphInfo info =
-            new BitmapGlyphInfo(this.glyphId, IndexSubTableFormat2.Builder.this.imageDataOffset(),
-                IndexSubTableFormat2.Builder.this.glyphStartOffset(this.glyphId),
-                IndexSubTableFormat2.Builder.this.glyphLength(this.glyphId),
-                IndexSubTableFormat2.Builder.this.imageFormat());
+            new BitmapGlyphInfo(
+                glyphId,
+                imageDataOffset(),
+                glyphStartOffset(glyphId),
+                glyphLength(glyphId),
+                imageFormat());
         this.glyphId++;
         return info;
       }
@@ -175,20 +179,20 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
     Iterator<BitmapGlyphInfo> iterator() {
       return new BitmapGlyphInfoIterator();
     }
-    
+
     @Override
     protected IndexSubTableFormat2 subBuildTable(ReadableFontData data) {
-      return new IndexSubTableFormat2(data, this.firstGlyphIndex(), this.lastGlyphIndex());
+      return new IndexSubTableFormat2(data, firstGlyphIndex(), lastGlyphIndex());
     }
 
     @Override
     protected void subDataSet() {
-      this.revert();
+      revert();
     }
 
     @Override
     protected int subDataSizeToSerialize() {
-      return Offset.indexSubTable2Length.offset;
+      return Offset.SIZE;
     }
 
     @Override
@@ -199,11 +203,11 @@ public final class IndexSubTableFormat2 extends IndexSubTable {
     @Override
     protected int subSerialize(WritableFontData newData) {
       int size = super.serializeIndexSubHeader(newData);
-      if (this.metrics == null) {
-        size += this.internalReadData().slice(size).copyTo(newData.slice(size));
+      if (metrics == null) {
+        size += internalReadData().slice(size).copyTo(newData.slice(size));
       } else {
-        size += newData.writeLong(Offset.indexSubTable2_imageSize.offset, this.imageSize());
-        size += this.metrics.subSerialize(newData.slice(size));
+        size += newData.writeLong(Offset.imageSize, imageSize());
+        size += metrics.subSerialize(newData.slice(size));
       }
       return size;
     }

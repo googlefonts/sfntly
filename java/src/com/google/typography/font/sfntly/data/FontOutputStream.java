@@ -22,8 +22,8 @@ import java.io.OutputStream;
 /**
  * An output stream for writing font data.
  *
- * The data types used are as listed:
- * <table>
+ * <p>The data types used are as listed:
+ *
  * <table>
  * <tr>
  * <td>BYTE</td>
@@ -88,11 +88,7 @@ public class FontOutputStream extends OutputStream {
   private final OutputStream out;
   private long position;
 
-  /**
-   * Constructor.
-   *
-   * @param os output stream to wrap
-   */
+  /** @param os output stream to wrap */
   public FontOutputStream(OutputStream os) {
     out = os;
   }
@@ -103,7 +99,7 @@ public class FontOutputStream extends OutputStream {
    * @return the current position in bytes
    */
   public long position() {
-    return this.position;
+    return position;
   }
 
   @Override
@@ -114,7 +110,7 @@ public class FontOutputStream extends OutputStream {
 
   @Override
   public void write(byte[] b) throws IOException {
-    this.write(b, 0, b.length);
+    write(b, 0, b.length);
   }
 
   @Override
@@ -126,90 +122,50 @@ public class FontOutputStream extends OutputStream {
     position += len;
   }
 
-  /**
-   * Write a Char value.
-   *
-   * @param c Char value
-   * @throws IOException
-   */
+  /** Write a Char value. */
   public void writeChar(byte c) throws IOException {
-    this.write(c);
+    write(c);
   }
 
-  /**
-   * Write a UShort value.
-   *
-   * @param us UShort value
-   * @throws IOException
-   */
+  /** Write a UShort value. */
   public void writeUShort(int us) throws IOException {
-    this.write((byte) ((us >> 8) & 0xff));
-    this.write((byte) (us & 0xff));
+    write((byte) ((us >> 8) & 0xff));
+    write((byte) (us & 0xff));
   }
 
-  /**
-   * Write a Short value.
-   *
-   * @param s Short value
-   * @throws IOException
-   */
+  /** Write a Short value. */
   public void writeShort(int s) throws IOException {
-    this.writeUShort(s);
+    writeUShort(s);
   }
 
-  /**
-   * Write a UInt24 value.
-   *
-   * @param ui UInt24 value
-   * @throws IOException
-   */
+  /** Write a UInt24 value. */
   public void writeUInt24(int ui) throws IOException {
-    this.write((byte) ((ui >> 16) & 0xff));
-    this.write((byte) ((ui >> 8) & 0xff));
-    this.write((byte) (ui & 0xff));
+    write((byte) ((ui >> 16) & 0xff));
+    write((byte) ((ui >> 8) & 0xff));
+    write((byte) (ui & 0xff));
   }
 
-  /**
-   * Write a ULong value.
-   *
-   * @param ul ULong value
-   * @throws IOException
-   */
+  /** Write a ULong value. */
   public void writeULong(long ul) throws IOException {
-    this.write((byte) ((ul >> 24) & 0xff));
-    this.write((byte) ((ul >> 16) & 0xff));
-    this.write((byte) ((ul >> 8) & 0xff));
-    this.write((byte) (ul & 0xff));
+    write((byte) ((ul >> 24) & 0xff));
+    write((byte) ((ul >> 16) & 0xff));
+    write((byte) ((ul >> 8) & 0xff));
+    write((byte) (ul & 0xff));
   }
 
-  /**
-   * Write a Long value.
-   *
-   * @param l Long value
-   * @throws IOException
-   */
+  /** Write a Long value. */
   public void writeLong(long l) throws IOException {
-    this.writeULong(l);
+    writeULong(l);
   }
 
-  /**
-   * Write a Fixed value.
-   *
-   * @param f Fixed value
-   * @throws IOException
-   */
+  /** Write a Fixed value. */
   public void writeFixed(int f) throws IOException {
-    this.writeULong(f);
+    writeULong(f);
   }
 
-  /**
-   * Write DateTime value.
-   *
-   * @param date date/time value
-   * @throws IOException
-   */
+  /** Write DateTime value. */
   public void writeDateTime(long date) throws IOException {
-    this.writeULong((date >> 32) & 0xffffffff);
-    this.writeULong(date & 0xffffffff);
+    writeULong(date >> 32);
+    writeULong(date);
   }
 }

@@ -22,25 +22,20 @@ import com.google.typography.font.sfntly.Tag;
 import com.google.typography.font.sfntly.table.core.HorizontalHeaderTable;
 import com.google.typography.font.sfntly.table.core.HorizontalMetricsTable;
 import com.google.typography.font.sfntly.table.core.MaximumProfileTable;
-
-import junit.framework.TestCase;
-
 import java.util.ArrayList;
 import java.util.List;
+import junit.framework.TestCase;
 
-/**
- * @author Raph Levien
- */
+/** @author Raph Levien */
 public class HorizontalMetricsTableBuilderTest extends TestCase {
 
   public void testHorizontalMetricsTableBuilder() {
     FontFactory fontFactory = FontFactory.getInstance();
     Font.Builder fontBuilder = fontFactory.newFontBuilder();
     HorizontalHeaderTable.Builder hheaBuilder =
-      (HorizontalHeaderTable.Builder) fontBuilder.newTableBuilder(Tag.hhea);
+        (HorizontalHeaderTable.Builder) fontBuilder.newTableBuilder(Tag.hhea);
 
-    List<HorizontalMetricsTableBuilder.LongHorMetric> metrics =
-        new ArrayList<HorizontalMetricsTableBuilder.LongHorMetric>();
+    List<HorizontalMetricsTableBuilder.LongHorMetric> metrics = new ArrayList<>();
     metrics.add(new HorizontalMetricsTableBuilder.LongHorMetric(123, 42));
     metrics.add(new HorizontalMetricsTableBuilder.LongHorMetric(123, 43));
     metrics.add(new HorizontalMetricsTableBuilder.LongHorMetric(789, 44));
@@ -65,5 +60,4 @@ public class HorizontalMetricsTableBuilderTest extends TestCase {
     assertEquals(789, hmtxTable.advanceWidth(3));
     assertEquals(45, hmtxTable.leftSideBearing(3));
   }
-
 }

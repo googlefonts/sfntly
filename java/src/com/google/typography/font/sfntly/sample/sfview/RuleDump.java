@@ -4,7 +4,6 @@ import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.table.opentype.component.GlyphGroup;
 import com.google.typography.font.sfntly.table.opentype.component.Rule;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,14 +28,11 @@ public class RuleDump {
   public static Font[] loadFont(File file) throws IOException {
     FontFactory fontFactory = FontFactory.getInstance();
     fontFactory.fingerprintFont(true);
-    FileInputStream is = new FileInputStream(file);
-    try {
+    try (FileInputStream is = new FileInputStream(file)) {
       return fontFactory.loadFonts(is);
     } catch (FileNotFoundException e) {
       System.err.println("Could not load the font: " + file.getName());
       return null;
-    } finally {
-      is.close();
     }
   }
 }

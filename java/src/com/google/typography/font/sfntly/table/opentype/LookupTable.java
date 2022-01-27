@@ -22,7 +22,7 @@ public class LookupTable extends OffsetRecordTable<SubstSubtable> {
     RESERVED(0x00E0),
     MARK_ATTACHMENT_TYPE(0xFF00);
 
-    private int bit;
+    private final int bit;
 
     private LookupFlagBit(int bit) {
       this.bit = bit;
@@ -58,27 +58,26 @@ public class LookupTable extends OffsetRecordTable<SubstSubtable> {
     int lookupType = getField(LOOKUP_TYPE_INDEX);
     GsubLookupType gsubLookupType = GsubLookupType.forTypeNum(lookupType);
     switch (gsubLookupType) {
-    case GSUB_LIGATURE:
-      return new LigatureSubst(data, base, dataIsCanonical);
-    case GSUB_SINGLE:
-      return new SingleSubst(data, base, dataIsCanonical);
-    case GSUB_MULTIPLE:
-      return new MultipleSubst(data, base, dataIsCanonical);
-    case GSUB_ALTERNATE:
-      return new AlternateSubst(data, base, dataIsCanonical);
-    case GSUB_CONTEXTUAL:
-      return new ContextSubst(data, base, dataIsCanonical);
-    case GSUB_CHAINING_CONTEXTUAL:
-      return new ChainContextSubst(data, base, dataIsCanonical);
-    case GSUB_EXTENSION:
-      return new ExtensionSubst(data, base, dataIsCanonical);
-    case GSUB_REVERSE_CHAINING_CONTEXTUAL_SINGLE:
-      return new ReverseChainSingleSubst(data, base, dataIsCanonical);
-    default:
-      System.err.println("Unimplemented LookupType: " + gsubLookupType);
-      return new NullTable(data, base, dataIsCanonical);
-      // throw new IllegalArgumentException("LookupType is " + lookupType);
+      case GSUB_LIGATURE:
+        return new LigatureSubst(data, base, dataIsCanonical);
+      case GSUB_SINGLE:
+        return new SingleSubst(data, base, dataIsCanonical);
+      case GSUB_MULTIPLE:
+        return new MultipleSubst(data, base, dataIsCanonical);
+      case GSUB_ALTERNATE:
+        return new AlternateSubst(data, base, dataIsCanonical);
+      case GSUB_CONTEXTUAL:
+        return new ContextSubst(data, base, dataIsCanonical);
+      case GSUB_CHAINING_CONTEXTUAL:
+        return new ChainContextSubst(data, base, dataIsCanonical);
+      case GSUB_EXTENSION:
+        return new ExtensionSubst(data, base, dataIsCanonical);
+      case GSUB_REVERSE_CHAINING_CONTEXTUAL_SINGLE:
+        return new ReverseChainSingleSubst(data, base, dataIsCanonical);
     }
+    System.err.println("Unimplemented LookupType: " + gsubLookupType);
+    return new NullTable(data, base, dataIsCanonical);
+    // throw new IllegalArgumentException("LookupType is " + lookupType);
   }
 
   @Override

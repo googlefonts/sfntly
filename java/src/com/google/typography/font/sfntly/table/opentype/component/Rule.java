@@ -2,6 +2,8 @@ package com.google.typography.font.sfntly.table.opentype.component;
 
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.data.SfObjects;
+import com.google.typography.font.sfntly.data.SfStringUtils;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.core.PostScriptTable;
@@ -11,12 +13,10 @@ import com.google.typography.font.sfntly.table.opentype.LangSysTable;
 import com.google.typography.font.sfntly.table.opentype.LookupListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptListTable;
 import com.google.typography.font.sfntly.table.opentype.ScriptTable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,7 +59,7 @@ public class Rule {
   }
 
   private void addMatchingTargetGlyphs(GlyphGroup glyphs) {
-    for (RuleSegment seg : new RuleSegment[] { input, backtrack, lookAhead }) {
+    for (RuleSegment seg : new RuleSegment[] {input, backtrack, lookAhead}) {
       if (seg == null) {
         continue;
       }
@@ -76,7 +76,7 @@ public class Rule {
   }
 
   public static Map<Integer, Set<Rule>> glyphRulesMap(Font font) {
-    Set<Rule> featuredRules = Rule.featuredRules(font);
+    Set<Rule> featuredRules = featuredRules(font);
     if (featuredRules == null) {
       return null;
     }
@@ -84,12 +84,12 @@ public class Rule {
   }
 
   private static Map<Integer, Set<Rule>> createGlyphRuleMap(Set<Rule> lookupRules) {
-    Map<Integer, Set<Rule>> map = new HashMap<Integer, Set<Rule>>();
+    Map<Integer, Set<Rule>> map = new HashMap<>();
 
     for (Rule rule : lookupRules) {
       for (int glyph : rule.input.get(0)) {
         if (!map.containsKey(glyph)) {
-          map.put(glyph, new HashSet<Rule>());
+          map.put(glyph, new HashSet<>());
         }
         map.get(glyph).add(rule);
       }
@@ -98,8 +98,8 @@ public class Rule {
   }
 
   private static Set<Rule> rulesForGlyph(Map<Integer, Set<Rule>> glyphRuleMap, GlyphGroup glyphs) {
-    Set<Rule> set = new HashSet<Rule>();
-    for(int glyph : glyphs) {
+    Set<Rule> set = new HashSet<>();
+    for (int glyph : glyphs) {
       if (glyphRuleMap.containsKey(glyph)) {
         set.addAll(glyphRuleMap.get(glyph));
       }
@@ -107,9 +107,8 @@ public class Rule {
     return set;
   }
 
-  private static Set<Rule> featuredRules(
-      Set<Integer> lookupIds, Map<Integer, Set<Rule>> ruleMap) {
-    Set<Rule> rules = new LinkedHashSet<Rule>();
+  private static Set<Rule> featuredRules(Set<Integer> lookupIds, Map<Integer, Set<Rule>> ruleMap) {
+    Set<Rule> rules = new LinkedHashSet<>();
     for (int lookupId : lookupIds) {
       Set<Rule> ruleForLookup = ruleMap.get(lookupId);
       if (ruleForLookup == null) {
@@ -132,8 +131,8 @@ public class Rule {
     LookupListTable lookupList = gsub.lookupList();
     Map<Integer, Set<Rule>> ruleMap = RuleExtractor.extract(lookupList);
 
-    Set<Integer> features = new HashSet<Integer>();
-    Set<Integer> lookupIds = new HashSet<Integer>();
+    Set<Integer> features = new HashSet<>();
+    Set<Integer> lookupIds = new HashSet<>();
 
     for (ScriptTable script : scripts.map().values()) {
       for (LangSysTable langSys : script.map().values()) {
@@ -161,7 +160,7 @@ public class Rule {
     LookupListTable lookupList = gsub.lookupList();
     Map<Integer, Set<Rule>> ruleMap = RuleExtractor.extract(lookupList);
     Set<Integer> lookupIds = featuredLookups(font);
-    Set<Rule> featuredRules = Rule.featuredRules(lookupIds, ruleMap);
+    Set<Rule> featuredRules = featuredRules(lookupIds, ruleMap);
     return featuredRules;
   }
 
@@ -169,17 +168,20 @@ public class Rule {
 
   public static GlyphGroup glyphGroupForText(String str, CMapTable cmapTable) {
     GlyphGroup glyphGroup = new GlyphGroup();
-    Set<Integer> codes = codepointsFromStr(str);
+    Set<Integer> codes = SfStringUtils.getAllCodepoints(str);
     for (int code : codes) {
       for (CMap cmap : cmapTable) {
-        if (cmap.platformId() == 3 && cmap.encodingId() == 1 || // Unicode BMP
-            cmap.platformId() == 3 && cmap.encodingId() == 10 || // UCS2
+        if (cmap.platformId() == 3 && cmap.encodingId() == 1
+            || // Unicode BMP
+            cmap.platformId() == 3 && cmap.encodingId() == 10
+            || // UCS2
             cmap.platformId() == 0 && cmap.encodingId() == 5) { // Variation
           int glyph = cmap.glyphId(code);
           if (glyph != CMapTable.NOTDEF) {
             glyphGroup.add(glyph);
           }
-          // System.out.println("code: " + code + " glyph: " + glyph + " platform: " + cmap.platformId() + " encodingId: " + cmap.encodingId() + " format: " + cmap.format());
+          // System.out.println("code: " + code + " glyph: " + glyph + " platform: " +
+          // cmap.platformId() + " encodingId: " + cmap.encodingId() + " format: " + cmap.format());
 
         }
       }
@@ -189,7 +191,7 @@ public class Rule {
 
   // Rule operation
 
-  private void applyRuleOnRuleWithSubst(Rule targetRule, int at, LinkedList<Rule> accumulateTo) {
+  private void applyRuleOnRuleWithSubst(Rule targetRule, int at, ArrayList<Rule> accumulateTo) {
     RuleSegment matchSegment = targetRule.match(this, at);
     if (matchSegment == null) {
       return;
@@ -206,10 +208,13 @@ public class Rule {
     if (at <= targetRule.subst.size()) {
       RuleSegment newInput = new RuleSegment();
       newInput.addAll(targetRule.input);
-      newInput.addAll(matchSegment.subList(backtrackSize + targetRule.subst.size(), backtrackSize + at + input.size()));
+      newInput.addAll(
+          matchSegment.subList(
+              backtrackSize + targetRule.subst.size(), backtrackSize + at + input.size()));
 
       RuleSegment newLookAhead = new RuleSegment();
-      newLookAhead.addAll(matchSegment.subList(backtrackSize + at + input.size(), matchSegment.size()));
+      newLookAhead.addAll(
+          matchSegment.subList(backtrackSize + at + input.size(), matchSegment.size()));
 
       RuleSegment newSubst = new RuleSegment();
       newSubst.addAll(targetRule.subst.subList(0, at));
@@ -224,11 +229,13 @@ public class Rule {
     }
 
     if (at >= targetRule.subst.size()) {
-      List<GlyphGroup> skippedLookAheadPart = matchSegment.subList(backtrackSize + targetRule.subst.size(), at);
+      List<GlyphGroup> skippedLookAheadPart =
+          matchSegment.subList(backtrackSize + targetRule.subst.size(), at);
       Set<RuleSegment> intermediateSegments = permuteToSegments(skippedLookAheadPart);
 
       RuleSegment newLookAhead = new RuleSegment();
-      List<GlyphGroup> remainingLookAhead = matchSegment.subList(backtrackSize + at + input.size(), matchSegment.size());
+      List<GlyphGroup> remainingLookAhead =
+          matchSegment.subList(backtrackSize + at + input.size(), matchSegment.size());
       newLookAhead.addAll(remainingLookAhead);
 
       for (RuleSegment interRuleSegment : intermediateSegments) {
@@ -250,11 +257,11 @@ public class Rule {
   }
 
   private static Set<RuleSegment> permuteToSegments(List<GlyphGroup> glyphGroups) {
-    Set<RuleSegment> result = new LinkedHashSet<RuleSegment>();
+    Set<RuleSegment> result = new LinkedHashSet<>();
     result.add(new RuleSegment());
 
     for (GlyphGroup glyphGroup : glyphGroups) {
-      Set<RuleSegment> newResult = new LinkedHashSet<RuleSegment>();
+      Set<RuleSegment> newResult = new LinkedHashSet<>();
       for (Integer glyphId : glyphGroup) {
         for (RuleSegment segment : result) {
           RuleSegment newSegment = new RuleSegment();
@@ -277,24 +284,25 @@ public class Rule {
 
     int backtrackSize = targetRule.backtrack != null ? targetRule.backtrack.size() : 0;
 
-    RuleSegment newBacktrack =  new RuleSegment();
+    RuleSegment newBacktrack = new RuleSegment();
     newBacktrack.addAll(matchSegment.subList(0, backtrackSize + at));
 
     RuleSegment newLookAhead = new RuleSegment();
-    newLookAhead.addAll(matchSegment.subList(backtrackSize + at + ruleToApply.input.size(), matchSegment.size()));
+    newLookAhead.addAll(
+        matchSegment.subList(backtrackSize + at + ruleToApply.input.size(), matchSegment.size()));
 
     return new Rule(newBacktrack, ruleToApply.input, newLookAhead, ruleToApply.subst);
   }
 
-  private static void applyRulesOnRuleWithSubst(Set<Rule> rulesToApply, Rule targetRule, int at,
-      LinkedList<Rule> accumulateTo) {
+  private static void applyRulesOnRuleWithSubst(
+      Set<Rule> rulesToApply, Rule targetRule, int at, ArrayList<Rule> accumulateTo) {
     for (Rule ruleToApply : rulesToApply) {
       ruleToApply.applyRuleOnRuleWithSubst(targetRule, at, accumulateTo);
     }
   }
 
-  private static void applyRulesOnRuleWithoutSubst(Set<Rule> rulesToApply, Rule targetRule, int at,
-      LinkedList<Rule> accumulateTo) {
+  private static void applyRulesOnRuleWithoutSubst(
+      Set<Rule> rulesToApply, Rule targetRule, int at, ArrayList<Rule> accumulateTo) {
     for (Rule ruleToApply : rulesToApply) {
       Rule newRule = applyRuleOnRuleWithoutSubst(ruleToApply, targetRule, at);
       if (newRule != null) {
@@ -303,9 +311,9 @@ public class Rule {
     }
   }
 
-  static LinkedList<Rule> applyRulesOnRules(Set<Rule> rulesToApply, List<Rule> targetRules,
-      int at) {
-    LinkedList<Rule> result = new LinkedList<Rule>();
+  static ArrayList<Rule> applyRulesOnRules(
+      Set<Rule> rulesToApply, List<Rule> targetRules, int at) {
+    ArrayList<Rule> result = new ArrayList<>();
     for (Rule targetRule : targetRules) {
       if (targetRule.subst != null) {
         applyRulesOnRuleWithSubst(rulesToApply, targetRule, at, result);
@@ -355,7 +363,7 @@ public class Rule {
       return null;
     }
 
-    for(int i = 0; i < otherAllSegments.size(); i++) {
+    for (int i = 0; i < otherAllSegments.size(); i++) {
       GlyphGroup thisGlyphs = thisAllSegments.get(i + initialPos);
       GlyphGroup otherGlyphs = otherAllSegments.get(i);
 
@@ -363,7 +371,7 @@ public class Rule {
       if (intersection.isEmpty()) {
         return null;
       }
-      thisAllSegments.set(i+initialPos, intersection);
+      thisAllSegments.set(i + initialPos, intersection);
     }
 
     return thisAllSegments;
@@ -377,7 +385,7 @@ public class Rule {
   }
 
   static List<Rule> prependToInput(int prefix, List<Rule> rules) {
-    List<Rule> result = new ArrayList<Rule>();
+    List<Rule> result = new ArrayList<>();
     for (Rule rule : rules) {
       result.add(prependToInput(prefix, rule));
     }
@@ -385,7 +393,7 @@ public class Rule {
   }
 
   static Set<Rule> deltaRules(List<Integer> glyphIds, int delta) {
-    Set<Rule> result = new LinkedHashSet<Rule>();
+    Set<Rule> result = new LinkedHashSet<>();
     for (int glyphId : glyphIds) {
       RuleSegment input = new RuleSegment(glyphId);
       RuleSegment subst = new RuleSegment(glyphId + delta);
@@ -394,13 +402,13 @@ public class Rule {
     return result;
   }
 
-  static Set<Rule> oneToOneRules(RuleSegment backtrack, List<Integer> inputs,
-      RuleSegment lookAhead, List<Integer> substs) {
+  static Set<Rule> oneToOneRules(
+      RuleSegment backtrack, List<Integer> inputs, RuleSegment lookAhead, List<Integer> substs) {
     if (inputs.size() != substs.size()) {
       throw new IllegalArgumentException("input - subst should have same count");
     }
 
-    Set<Rule> result = new LinkedHashSet<Rule>();
+    Set<Rule> result = new LinkedHashSet<>();
     for (int i = 0; i < inputs.size(); i++) {
       RuleSegment input = new RuleSegment(inputs.get(i));
       RuleSegment subst = new RuleSegment(substs.get(i));
@@ -414,24 +422,16 @@ public class Rule {
   }
 
   // Dump routines
-  private static Set<Integer> codepointsFromStr(String s) {
-    Set<Integer> list = new HashSet<Integer>();
-    for (int cp, i = 0; i < s.length(); i += Character.charCount(cp)) {
-      cp = s.codePointAt(i);
-      list.add(cp);
-    }
-    return list;
-  }
 
   private static void dumpRuleMap(Map<Integer, Set<Rule>> rulesList, PostScriptTable post) {
-    for (int index : rulesList.keySet()) {
-      Set<Rule> rules = rulesList.get(index);
-      System.out.println(
-          "------------------------------ " + index + " --------------------------------");
-      for (Rule rule : rules) {
-        System.out.println(rule.toString(post));
-      }
-    }
+    rulesList.forEach(
+        (key, rules) -> {
+          System.out.println(
+              "------------------------------ " + key + " --------------------------------");
+          for (Rule rule : rules) {
+            System.out.println(rule.toString(post));
+          }
+        });
   }
 
   public static void dumpLookups(Font font) {
@@ -439,7 +439,7 @@ public class Rule {
     Map<Integer, Set<Rule>> ruleMap = RuleExtractor.extract(gsub.lookupList());
     PostScriptTable post = font.getTable(Tag.post);
     dumpRuleMap(ruleMap, post);
-    System.out.println("\nFeatured Lookup IDs: " + Rule.featuredLookups(font));
+    System.out.println("\nFeatured Lookup IDs: " + featuredLookups(font));
   }
 
   private String toString(PostScriptTable post) {
@@ -484,23 +484,11 @@ public class Rule {
       return false;
     }
     Rule other = (Rule) o;
-    if (hashCode != other.hashCode) {
-      return false;
-    }
-    RuleSegment[] these = new RuleSegment[] {input, subst, backtrack, lookAhead};
-    RuleSegment[] others = new RuleSegment[] {other.input, other.subst, other.backtrack, other.lookAhead};
-    for (int i = 0; i < these.length; i++) {
-      RuleSegment thisSeg = these[i];
-      RuleSegment otherSeg = others[i];
-      if (thisSeg != null) {
-        if (!thisSeg.equals(otherSeg)) {
-          return false;
-        }
-      } else if (otherSeg != null){
-        return false;
-      }
-    }
-    return true;
+    return hashCode == other.hashCode
+        && SfObjects.equals(input, other.input)
+        && SfObjects.equals(subst, other.subst)
+        && SfObjects.equals(backtrack, other.backtrack)
+        && SfObjects.equals(lookAhead, other.lookAhead);
   }
 
   @Override
@@ -509,10 +497,6 @@ public class Rule {
   }
 
   private int getHashCode() {
-    int hashCode = 1;
-    for (RuleSegment e : new RuleSegment[] {input, subst, backtrack, lookAhead}) {
-      hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
-    }
-    return hashCode;
+    return SfObjects.hash(input, subst, backtrack, lookAhead);
   }
 }
