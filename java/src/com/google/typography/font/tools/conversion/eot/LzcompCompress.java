@@ -79,7 +79,7 @@ public class LzcompCompress {
   void setDistRange(int length) {
     numDistRanges = 1;
     distMax = DIST_MIN + (1 << (DIST_WIDTH * numDistRanges)) - 1;
-    while (distMax < length1) {
+    while (distMax < length) {
       numDistRanges++;
       distMax = DIST_MIN + (1 << (DIST_WIDTH * numDistRanges)) - 1;
     }
@@ -214,7 +214,7 @@ public class LzcompCompress {
         int i = hNode.index;
         int dist = index - i;
         hNodeCount++;
-        if (hNodeCount > 256 || dist > maxCopyDist) {
+        if (hNodeCount > 256 || dist > maxCopyDist || dist > distMax) {
           if (hashTable[pos] == hNode) {
             hashTable[pos] = null;
           } else {

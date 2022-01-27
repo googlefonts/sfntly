@@ -23,8 +23,9 @@
 #include <limits>
 #include <map>
 #include <set>
+#include <string>
 
-#include <unicode/unistr.h>
+#include <unicode/ustring.h>
 #include <unicode/uversion.h>
 
 #include "sfntly/table/bitmap/eblc_table.h"
@@ -41,18 +42,22 @@
 #include "sfntly/port/memory_input_stream.h"
 #include "sfntly/port/memory_output_stream.h"
 
-#if defined U_USING_ICU_NAMESPACE
-  U_NAMESPACE_USE
-#endif
-
 namespace {
 
 using namespace sfntly;
 
+/**
+ * std::u16string and icu::UnicodeString can't be used here.
+ * UChar is not always char16_t in some platforms. std::u16string is avoided.
+ * icu::UnicodeString C++ API is also avoided to make it more portable across
+ * platforms due to C++ ABI compatility issue.
+ */
+typedef std::basic_string<UChar> UCharString;
+
 // The bitmap tables must be greater than 16KB to trigger bitmap subsetter.
 static const int BITMAP_SIZE_THRESHOLD = 16384;
 
-void ConstructName(UChar* name_part, UnicodeString* name, int32_t name_id) {
+void ConstructName(UChar* name_part, UCharString* name, int32_t name_id) {
   switch (name_id) {
     case NameId::kFullFontName:
       *name = name_part;
@@ -60,7 +65,7 @@ void ConstructName(UChar* name_part, UnicodeString* name, int32_t name_id) {
     case NameId::kFontFamilyName:
     case NameId::kPreferredFamily:
     case NameId::kWWSFamilyName: {
-      UnicodeString original = *name;
+      UCharString original = *name;
       *name = name_part;
       *name += original;
       break;
@@ -75,6 +80,38 @@ void ConstructName(UChar* name_part, UnicodeString* name, int32_t name_id) {
       // Simply ignore it.
       break;
   }
+}
+
+// Convert UTF-8 string into UTF-16 string.
+//
+// Ill-formed input is replaced with U+FFFD.
+// Otherwise, return empty string if other error occurs during the conversion.
+UCharString ConvertFromUtf8(const char* src) {
+  int32_t srcLength = strlen(src);
+  int32_t destCapacity = srcLength + 1;
+  UChar* buffer = new UChar[destCapacity];
+  UCharString dest;
+  if (buffer == NULL) {
+    return dest;
+  }
+  int32_t destLength;
+  UErrorCode errorCode = U_ZERO_ERROR;
+  u_strFromUTF8WithSub(buffer, destCapacity, &destLength, src, srcLength,
+                       0xfffd, // Unicode replacement character
+                       NULL,
+                       &errorCode);
+  if (U_SUCCESS(errorCode)) {
+    dest.append(buffer, destLength);
+  }
+  delete[] buffer;
+  return dest;
+}
+
+int32_t CaseCompareUtf16(const UCharString& str1,
+                         const UCharString& str2, uint32_t option) {
+  UErrorCode errorCode = U_ZERO_ERROR;
+  return u_strCaseCompare(str1.c_str(), str1.length(), str2.c_str(),
+                          str2.length(), option, &errorCode);
 }
 
 int32_t HashCode(int32_t platform_id, int32_t encoding_id, int32_t language_id,
@@ -93,14 +130,14 @@ int32_t HashCode(int32_t platform_id, int32_t encoding_id, int32_t language_id,
 }
 
 bool HasName(const char* font_name, Font* font) {
-  UnicodeString font_string = UnicodeString::fromUTF8(font_name);
-  if (font_string.isEmpty())
+  UCharString font_string = ConvertFromUtf8(font_name);
+  if (font_string.empty())
     return false;
-  UnicodeString regular_suffix = UnicodeString::fromUTF8(" Regular");
-  UnicodeString alt_font_string = font_string;
+  UCharString regular_suffix = ConvertFromUtf8(" Regular");
+  UCharString alt_font_string = font_string;
   alt_font_string += regular_suffix;
 
-  typedef std::map<int32_t, UnicodeString> NameMap;
+  typedef std::map<int32_t, UCharString> NameMap;
   NameMap names;
   NameTablePtr name_table = down_cast<NameTable*>(font->GetTable(Tag::name));
   if (name_table == NULL) {
@@ -135,8 +172,8 @@ bool HasName(const char* font_name, Font* font) {
 
   if (!names.empty()) {
     for (NameMap::iterator i = names.begin(), e = names.end(); i != e; ++i) {
-      if (i->second.caseCompare(font_string, 0) == 0 ||
-          i->second.caseCompare(alt_font_string, 0) == 0) {
+      if (CaseCompareUtf16(i->second, font_string, 0) == 0 ||
+          CaseCompareUtf16(i->second, alt_font_string, 0) == 0) {
         return true;
       }
     }

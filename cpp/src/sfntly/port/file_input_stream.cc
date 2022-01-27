@@ -74,7 +74,7 @@ int32_t FileInputStream::Read() {
 #endif
     return 0;
   }
-  uint8_t value;
+  uint8_t value = 0;
   size_t length = fread(&value, 1, 1, file_);
   position_ += length;
   return value;

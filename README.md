@@ -1,5 +1,10 @@
 # sfntly
 
+This project is not developed any further.
+For a font renderer, have a look at Apache PDFBox.
+
+# Archived description
+
 sfntly is pronounced "ess-font-lee."
 
 The sfntly project contains Java and C++ libraries for reading, editing, and writing sfnt container fonts (OpenType, TrueType, AAT/GX, and Graphite.)
@@ -20,7 +25,7 @@ This level of support provides for many of the needs developers have related to 
 It also covers a lot of the editing needs.
 
 The Java library was initially created by Stuart Gill, within Google's i18n Font and Text Team.
-The Java version was the core library used to power the Google Fonts AP from 2010 to 2015, .
+The Java version was the core library used to power the Google Fonts AP from 2010 to 2015, .
 There it was used for all font manipulation - to read font data, to pull apart fonts, and to then reassemble them before they are streamed out to a user. 
 Portions of the font that are not needed - specific glyph ranges or features - were stripped using sfntly to minimize the size of the served font. 
 
