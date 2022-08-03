@@ -147,6 +147,10 @@ public class SfntTool {
           removeTables.add(Tag.LTSH);
           removeTables.add(Tag.DSIG);
           removeTables.add(Tag.vhea);
+          // Embedded monochrome or grayscale bitmap glyph data
+          removeTables.add(Tag.EBDT);
+          removeTables.add(Tag.EBLC);
+          removeTables.add(Tag.EBSC);
           // AAT tables, not yet defined in sfntly Tag class
           removeTables.add(Tag.intValue(new byte[]{'m', 'o', 'r', 't'}));
           removeTables.add(Tag.intValue(new byte[]{'m', 'o', 'r', 'x'}));
